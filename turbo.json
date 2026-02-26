@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".output/**", "dist/**", ".nuxt/**"]
+      "outputs": [".output/**", "dist/**", ".nuxt/**"],
+      "env": ["NITRO_PRESET"]
     },
     "dev": {
       "cache": false,

@@ -9,6 +9,10 @@ export interface RplFormInputProps {
   error?: string
 }
 
+defineOptions({
+  inheritAttrs: false
+})
+
 withDefaults(defineProps<RplFormInputProps>(), {
   modelValue: '',
   type: 'text',
@@ -33,6 +37,7 @@ const inputId = `rpl-input-${Math.random().toString(36).slice(2, 9)}`
     </label>
     <input
       :id="inputId"
+      v-bind="$attrs"
       :value="modelValue"
       :type="type"
       :placeholder="placeholder"
