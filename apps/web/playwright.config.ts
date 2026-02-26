@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
-  testDir: 'apps/web/tests/e2e',
+  testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -28,8 +28,8 @@ export default defineConfig({
   ],
   webServer: {
     command: process.env.CI
-      ? 'node apps/web/.output/server/index.mjs'
-      : 'pnpm --filter @ripple/web dev',
+      ? 'node .output/server/index.mjs'
+      : 'nuxi dev',
     port: 3000,
     reuseExistingServer: !process.env.CI
   }
