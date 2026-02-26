@@ -1,0 +1,25 @@
+{
+  "name": "@ripple/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch handlers/index.ts",
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ripple/db": "workspace:*",
+    "@ripple/email": "workspace:*",
+    "@ripple/queue": "workspace:*",
+    "@ripple/storage": "workspace:*",
+    "@ripple/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "@ripple/ui",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./nuxt": "./nuxt.ts"
+  },
+  "scripts": {
+    "build": "echo 'UI build handled by Nuxt'",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@storybook/vue3": "^8.4.7",
+    "@storybook/vue3-vite": "^8.4.7",
+    "@vue/test-utils": "^2.4.6",
+    "storybook": "^8.4.7",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}
