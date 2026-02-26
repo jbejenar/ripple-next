@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Next Readiness Manifest",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-26.",
+  "version": "0.1.0",
+  "subsystems": {
+    "auth": {
+      "status": "partial",
+      "description": "Auth provider interface defined. MockAuthProvider fully functional for tests. LuciaAuthProvider and CognitoAuthProvider are placeholders (throw 'Not yet implemented').",
+      "packages": ["@ripple/auth"],
+      "blockers": [
+        "LuciaAuthProvider methods not implemented",
+        "CognitoAuthProvider methods not implemented",
+        "No integration tests for production auth flow"
+      ],
+      "testCoverage": "mock-only"
+    },
+    "database": {
+      "status": "implemented",
+      "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log. Repository pattern implemented. Migrations working.",
+      "packages": ["@ripple/db"],
+      "blockers": [],
+      "testCoverage": "minimal"
+    },
+    "queue": {
+      "status": "implemented",
+      "description": "Full provider pattern: MemoryQueueProvider (test), BullMQQueueProvider (local), SqsQueueProvider (prod). Consumer pattern with DLQ retry logic.",
+      "packages": ["@ripple/queue"],
+      "blockers": [],
+      "testCoverage": "memory-provider-tested"
+    },
+    "storage": {
+      "status": "implemented",
+      "description": "Full provider pattern: FilesystemStorageProvider (test), MinioStorageProvider (local), S3StorageProvider (prod). Presigned URL support.",
+      "packages": ["@ripple/storage"],
+      "blockers": [],
+      "testCoverage": "minimal"
+    },
+    "email": {
+      "status": "implemented",
+      "description": "Full provider pattern: MemoryEmailProvider (test), SmtpEmailProvider (local/Mailpit), SesEmailProvider (prod).",
+      "packages": ["@ripple/email"],
+      "blockers": [],
+      "testCoverage": "memory-provider-tested"
+    },
+    "events": {
+      "status": "implemented",
+      "description": "Domain event bus: MemoryEventBus (test/local), EventBridgeBus (prod). Typed domain events for users, projects.",
+      "packages": ["@ripple/events"],
+      "blockers": [],
+      "testCoverage": "minimal"
+    },
+    "ui": {
+      "status": "partial",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer). Storybook configured.",
+      "packages": ["@ripple/ui"],
+      "blockers": [
+        "Component library is still foundational — more components needed"
+      ],
+      "testCoverage": "component-tests-exist"
+    },
+    "api": {
+      "status": "scaffold",
+      "description": "tRPC routers defined with auth middleware. User router returns placeholder data (not wired to repositories). Health endpoint is basic (no dependency checks).",
+      "packages": [],
+      "paths": ["apps/web/server/trpc/", "apps/web/server/api/"],
+      "blockers": [
+        "tRPC routers not wired to @ripple/db repositories",
+        "Health endpoint does not check DB/Redis/queue readiness",
+        "No contract tests for API routes"
+      ],
+      "testCoverage": "none"
+    },
+    "infrastructure": {
+      "status": "implemented",
+      "description": "SST v3 config with VPC, Aurora Postgres, Redis, DynamoDB, S3, SQS queues, EventBridge, Lambda consumers, ECS Fargate services, Cron jobs, Nuxt app.",
+      "packages": [],
+      "paths": ["sst.config.ts"],
+      "blockers": [],
+      "testCoverage": "preview-deploys"
+    },
+    "ci": {
+      "status": "implemented",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR.",
+      "packages": [],
+      "paths": [".github/workflows/"],
+      "blockers": [
+        "No coverage thresholds enforced yet",
+        "Lint warnings not promoted to errors yet"
+      ],
+      "testCoverage": "pipeline-tested"
+    },
+    "testing-infra": {
+      "status": "implemented",
+      "description": "Mock providers bundle, test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup.",
+      "packages": ["@ripple/testing"],
+      "blockers": [],
+      "testCoverage": "self-tested"
+    },
+    "publishing": {
+      "status": "planned",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. See ADR-007.",
+      "packages": ["all @ripple/* packages"],
+      "blockers": [
+        "publishConfig not yet added to package.json files",
+        "No release CI workflow yet",
+        "No changeset/versioning tool configured",
+        "Packages need dist/ build step (currently raw .ts exports)"
+      ],
+      "testCoverage": "none"
+    }
+  },
+  "statusLegend": {
+    "implemented": "Core functionality working and tested at some level",
+    "partial": "Interface defined, some implementations working, gaps remain",
+    "scaffold": "Structure exists but returns placeholder/mock data",
+    "planned": "Architecture decided but no implementation yet"
+  }
+}

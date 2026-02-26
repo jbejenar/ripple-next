@@ -1,0 +1,41 @@
+# ─── CODEOWNERS ─────────────────────────────────────────────────
+# Defines ownership boundaries for critical shared surfaces.
+# Changes to these paths require review from the owning team.
+#
+# Format: <pattern> <owner1> <owner2> ...
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ─── Infrastructure (requires platform team review) ────────────
+sst.config.ts                         @ripple-next/platform
+docker-compose.yml                    @ripple-next/platform
+.github/workflows/                    @ripple-next/platform
+tsconfig.json                         @ripple-next/platform
+turbo.json                            @ripple-next/platform
+pnpm-workspace.yaml                   @ripple-next/platform
+
+# ─── Database schema & migrations (requires data team review) ──
+packages/db/schema/                   @ripple-next/platform @ripple-next/data
+packages/db/migrations/               @ripple-next/platform @ripple-next/data
+packages/db/drizzle.config.ts         @ripple-next/platform @ripple-next/data
+
+# ─── Auth (requires security review) ──────────────────────────
+packages/auth/                        @ripple-next/platform @ripple-next/security
+
+# ─── Queue contracts (requires platform review) ────────────────
+packages/queue/types.ts               @ripple-next/platform
+packages/queue/events.ts              @ripple-next/platform
+
+# ─── Shared types & validation (cross-team contract) ──────────
+packages/shared/                      @ripple-next/platform
+packages/validation/                  @ripple-next/platform
+
+# ─── Provider interfaces (changing these affects all consumers) ─
+packages/storage/types.ts             @ripple-next/platform
+packages/email/types.ts               @ripple-next/platform
+packages/events/types.ts              @ripple-next/platform
+
+# ─── Agent & developer documentation ──────────────────────────
+AGENTS.md                             @ripple-next/platform
+.github/agents/                       @ripple-next/platform
+.github/instructions/                 @ripple-next/platform
+docs/adr/                             @ripple-next/platform
