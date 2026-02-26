@@ -22,8 +22,9 @@ export default defineNuxtConfig({
   ],
 
   // Nitro server config (deploys to Lambda via SST)
+  // NITRO_PRESET env var overrides for e2e tests (node-server)
   nitro: {
-    preset: 'aws-lambda',
+    preset: process.env.NITRO_PRESET || 'aws-lambda',
     compressPublicAssets: true
   },
 
