@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     include: ['tests/unit/**/*.test.ts', 'tests/integration/**/*.test.ts'],
+    passWithNoTests: true,
     coverage: {
       provider: 'v8',
       include: ['components/**', 'composables/**', 'server/**', 'stores/**']

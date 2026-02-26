@@ -5,6 +5,8 @@ on:
 
 jobs:
   deploy:
+    # Only run if AWS_ROLE_ARN secret is configured
+    if: ${{ secrets.AWS_ROLE_ARN != '' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write

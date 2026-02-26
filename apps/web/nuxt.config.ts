@@ -8,7 +8,7 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: false // Type checking runs separately via `pnpm typecheck`
   },
 
   modules: ['@pinia/nuxt', '@ripple/ui/nuxt'],
