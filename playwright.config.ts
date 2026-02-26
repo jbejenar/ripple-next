@@ -26,11 +26,11 @@ export default defineConfig({
       use: { ...devices['iPhone 14'] }
     }
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'pnpm --filter @ripple/web dev',
-        port: 3000,
-        reuseExistingServer: true
-      }
+  webServer: {
+    command: process.env.CI
+      ? 'node apps/web/.output/server/index.mjs'
+      : 'pnpm --filter @ripple/web dev',
+    port: 3000,
+    reuseExistingServer: !process.env.CI
+  }
 })
