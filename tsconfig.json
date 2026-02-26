@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["node"],
+    "paths": {
+      "@ripple/ui": ["./packages/ui/index.ts"],
+      "@ripple/db": ["./packages/db/index.ts"],
+      "@ripple/queue": ["./packages/queue/index.ts"],
+      "@ripple/auth": ["./packages/auth/index.ts"],
+      "@ripple/storage": ["./packages/storage/index.ts"],
+      "@ripple/email": ["./packages/email/index.ts"],
+      "@ripple/events": ["./packages/events/index.ts"],
+      "@ripple/validation": ["./packages/validation/index.ts"],
+      "@ripple/shared": ["./packages/shared/index.ts"],
+      "@ripple/testing": ["./packages/testing/setup.ts"]
+    }
+  },
+  "exclude": ["node_modules", "**/dist/**", "**/.output/**", "**/.nuxt/**"]
+}

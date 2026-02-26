@@ -1,0 +1,26 @@
+{
+  "name": "@ripple/testing",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./setup.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ripple/auth": "workspace:*",
+    "@ripple/db": "workspace:*",
+    "@ripple/email": "workspace:*",
+    "@ripple/events": "workspace:*",
+    "@ripple/queue": "workspace:*",
+    "@ripple/storage": "workspace:*",
+    "fishery": "^2.2.2"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "^10.16.0",
+    "testcontainers": "^10.16.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}

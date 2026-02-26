@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.output/
+.nuxt/
+.nitro/
+*.tsbuildinfo
+
+# TypeScript compiled output in source dirs (should go to dist/ or be noEmit)
+apps/**/*.js
+apps/**/*.js.map
+apps/**/*.d.ts
+apps/**/*.d.ts.map
+packages/**/*.js
+packages/**/*.js.map
+packages/**/*.d.ts
+packages/**/*.d.ts.map
+services/**/*.js
+services/**/*.js.map
+services/**/*.d.ts
+services/**/*.d.ts.map
+sst.config.js
+sst.config.js.map
+sst.config.d.ts
+sst.config.d.ts.map
+vitest.workspace.js
+vitest.workspace.js.map
+vitest.workspace.d.ts
+vitest.workspace.d.ts.map
+playwright.config.d.ts
+playwright.config.d.ts.map
+playwright.config.js
+# node-compile-cache from Nuxt
+apps/**/node-compile-cache/
+# Exceptions for intentional source files
+!eslint.config.js
+!**/shims-vue.d.ts
+
+# SST
+.sst/
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Turbo
+.turbo/
+
+# Storybook
+storybook-static/
+
+# Misc
+*.log

@@ -1,0 +1,64 @@
+/* Ripple Global Design Tokens */
+:root {
+  /* Colors */
+  --rpl-clr-primary: #0052c2;
+  --rpl-clr-primary-dark: #003e91;
+  --rpl-clr-primary-light: #e5edf8;
+  --rpl-clr-secondary: #333333;
+  --rpl-clr-success: #027a48;
+  --rpl-clr-warning: #dc6803;
+  --rpl-clr-error: #d0021b;
+  --rpl-clr-info: #0052c2;
+  --rpl-clr-text: #333333;
+  --rpl-clr-text-light: #666666;
+  --rpl-clr-text-inverse: #ffffff;
+  --rpl-clr-background: #ffffff;
+  --rpl-clr-background-light: #f5f5f5;
+  --rpl-clr-border: #cccccc;
+  --rpl-clr-border-light: #e0e0e0;
+  --rpl-clr-footer-bg: #1a1a1a;
+
+  /* Typography */
+  --rpl-type-font-family: 'VIC', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  --rpl-type-size-xs: 0.75rem;
+  --rpl-type-size-sm: 0.875rem;
+  --rpl-type-size-base: 1rem;
+  --rpl-type-size-lg: 1.125rem;
+  --rpl-type-size-xl: 1.25rem;
+  --rpl-type-size-2xl: 1.5rem;
+  --rpl-type-size-3xl: 2rem;
+  --rpl-type-size-4xl: 2.5rem;
+
+  /* Spacing */
+  --rpl-sp-1: 0.25rem;
+  --rpl-sp-2: 0.5rem;
+  --rpl-sp-3: 0.75rem;
+  --rpl-sp-4: 1rem;
+  --rpl-sp-5: 1.25rem;
+  --rpl-sp-6: 1.5rem;
+  --rpl-sp-8: 2rem;
+  --rpl-sp-10: 2.5rem;
+  --rpl-sp-12: 3rem;
+
+  /* Borders */
+  --rpl-border-radius: 4px;
+  --rpl-border-radius-lg: 8px;
+}
+
+/* Base reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--rpl-type-font-family);
+  font-size: var(--rpl-type-size-base);
+  line-height: 1.5;
+  color: var(--rpl-clr-text);
+  background-color: var(--rpl-clr-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
