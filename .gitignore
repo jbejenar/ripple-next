@@ -34,8 +34,9 @@ playwright.config.d.ts.map
 playwright.config.js
 # node-compile-cache from Nuxt
 apps/**/node-compile-cache/
-# Exceptions for intentional JS config files
+# Exceptions for intentional source files
 !eslint.config.js
+!**/shims-vue.d.ts
 
 # SST
 .sst/
