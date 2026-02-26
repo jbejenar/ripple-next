@@ -5,6 +5,16 @@ A full-stack government digital platform built with Nuxt 3, Ripple UI,
 and TypeScript. Deployed to AWS via SST v3 (Pulumi — NOT CDK/CloudFormation).
 Port of the Victorian government Ripple design system to an AI-agent-first architecture.
 
+## Architecture Model
+**Hybrid monorepo** — this repo is the development hub for all `@ripple/*` packages.
+Packages are published to a private npm registry so external projects consume versioned
+releases (e.g. `"@ripple/auth": "^0.2.0"`). Consumer teams upgrade at their own pace —
+no coordinated redeployments needed. See [ADR-007](docs/adr/007-library-vs-monorepo.md).
+
+## Subsystem Status
+Check `docs/readiness.json` for machine-readable status of each subsystem.
+Status values: `implemented` | `partial` | `scaffold` | `planned`.
+
 ## Tech Stack
 - Frontend: Nuxt 3 + Vue 3 Composition API + TypeScript
 - UI: Ripple UI Core (forked), UnoCSS, Storybook 8
@@ -39,6 +49,28 @@ import { Resource } from "sst"
 // Resource.Database.connectionString, Resource.EmailQueue.url, etc.
 ```
 In tests, use mock providers. In local dev, use docker-compose services.
+
+## Nuxt Auto-Imports
+
+Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
+
+### Auto-imported by Nuxt core (no import statement needed):
+- **Vue APIs**: `ref`, `computed`, `watch`, `watchEffect`, `reactive`, `toRef`, `toRefs`, `onMounted`, `onUnmounted`, `nextTick`, `defineProps`, `defineEmits`, `withDefaults`
+- **Nuxt composables**: `useRuntimeConfig`, `useFetch`, `useAsyncData`, `useLazyFetch`, `useLazyAsyncData`, `useRoute`, `useRouter`, `useState`, `useHead`, `useSeoMeta`, `useNuxtApp`, `navigateTo`, `createError`, `definePageMeta`, `defineNuxtRouteMiddleware`
+- **Nitro server utils**: `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`
+
+### Auto-imported from project directories:
+- `composables/**` — all exports (e.g. `useAuth()`)
+- `stores/**` — all Pinia stores
+- `~/components/**` — all Vue components (no pathPrefix)
+
+### NOT auto-imported (you must import explicitly):
+- Anything from `@ripple/*` packages (e.g. `import { AuthProvider } from '@ripple/auth'`)
+- Anything from `node_modules` (e.g. `import { z } from 'zod'`)
+- Server-side tRPC utilities (e.g. `import { router, protectedProcedure } from '../trpc/trpc'`)
+
+### If you see import errors:
+Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 
 ## Commands
 - `pnpm install` — Install all dependencies
@@ -87,6 +119,12 @@ In tests, use mock providers. In local dev, use docker-compose services.
 - Use SST `link` to pass resources to functions — never hardcode ARNs or URLs
 - Test infra changes with `npx sst deploy --stage pr-123` (isolated per PR)
 
+## CI Pipeline (Tiered)
+The CI runs a tiered model to balance speed with safety:
+- **Tier 1 (every PR):** lint, typecheck, unit tests — skipped if no source files changed.
+- **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
+- **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.
+
 ## File Naming
 - Components: PascalCase (`UserProfile.vue`)
 - Composables: camelCase with `use` prefix (`useAuth.ts`)
@@ -114,4 +152,13 @@ services/worker/   — Queue consumer service (Lambda + ECS)
 services/websocket/ — WebSocket service (ECS Fargate)
 services/cron/     — Cron job handlers (Lambda)
 services/events/   — EventBridge event handlers (Lambda)
+docs/              — Architecture docs, ADRs, readiness manifest
 ```
+
+## Shared Package Ownership
+Critical shared surfaces require review from owning teams (see `.github/CODEOWNERS`):
+- **Infrastructure** (`sst.config.ts`, workflows, root configs): platform team
+- **Database schema/migrations**: platform + data teams
+- **Auth package**: platform + security teams
+- **Provider interfaces** (`types.ts` in each package): platform team
+- **Shared types/validation**: platform team
