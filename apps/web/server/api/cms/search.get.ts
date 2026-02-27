@@ -3,7 +3,7 @@ import type { CmsSearchQuery } from '@ripple/cms'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const cms = getCmsProvider()
+  const cms = await getCmsProvider()
 
   if (!query.q || typeof query.q !== 'string') {
     throw createError({ statusCode: 400, statusMessage: 'Search query parameter "q" is required' })

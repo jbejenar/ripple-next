@@ -3,7 +3,7 @@ import type { CmsListOptions } from '@ripple/cms'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const cms = getCmsProvider()
+  const cms = await getCmsProvider()
 
   const options: CmsListOptions = {
     contentType: query.contentType as string | undefined,

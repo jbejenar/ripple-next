@@ -2,7 +2,7 @@ import { getCmsProvider } from '../../../utils/cms-provider'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug') ?? ''
-  const cms = getCmsProvider()
+  const cms = await getCmsProvider()
   const page = await cms.getPageBySlug(slug)
 
   if (!page) {

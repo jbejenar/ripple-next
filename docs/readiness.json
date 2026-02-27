@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -94,15 +94,14 @@
       "testCoverage": "release-workflow-validated"
     },
     "cms": {
-      "status": "partial",
-      "description": "CMS content layer for Drupal/Tide integration. Full provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Zod schemas for all CMS content types in @ripple/validation. Conformance test suite validates provider contract. Nuxt API routes and composables wired. Dynamic page rendering with Tide-compatible content section components (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg).",
+      "status": "implemented",
+      "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) — removable without touching frontend, tests, or API layer. See ADR-011.",
       "packages": ["@ripple/cms"],
       "paths": ["apps/web/server/api/cms/", "apps/web/composables/useCms.ts", "apps/web/pages/content/"],
       "blockers": [
-        "No integration test with live Drupal/Tide instance",
-        "Paragraph-to-section mapping in DrupalCmsProvider is MVP (body-only)"
+        "No integration test with live Drupal/Tide instance"
       ],
-      "testCoverage": "conformance-tested"
+      "testCoverage": "conformance-tested + unit-tested"
     }
   },
   "statusLegend": {
