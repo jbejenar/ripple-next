@@ -2,22 +2,39 @@
 
 Complete guide from a bare Mac to running, testing, and deploying Ripple Next.
 
+## Start Here: What kind of development are you doing?
+
+Most confusion comes from mixing two valid workflows. This repo supports both:
+
+1. **Platform development (inside this monorepo)**
+   - You are changing `apps/web` and/or `packages/*` in `ripple-next` itself.
+   - Use this when you are building or changing the shared Ripple platform.
+2. **Consumer app development (separate app repo)**
+   - You are building your own app that depends on published `@ripple/*` packages.
+   - Use this when your team is consuming Ripple as a library.
+
+> **Do you need to replicate this repo?**
+>
+> - **No** for normal consumer app work: create a separate app repo and install `@ripple/*` packages from the private npm registry.
+> - **No** for platform contributions: clone this repo once and work directly in it.
+> - **Only clone/fork this repo** if you need to modify platform internals (shared packages, providers, infra, docs, or `apps/web`).
+
 ## Prerequisites
 
-| Requirement | Version | How to install |
-| ----------- | ------- | -------------- |
-| Node.js | >= 22 | `nvm install 22` or `brew install node@22` |
-| pnpm | >= 9 | `corepack enable pnpm` (bundled with Node 22) |
-| Docker | Latest | [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/) |
-| Git | Latest | `brew install git` or Xcode Command Line Tools |
+| Requirement | Version | How to install                                                                 |
+| ----------- | ------- | ------------------------------------------------------------------------------ |
+| Node.js     | >= 22   | `nvm install 22` or `brew install node@22`                                     |
+| pnpm        | >= 9    | `corepack enable pnpm` (bundled with Node 22)                                  |
+| Docker      | Latest  | [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/) |
+| Git         | Latest  | `brew install git` or Xcode Command Line Tools                                 |
 
 Optional but recommended:
 
-| Tool | Purpose |
-| ---- | ------- |
+| Tool                                 | Purpose                                  |
+| ------------------------------------ | ---------------------------------------- |
 | [nvm](https://github.com/nvm-sh/nvm) | Node version management (reads `.nvmrc`) |
-| AWS CLI v2 | Deploying to staging/production |
-| SST CLI | `npx sst` — no separate install needed |
+| AWS CLI v2                           | Deploying to staging/production          |
+| SST CLI                              | `npx sst` — no separate install needed   |
 
 ## 1. Clone and Bootstrap
 
@@ -28,16 +45,113 @@ cd ripple-next
 # nvm users: auto-switch to Node 22
 nvm use
 
-# One-command setup: install deps + validate environment + run quality gates
+# One-command setup: install deps + validate environment
 pnpm bootstrap
 ```
 
 `pnpm bootstrap` runs three steps:
+
 1. `pnpm install --frozen-lockfile` — install all dependencies
 2. `pnpm doctor` — validate your environment (Node, pnpm, Docker, env vars, turbo)
-3. `pnpm validate` — lint + typecheck + test
 
 If bootstrap fails, run `pnpm doctor` to see which checks are failing.
+
+## 1A. Platform developer workflow (this repo)
+
+If you are changing Ripple internals, stay in this repository and follow this sequence:
+
+```bash
+pnpm doctor
+cp .env.example .env
+docker compose up -d
+pnpm db:migrate
+pnpm db:seed
+pnpm dev
+```
+
+Make your changes, then run the quality gates before opening a PR:
+
+```bash
+pnpm test
+pnpm lint
+pnpm typecheck
+```
+
+Typical platform tasks:
+
+- Add/modify reusable APIs in `packages/*`
+- Update Nuxt app behavior in `apps/web`
+- Add provider implementations and conformance tests
+- Update infra in `sst.config.ts`
+- Improve docs in `docs/*`
+
+## 1B. Consumer app workflow (separate repo) — example
+
+If your team is building a product _with_ Ripple libraries, create a separate repo. Do **not** copy the whole monorepo.
+
+### Example: create a Nuxt consumer app
+
+```bash
+# Create a new app repo
+mkdir my-service-portal && cd my-service-portal
+git init
+
+# Create a Nuxt app
+pnpm dlx nuxi@latest init .
+pnpm install
+
+# Configure private registry auth (org-specific)
+# Usually done via ~/.npmrc or project .npmrc
+
+# Install Ripple packages you need
+pnpm add @ripple/auth @ripple/ui @ripple/validation
+```
+
+Create a page using Ripple packages:
+
+```vue
+<!-- pages/index.vue -->
+<script setup lang="ts">
+import { z } from 'zod'
+import { loginSchema } from '@ripple/validation'
+
+const status = ref<'idle' | 'valid'>('idle')
+
+const validateExample = (): void => {
+  const candidate = { email: 'user@example.com', password: 'example-password' }
+  const mergedSchema = loginSchema.and(z.object({ password: z.string().min(8) }))
+  mergedSchema.parse(candidate)
+  status.value = 'valid'
+}
+</script>
+
+<template>
+  <main>
+    <h1>Service Portal</h1>
+    <button type="button" @click="validateExample">Validate sample login payload</button>
+    <p>Validation state: {{ status }}</p>
+  </main>
+</template>
+```
+
+Run the consumer app:
+
+```bash
+pnpm dev
+```
+
+### How consumer apps should track Ripple updates
+
+1. Keep Ripple dependencies versioned normally (for example, `^0.2.0`).
+2. Let platform team publish updates from this monorepo.
+3. Upgrade on your schedule:
+
+```bash
+pnpm up @ripple/auth @ripple/ui @ripple/validation
+pnpm test
+```
+
+This is the core hybrid-monorepo model in [ADR-007](./adr/007-library-vs-monorepo.md): platform code evolves here; consumer apps upgrade independently.
 
 ## 2. Configure Environment
 
@@ -47,15 +161,15 @@ cp .env.example .env
 
 The `.env.example` file is the authoritative contract for all environment variables. Most defaults work out of the box for local development. Key sections:
 
-| Section | Required for local dev? | Notes |
-| ------- | ----------------------- | ----- |
-| Database | Yes | `DATABASE_URL` and `NUXT_DATABASE_URL` — defaults connect to docker-compose Postgres |
-| Redis | Yes | `REDIS_URL` — defaults connect to docker-compose Redis |
-| Auth/OIDC | No | Leave `NUXT_OIDC_ISSUER_URL` empty to use MockAuthProvider |
-| Storage | No | MinIO defaults work with docker-compose |
-| Email | No | Mailpit defaults work with docker-compose |
-| CMS | No | Leave `NUXT_CMS_BASE_URL` empty to use MockCmsProvider |
-| AWS | No | Only needed for deployed environments |
+| Section   | Required for local dev? | Notes                                                                                |
+| --------- | ----------------------- | ------------------------------------------------------------------------------------ |
+| Database  | Yes                     | `DATABASE_URL` and `NUXT_DATABASE_URL` — defaults connect to docker-compose Postgres |
+| Redis     | Yes                     | `REDIS_URL` — defaults connect to docker-compose Redis                               |
+| Auth/OIDC | No                      | Leave `NUXT_OIDC_ISSUER_URL` empty to use MockAuthProvider                           |
+| Storage   | No                      | MinIO defaults work with docker-compose                                              |
+| Email     | No                      | Mailpit defaults work with docker-compose                                            |
+| CMS       | No                      | Leave `NUXT_CMS_BASE_URL` empty to use MockCmsProvider                               |
+| AWS       | No                      | Only needed for deployed environments                                                |
 
 **Provider auto-selection**: When environment variables are empty, the system uses mock/memory providers automatically. You don't need Drupal, Keycloak, or AWS to develop locally. See [Provider Pattern](./provider-pattern.md).
 
@@ -67,14 +181,14 @@ docker compose up -d
 
 This starts six services:
 
-| Service | Port(s) | Credentials | Purpose |
-| ------- | ------- | ----------- | ------- |
-| PostgreSQL 17 | 5432 | `app` / `devpassword` | Primary database |
-| Redis 7 | 6379 | — | Caching and queues |
-| MinIO | 9000 (API), 9001 (console) | `minioadmin` / `minioadmin` | S3-compatible file storage |
-| Mailpit | 1025 (SMTP), 8025 (UI) | — | Email testing ([localhost:8025](http://localhost:8025)) |
-| MeiliSearch | 7700 | master key: `devkey` | Search indexing |
-| Keycloak 26 | 8080 | `admin` / `admin` | OIDC/OAuth provider (optional) |
+| Service       | Port(s)                    | Credentials                 | Purpose                                                 |
+| ------------- | -------------------------- | --------------------------- | ------------------------------------------------------- |
+| PostgreSQL 17 | 5432                       | `app` / `devpassword`       | Primary database                                        |
+| Redis 7       | 6379                       | —                           | Caching and queues                                      |
+| MinIO         | 9000 (API), 9001 (console) | `minioadmin` / `minioadmin` | S3-compatible file storage                              |
+| Mailpit       | 1025 (SMTP), 8025 (UI)     | —                           | Email testing ([localhost:8025](http://localhost:8025)) |
+| MeiliSearch   | 7700                       | master key: `devkey`        | Search indexing                                         |
+| Keycloak 26   | 8080                       | `admin` / `admin`           | OIDC/OAuth provider (optional)                          |
 
 Check service health:
 
@@ -96,6 +210,7 @@ pnpm db:studio
 ```
 
 Seed data includes:
+
 - `admin@example.com` (role: admin)
 - `user@example.com` (role: user)
 - A sample project owned by the admin
@@ -110,11 +225,11 @@ This starts the Nuxt 3 dev server on [localhost:3000](http://localhost:3000) wit
 
 Other development commands:
 
-| Command | Description |
-| ------- | ----------- |
+| Command          | Description                                                |
+| ---------------- | ---------------------------------------------------------- |
 | `pnpm storybook` | Start Storybook on [localhost:6006](http://localhost:6006) |
-| `pnpm db:studio` | Open Drizzle Studio database browser |
-| `pnpm build` | Build all packages and apps |
+| `pnpm db:studio` | Open Drizzle Studio database browser                       |
+| `pnpm build`     | Build all packages and apps                                |
 
 ## 6. Run Quality Gates
 
@@ -128,25 +243,25 @@ pnpm typecheck   # TypeScript strict mode — zero errors
 
 Additional quality commands:
 
-| Command | Description |
-| ------- | ----------- |
-| `pnpm test:e2e` | Playwright end-to-end tests (requires built app) |
-| `pnpm test:ui` | Storybook component tests |
-| `pnpm lint:fix` | Auto-fix lint issues |
-| `pnpm format` | Prettier format all files |
-| `pnpm format:check` | Check formatting without writing |
-| `pnpm validate:env` | Validate env vars against Zod schema ([ADR-012](./adr/012-env-schema-validation.md)) |
-| `pnpm check:readiness` | Verify `docs/readiness.json` is not stale |
+| Command                | Description                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `pnpm test:e2e`        | Playwright end-to-end tests (requires built app)                                     |
+| `pnpm test:ui`         | Storybook component tests                                                            |
+| `pnpm lint:fix`        | Auto-fix lint issues                                                                 |
+| `pnpm format`          | Prettier format all files                                                            |
+| `pnpm format:check`    | Check formatting without writing                                                     |
+| `pnpm validate:env`    | Validate env vars against Zod schema ([ADR-012](./adr/012-env-schema-validation.md)) |
+| `pnpm check:readiness` | Verify `docs/readiness.json` is not stale                                            |
 
 ### Coverage thresholds
 
 Tests enforce risk-tiered coverage thresholds:
 
-| Tier | Packages | Lines/Functions | Branches |
-| ---- | -------- | --------------- | -------- |
-| 1 (Critical) | auth, db, queue | 60% | 50% |
-| 2 (Important) | email, storage, events, cms | 40% | 30% |
-| 3 (UI/Services) | ui, worker | 20% | 10% |
+| Tier            | Packages                    | Lines/Functions | Branches |
+| --------------- | --------------------------- | --------------- | -------- |
+| 1 (Critical)    | auth, db, queue             | 60%             | 50%      |
+| 2 (Important)   | email, storage, events, cms | 40%             | 30%      |
+| 3 (UI/Services) | ui, worker                  | 20%             | 10%      |
 
 Thresholds only go up, never down. See [Testing Guide](./testing-guide.md) for details.
 
@@ -203,6 +318,7 @@ The CMS layer uses a **decoupled architecture** ([ADR-011](./adr/011-cms-decoupl
 - **DrupalCmsProvider** — used in production with a Drupal/Tide backend
 
 Drupal-specific code is isolated to exactly 2 files:
+
 - `packages/cms/providers/drupal.ts`
 - `packages/cms/providers/tide-paragraph-mapper.ts`
 
@@ -284,11 +400,11 @@ Nuxt auto-imports `defineEventHandler`, `getQuery`, `readBody`, `createError`, a
 
 ### Environments
 
-| Stage | Trigger | URL |
-| ----- | ------- | --- |
-| Preview | Per pull request | `pr-{number}.preview.example.com` |
-| Staging | Merge to `main` | `staging.example.com` |
-| Production | Manual approval gate | `example.com` |
+| Stage      | Trigger              | URL                               |
+| ---------- | -------------------- | --------------------------------- |
+| Preview    | Per pull request     | `pr-{number}.preview.example.com` |
+| Staging    | Merge to `main`      | `staging.example.com`             |
+| Production | Manual approval gate | `example.com`                     |
 
 ### Deploy commands
 
@@ -313,18 +429,18 @@ npx sst remove --stage pr-123
 
 SST v3 provisions the following on AWS (region `ap-southeast-2`):
 
-| Component | Service | Notes |
-| --------- | ------- | ----- |
-| VPC | NAT (EC2, not Gateway) + Bastion | Cost-effective networking |
-| Database | Aurora PostgreSQL Serverless v2 | 0.5–8 ACU auto-scaling |
-| Cache | ElastiCache Redis | Session cache, BullMQ backing |
-| NoSQL | DynamoDB | Single-table design with GSIs |
-| Storage | S3 | CORS-enabled uploads bucket |
-| Queues | SQS | Email (5m), Image (15m), Long-running (4h) visibility |
-| Events | EventBridge | Domain event routing |
-| Compute | Lambda (default) | Nuxt app, event handlers, cron jobs |
-| Compute | ECS Fargate | Worker service, WebSocket service |
-| Search | MeiliSearch | Content indexing |
+| Component | Service                          | Notes                                                 |
+| --------- | -------------------------------- | ----------------------------------------------------- |
+| VPC       | NAT (EC2, not Gateway) + Bastion | Cost-effective networking                             |
+| Database  | Aurora PostgreSQL Serverless v2  | 0.5–8 ACU auto-scaling                                |
+| Cache     | ElastiCache Redis                | Session cache, BullMQ backing                         |
+| NoSQL     | DynamoDB                         | Single-table design with GSIs                         |
+| Storage   | S3                               | CORS-enabled uploads bucket                           |
+| Queues    | SQS                              | Email (5m), Image (15m), Long-running (4h) visibility |
+| Events    | EventBridge                      | Domain event routing                                  |
+| Compute   | Lambda (default)                 | Nuxt app, event handlers, cron jobs                   |
+| Compute   | ECS Fargate                      | Worker service, WebSocket service                     |
+| Search    | MeiliSearch                      | Content indexing                                      |
 
 See [Deployment Guide](./deployment.md) for more details, [Lambda vs ECS](./lambda-vs-ecs.md) for the compute decision framework.
 
@@ -336,6 +452,7 @@ The CI pipeline runs automatically on every PR:
 **Tier 2 (main or high-risk changes)**: Playwright E2E tests
 
 The release pipeline generates:
+
 - CycloneDX SBOM mandatory (fail-fast, 90-day retention)
 - Build provenance attestations
 - Automated package publishing via Changesets
