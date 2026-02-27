@@ -1,9 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 3.0.0
+> Last updated: 2026-02-27 | Version: 4.0.0
+>
+> **AI-first platform.** This roadmap is structured for both human and AI agent
+> consumption. Every item is machine-parseable, uniquely identified (`RN-XXX`),
+> and prioritised using a tiered system that favours agent-executable, high-impact
+> work first.
 
-Every item has a unique ticket number (`RN-XXX`). Completed items live in
-[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-022, plus RN-018, RN-019, RN-030, RN-031).
+Completed items (RN-001 through RN-031) live in [ARCHIVE.md](./ARCHIVE.md).
 
 ---
 
@@ -24,24 +28,21 @@ for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift
 
 - Deterministic package manager and lockfile usage (`pnpm@9.15.4`, frozen lockfile in CI).
 - CI is tiered with change detection and high-risk routing.
-- **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention ([RN-005](./ARCHIVE.md#rn-005-ci-test-artifact-upload), [RN-013](./ARCHIVE.md#rn-013-standardized-ci-artifacts)).
-- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow ([RN-006](./ARCHIVE.md#rn-006-mandatory-sbom-in-release-workflow), [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release)).
-- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos ([RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)), with [downstream consumption guide](../downstream-workflows.md) ([RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation)).
-- **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI ([RN-008](./ARCHIVE.md#rn-008-env-schema-validation-gate-adr-012)). See ADR-012.
-- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured ([RN-009](./ARCHIVE.md#rn-009-devcontainer-baseline)).
-- Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close ([RN-011](./ARCHIVE.md#rn-011-preview-deploy-guardrails-adr-014)).
+- **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
+- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow.
+- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos, with [downstream consumption guide](../downstream-workflows.md).
+- **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI. See ADR-012.
+- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured.
+- Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
-- `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics ([RN-002](./ARCHIVE.md#rn-002-doctor-machine-mode---json---offline), [RN-003](./ARCHIVE.md#rn-003-environment-contract-envexample--pnpm-bootstrap)).
-- **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit ([RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml)).
-- **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate ([RN-010](./ARCHIVE.md#rn-010-flaky-test-containment-policy-adr-013)).
+- `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics.
+- **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
+- **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **Storybook coverage** — All 16 UI components (atoms, molecules, organisms, Tide content) have Storybook stories with autodocs ([RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)).
-- **UI component tests** — Vue Test Utils tests for all 16 components with full coverage of atoms, molecules, organisms, and Tide content renderers ([RN-030](./ARCHIVE.md#rn-030-ui-component-test-suite)).
-- **Navigation** — Header and footer navigation from CMS menus with nested menu support ([RN-019](./ARCHIVE.md#rn-019-navigationmenu-component)).
-- **Search integration** — Dedicated search provider layer (MeiliSearch for local, extensible to Elasticsearch) with `SearchEnhancedCmsProvider` decorator pattern ([RN-018](./ARCHIVE.md#rn-018-search-integration-provider)).
-- **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository ([RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api)).
-- **ADR coverage** — 15 ADRs with [indexed directory](../adr/README.md), including LocalStack assessment ([ADR-015](../adr/015-localstack-assessment.md)).
+- **UI component tests** — Vue Test Utils tests for all 16 components with full coverage of atoms, molecules, organisms, and Tide content renderers.
+- **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
+- **ADR coverage** — 16 ADRs with [indexed directory](../adr/README.md), including roadmap reorganisation (ADR-016).
 
 ---
 
@@ -126,39 +127,119 @@ for full details on each.
 
 ## Active Roadmap
 
-### Phase 2 Remaining — In Progress
+> Items are organised by priority tier. Within each tier, items are ordered by
+> recommended execution sequence. AI agents should start from **Tier 1** and work
+> down. Each item includes machine-readable metadata for automated planning.
 
-#### RN-017: Live Drupal Integration Testing
+### Tier 1: Immediate — Quick Wins + Top Blocker
 
-**Impact:** Medium | **Effort:** Medium | **Risk:** Medium
-**Continues:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
-**Blocked:** Awaiting live Drupal/Tide URLs from content team.
+> High-impact items that are either low-effort quick wins or critical blockers.
+> These should be tackled first in any sprint.
 
-Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider
-against a live JSON:API endpoint.
+#### RN-032: Toolchain Pinning Hardening
 
-- [ ] Set up test Drupal instance (Docker-based or hosted)
-- [ ] Write integration test suite exercising all CMS provider methods
-- [ ] Add CI job that runs integration tests on schedule (not every PR)
+**Priority:** Critical | **Impact:** High | **Effort:** Low | **Risk:** Low
+**Source:** AI Principal Engineer review | **AI-first benefit:** Eliminates version drift across agent runs
+
+Harden reproducibility by moving from major/range-based runtime constraints to
+exact, enforceable toolchain contracts across local, CI, and devcontainer
+environments.
+
+- [ ] Pin exact Node version in CI and document a single local version manager strategy (Volta/asdf/mise)
+- [ ] Pin exact pnpm version in all execution paths
+- [ ] Add a guard check in `pnpm doctor` for exact versions (not only minimums)
+- [ ] Document upgrade procedure for runtime bumps
+
+---
+
+#### RN-033: Preview Cleanup Guardrails Parity
+
+**Priority:** Critical | **Impact:** High | **Effort:** Low | **Risk:** Low
+**Source:** AI Principal Engineer review | **AI-first benefit:** Eliminates noisy CI failures for agents
+
+Align `cleanup-preview` behavior with deploy-preview guardrails so missing AWS
+credentials produce a safe, explainable skip rather than noisy failures.
+
+- [ ] Add secret/credential presence gate to cleanup workflow
+- [ ] Emit explicit notice when cleanup is skipped due to missing credentials
+- [ ] Add test/validation checklist entry for preview lifecycle workflows
+- [ ] Update deployment docs with failure/skip behavior
 
 ---
 
-#### RN-021: Media Gallery + Document Download Components
+#### RN-024: Fleet Update Mechanism + Template Drift Automation
 
-**Impact:** Low | **Effort:** Medium | **Risk:** Low
-**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+**Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** Medium
+**Source:** Roadmap blocker + AI Principal Engineer review | **AI-first benefit:** Enables agent-driven fleet governance
 
-Media gallery and document download components for Tide content types.
+Template repo + sync bot + policy drift reporting for downstream clones. This is
+the **last remaining top blocker** for ship-ready status.
 
-- [ ] Build media gallery component with lightbox
-- [ ] Build document download component with file type icons
-- [ ] Integrate with CMS media content types
+- [ ] Create template repository from this golden-path source
+- [ ] Build GitHub App or Action for template drift detection
+- [ ] Automated sync PRs for security/standards updates
+- [ ] Policy drift reporting dashboard
 
 ---
+
+### Tier 2: Next Sprint — AI-First Platform Enablers
+
+> Items that directly improve agent automation, observability, and operational
+> safety. These make the platform smarter for AI-driven workflows.
+
+#### RN-034: Machine-Readable Quality Gate Summaries
+
+**Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** AI Principal Engineer review | **AI-first benefit:** Agents parse structured JSON instead of scraping logs
+
+Standardise JSON summaries for lint/typecheck/test outcomes (similar to
+doctor/env checks) so AI agents can programmatically act on quality gate results.
+
+- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
+- [ ] Include machine-readable status in CI artifacts
+- [ ] Ensure non-zero exits remain authoritative for gating
+- [ ] Document schema for downstream automation consumers
+
+---
+
+#### RN-035: Rollback and Recovery Command Contract
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review | **AI-first benefit:** Agents can execute safe recovery without human interpretation
+
+Define and automate rollback procedures for staging/production so agents can
+execute safe recovery paths without ad hoc human interpretation.
+
+- [ ] Add explicit rollback runbook with command examples
+- [ ] Provide scripted rollback entrypoint(s) for common failure modes
+- [ ] Add post-deploy health validation + rollback trigger criteria
+- [ ] Capture rollback evidence as CI/CD artifacts
+
+---
+
+#### RN-036: IaC Policy Scanning for SST Changes
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review | **AI-first benefit:** Blocks unsafe infra changes before deploy
+
+Add blocking policy-as-code checks for infrastructure changes to strengthen
+security and compliance posture.
+
+- [ ] Add IaC policy scan job for `sst.config.ts` changes
+- [ ] Define baseline policy set (least privilege, restricted public exposure, encryption)
+- [ ] Route violations to clear, machine-readable diagnostics
+- [ ] Document exception workflow and approvals
+
+---
+
+### Tier 3: Scheduled — Feature Completeness
+
+> Content delivery and integration items. Important for product completeness
+> but not blockers for platform maturity.
 
 #### RN-023: Landing Page + Content Templates
 
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
 
 Pre-built page templates for common government content layouts (landing pages,
@@ -171,26 +252,56 @@ content pages, campaign pages).
 
 ---
 
-### Phase 3: Do Later (Quarterly)
+#### RN-021: Media Gallery + Document Download Components
 
-#### RN-024: Fleet Update Mechanism + Template Drift Automation
+**Priority:** Medium | **Impact:** Low | **Effort:** Medium | **Risk:** Low
+**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
 
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-**Source:** Roadmap blocker + AI Principal Engineer review
+Media gallery and document download components for Tide content types.
 
-Template repo + sync bot + policy drift reporting for downstream clones. This is
-the last remaining top blocker.
+- [ ] Build media gallery component with lightbox
+- [ ] Build document download component with file type icons
+- [ ] Integrate with CMS media content types
 
-- [ ] Create template repository from this golden-path source
-- [ ] Build GitHub App or Action for template drift detection
-- [ ] Automated sync PRs for security/standards updates
-- [ ] Policy drift reporting dashboard
+---
+
+#### RN-017: Live Drupal Integration Testing
+
+**Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+**Continues:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
+**Status:** Blocked — awaiting live Drupal/Tide URLs from content team.
+
+Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider
+against a live JSON:API endpoint.
+
+- [ ] Set up test Drupal instance (Docker-based or hosted)
+- [ ] Write integration test suite exercising all CMS provider methods
+- [ ] Add CI job that runs integration tests on schedule (not every PR)
+
+---
+
+### Tier 4: Backlog — Fleet Governance + Hardening
+
+> Strategic items for org-wide governance and supply chain hardening.
+> Schedule when Tier 1–3 are substantially complete.
+
+#### RN-026: Org-Wide Reusable Workflow Distribution
+
+**Priority:** Low | **Impact:** Very High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review
+
+Centralise policy gates using `workflow_call` with versioned rollout channels
+for the entire organisation.
+
+- [ ] Publish reusable workflows to a central `.github` org repo
+- [ ] Implement versioned rollout channels (stable, canary)
+- [ ] Migrate downstream repos to org-wide workflows
 
 ---
 
 #### RN-025: Contract Testing Across Consumers
 
-**Impact:** High | **Effort:** High | **Risk:** Medium
+**Priority:** Low | **Impact:** High | **Effort:** High | **Risk:** Medium
 
 Formal compatibility contract testing across published `@ripple/*` package
 consumers.
@@ -201,37 +312,9 @@ consumers.
 
 ---
 
-#### RN-026: Org-Wide Reusable Workflow Distribution
-
-**Impact:** Very High | **Effort:** Medium | **Risk:** Medium
-**Source:** AI Principal Engineer review
-
-Centralize policy gates using `workflow_call` with versioned rollout channels
-for the entire organization.
-
-- [ ] Publish reusable workflows to a central `.github` org repo
-- [ ] Implement versioned rollout channels (stable, canary)
-- [ ] Migrate downstream repos to org-wide workflows
-
----
-
-#### RN-027: Signed Release Bundles + Verification
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium
-**Source:** AI Principal Engineer review
-
-Extend provenance with package-level signature verification commands for
-consumers.
-
-- [ ] Implement package signing in release workflow
-- [ ] Build verification CLI command (`pnpm verify:release`)
-- [ ] Document consumer-side verification workflow
-
----
-
 #### RN-028: Golden-Path Conformance CLI
 
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
+**Priority:** Low | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** AI Principal Engineer review
 
 One command that scores repos against required standards and auto-opens
@@ -244,12 +327,26 @@ remediation PRs.
 
 ---
 
+#### RN-027: Signed Release Bundles + Verification
+
+**Priority:** Low | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review
+
+Extend provenance with package-level signature verification commands for
+consumers.
+
+- [ ] Implement package signing in release workflow
+- [ ] Build verification CLI command (`pnpm verify:release`)
+- [ ] Document consumer-side verification workflow
+
+---
+
 #### RN-029: Validate Devcontainer in CI Runners
 
-**Impact:** Low | **Effort:** Low | **Risk:** Low
+**Priority:** Low | **Impact:** Low | **Effort:** Low | **Risk:** Low
 **Continues:** [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer)
 
-Optional validation that the devcontainer works in containerized CI runners.
+Optional validation that the devcontainer works in containerised CI runners.
 
 - [ ] Add CI job that builds and validates devcontainer image
 - [ ] Run smoke test inside devcontainer in CI
@@ -258,114 +355,24 @@ Optional validation that the devcontainer works in containerized CI runners.
 
 ## Active Items Summary
 
-| ID | Item | Phase | Priority | Impact | Status |
-|----|------|-------|----------|--------|--------|
-| [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 2 | Medium | Medium | Blocked (awaiting URLs) |
-| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 2 | Low | Low | Pending |
-| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 2 | Medium | Medium | Pending |
-| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 3 | **High** | **Very High** | Pending |
-| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 3 | Medium | High | Pending |
-| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 3 | Medium | Very High | Pending |
-| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 3 | Low | High | Pending |
-| [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 3 | Low | Very High | Pending |
-| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 3 | Low | Low | Pending |
+| ID | Item | Tier | Priority | Impact | Effort | Status |
+|----|------|------|----------|--------|--------|--------|
+| [RN-032](#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | 1 | Critical | High | Low | Pending |
+| [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 1 | Critical | High | Low | Pending |
+| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
+| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Pending |
+| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Pending |
+| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
+| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
+| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
+| [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
+| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
+| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
+| [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
+| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
+| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Pending |
 
 ---
-
-## Additional AI Suggestions (Principal Engineer + Platform Architecture Review)
-
-> Structured in roadmap feature style so these can be triaged, scheduled, and extended like RN-017…RN-031.
-
-### Executive Verdict
-
-**Ship-ready? Yes, with conditions.**
-
-Top blockers from the review are now represented as discrete roadmap items below.
-
-### AI Suggestions — Feature Backlog
-
-#### RN-032: Toolchain Pinning Hardening (Exact Runtime Contract)
-
-**Impact:** High | **Effort:** Low | **Risk:** Low  
-**Source:** AI Principal Engineer review
-
-Harden reproducibility by moving from major/range-based runtime constraints to exact, enforceable toolchain contracts across local, CI, and devcontainer environments.
-
-- [ ] Pin exact Node version in CI and document a single local version manager strategy (Volta/asdf/mise)
-- [ ] Pin exact pnpm version in all execution paths
-- [ ] Add a guard check in `pnpm doctor` for exact versions (not only minimums)
-- [ ] Document upgrade procedure for runtime bumps
-
----
-
-#### RN-033: Preview Cleanup Guardrails Parity
-
-**Impact:** High | **Effort:** Low | **Risk:** Low  
-**Source:** AI Principal Engineer review
-
-Align `cleanup-preview` behavior with deploy-preview guardrails so missing AWS credentials produce a safe, explainable skip rather than noisy failures.
-
-- [ ] Add secret/credential presence gate to cleanup workflow
-- [ ] Emit explicit notice when cleanup is skipped due to missing credentials
-- [ ] Add test/validation checklist entry for preview lifecycle workflows
-- [ ] Update deployment docs with failure/skip behavior
-
----
-
-#### RN-034: Machine-Readable Quality Gate Summaries
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low  
-**Source:** AI Principal Engineer review
-
-Improve automated remediation friendliness by standardizing JSON summaries for lint/typecheck/test outcomes (similar to doctor/env checks).
-
-- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
-- [ ] Include machine-readable status in CI artifacts
-- [ ] Ensure non-zero exits remain authoritative for gating
-- [ ] Document schema for downstream automation consumers
-
----
-
-#### RN-035: Rollback and Recovery Command Contract
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium  
-**Source:** AI Principal Engineer review
-
-Define and automate rollback procedures for staging/production so agents can execute safe recovery paths without ad hoc human interpretation.
-
-- [ ] Add explicit rollback runbook with command examples
-- [ ] Provide scripted rollback entrypoint(s) for common failure modes
-- [ ] Add post-deploy health validation + rollback trigger criteria
-- [ ] Capture rollback evidence as CI/CD artifacts
-
----
-
-#### RN-036: IaC Policy Scanning for SST Changes
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium  
-**Source:** AI Principal Engineer review
-
-Add blocking policy-as-code checks for infrastructure changes to strengthen security and compliance posture.
-
-- [ ] Add IaC policy scan job for `sst.config.ts` changes
-- [ ] Define baseline policy set (least privilege, restricted public exposure, encryption)
-- [ ] Route violations to clear, machine-readable diagnostics
-- [ ] Document exception workflow and approvals
-
----
-
-### AI Suggestions Summary
-
-| ID | Item | Phase | Priority | Impact | Status |
-|----|------|-------|----------|--------|--------|
-| [RN-032](#rn-032-toolchain-pinning-hardening-exact-runtime-contract) | Toolchain Pinning Hardening | 3 | High | High | Pending |
-| [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 3 | High | High | Pending |
-| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 3 | Medium | Medium | Pending |
-| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 3 | Medium | High | Pending |
-| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 3 | Medium | High | Pending |
-
----
-
 
 ## Roadmap Gantt
 
@@ -375,14 +382,14 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %Y
 
-    section Phase 1 — Complete
+    section Completed (Phase 1)
     RN-001 Security Pipeline              :done, rn001, 2026-02-27, 7d
     RN-002 Doctor --json + --offline       :done, rn002, 2026-02-27, 5d
     RN-003 .env.example + bootstrap        :done, rn003, 2026-02-27, 5d
     RN-004 @ripple/cms + Drupal            :done, rn004, 2026-02-28, 14d
     RN-005 CI test artifact upload         :done, rn005, 2026-03-03, 7d
 
-    section Phase 2 — Complete
+    section Completed (Phase 2)
     RN-006 Mandatory SBOM                  :done, rn006, 2026-02-27, 1d
     RN-007 Unified CI test entrypoint      :done, rn007, 2026-02-27, 1d
     RN-008 Env schema validation           :done, rn008, 2026-02-27, 3d
@@ -393,31 +400,85 @@ gantt
     RN-013 Standardized CI artifacts       :done, rn013, 2026-03-17, 7d
     RN-014 SBOM + provenance               :done, rn014, 2026-03-17, 7d
     RN-015 Reusable composite actions      :done, rn015, 2026-03-17, 7d
-    RN-020 Storybook stories (Tide)        :done, rn020, 2026-02-27, 1d
-    RN-022 Downstream workflow docs        :done, rn022, 2026-02-27, 1d
-
-    section Phase 2 — Newly Complete
+    RN-016 Hermetic dev/runtime            :done, rn016, 2026-02-27, 1d
     RN-018 Search provider                 :done, rn018, 2026-02-27, 1d
     RN-019 Navigation component            :done, rn019, 2026-02-27, 1d
+    RN-020 Storybook stories (Tide)        :done, rn020, 2026-02-27, 1d
+    RN-022 Downstream workflow docs        :done, rn022, 2026-02-27, 1d
     RN-030 UI component test suite         :done, rn030, 2026-02-27, 1d
     RN-031 Testcontainers integration      :done, rn031, 2026-02-27, 1d
 
-    section Phase 2 — Remaining
-    RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
-    RN-021 Media gallery + downloads       :rn021, 2026-04-15, 14d
-    RN-023 Landing page templates          :rn023, 2026-04-15, 14d
+    section Tier 1 — Immediate
+    RN-032 Toolchain pinning               :rn032, 2026-03-01, 7d
+    RN-033 Preview cleanup parity          :rn033, 2026-03-01, 5d
+    RN-024 Fleet update + drift            :rn024, 2026-03-08, 30d
 
-    section Phase 3 — Later
-    RN-024 Fleet update + drift            :rn024, 2026-05-01, 30d
-    RN-025 Contract testing                :rn025, 2026-06-01, 30d
-    RN-026 Org-wide workflows              :rn026, 2026-06-15, 30d
-    RN-027 Signed release bundles          :rn027, 2026-07-01, 30d
-    RN-028 Conformance CLI                 :rn028, 2026-07-15, 30d
-    RN-029 Devcontainer CI validation      :rn029, 2026-05-15, 7d
+    section Tier 2 — Next Sprint
+    RN-034 Quality gate summaries          :rn034, 2026-04-07, 14d
+    RN-035 Rollback/recovery contract      :rn035, 2026-04-07, 14d
+    RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
 
-    section Phase 3 — Complete
-    RN-016 Hermetic dev/runtime            :done, rn016, 2026-02-27, 1d
+    section Tier 3 — Scheduled
+    RN-023 Landing page templates          :rn023, 2026-05-05, 14d
+    RN-021 Media gallery + downloads       :rn021, 2026-05-19, 14d
+    RN-017 Live Drupal integration         :rn017, 2026-06-01, 21d
+
+    section Tier 4 — Backlog
+    RN-026 Org-wide workflows              :rn026, 2026-07-01, 30d
+    RN-025 Contract testing                :rn025, 2026-08-01, 30d
+    RN-028 Conformance CLI                 :rn028, 2026-08-15, 30d
+    RN-027 Signed release bundles          :rn027, 2026-09-01, 14d
+    RN-029 Devcontainer CI validation      :rn029, 2026-09-15, 7d
 ```
+
+---
+
+## AI Agent Suggestions
+
+> **This section is for AI agents** (Claude Code, Copilot, Cursor, etc.) to
+> propose new roadmap items, challenge priorities, or flag risks discovered
+> during automated analysis. Human reviewers triage suggestions into the active
+> roadmap during periodic roadmap reviews.
+>
+> **Current status: Empty** — all previous suggestions have been triaged into
+> the active roadmap (see [ADR-016](../adr/016-roadmap-reorganisation.md)).
+
+### How to Add an AI Suggestion
+
+AI agents MUST follow this format exactly. Suggestions that do not match this
+template will be rejected during triage.
+
+1. Assign the next available `RN-XXX` number (check the active roadmap and archive)
+2. Use the template below — every field is required
+3. Do NOT modify any other section of this file when adding a suggestion
+4. Do NOT self-triage — a human or scheduled review will move accepted items into the active roadmap
+
+#### Template
+
+```markdown
+#### RN-XXX: Short Descriptive Title
+
+**Category:** `[New Item]` | `[Priority Change]` | `[Risk Flag]` | `[Removal]`
+**Source:** Agent type and analysis context (e.g., "Claude Code — gap analysis during RN-031 implementation")
+**Date:** YYYY-MM-DD
+**Impact:** Low | Medium | High | Very High
+**Effort:** Low | Medium | High
+**Risk:** Low | Medium | High
+**AI-first benefit:** One sentence explaining how this helps AI agent workflows
+
+Description of the suggestion with rationale and evidence.
+
+**Affected items:** RN-XXX, RN-YYY (if applicable)
+**Proposed action:** What should happen (e.g., add to Tier 2, reprioritise RN-024)
+
+Checklist (if `[New Item]`):
+- [ ] Task 1
+- [ ] Task 2
+```
+
+### Open AI Suggestions
+
+_No open suggestions. All previous suggestions (RN-032 through RN-036) were triaged into the active roadmap on 2026-02-27. See [ADR-016](../adr/016-roadmap-reorganisation.md)._
 
 ---
 
@@ -425,17 +486,17 @@ gantt
 
 > **This section is for human tech leads, architects, and team members** to
 > propose roadmap changes, challenge priorities, or flag concerns. AI agents
-> should read this section during planning but must not modify it — only
-> humans should add or edit entries here.
+> MUST read this section during planning but MUST NOT modify it — only humans
+> should add or edit entries here.
 
-### How to Suggest a Change
+### How to Add a Suggestion
 
 1. Add your suggestion below using the template
 2. Include your name/handle and the date
 3. Tag it with a category: `[Priority Change]`, `[New Item]`, `[Challenge]`, `[Removal]`, or `[Question]`
-4. An AI agent or human reviewer will triage suggestions into the active roadmap during the next roadmap review
+4. A roadmap review (human or AI-assisted) will triage suggestions into the active roadmap
 
-### Suggestion Template
+#### Template
 
 ```markdown
 #### [Category] Short Title
@@ -444,24 +505,12 @@ gantt
 Description of the suggestion, rationale, and any evidence or context.
 
 **Affected items:** RN-XXX, RN-YYY (if applicable)
-**Proposed action:** What should happen (e.g., reprioritize, add new item, remove, merge)
+**Proposed action:** What should happen (e.g., reprioritise, add new item, remove, merge)
 ```
 
 ### Open Suggestions
 
 _No open suggestions. Add yours above using the template._
-
-<!-- Example (remove when first real suggestion is added):
-#### [Priority Change] Elevate RN-030 above RN-019
-**Author:** @jsmith | **Date:** 2026-03-01
-
-UI component tests (RN-030) should be prioritized over navigation components
-(RN-019) because test coverage gaps are blocking the UI subsystem from moving
-to "implemented" status. Navigation can wait — test confidence cannot.
-
-**Affected items:** RN-030, RN-019
-**Proposed action:** Swap priority ordering; start RN-030 in next sprint
--->
 
 ---
 
@@ -657,7 +706,7 @@ graph TD
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories
-- [x] ADR index with all 15 decisions cross-referenced
+- [x] ADR index with all 16 decisions cross-referenced
 
 ### Template Strategy
 
