@@ -1,11 +1,15 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 4.0.0
+> Last updated: 2026-02-27 | Version: 5.0.0
 >
 > **AI-first platform.** This roadmap is structured for both human and AI agent
 > consumption. Every item is machine-parseable, uniquely identified (`RN-XXX`),
 > and prioritised using a tiered system that favours agent-executable, high-impact
 > work first.
+>
+> **v5.0.0 changes:** Added AI-first workflow strategy items (RN-039 through
+> RN-043), created [ADR-018](../adr/018-ai-first-workflow-strategy.md), refreshed
+> scorecard and Gantt, optimised documentation cross-references.
 
 Completed items (RN-001 through RN-031) live in [ARCHIVE.md](./ARCHIVE.md).
 
@@ -23,6 +27,25 @@ consistency.
 
 **Remaining blocker:** Fleet template/update mechanics — repo-template + sync bot
 for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation)).
+
+### AI-First Strategy
+
+This platform treats **AI agents as first-class developers**. Every architectural
+and workflow decision is evaluated through the lens of agent effectiveness:
+
+1. **Machine-parseable outputs** — All quality gates, diagnostics, and status
+   reports emit structured JSON that agents parse without scraping.
+2. **Deterministic environments** — Pinned toolchains, frozen lockfiles,
+   devcontainer, and `pnpm bootstrap` give agents identical setups every run.
+3. **Fast feedback loops** — Memory/mock providers keep test suites under 100ms;
+   conformance suites validate provider contracts without cloud dependencies.
+4. **Codified runbooks** — Common operations (deploy, rollback, add component,
+   add provider) have documented, executable procedures agents follow without
+   human interpretation.
+5. **Scaffolding generators** — Code generation templates for components,
+   providers, and API routes eliminate boilerplate and enforce conventions.
+
+See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 
 ### Evidence Highlights
 
@@ -43,7 +66,7 @@ for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift
 - **UI component tests** — Vue Test Utils tests for all 16 components with full coverage of atoms, molecules, organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
-- **ADR coverage** — 17 ADRs with [indexed directory](../adr/README.md), including roadmap reorganisation (ADR-016) and upstream component strategy (ADR-017).
+- **ADR coverage** — 18 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018).
 
 ---
 
@@ -72,6 +95,7 @@ graph LR
     end
     subgraph Planned
         FLEET[Fleet Templates]
+        AGENT_DX[Agent Tooling]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -90,6 +114,7 @@ graph LR
     style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
     style FLEET fill:#6366f1,color:#fff
+    style AGENT_DX fill:#6366f1,color:#fff
 ```
 
 ---
@@ -283,6 +308,63 @@ design system without taking a runtime dependency.
 
 ---
 
+#### RN-039: Agent Runbook Automation
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents execute multi-step operations from codified procedures without human interpretation
+
+Codify all common operations into structured, executable runbooks that AI agents
+and humans can follow deterministically. Runbooks are machine-parseable
+(step-by-step with preconditions, commands, and validation checks).
+
+- [ ] Create `docs/runbooks/` directory with standardised template
+- [ ] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
+- [ ] Write runbook: **rollback-production** (identify version, rollback, verify, notify)
+- [ ] Write runbook: **add-new-provider** (scaffold, implement interface, conformance test, register)
+- [ ] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
+- [ ] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
+- [ ] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
+- [ ] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
+
+---
+
+#### RN-040: Structured Error Taxonomy
+
+**Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
+
+Define a machine-parseable error taxonomy covering all failure modes across
+quality gates, tests, builds, and deployments. Every error maps to a category,
+severity, and suggested remediation — enabling agents to auto-triage failures.
+
+- [ ] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
+- [ ] Categorise quality gate failures (lint, typecheck, test, env validation)
+- [ ] Categorise build failures (compilation, bundling, missing deps)
+- [ ] Categorise deployment failures (health check, resource limit, permission)
+- [ ] Wire `pnpm doctor --json` output to use taxonomy codes
+- [ ] Document agent remediation flowchart for each error category
+
+---
+
+#### RN-041: Code Generation Templates
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents scaffold convention-compliant code without memorising boilerplate
+
+Code generators for common patterns: components, providers, API routes, and
+packages. Generators enforce naming conventions, file structure, test stubs,
+and Storybook stories automatically.
+
+- [ ] Create `scripts/generate/` with template engine (Handlebars or simple string templates)
+- [ ] `pnpm generate:component <name>` — SFC + test + story + index export
+- [ ] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
+- [ ] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
+- [ ] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
+- [ ] Add `--dry-run` flag to preview generated files without writing
+- [ ] Document generators in `AGENTS.md` and `docs/developer-guide.md`
+
+---
+
 ### Tier 3: Scheduled — Feature Completeness
 
 > Content delivery and integration items. Important for product completeness
@@ -328,6 +410,23 @@ against a live JSON:API endpoint.
 - [ ] Set up test Drupal instance (Docker-based or hosted)
 - [ ] Write integration test suite exercising all CMS provider methods
 - [ ] Add CI job that runs integration tests on schedule (not every PR)
+
+---
+
+#### RN-042: Accessibility Audit Pipeline
+
+**Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents receive structured WCAG violations with remediation guidance in CI
+
+Integrate automated WCAG 2.1 AA accessibility checks into the CI pipeline and
+Storybook, providing machine-readable violation reports that agents can act on.
+
+- [ ] Add `axe-core` integration to Playwright E2E tests
+- [ ] Add `@storybook/addon-a11y` to Storybook configuration
+- [ ] Create `pnpm test:a11y` command for standalone accessibility audit
+- [ ] Emit structured JSON report (violation, impact, selector, remediation)
+- [ ] Add accessibility gate to Tier 2 CI (block on critical/serious violations)
+- [ ] Document WCAG compliance requirements in `docs/accessibility.md`
 
 ---
 
@@ -404,6 +503,23 @@ Optional validation that the devcontainer works in containerised CI runners.
 
 ---
 
+#### RN-043: Agent Session Observability
+
+**Priority:** Low | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Platform teams understand agent effectiveness and identify bottlenecks
+
+Track and aggregate metrics from AI agent sessions — files changed, tests run,
+quality gate pass/fail rates, common failure patterns, time-to-green — to
+continuously improve agent ergonomics.
+
+- [ ] Define session metrics schema (files changed, commands run, outcomes)
+- [ ] Create lightweight session logger (opt-in, privacy-respecting)
+- [ ] Build aggregation script (`pnpm agent:metrics`) for session summaries
+- [ ] Identify top friction points from aggregated data
+- [ ] Feed insights back into roadmap prioritisation
+
+---
+
 ## Active Items Summary
 
 | ID | Item | Tier | Priority | Impact | Effort | Status |
@@ -416,14 +532,19 @@ Optional validation that the devcontainer works in containerised CI runners.
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
+| [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Pending |
+| [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Pending |
+| [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Pending |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
+| [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Pending |
 | [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
 | [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Pending |
+| [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Pending |
 
 ---
 
@@ -472,11 +593,15 @@ gantt
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
     RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
+    RN-039 Agent runbook automation        :rn039, 2026-04-07, 21d
+    RN-040 Structured error taxonomy       :rn040, 2026-04-28, 14d
+    RN-041 Code generation templates       :rn041, 2026-04-14, 14d
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :rn023, 2026-05-05, 14d
     RN-021 Media gallery + downloads       :rn021, 2026-05-19, 14d
     RN-017 Live Drupal integration         :rn017, 2026-06-01, 21d
+    RN-042 Accessibility audit pipeline    :rn042, 2026-05-12, 14d
 
     section Tier 4 — Backlog
     RN-026 Org-wide workflows              :rn026, 2026-07-01, 30d
@@ -484,6 +609,7 @@ gantt
     RN-028 Conformance CLI                 :rn028, 2026-08-15, 30d
     RN-027 Signed release bundles          :rn027, 2026-09-01, 14d
     RN-029 Devcontainer CI validation      :rn029, 2026-09-15, 7d
+    RN-043 Agent session observability     :rn043, 2026-09-22, 21d
 ```
 
 ---
@@ -583,23 +709,24 @@ compatibility testing only.
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Setup determinism | 5/5 | Strong pinning, lockfile, `.env.example` + Zod env validation, devcontainer |
+| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer |
 | One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
-| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers for integration tests |
-| Test reliability / flake resistance | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, CMS mock provider, component tests |
-| Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile; semver ranges remain (normal) |
-| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM mandatory, JSON env diagnostics |
-| Automated remediation friendliness | 5/5 | `pnpm doctor --json`, conformance suites, documented removal procedures |
+| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers |
+| Test reliability / flake resistance | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, mock providers, component tests |
+| Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile; exact pinning planned ([RN-032](#rn-032-toolchain-pinning-hardening)) |
+| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics |
+| Automated remediation friendliness | 5/5 | `pnpm doctor --json`, conformance suites, documented procedures |
+| Agent workflow integration | 4/5 | Runbooks ([RN-039](#rn-039-agent-runbook-automation)), generators ([RN-041](#rn-041-code-generation-templates)), error taxonomy ([RN-040](#rn-040-structured-error-taxonomy)) planned |
 
-**Overall: 34/35** _(+1 from 33: local dev parity improved with Testcontainers integration tests and full component test coverage)_
+**Overall: 38/40** _(v5.0.0: added "Agent workflow integration" dimension; see [ADR-018](../adr/018-ai-first-workflow-strategy.md))_
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
 xychart-beta
     title "Agent-Friction Scorecard (0-5)"
-    x-axis ["Setup", "Workflows", "Dev Parity", "Test Reliability", "Pinning", "Observability", "Remediation"]
+    x-axis ["Setup", "Workflows", "Parity", "Tests", "Pinning", "Observe", "Remediate", "Agent DX"]
     y-axis "Score" 0 --> 5
-    bar [5, 5, 5, 5, 4, 5, 5]
+    bar [5, 5, 5, 5, 4, 5, 5, 4]
 ```
 
 ### Security + Supply Chain
@@ -761,8 +888,13 @@ graph TD
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories
-- [x] ADR index with all 17 decisions cross-referenced
+- [x] ADR index with all 18 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
+- [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
+- [ ] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
+- [ ] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
+- [ ] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
+- [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 
 ### Template Strategy
 
