@@ -126,6 +126,7 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md) for the rationale.
 
 ## Related Documentation
 
+- [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
 - [Provider Pattern](./provider-pattern.md) — core architecture pattern
 - [Data Model](./data-model.md) — PostgreSQL schema
 - [API Contracts](./api-contracts.md) — tRPC routers and REST endpoints

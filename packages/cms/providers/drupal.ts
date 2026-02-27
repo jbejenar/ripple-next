@@ -91,14 +91,20 @@ export class DrupalCmsProvider implements CmsProvider {
     'field_topic',
     'field_landing_page_component',
     'field_node_paragraphs',
+    // Landing page component nested relations
     'field_landing_page_component.field_paragraph_media',
     'field_landing_page_component.field_paragraph_media.field_media_image',
     'field_landing_page_component.field_paragraph_accordion',
     'field_landing_page_component.field_paragraph_reference',
     'field_landing_page_component.field_paragraph_keydates',
     'field_landing_page_component.field_timeline',
+    // Node paragraph nested relations (same sub-resources as landing page)
     'field_node_paragraphs.field_paragraph_media',
-    'field_node_paragraphs.field_paragraph_media.field_media_image'
+    'field_node_paragraphs.field_paragraph_media.field_media_image',
+    'field_node_paragraphs.field_paragraph_accordion',
+    'field_node_paragraphs.field_paragraph_reference',
+    'field_node_paragraphs.field_paragraph_keydates',
+    'field_node_paragraphs.field_timeline'
   ].join(',')
 
   async getPage(id: string): Promise<CmsPage | null> {

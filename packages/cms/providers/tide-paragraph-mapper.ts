@@ -340,9 +340,10 @@ function getRelationships(
 function extractProcessedText(field: unknown): string | undefined {
   if (!field) return undefined
   if (typeof field === 'string') return field
-  if (typeof field === 'object' && field !== null) {
-    if ('processed' in field) return String((field as Record<string, unknown>)['processed'])
-    if ('value' in field) return String((field as Record<string, unknown>)['value'])
+  if (typeof field === 'object') {
+    const obj = field as Record<string, unknown>
+    if ('processed' in obj) return String(obj['processed'])
+    if ('value' in obj) return String(obj['value'])
   }
   return undefined
 }

@@ -34,7 +34,12 @@ export async function getCmsProvider(): Promise<CmsProvider> {
         }
   )
 
-  provider = await providerPromise
-  providerPromise = null
-  return provider
+  try {
+    provider = await providerPromise
+    return provider
+  } catch (error) {
+    // Clear so subsequent requests retry instead of hitting a cached rejection
+    providerPromise = null
+    throw error
+  }
 }

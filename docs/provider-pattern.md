@@ -125,6 +125,7 @@ See the [Testing Guide](./testing-guide.md) for more examples of using mock prov
 
 ## Related Documentation
 
+- [Developer Guide](./developer-guide.md) — full setup and provider usage guide
 - [Architecture](./architecture.md) — system overview
 - [Testing Guide](./testing-guide.md) — testing with mock providers
 - [ADR-003: Provider Pattern](./adr/003-provider-pattern.md) — decision rationale

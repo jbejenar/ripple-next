@@ -57,6 +57,7 @@ pnpm dev
 
 | Document                                           | Description                                           |
 | -------------------------------------------------- | ----------------------------------------------------- |
+| [Developer Guide](docs/developer-guide.md)         | **Start here** — bare Mac to deployment               |
 | [Architecture](docs/architecture.md)               | System overview, stack, and high-level design         |
 | [Provider Pattern](docs/provider-pattern.md)       | Core pattern for environment-swappable infrastructure |
 | [Data Model](docs/data-model.md)                   | PostgreSQL schema and entity relationships            |
@@ -81,6 +82,8 @@ pnpm dev
 | [ADR-007](docs/adr/007-library-vs-monorepo.md)       | Hybrid monorepo + published packages |
 | [ADR-008](docs/adr/008-oidc-over-lucia.md)           | OIDC/OAuth over deprecated Lucia     |
 | [ADR-009](docs/adr/009-cms-provider-drupal.md)       | CMS provider pattern for Drupal/Tide |
+| [ADR-010](docs/adr/010-ci-observability-supply-chain.md) | CI observability + supply chain  |
+| [ADR-011](docs/adr/011-cms-decoupling-pull-out-drupal.md) | CMS decoupling — pull out Drupal |
 
 ## Repository Structure
 
