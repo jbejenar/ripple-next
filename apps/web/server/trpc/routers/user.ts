@@ -2,6 +2,14 @@ import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 import { UserRepository } from '@ripple/db'
 import { router, protectedProcedure } from '../trpc'
+import type { Context } from '../context'
+
+function requireDb(ctx: Context): NonNullable<Context['db']> {
+  if (!ctx.db) {
+    throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not configured' })
+  }
+  return ctx.db
+}
 
 export const userRouter = router({
   me: protectedProcedure.query(({ ctx }) => {
@@ -11,7 +19,7 @@ export const userRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const repo = new UserRepository(ctx.db)
+      const repo = new UserRepository(requireDb(ctx))
       const user = await repo.findById(input.id)
       if (!user) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' })
@@ -27,7 +35,7 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const repo = new UserRepository(ctx.db)
+      const repo = new UserRepository(requireDb(ctx))
       const existing = await repo.findByEmail(input.email)
       if (existing) {
         throw new TRPCError({ code: 'CONFLICT', message: 'Email already in use' })
@@ -36,7 +44,7 @@ export const userRouter = router({
     }),
 
   list: protectedProcedure.query(async ({ ctx }) => {
-    const repo = new UserRepository(ctx.db)
+    const repo = new UserRepository(requireDb(ctx))
     return repo.list()
   })
 })

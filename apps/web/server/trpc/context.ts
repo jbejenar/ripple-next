@@ -14,7 +14,7 @@ export interface Session {
 export interface Context {
   event: H3Event
   session: Session | null
-  db: Database
+  db: Database | undefined
 }
 
 export async function createContext(event: H3Event): Promise<Context> {
@@ -31,7 +31,10 @@ export async function createContext(event: H3Event): Promise<Context> {
     : null
 
   const config = useRuntimeConfig()
-  const db = getDatabase(config.databaseUrl)
+  let db: Database | undefined
+  if (config.databaseUrl) {
+    db = getDatabase(config.databaseUrl)
+  }
 
   return {
     event,
