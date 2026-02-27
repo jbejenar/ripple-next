@@ -26,7 +26,8 @@
       "@ripple/events": ["./packages/events/index.ts"],
       "@ripple/validation": ["./packages/validation/index.ts"],
       "@ripple/shared": ["./packages/shared/index.ts"],
-      "@ripple/testing": ["./packages/testing/setup.ts"]
+      "@ripple/testing": ["./packages/testing/setup.ts"],
+      "@ripple/cms": ["./packages/cms/index.ts"]
     }
   },
   "exclude": ["node_modules", "**/dist/**", "**/.output/**", "**/.nuxt/**"]

@@ -59,6 +59,14 @@ export default defineWorkspace([
   },
   {
     test: {
+      name: 'cms',
+      root: './packages/cms',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier2Coverage
+    }
+  },
+  {
+    test: {
       name: 'email',
       root: './packages/email',
       include: ['tests/**/*.test.ts'],

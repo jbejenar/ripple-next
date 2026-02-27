@@ -12,5 +12,10 @@ export {
   emailConformance,
   storageConformance,
   authConformance,
-  eventBusConformance
+  eventBusConformance,
+  cmsConformance,
+  createTestPage,
+  createTestPageTwo,
+  createDraftPage
 } from './conformance'
+export type { CmsConformanceOptions } from './conformance'

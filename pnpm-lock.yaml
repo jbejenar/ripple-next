@@ -80,6 +80,9 @@ importers:
       '@ripple/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@ripple/cms':
+        specifier: workspace:*
+        version: link:../../packages/cms
       '@ripple/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -162,6 +165,15 @@ importers:
       oauth4webapi:
         specifier: ^3.1.4
         version: 3.8.5
+    devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.4
+        version: 3.2.4(@types/node@25.3.1)(happy-dom@17.6.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+
+  packages/cms:
     devDependencies:
       typescript:
         specifier: ^5.7.3
@@ -276,6 +288,9 @@ importers:
       '@ripple/auth':
         specifier: workspace:*
         version: link:../auth
+      '@ripple/cms':
+        specifier: workspace:*
+        version: link:../cms
       '@ripple/db':
         specifier: workspace:*
         version: link:../db

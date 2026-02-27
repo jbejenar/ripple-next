@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ripple/auth": "workspace:*",
+    "@ripple/cms": "workspace:*",
     "@ripple/db": "workspace:*",
     "@ripple/email": "workspace:*",
     "@ripple/events": "workspace:*",
