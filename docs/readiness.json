@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -48,10 +48,10 @@
     },
     "ui": {
       "status": "partial",
-      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). Storybook configured.",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). Storybook stories with autodocs for all 15 components. Storybook configured.",
       "packages": ["@ripple/ui"],
-      "blockers": ["Component tests needed for new Tide-compatible content components"],
-      "testCoverage": "component-tests-exist"
+      "blockers": ["Vue Test Utils component tests needed for Tide content components (RN-030)"],
+      "testCoverage": "storybook-stories-complete"
     },
     "api": {
       "status": "partial",
@@ -73,9 +73,9 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes. Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test. SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes. Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test with downstream consumption guide. SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
       "packages": [],
-      "paths": [".github/workflows/", ".github/actions/"],
+      "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md"],
       "blockers": [],
       "testCoverage": "pipeline-tested"
     },

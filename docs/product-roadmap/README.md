@@ -1,9 +1,9 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 2.0.0
+> Last updated: 2026-02-27 | Version: 2.1.0
 
 Every item has a unique ticket number (`RN-XXX`). Completed items live in
-[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-016).
+[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-022).
 
 ---
 
@@ -26,7 +26,7 @@ for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift
 - CI is tiered with change detection and high-risk routing.
 - **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention ([RN-005](./ARCHIVE.md#rn-005-ci-test-artifact-upload), [RN-013](./ARCHIVE.md#rn-013-standardized-ci-artifacts)).
 - **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow ([RN-006](./ARCHIVE.md#rn-006-mandatory-sbom-in-release-workflow), [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release)).
-- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos ([RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)).
+- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos ([RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)), with [downstream consumption guide](../downstream-workflows.md) ([RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation)).
 - **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI ([RN-008](./ARCHIVE.md#rn-008-env-schema-validation-gate-adr-012)). See ADR-012.
 - **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured ([RN-009](./ARCHIVE.md#rn-009-devcontainer-baseline)).
 - Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close ([RN-011](./ARCHIVE.md#rn-011-preview-deploy-guardrails-adr-014)).
@@ -36,6 +36,7 @@ for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit ([RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml)).
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate ([RN-010](./ARCHIVE.md#rn-010-flaky-test-containment-policy-adr-013)).
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
+- **Storybook coverage** — All 15 UI components (atoms, molecules, organisms, Tide content) have Storybook stories with autodocs ([RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)).
 
 ---
 
@@ -82,9 +83,9 @@ graph LR
 
 ---
 
-## Completed Work (RN-001 – RN-016)
+## Completed Work (RN-001 – RN-022)
 
-16 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
+18 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
 for full details on each.
 
 | ID | Item | Phase |
@@ -105,6 +106,8 @@ for full details on each.
 | [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release) | SBOM + Provenance in Release | 2 |
 | [RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions) | Reusable Composite Actions | 2 |
 | [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer) | Hermetic Dev/Runtime | 3 |
+| [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components) | Storybook Stories for Tide Components | 2 |
+| [RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation) | Downstream Workflow Documentation | 2 |
 
 ---
 
@@ -156,20 +159,6 @@ footer, and sidebar menus.
 
 ---
 
-#### RN-020: Storybook Stories for Tide Components
-
-**Impact:** Low | **Effort:** Low | **Risk:** Low
-**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
-
-Stories for all 8 Tide-compatible content components for visual regression
-testing and documentation.
-
-- [ ] Add Storybook stories for accordion, card collection, timeline
-- [ ] Add Storybook stories for CTA, key dates, image, video, wysiwyg
-- [ ] Configure Chromatic or Percy for visual regression
-
----
-
 #### RN-021: Media Gallery + Document Download Components
 
 **Impact:** Low | **Effort:** Medium | **Risk:** Low
@@ -180,20 +169,6 @@ Media gallery and document download components for Tide content types.
 - [ ] Build media gallery component with lightbox
 - [ ] Build document download component with file type icons
 - [ ] Integrate with CMS media content types
-
----
-
-#### RN-022: Downstream Workflow Documentation
-
-**Impact:** Medium | **Effort:** Low | **Risk:** Low
-**Continues:** [RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)
-
-Document how downstream repos consume the reusable composite actions from
-`.github/actions/`.
-
-- [ ] Write consumption guide for `setup`, `quality`, `test` actions
-- [ ] Add example workflow files for downstream repos
-- [ ] Document version pinning strategy for action references
 
 ---
 
@@ -209,6 +184,40 @@ content pages, campaign pages).
 - [ ] Build content page template
 - [ ] Build campaign page template
 - [ ] Wire templates to CMS page type field
+
+---
+
+#### RN-030: UI Component Test Suite
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** AI agent gap analysis
+**Continues:** [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)
+
+Vue Test Utils component tests for all Tide content components and existing
+atoms/molecules. This addresses the UI subsystem's "partial" status — the main
+blocker is "Component tests needed for new Tide-compatible content components".
+
+- [ ] Add component tests for atoms (RplButton, RplFormInput, RplIcon)
+- [ ] Add component tests for molecules (RplCard, RplHeroHeader)
+- [ ] Add component tests for Tide content organisms (all 8 components)
+- [ ] Ensure UI package coverage meets Tier 3 thresholds (20% lines, 10% branches)
+
+---
+
+#### RN-031: Testcontainers Integration Tests for DB + API
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI agent gap analysis
+
+Integration tests using Testcontainers for both `@ripple/db` repositories and
+tRPC API routers. Addresses blockers in readiness.json for database ("No
+integration tests for repositories using testcontainers") and API ("No
+integration tests with real DB").
+
+- [ ] Add Testcontainers-based integration tests for UserRepository
+- [ ] Add Testcontainers-based integration tests for tRPC user router
+- [ ] Validate audit_log and project repositories with real PostgreSQL
+- [ ] Add CI job for integration tests (Tier 2, not every PR)
 
 ---
 
@@ -304,10 +313,10 @@ Optional validation that the devcontainer works in containerized CI runners.
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 2 | Medium | Medium |
 | [RN-018](#rn-018-search-integration-provider) | Search Integration Provider | 2 | Medium | Medium |
 | [RN-019](#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 | Medium | Medium |
-| [RN-020](#rn-020-storybook-stories-for-tide-components) | Storybook Stories | 2 | Low | Low |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 2 | Low | Low |
-| [RN-022](#rn-022-downstream-workflow-documentation) | Downstream Workflow Docs | 2 | Medium | Medium |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 2 | Medium | Medium |
+| [RN-030](#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 | Medium | Medium |
+| [RN-031](#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 | **High** | **High** |
 | [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 3 | **High** | **Very High** |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 3 | Medium | High |
 | [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 3 | Medium | Very High |
@@ -343,15 +352,17 @@ gantt
     RN-013 Standardized CI artifacts       :done, rn013, 2026-03-17, 7d
     RN-014 SBOM + provenance               :done, rn014, 2026-03-17, 7d
     RN-015 Reusable composite actions      :done, rn015, 2026-03-17, 7d
+    RN-020 Storybook stories (Tide)        :done, rn020, 2026-02-27, 1d
+    RN-022 Downstream workflow docs        :done, rn022, 2026-02-27, 1d
 
     section Phase 2 — Remaining
     RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
     RN-018 Search provider                 :rn018, 2026-04-15, 21d
     RN-019 Navigation component            :rn019, 2026-04-01, 14d
-    RN-020 Storybook stories               :rn020, 2026-04-15, 14d
     RN-021 Media gallery + downloads       :rn021, 2026-04-15, 14d
-    RN-022 Downstream workflow docs        :rn022, 2026-04-01, 7d
     RN-023 Landing page templates          :rn023, 2026-04-15, 14d
+    RN-030 UI component test suite         :rn030, 2026-04-01, 14d
+    RN-031 Testcontainers integration      :rn031, 2026-04-15, 21d
 
     section Phase 3 — Later
     RN-024 Fleet update + drift            :rn024, 2026-05-01, 30d
@@ -364,6 +375,50 @@ gantt
     section Phase 3 — Complete
     RN-016 Hermetic dev/runtime            :done, rn016, 2026-02-27, 1d
 ```
+
+---
+
+## Tech Lead Suggestions
+
+> **This section is for human tech leads, architects, and team members** to
+> propose roadmap changes, challenge priorities, or flag concerns. AI agents
+> should read this section during planning but must not modify it — only
+> humans should add or edit entries here.
+
+### How to Suggest a Change
+
+1. Add your suggestion below using the template
+2. Include your name/handle and the date
+3. Tag it with a category: `[Priority Change]`, `[New Item]`, `[Challenge]`, `[Removal]`, or `[Question]`
+4. An AI agent or human reviewer will triage suggestions into the active roadmap during the next roadmap review
+
+### Suggestion Template
+
+```markdown
+#### [Category] Short Title
+**Author:** @yourname | **Date:** YYYY-MM-DD
+
+Description of the suggestion, rationale, and any evidence or context.
+
+**Affected items:** RN-XXX, RN-YYY (if applicable)
+**Proposed action:** What should happen (e.g., reprioritize, add new item, remove, merge)
+```
+
+### Open Suggestions
+
+_No open suggestions. Add yours above using the template._
+
+<!-- Example (remove when first real suggestion is added):
+#### [Priority Change] Elevate RN-030 above RN-019
+**Author:** @jsmith | **Date:** 2026-03-01
+
+UI component tests (RN-030) should be prioritized over navigation components
+(RN-019) because test coverage gaps are blocking the UI subsystem from moving
+to "implemented" status. Navigation can wait — test confidence cannot.
+
+**Affected items:** RN-030, RN-019
+**Proposed action:** Swap priority ordering; start RN-030 in next sprint
+-->
 
 ---
 
@@ -562,6 +617,8 @@ graph TD
 - [x] Unified CI test entrypoint (`pnpm test:ci`)
 - [x] Flaky test containment policy with quarantine check
 - [x] Preview deploy environment guardrails
+- [x] Storybook stories for all UI components (atoms, molecules, organisms, Tide content)
+- [x] Downstream workflow consumption guide
 
 ### Template Strategy
 

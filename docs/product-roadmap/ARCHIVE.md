@@ -216,9 +216,9 @@ Tide content types. Implemented full decoupling architecture per ADR-011.
 
 > **Note:** Some sub-items from this effort remain active — see
 > [RN-019](./README.md#rn-019-navigationmenu-component),
-> [RN-020](./README.md#rn-020-storybook-stories-for-tide-components),
 > [RN-021](./README.md#rn-021-media-gallery--document-download-components),
 > [RN-023](./README.md#rn-023-landing-page--content-templates).
+> Storybook stories completed in [RN-020](#rn-020-storybook-stories-for-tide-components).
 
 ---
 
@@ -264,8 +264,8 @@ downstream repos can reference.
 - [x] Create `.github/actions/` directory with `setup`, `quality`, `test` actions
 - [x] CI workflow updated to use composite actions (reduced duplication)
 
-> **Note:** Downstream documentation remains active — see
-> [RN-022](./README.md#rn-022-downstream-workflow-documentation).
+> **Note:** Downstream documentation completed — see
+> [RN-022](#rn-022-downstream-workflow-documentation).
 
 ---
 
@@ -281,6 +281,42 @@ GitHub CLI, AWS CLI, and all local services pre-configured.
 - [x] Evaluate devcontainer vs Nix for agent runner reproducibility — devcontainer chosen
 - [x] Create hermetic profile that pins all system dependencies
 - [ ] Validate in CI with containerized runners (optional — devcontainer primarily for local dev)
+
+---
+
+### RN-020: Storybook Stories for Tide Components
+
+**Phase:** 2 | **Impact:** Low | **Effort:** Low | **Risk:** Low
+**Continues:** [RN-012](#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Added Storybook stories with autodocs for all 8 Tide-compatible content
+components: accordion, card collection, timeline, call-to-action, key dates,
+content image, embedded video, and wysiwyg. Each story includes multiple
+variants (default, with/without optional props, rich content).
+
+**Reference:** `packages/ui/components/organisms/content/*.stories.ts`
+
+- [x] Add Storybook stories for accordion, card collection, timeline
+- [x] Add Storybook stories for CTA, key dates, image, video, wysiwyg
+- [ ] Configure Chromatic or Percy for visual regression (deferred — optional enhancement)
+
+---
+
+### RN-022: Downstream Workflow Documentation
+
+**Phase:** 2 | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Continues:** [RN-015](#rn-015-reusable-composite-actions)
+
+Wrote comprehensive consumption guide for downstream repos documenting how to
+use the `setup`, `quality`, and `test` composite actions. Includes example
+workflow files (minimal CI, tiered CI, publish), version pinning strategy
+(SHA, tag, branch), troubleshooting, and artifact reference.
+
+**Reference:** `docs/downstream-workflows.md`
+
+- [x] Write consumption guide for `setup`, `quality`, `test` actions
+- [x] Add example workflow files for downstream repos
+- [x] Document version pinning strategy for action references
 
 ---
 
@@ -304,3 +340,5 @@ GitHub CLI, AWS CLI, and all local services pre-configured.
 | [RN-014](#rn-014-sbom--provenance-in-release) | SBOM + Provenance in Release | 2 | **Done** |
 | [RN-015](#rn-015-reusable-composite-actions) | Reusable Composite Actions | 2 | **Done** |
 | [RN-016](#rn-016-hermetic-devruntime-devcontainer) | Hermetic Dev/Runtime | 3 | **Done** |
+| [RN-020](#rn-020-storybook-stories-for-tide-components) | Storybook Stories (Tide) | 2 | **Done** |
+| [RN-022](#rn-022-downstream-workflow-documentation) | Downstream Workflow Docs | 2 | **Done** |

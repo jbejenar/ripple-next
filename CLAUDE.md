@@ -23,6 +23,7 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap, agent-friction scorecard, improvement phases
+- `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
 - `.changeset/config.json` — version management config
