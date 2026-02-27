@@ -143,22 +143,32 @@ else
   fi
 fi
 
-if [ -n "${DATABASE_URL:-}" ]; then
-  pass "DATABASE_URL set" "environment"
+# Env schema validation (Zod-based) — structured diagnostics
+if command -v node &>/dev/null && [ -f "scripts/validate-env.mjs" ]; then
+  ENV_RESULT=$(node scripts/validate-env.mjs --json 2>/dev/null || echo "")
+  if [ -n "$ENV_RESULT" ]; then
+    ENV_VALID=$(echo "$ENV_RESULT" | node -e "process.stdin.on('data',d=>{const r=JSON.parse(d);process.stdout.write(String(r.valid))})" 2>/dev/null || echo "false")
+    ENV_FAILED=$(echo "$ENV_RESULT" | node -e "process.stdin.on('data',d=>{const r=JSON.parse(d);process.stdout.write(String(r.failed))})" 2>/dev/null || echo "0")
+    ENV_WARNINGS=$(echo "$ENV_RESULT" | node -e "process.stdin.on('data',d=>{const r=JSON.parse(d);process.stdout.write(String(r.warnings))})" 2>/dev/null || echo "0")
+    if [ "$ENV_VALID" = "true" ]; then
+      pass "Env schema validation passed (Zod)" "environment"
+    else
+      warn "Env schema: $ENV_FAILED required var(s) missing/invalid — run 'pnpm validate:env' for details" "environment"
+    fi
+    if [ "$ENV_WARNINGS" != "0" ]; then
+      warn "Env schema: $ENV_WARNINGS optional var(s) have issues" "environment"
+    fi
+  else
+    # Fallback to basic checks if validate-env.mjs fails
+    if [ -n "${DATABASE_URL:-}" ]; then pass "DATABASE_URL set" "environment"; else warn "DATABASE_URL not set" "environment"; fi
+    if [ -n "${NUXT_DATABASE_URL:-}" ]; then pass "NUXT_DATABASE_URL set" "environment"; else warn "NUXT_DATABASE_URL not set" "environment"; fi
+    if [ -n "${REDIS_URL:-}" ]; then pass "REDIS_URL set" "environment"; else warn "REDIS_URL not set" "environment"; fi
+  fi
 else
-  warn "DATABASE_URL not set — needed for DB commands & integration tests" "environment"
-fi
-
-if [ -n "${NUXT_DATABASE_URL:-}" ]; then
-  pass "NUXT_DATABASE_URL set" "environment"
-else
-  warn "NUXT_DATABASE_URL not set — needed for Nuxt server runtime (tRPC, auth)" "environment"
-fi
-
-if [ -n "${REDIS_URL:-}" ]; then
-  pass "REDIS_URL set" "environment"
-else
-  warn "REDIS_URL not set — needed for BullMQ queue provider" "environment"
+  # Fallback: basic presence checks when Node/script not available
+  if [ -n "${DATABASE_URL:-}" ]; then pass "DATABASE_URL set" "environment"; else warn "DATABASE_URL not set" "environment"; fi
+  if [ -n "${NUXT_DATABASE_URL:-}" ]; then pass "NUXT_DATABASE_URL set" "environment"; else warn "NUXT_DATABASE_URL not set" "environment"; fi
+  if [ -n "${REDIS_URL:-}" ]; then pass "REDIS_URL set" "environment"; else warn "REDIS_URL not set" "environment"; fi
 fi
 
 # ── 8. Turbo installed ──────────────────────────────────────────────

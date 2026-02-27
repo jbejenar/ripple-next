@@ -83,6 +83,14 @@ export default defineWorkspace([
   },
   {
     test: {
+      name: 'validation',
+      root: './packages/validation',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier2Coverage
+    }
+  },
+  {
+    test: {
       name: 'worker',
       root: './services/worker',
       include: ['tests/**/*.test.ts'],

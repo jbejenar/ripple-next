@@ -118,11 +118,12 @@ The CI pipeline provides structured observability and supply-chain security:
 - **Test artifacts** — JUnit XML reports uploaded on every CI run (30-day retention)
 - **Coverage reports** — Available as downloadable artifacts
 - **Playwright traces** — Uploaded on E2E failure (7-day retention)
-- **SBOM** — CycloneDX SBOM generated on every release (90-day retention)
+- **SBOM** — CycloneDX SBOM mandatory (fail-fast) on every release (90-day retention)
 - **Build provenance** — Attestations via `actions/attest-build-provenance`
 - **Reusable actions** — `.github/actions/{setup,quality,test}` for fleet consistency
+- **Env schema validation** — Zod-based validation of required/optional env vars in CI quality gate
 
-See [ADR-010](./adr/010-ci-observability-supply-chain.md) for the rationale.
+See [ADR-010](./adr/010-ci-observability-supply-chain.md) and [ADR-012](./adr/012-env-schema-validation.md) for the rationale.
 
 ## Related Documentation
 
@@ -136,3 +137,4 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md) for the rationale.
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
 - [ADR Index](./adr/) — all Architecture Decision Records
 - [ADR-011: CMS Decoupling](./adr/011-cms-decoupling-pull-out-drupal.md) — pull-out-Drupal strategy
+- [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment schema validation gate
