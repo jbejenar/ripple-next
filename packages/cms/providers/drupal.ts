@@ -15,6 +15,7 @@ import type {
   PageSection,
   ContentStatus
 } from '../types'
+import { mapParagraphsToSections } from './tide-paragraph-mapper'
 
 // ── JSON:API response shapes ───────────────────────────────────────────
 
@@ -48,10 +49,16 @@ interface JsonApiResponse {
  * Connects to a Drupal backend configured with the Tide distribution,
  * mapping Drupal's JSON:API responses to the CmsProvider interface.
  *
+ * DECOUPLING: This provider is the ONLY file that knows about Drupal.
+ * The CmsProvider interface, UI components, tests, and composables are
+ * completely CMS-agnostic. To remove Drupal: delete this file and
+ * tide-paragraph-mapper.ts, then update the provider factory.
+ *
  * Aligns with the original Ripple's ripple-nuxt-tide integration:
  * - Same Tide content types (page, landing_page, news, event)
  * - Same JSON:API endpoints
  * - Same relationship handling (includes, field references)
+ * - Full paragraph-to-section mapping (accordion, cards, timeline, etc.)
  *
  * Diverges from original Ripple:
  * - Uses native fetch instead of Axios
@@ -77,9 +84,26 @@ export class DrupalCmsProvider implements CmsProvider {
 
   // ── Page operations ────────────────────────────────────────────────
 
+  // Paragraph include fields for full section mapping
+  private static readonly INCLUDE_FIELDS = [
+    'field_featured_image',
+    'field_featured_image.field_media_image',
+    'field_topic',
+    'field_landing_page_component',
+    'field_node_paragraphs',
+    'field_landing_page_component.field_paragraph_media',
+    'field_landing_page_component.field_paragraph_media.field_media_image',
+    'field_landing_page_component.field_paragraph_accordion',
+    'field_landing_page_component.field_paragraph_reference',
+    'field_landing_page_component.field_paragraph_keydates',
+    'field_landing_page_component.field_timeline',
+    'field_node_paragraphs.field_paragraph_media',
+    'field_node_paragraphs.field_paragraph_media.field_media_image'
+  ].join(',')
+
   async getPage(id: string): Promise<CmsPage | null> {
     const response = await this.fetch<JsonApiResponse>(
-      `/jsonapi/node/page/${id}?include=field_featured_image,field_topic`
+      `/jsonapi/node/page/${id}?include=${DrupalCmsProvider.INCLUDE_FIELDS}`
     )
     if (!response?.data || Array.isArray(response.data)) return null
     return this.mapNodeToPage(response.data, response.included)
@@ -88,7 +112,7 @@ export class DrupalCmsProvider implements CmsProvider {
   async getPageBySlug(slug: string): Promise<CmsPage | null> {
     const normalised = slug.startsWith('/') ? slug.slice(1) : slug
     const response = await this.fetch<JsonApiResponse>(
-      `/jsonapi/node/page?filter[field_slug]=${encodeURIComponent(normalised)}&include=field_featured_image,field_topic`
+      `/jsonapi/node/page?filter[field_slug]=${encodeURIComponent(normalised)}&include=${DrupalCmsProvider.INCLUDE_FIELDS}`
     )
     if (!response?.data) return null
     const data = Array.isArray(response.data) ? response.data[0] : response.data
@@ -99,7 +123,7 @@ export class DrupalCmsProvider implements CmsProvider {
   async listPages(options?: CmsListOptions): Promise<CmsListResult> {
     const contentType = options?.contentType ?? 'page'
     const params = new URLSearchParams()
-    params.set('include', 'field_featured_image,field_topic')
+    params.set('include', DrupalCmsProvider.INCLUDE_FIELDS)
 
     if (options?.status) {
       params.set('filter[status]', options.status === 'published' ? '1' : '0')
@@ -312,7 +336,7 @@ export class DrupalCmsProvider implements CmsProvider {
       .map((ref) => this.mapIncludedTaxonomy(ref, included))
       .filter((t): t is NonNullable<typeof t> => t !== null)
 
-    const sections = this.mapParagraphsToSections(node, included)
+    const sections = this.mapNodeSections(node, included)
 
     return {
       id: node.id,
@@ -338,19 +362,11 @@ export class DrupalCmsProvider implements CmsProvider {
     }
   }
 
-  private mapParagraphsToSections(
-    _node: JsonApiResource,
-    _included?: JsonApiResource[]
+  private mapNodeSections(
+    node: JsonApiResource,
+    included?: JsonApiResource[]
   ): PageSection[] {
-    // Tide uses paragraph entities for page sections.
-    // Full paragraph mapping would resolve field_paragraph references
-    // from included resources and map each paragraph type.
-    // For MVP, return body as a single wysiwyg section if present.
-    const body = this.extractBody(_node.attributes['body'])
-    if (body) {
-      return [{ type: 'wysiwyg', html: body }]
-    }
-    return []
+    return mapParagraphsToSections(node, included)
   }
 
   private mapIncludedImage(

@@ -26,3 +26,5 @@ export type {
 } from './types'
 export { MockCmsProvider } from './providers/mock'
 export { DrupalCmsProvider } from './providers/drupal'
+export { createCmsProvider } from './factory'
+export type { CmsProviderType, CmsProviderFactoryOptions } from './factory'

@@ -28,7 +28,10 @@ graph LR
 
 ### CMS Endpoints
 
-Content management routes that proxy to the configured CMS provider (Drupal/Tide or Mock).
+Content management routes that proxy to the configured CMS provider via `createCmsProvider()`.
+Provider is auto-selected based on `NUXT_CMS_BASE_URL` env var (Drupal when set, Mock when empty).
+CMS provider code is loaded via dynamic imports — Drupal-specific code is tree-shakeable.
+See [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) for decoupling details.
 
 | Method | Path                          | Description                              |
 | ------ | ----------------------------- | ---------------------------------------- |

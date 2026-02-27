@@ -64,7 +64,7 @@ graph TB
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             |
 | Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           |
-| CMS            | Drupal/Tide JSON:API (prod) / Mock (test)               |
+| CMS            | Drupal/Tide JSON:API (prod) / Mock (test) — decoupled, removable (ADR-011) |
 | File Storage   | S3 (prod) / MinIO (local) / fs (test)                   |
 | Infrastructure | SST v3 (Pulumi/Terraform)                               |
 | Compute        | Lambda (default) + ECS Fargate (long-running)           |
@@ -75,7 +75,12 @@ graph TB
 Every infrastructure concern uses a provider interface with at least three
 implementations: one for tests (memory/mock), one for local dev, one for production.
 
-See [Provider Pattern](./provider-pattern.md) for details, and [ADR-003](./adr/003-provider-pattern.md) for the rationale.
+The CMS provider has an explicit **decoupling architecture**: Drupal-specific code
+is isolated to exactly 2 files (`drupal.ts` + `tide-paragraph-mapper.ts`), making
+Drupal removable without affecting frontend, tests, or API layer. A provider factory
+with dynamic imports ensures Drupal code is tree-shakeable and only loaded when needed.
+
+See [Provider Pattern](./provider-pattern.md) for details, [ADR-003](./adr/003-provider-pattern.md) for the rationale, and [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) for CMS decoupling.
 
 ## Compute Decision Framework
 
@@ -129,3 +134,4 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md) for the rationale.
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
 - [ADR Index](./adr/) — all Architecture Decision Records
+- [ADR-011: CMS Decoupling](./adr/011-cms-decoupling-pull-out-drupal.md) — pull-out-Drupal strategy

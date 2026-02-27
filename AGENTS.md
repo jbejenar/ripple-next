@@ -56,8 +56,10 @@ Every infrastructure concern uses a provider interface:
 - `packages/auth/providers/` → mock.ts | oidc.ts
 - `packages/storage/providers/` → filesystem.ts | minio.ts | s3.ts
 - `packages/email/providers/` → smtp.ts (includes MemoryEmailProvider) | ses.ts
-- `packages/cms/providers/` → mock.ts | drupal.ts
-  Tests ALWAYS use memory/mock providers. Never depend on cloud services.
+- `packages/cms/providers/` → mock.ts | drupal.ts | tide-paragraph-mapper.ts
+  - CMS has explicit decoupling: Drupal isolated to 2 files, removable per ADR-011
+  - Provider factory (`createCmsProvider()`) auto-selects based on env config
+  - Tests ALWAYS use memory/mock providers. Never depend on cloud services.
 
 ### Lambda-First Compute
 
@@ -288,6 +290,9 @@ When making changes, match the change type to the right validation:
 |---|---|
 | New API endpoint | `pnpm test`, `pnpm typecheck`, integration test with testcontainers |
 | New provider implementation | Conformance test + unit test, `pnpm typecheck` |
+| New CMS provider | Implement `CmsProvider` interface, add to factory, run CMS conformance suite (18 tests) |
+| CMS Drupal changes | Edit only `providers/drupal.ts` or `tide-paragraph-mapper.ts`, run `pnpm test` |
+| Remove Drupal | Follow ADR-011 removal procedure (delete 2 files + update factory/exports) |
 | DB schema change | `pnpm db:generate`, migration test, `pnpm typecheck` |
 | New Vue component | Component test, `pnpm lint`, Storybook story |
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |

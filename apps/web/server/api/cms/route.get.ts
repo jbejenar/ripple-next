@@ -2,7 +2,7 @@ import { getCmsProvider } from '../../utils/cms-provider'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const cms = getCmsProvider()
+  const cms = await getCmsProvider()
 
   if (!query.path || typeof query.path !== 'string') {
     throw createError({ statusCode: 400, statusMessage: 'Path query parameter is required' })
