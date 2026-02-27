@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import RplNavigationList from './RplNavigationList.vue'
+
 export interface RplNavigationItem {
   id: string
   label: string
@@ -23,32 +25,11 @@ withDefaults(defineProps<RplNavigationProps>(), {
     :class="['rpl-navigation', `rpl-navigation--${variant}`]"
     :aria-label="ariaLabel"
   >
-    <ul class="rpl-navigation__list">
-      <li
-        v-for="item in items"
-        :key="item.id"
-        :class="['rpl-navigation__item', { 'rpl-navigation__item--has-children': item.children.length > 0 }]"
-      >
-        <a :href="item.url" class="rpl-navigation__link">
-          {{ item.label }}
-        </a>
-        <ul v-if="item.children.length > 0" class="rpl-navigation__submenu">
-          <li
-            v-for="child in item.children"
-            :key="child.id"
-            class="rpl-navigation__subitem"
-          >
-            <a :href="child.url" class="rpl-navigation__sublink">
-              {{ child.label }}
-            </a>
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <RplNavigationList :items="items" :depth="0" />
   </nav>
 </template>
 
-<style scoped>
+<style>
 .rpl-navigation__list {
   list-style: none;
   margin: 0;

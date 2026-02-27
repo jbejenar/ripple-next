@@ -103,4 +103,38 @@ describe('RplNavigation', () => {
     })
     expect(wrapper.find('nav').attributes('aria-label')).toBe('Navigation')
   })
+
+  it('renders deeply nested children (grandchildren and beyond)', () => {
+    const deepItems = [
+      {
+        id: '1',
+        label: 'Top',
+        url: '/top',
+        children: [
+          {
+            id: '1a',
+            label: 'Child',
+            url: '/top/child',
+            children: [
+              {
+                id: '1a1',
+                label: 'Grandchild',
+                url: '/top/child/grandchild',
+                children: []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    const wrapper = mount(RplNavigation, {
+      props: { items: deepItems }
+    })
+    const allLinks = wrapper.findAll('a')
+    expect(allLinks).toHaveLength(3)
+    expect(allLinks[0]!.text()).toBe('Top')
+    expect(allLinks[1]!.text()).toBe('Child')
+    expect(allLinks[2]!.text()).toBe('Grandchild')
+    expect(allLinks[2]!.attributes('href')).toBe('/top/child/grandchild')
+  })
 })
