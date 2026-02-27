@@ -66,10 +66,14 @@ jobs:
           - '6379:6379'
     env:
       DATABASE_URL: postgres://test:test@localhost:5432/test
+      NUXT_DATABASE_URL: postgres://test:test@localhost:5432/test
       REDIS_URL: redis://localhost:6379
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+
+      - name: Validate env schema
+        run: pnpm validate:env
 
       - name: Run migrations
         run: pnpm db:migrate

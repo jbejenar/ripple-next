@@ -1,5 +1,5 @@
 name: Quality Gates
-description: Run lint, typecheck, env validation, and readiness drift guard
+description: Run lint, typecheck, and readiness drift guard
 
 runs:
   using: composite
@@ -11,10 +11,6 @@ runs:
     - name: Typecheck
       shell: bash
       run: pnpm typecheck
-
-    - name: Env schema validation
-      shell: bash
-      run: pnpm validate:env
 
     - name: Readiness drift guard
       shell: bash

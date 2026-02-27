@@ -41,8 +41,9 @@ the schema rules in plain JS) that can run before `pnpm install` completes:
 
 - **`pnpm doctor`** — calls `validate-env.mjs --json` and reports results alongside
   other environment checks. Falls back to basic presence checks if the script fails.
-- **CI quality gate** — `validate:env` added to `.github/actions/quality/action.yml`
-  alongside lint, typecheck, and readiness drift guard.
+- **CI test job** — `validate:env` runs in the CI test job (`.github/workflows/ci.yml`)
+  where database and Redis services are available, since the required env vars
+  (`DATABASE_URL`, `NUXT_DATABASE_URL`, `REDIS_URL`) need to be set.
 - **Programmatic use** — Applications and tests import `validateEnv()` from
   `@ripple/validation` for runtime env checking with full Zod schema.
 
