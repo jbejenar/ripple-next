@@ -149,6 +149,12 @@ else
   warn "DATABASE_URL not set — needed for DB commands & integration tests" "environment"
 fi
 
+if [ -n "${NUXT_DATABASE_URL:-}" ]; then
+  pass "NUXT_DATABASE_URL set" "environment"
+else
+  warn "NUXT_DATABASE_URL not set — needed for Nuxt server runtime (tRPC, auth)" "environment"
+fi
+
 if [ -n "${REDIS_URL:-}" ]; then
   pass "REDIS_URL set" "environment"
 else

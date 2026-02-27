@@ -34,6 +34,7 @@ graph LR
         SEC[Security Gates]
         SBOM[SBOM/Provenance]
         FLEET[Fleet Templates]
+        CMS["Drupal/Tide CMS"]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -51,17 +52,19 @@ graph LR
     style SEC fill:#6366f1,color:#fff
     style SBOM fill:#6366f1,color:#fff
     style FLEET fill:#6366f1,color:#fff
+    style CMS fill:#ef4444,color:#fff
 ```
 
-### Top 5 Blockers
+### Top Blockers
 
 | # | Blocker | Impact | Status |
 |---|---------|--------|--------|
-| 1 | No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance) | Critical — required for hostile-internet assumptions and fleet trust | **In Progress** |
-| 2 | Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents | High — breaks ephemeral/offline runners | **Done** |
-| 3 | No standardized env contract artifact (.env.example/schema) | High — hidden setup variance across teams/agents | **Done** |
-| 4 | CI artifact observability is partial (Playwright only, no structured reports for unit/integration) | Medium — limits CI debugging at scale | Planned |
-| 5 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
+| 1 | **No Drupal/Tide CMS integration** — the original Ripple is a Drupal design system; Ripple Next has no CMS content layer | Critical — blocks content parity with original Ripple | **Planned** |
+| 2 | No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance) | Critical — required for hostile-internet assumptions and fleet trust | **In Progress** |
+| 3 | Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents | High — breaks ephemeral/offline runners | **Done** |
+| 4 | No standardized env contract artifact (.env.example/schema) | High — hidden setup variance across teams/agents | **Done** |
+| 5 | CI artifact observability is partial (Playwright only, no structured reports for unit/integration) | Medium — limits CI debugging at scale | Planned |
+| 6 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
 
 ---
 
@@ -160,6 +163,73 @@ graph LR
 
 ---
 
+## Drupal/Tide CMS Integration (Gap Analysis)
+
+The original [Ripple design system](https://github.com/dpc-sdp/ripple) is tightly
+coupled to **Tide** — a Drupal distribution that serves as the content management
+backend for Victorian government websites. Ripple Next currently has **no CMS or
+content management integration**. The platform's data model covers users, projects,
+and audit logs, but lacks content entities (pages, sections, media, taxonomies,
+menus) that are fundamental to the original Ripple's purpose.
+
+This is a **high-priority gap** that must be addressed to achieve parity with the
+original system and serve government content publishing use cases.
+
+```mermaid
+graph LR
+    subgraph "Original Ripple"
+        DRUPAL["Drupal/Tide CMS"] -->|JSON:API| NUXT_OLD["Nuxt 2 Frontend"]
+        DRUPAL -->|manages| CONTENT["Pages, Media,<br/>Taxonomies, Menus"]
+    end
+
+    subgraph "Ripple Next (Current)"
+        PG[(PostgreSQL)] -->|Drizzle ORM| NUXT_NEW["Nuxt 3 Frontend"]
+        PG -->|stores| DATA["Users, Projects,<br/>Audit Logs"]
+        MISSING["No CMS Layer ⚠️"]
+    end
+
+    subgraph "Ripple Next (Target)"
+        CMS_PROVIDER["@ripple/cms<br/>(provider pattern)"] -->|interface| NUXT_TARGET["Nuxt 3 Frontend"]
+        DRUPAL_PROV["DrupalCmsProvider"] -.->|implements| CMS_PROVIDER
+        MOCK_PROV["MockCmsProvider"] -.->|implements| CMS_PROVIDER
+        DRUPAL_BACK["Drupal/Tide"] -->|JSON:API| DRUPAL_PROV
+    end
+
+    style MISSING fill:#ef4444,color:#fff
+    style CMS_PROVIDER fill:#22c55e,color:#fff
+    style DRUPAL_PROV fill:#6366f1,color:#fff
+    style MOCK_PROV fill:#f59e0b,color:#fff
+```
+
+### What needs to be built
+
+| Component | Description | Priority |
+|-----------|-------------|----------|
+| `@ripple/cms` package | CMS provider interface with content types (pages, media, taxonomies, menus, search) | **High** |
+| `DrupalCmsProvider` | JSON:API client for Drupal/Tide — fetches pages, routes, menus, taxonomies | **High** |
+| `MockCmsProvider` | In-memory CMS for tests and local dev without Drupal | **High** |
+| Content type schemas | Zod schemas in `@ripple/validation` for CMS content entities | **High** |
+| CMS conformance tests | Provider conformance suite in `@ripple/testing/conformance/` | **High** |
+| Page rendering layer | Nuxt pages/components that render CMS content (landing pages, content pages, media galleries) | Medium |
+| Tide-compatible components | UI components matching original Ripple's Tide content types (accordion, card collection, timeline, etc.) | Medium |
+| Search integration | Search provider interface (MeiliSearch/Elasticsearch) for content indexing | Medium |
+
+### Design principles
+
+The CMS integration should follow the same **provider pattern** used throughout
+the codebase:
+
+1. **`@ripple/cms/types.ts`** — CMS provider interface
+2. **`@ripple/cms/providers/mock.ts`** — Memory provider for tests
+3. **`@ripple/cms/providers/drupal.ts`** — Drupal JSON:API client
+4. **Tests ALWAYS use MockCmsProvider** — no Drupal dependency in tests
+5. **Conformance suite** validates any CMS provider implements the full contract
+
+This ensures Ripple Next can work with Drupal/Tide (for government sites that
+already use it) while remaining CMS-agnostic for new deployments.
+
+---
+
 ## Architecture + Maintainability
 
 | Area | Assessment |
@@ -168,6 +238,7 @@ graph LR
 | API contracts | tRPC + repository pattern + health endpoint guidance is clear; readiness manifest records subsystem maturity. |
 | Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. |
 | Backwards compatibility | Changesets and package publishing support incremental consumer upgrades — key fleet strength. |
+| CMS integration | **Missing.** No content management layer. Original Ripple's Drupal/Tide integration not yet ported. |
 
 ```mermaid
 graph TD
@@ -186,6 +257,11 @@ graph TD
         VAL["@ripple/validation"]
         SHARED["@ripple/shared"]
         TESTING["@ripple/testing"]
+        CMS["@ripple/cms<br/>(planned)"]
+    end
+
+    subgraph "External CMS (planned)"
+        DRUPAL["Drupal/Tide"]
     end
 
     subgraph "services/"
@@ -205,10 +281,11 @@ graph TD
         EB[EventBridge]
     end
 
-    WEB --> AUTH & DB & QUEUE & UI & VAL
+    WEB --> AUTH & DB & QUEUE & UI & VAL & CMS
     WORKER --> QUEUE & EMAIL & STORAGE
     CRON --> DB & EVENTS
     EVH --> EVENTS & EMAIL
+    CMS -.->|JSON:API| DRUPAL
 
     DB --> AURORA
     QUEUE --> SQS
@@ -223,6 +300,8 @@ graph TD
     style ECS fill:#f59e0b,color:#fff
     style AURORA fill:#6366f1,color:#fff
     style REDIS fill:#6366f1,color:#fff
+    style CMS fill:#ef4444,color:#fff
+    style DRUPAL fill:#ef4444,color:#fff
 ```
 
 ---
@@ -287,9 +366,11 @@ gantt
     Security pipeline (security.yml)           :done, sec, 2026-02-27, 7d
     Doctor --json + --offline                  :done, doc, 2026-02-27, 5d
     .env.example + pnpm bootstrap              :done, env, 2026-02-27, 5d
+    @ripple/cms provider + Drupal integration  :crit, active, cms, 2026-02-28, 14d
     CI test artifact upload                    :active, art, 2026-03-03, 7d
 
     section Phase 2 — Do Next
+    CMS page rendering + Tide components       :cms2, 2026-03-14, 21d
     Standardize CI artifacts                   :ci, 2026-03-17, 14d
     SBOM + provenance in release               :sbom, 2026-03-17, 21d
     Reusable org workflows                     :reuse, 2026-04-01, 21d
@@ -344,7 +425,27 @@ See: `.env.example` (added with this roadmap)
 - [x] Add `pnpm bootstrap` command to package.json
 - [ ] Verify docker-compose uses matching env var names
 
-#### 1.4 CI Test Artifact Upload
+#### 1.4 Drupal/Tide CMS Integration (`@ripple/cms`)
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium
+
+The original Ripple design system is built on Drupal/Tide. Ripple Next must
+provide a CMS content layer to serve government content publishing use cases.
+Following the provider pattern, create `@ripple/cms` with Drupal JSON:API
+integration and a mock provider for testing.
+
+See: [Drupal/Tide CMS Integration](#drupaltide-cms-integration-gap-analysis)
+
+- [ ] Create `packages/cms/` with CMS provider interface (`types.ts`)
+- [ ] Implement `MockCmsProvider` for tests and local dev
+- [ ] Implement `DrupalCmsProvider` with JSON:API client for Tide
+- [ ] Add CMS conformance test suite to `packages/testing/conformance/`
+- [ ] Add content type Zod schemas to `packages/validation/`
+- [ ] Wire CMS provider into Nuxt server context
+- [ ] Add `NUXT_CMS_BASE_URL` to `.env.example` and runtime config
+- [ ] Update `readiness.json` with CMS subsystem entry
+
+#### 1.5 CI Test Artifact Upload
 
 **Impact:** Medium | **Effort:** Low | **Risk:** Low
 
@@ -359,7 +460,23 @@ test job in CI for better observability.
 
 ### Phase 2: Do Next (1-2 months)
 
-#### 2.1 Standardize CI Artifacts
+#### 2.1 CMS Page Rendering + Tide Components
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium
+
+Build Nuxt pages and UI components that render content from the CMS provider,
+achieving visual and functional parity with the original Ripple design system's
+Tide content types.
+
+- [ ] Create dynamic page route (`/[...slug].vue`) that fetches from CMS provider
+- [ ] Implement Tide-compatible components (accordion, card collection, timeline, etc.)
+- [ ] Add landing page and content page templates
+- [ ] Media gallery and document download components
+- [ ] Navigation/menu rendering from CMS-provided menu structure
+- [ ] Search integration provider (MeiliSearch for local, Elasticsearch for prod)
+- [ ] Storybook stories for all new Tide-compatible components
+
+#### 2.2 Standardize CI Artifacts
 
 **Impact:** High | **Effort:** Medium | **Risk:** Low
 
@@ -370,7 +487,7 @@ retention and naming policy.
 - [ ] Upload artifacts with standardized naming (`{job}-{suite}-results`)
 - [ ] Set retention policy (30 days for reports, 7 days for traces)
 
-#### 2.2 SBOM + Provenance in Release
+#### 2.3 SBOM + Provenance in Release
 
 **Impact:** High | **Effort:** Medium | **Risk:** Medium
 
@@ -381,7 +498,7 @@ workflow.
 - [ ] Generate provenance attestations with `actions/attest-build-provenance`
 - [ ] Publish SBOM alongside package releases
 
-#### 2.3 Reusable Org Workflows
+#### 2.4 Reusable Org Workflows
 
 **Impact:** Very High | **Effort:** Medium | **Risk:** Medium
 
