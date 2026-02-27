@@ -53,17 +53,27 @@ export default [
     }
   },
   {
-    files: ['**/migrate.ts', '**/seed.ts', '**/handlers/index.ts', '**/*.handler.ts'],
-    rules: {
-      'no-console': 'off'
-    }
-  },
-  {
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      'no-console': ['warn', { allow: ['warn', 'error'] }]
+      // Promoted from warn → error: agents need hard pass/fail signals
+      'no-console': ['error', { allow: ['warn', 'error'] }]
+    }
+  },
+  // Scripts that legitimately need console output
+  {
+    files: ['**/migrate.ts', '**/seed.ts', '**/handlers/index.ts', '**/*.handler.ts', 'scripts/**'],
+    rules: {
+      'no-console': 'off'
+    }
+  },
+  // Tests are allowed to be looser
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts', '**/tests/**', '**/conformance/**'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off'
     }
   },
   {

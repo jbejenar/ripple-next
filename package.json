@@ -25,10 +25,16 @@
     "db:studio": "pnpm --filter @ripple/db db:studio",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build && changeset publish",
     "doctor": "bash scripts/doctor.sh",
+    "check:readiness": "node scripts/check-readiness.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/js": "^9.18.0",

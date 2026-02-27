@@ -51,6 +51,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
+      - name: Readiness drift guard
+        run: pnpm check:readiness
 
   test:
     runs-on: ubuntu-latest

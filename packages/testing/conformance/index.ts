@@ -1,0 +1,5 @@
+export { queueConformance } from './queue.conformance'
+export { emailConformance } from './email.conformance'
+export { storageConformance } from './storage.conformance'
+export { authConformance } from './auth.conformance'
+export { eventBusConformance } from './events.conformance'

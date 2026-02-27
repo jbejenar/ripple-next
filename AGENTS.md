@@ -119,9 +119,11 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm test` — Run all Vitest tests (unit + integration)
 - `pnpm test:e2e` — Run Playwright E2E tests
 - `pnpm test:ui` — Run Storybook component tests
-- `pnpm lint` — ESLint + Stylelint + Prettier check
+- `pnpm lint` — ESLint (no-console is an error, not a warning)
 - `pnpm lint:fix` — Auto-fix lint issues
 - `pnpm typecheck` — TypeScript type checking (tsc --noEmit)
+- `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
+- `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations
 - `pnpm db:seed` — Seed development data
@@ -147,12 +149,23 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 ## Testing Requirements
 
 - Every new feature needs: unit test + integration test (minimum)
-- Every new API endpoint needs: integration test with real DB (testcontainers)
+- Every new API endpoint needs: contract test + integration test with real DB (testcontainers)
 - Every new component needs: component test with Vue Test Utils
 - Every Lambda handler needs: unit test with mock providers
+- **Every new provider** needs: conformance test from `packages/testing/conformance/`
 - Use factories from `packages/testing/factories/` for test data
 - Use mock providers from `packages/testing/mocks/providers.ts`
 - Always run `pnpm test` and `pnpm typecheck` before considering work done
+
+### Coverage Thresholds (Enforced in vitest.workspace.ts)
+
+| Risk Tier | Packages | Lines/Functions/Statements | Branches |
+|---|---|---|---|
+| Tier 1 (Critical) | auth, db, queue | 60% | 50% |
+| Tier 2 (Infrastructure) | email, storage, events | 40% | 30% |
+| Tier 3 (UI/Services) | ui, worker | 20% | 10% |
+
+Never lower a threshold — only raise it.
 
 ## Infrastructure Changes
 
@@ -166,8 +179,9 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 
 The CI runs a tiered model to balance speed with safety:
 
-- **Tier 1 (every PR):** lint, typecheck, unit tests — skipped if no source files changed.
+- **Tier 1 (every PR):** lint, typecheck, unit tests, readiness drift guard — skipped if no source files changed.
 - **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
+- **Release (main only):** changesets consume version intent, bump packages, publish to private registry.
 - **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.
 
 ## Health Check
@@ -185,8 +199,13 @@ Use the full check in deployment validation and monitoring.
 All `@ripple/*` packages include `publishConfig`, `exports`, `types`, and `files`
 fields for npm publishing. Packages build to `dist/` via `tsc`.
 
-Current status: publishConfig ready, release workflow pending.
-See `docs/readiness.json` → `publishing` for blockers.
+Versioning uses **Changesets**. When a PR changes a published package's public
+API or behavior:
+
+1. Run `pnpm changeset` to describe the change and select the semver bump.
+2. Commit the generated `.changeset/*.md` file with your PR.
+3. On merge to main, the release workflow consumes changesets, bumps versions,
+   updates changelogs, and publishes to the private registry.
 
 ## File Naming
 
@@ -238,7 +257,7 @@ When making changes, match the change type to the right validation:
 | Change Type | Required Validation |
 |---|---|
 | New API endpoint | `pnpm test`, `pnpm typecheck`, integration test with testcontainers |
-| New provider implementation | Unit test with mock, `pnpm typecheck` |
+| New provider implementation | Conformance test + unit test, `pnpm typecheck` |
 | DB schema change | `pnpm db:generate`, migration test, `pnpm typecheck` |
 | New Vue component | Component test, `pnpm lint`, Storybook story |
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |

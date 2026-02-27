@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "jbejenar/ripple-next" }
+  ],
+  "commit": false,
+  "fixed": [],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["@ripple/web", "@ripple/testing"],
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  }
+}
