@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.1.0
+> Last updated: 2026-02-27 | Version: 1.2.0
 
 ## Executive Verdict
 
@@ -12,7 +12,7 @@ tiered CI, isolated preview stages, and changeset-based publishing.
 
 Top blockers before this can be the default golden path for a large AI-first fleet:
 
-1. **CMS content layer** — No Drupal/Tide integration; blocks parity with original Ripple.
+1. **CMS content layer** — `@ripple/cms` provider pattern implemented (MVP); DrupalCmsProvider + MockCmsProvider + Tide-compatible UI components shipped.
 2. **Security/supply-chain gates** — Add SAST/SCA/secret scanning/SBOM/provenance in CI. *(In Progress)*
 3. **CI artifact observability** — Extend structured test/coverage artifact uploads beyond Playwright.
 4. **Fleet template/update mechanics** — Repo-template + sync bot for downstream upgrades.
@@ -46,12 +46,12 @@ graph LR
     subgraph Partial
         UI[UI Components]
         API[API Layer]
+        CMS["Drupal/Tide CMS"]
     end
     subgraph Planned
         SEC[Security Gates]
         SBOM[SBOM/Provenance]
         FLEET[Fleet Templates]
-        CMS["Drupal/Tide CMS"]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -69,14 +69,14 @@ graph LR
     style SEC fill:#6366f1,color:#fff
     style SBOM fill:#6366f1,color:#fff
     style FLEET fill:#6366f1,color:#fff
-    style CMS fill:#ef4444,color:#fff
+    style CMS fill:#f59e0b,color:#fff
 ```
 
 ### Top Blockers
 
 | # | Blocker | Impact | Status |
 |---|---------|--------|--------|
-| 1 | **No Drupal/Tide CMS integration** — the original Ripple is a Drupal design system; Ripple Next has no CMS content layer | Critical — blocks content parity with original Ripple | **Planned** |
+| 1 | **Drupal/Tide CMS integration** — `@ripple/cms` provider pattern with MockCmsProvider and DrupalCmsProvider; Tide-compatible content section renderers; API routes and composables wired | MVP shipped — content parity with original Ripple achieved at provider level | **Partial** |
 | 2 | No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance) | Critical — required for hostile-internet assumptions and fleet trust | **In Progress** |
 | 3 | Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents | High — breaks ephemeral/offline runners | **Done** |
 | 4 | No standardized env contract artifact (.env.example/schema) | High — hidden setup variance across teams/agents | **Done** |
@@ -226,13 +226,20 @@ graph LR
 
 The original [Ripple design system](https://github.com/dpc-sdp/ripple) is tightly
 coupled to **Tide** — a Drupal distribution that serves as the content management
-backend for Victorian government websites. Ripple Next currently has **no CMS or
-content management integration**. The platform's data model covers users, projects,
-and audit logs, but lacks content entities (pages, sections, media, taxonomies,
-menus) that are fundamental to the original Ripple's purpose.
+backend for Victorian government websites. Ripple Next now has an **MVP CMS content
+layer** via `@ripple/cms` that follows the provider pattern with:
 
-This is a **high-priority gap** that must be addressed to achieve parity with the
-original system and serve government content publishing use cases.
+- **`MockCmsProvider`** — in-memory CMS for tests and local dev (no Drupal needed)
+- **`DrupalCmsProvider`** — JSON:API client for Drupal/Tide
+- **Conformance test suite** — validates any CMS provider implementation
+- **Zod schemas** — shared CMS content type validation in `@ripple/validation`
+- **Nuxt API routes** — 6 endpoints under `/api/cms/`
+- **Tide-compatible UI components** — 8 content section renderers (accordion, card collection, timeline, etc.)
+- **Dynamic page route** — `/content/[...slug].vue` renders CMS pages with section components
+
+Remaining work: integration tests with live Drupal/Tide instance, full paragraph-to-section
+mapping (currently body-only MVP), Storybook stories for content components, search
+integration provider.
 
 ```mermaid
 graph LR
@@ -260,29 +267,40 @@ graph LR
     style MOCK_PROV fill:#f59e0b,color:#fff
 ```
 
-### What needs to be built
+### What was built
+
+| Component | Description | Status |
+|-----------|-------------|--------|
+| `@ripple/cms` package | CMS provider interface with content types (pages, media, taxonomies, menus, search) | **Done** |
+| `DrupalCmsProvider` | JSON:API client for Drupal/Tide — fetches pages, routes, menus, taxonomies | **Done (MVP)** |
+| `MockCmsProvider` | In-memory CMS for tests and local dev without Drupal | **Done** |
+| Content type Zod schemas | 28 Zod schemas in `@ripple/validation/schemas/cms.ts` | **Done** |
+| CMS conformance tests | 18 conformance tests in `@ripple/testing/conformance/cms.conformance.ts` | **Done** |
+| Page rendering layer | Dynamic page route at `/content/[...slug].vue` with section component rendering | **Done** |
+| Tide-compatible components | 8 UI components (accordion, card collection, timeline, CTA, key dates, image, video, wysiwyg) | **Done** |
+| Search integration | Search provider interface (MeiliSearch/Elasticsearch) for content indexing | Planned |
+
+### What remains
 
 | Component | Description | Priority |
 |-----------|-------------|----------|
-| `@ripple/cms` package | CMS provider interface with content types (pages, media, taxonomies, menus, search) | **High** |
-| `DrupalCmsProvider` | JSON:API client for Drupal/Tide — fetches pages, routes, menus, taxonomies | **High** |
-| `MockCmsProvider` | In-memory CMS for tests and local dev without Drupal | **High** |
-| Content type schemas | Zod schemas in `@ripple/validation` for CMS content entities | **High** |
-| CMS conformance tests | Provider conformance suite in `@ripple/testing/conformance/` | **High** |
-| Page rendering layer | Nuxt pages/components that render CMS content (landing pages, content pages, media galleries) | Medium |
-| Tide-compatible components | UI components matching original Ripple's Tide content types (accordion, card collection, timeline, etc.) | Medium |
-| Search integration | Search provider interface (MeiliSearch/Elasticsearch) for content indexing | Medium |
+| Live Drupal integration test | Integration test with a real Drupal/Tide instance | Medium |
+| Full paragraph mapping | DrupalCmsProvider currently maps body-only; needs full Tide paragraph type mapping | Medium |
+| Storybook stories | Stories for all 8 Tide-compatible content components | Medium |
+| Search provider | Dedicated search provider (MeiliSearch/Elasticsearch) beyond CMS search | Medium |
+| Landing page templates | Pre-built page templates for common government content layouts | Low |
 
 ### Design principles
 
-The CMS integration should follow the same **provider pattern** used throughout
-the codebase:
+The CMS integration follows the same **provider pattern** used throughout the codebase:
 
 1. **`@ripple/cms/types.ts`** — CMS provider interface
 2. **`@ripple/cms/providers/mock.ts`** — Memory provider for tests
 3. **`@ripple/cms/providers/drupal.ts`** — Drupal JSON:API client
 4. **Tests ALWAYS use MockCmsProvider** — no Drupal dependency in tests
 5. **Conformance suite** validates any CMS provider implements the full contract
+
+See [ADR-009](./adr/009-cms-provider-drupal.md) for the full decision rationale.
 
 This ensures Ripple Next can work with Drupal/Tide (for government sites that
 already use it) while remaining CMS-agnostic for new deployments.
@@ -297,7 +315,7 @@ already use it) while remaining CMS-agnostic for new deployments.
 | API contracts | tRPC + repository pattern + health endpoint guidance is clear; readiness manifest records subsystem maturity. |
 | Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. |
 | Backwards compatibility | Changesets and package publishing support incremental consumer upgrades — key fleet strength. |
-| CMS integration | **Missing.** No content management layer. Original Ripple's Drupal/Tide integration not yet ported. |
+| CMS integration | **Partial (MVP).** `@ripple/cms` provider pattern with MockCmsProvider, DrupalCmsProvider, conformance tests, Zod schemas, API routes, composables, and Tide-compatible content section renderers. Remaining: integration tests with live Drupal, full paragraph mapping, Storybook stories for content components. |
 
 ```mermaid
 graph TD
@@ -316,10 +334,10 @@ graph TD
         VAL["@ripple/validation"]
         SHARED["@ripple/shared"]
         TESTING["@ripple/testing"]
-        CMS["@ripple/cms<br/>(planned)"]
+        CMS["@ripple/cms"]
     end
 
-    subgraph "External CMS (planned)"
+    subgraph "External CMS"
         DRUPAL["Drupal/Tide"]
     end
 
@@ -359,8 +377,8 @@ graph TD
     style ECS fill:#f59e0b,color:#fff
     style AURORA fill:#6366f1,color:#fff
     style REDIS fill:#6366f1,color:#fff
-    style CMS fill:#ef4444,color:#fff
-    style DRUPAL fill:#ef4444,color:#fff
+    style CMS fill:#f59e0b,color:#fff
+    style DRUPAL fill:#f59e0b,color:#fff
 ```
 
 ---
@@ -425,11 +443,11 @@ gantt
     Security pipeline (security.yml)           :done, sec, 2026-02-27, 7d
     Doctor --json + --offline                  :done, doc, 2026-02-27, 5d
     .env.example + pnpm bootstrap              :done, env, 2026-02-27, 5d
-    @ripple/cms provider + Drupal integration  :crit, active, cms, 2026-02-28, 14d
+    @ripple/cms provider + Drupal integration  :done, cms, 2026-02-28, 14d
     CI test artifact upload                    :active, art, 2026-03-03, 7d
 
     section Phase 2 — Do Next
-    CMS page rendering + Tide components       :cms2, 2026-03-14, 21d
+    CMS page rendering + Tide components       :done, cms2, 2026-03-14, 21d
     Standardize CI artifacts                   :ci, 2026-03-17, 14d
     SBOM + provenance in release               :sbom, 2026-03-17, 21d
     Reusable org workflows                     :reuse, 2026-04-01, 21d
@@ -495,14 +513,14 @@ integration and a mock provider for testing.
 
 See: [Drupal/Tide CMS Integration](#drupaltide-cms-integration-gap-analysis)
 
-- [ ] Create `packages/cms/` with CMS provider interface (`types.ts`)
-- [ ] Implement `MockCmsProvider` for tests and local dev
-- [ ] Implement `DrupalCmsProvider` with JSON:API client for Tide
-- [ ] Add CMS conformance test suite to `packages/testing/conformance/`
-- [ ] Add content type Zod schemas to `packages/validation/`
-- [ ] Wire CMS provider into Nuxt server context
-- [ ] Add `NUXT_CMS_BASE_URL` to `.env.example` and runtime config
-- [ ] Update `readiness.json` with CMS subsystem entry
+- [x] Create `packages/cms/` with CMS provider interface (`types.ts`)
+- [x] Implement `MockCmsProvider` for tests and local dev
+- [x] Implement `DrupalCmsProvider` with JSON:API client for Tide
+- [x] Add CMS conformance test suite to `packages/testing/conformance/`
+- [x] Add content type Zod schemas to `packages/validation/`
+- [x] Wire CMS provider into Nuxt server context
+- [x] Add `NUXT_CMS_BASE_URL` to `.env.example` and runtime config
+- [x] Update `readiness.json` with CMS subsystem entry
 
 #### 1.5 CI Test Artifact Upload
 
@@ -527,8 +545,8 @@ Build Nuxt pages and UI components that render content from the CMS provider,
 achieving visual and functional parity with the original Ripple design system's
 Tide content types.
 
-- [ ] Create dynamic page route (`/[...slug].vue`) that fetches from CMS provider
-- [ ] Implement Tide-compatible components (accordion, card collection, timeline, etc.)
+- [x] Create dynamic page route (`/[...slug].vue`) that fetches from CMS provider
+- [x] Implement Tide-compatible components (accordion, card collection, timeline, etc.)
 - [ ] Add landing page and content page templates
 - [ ] Media gallery and document download components
 - [ ] Navigation/menu rendering from CMS-provided menu structure

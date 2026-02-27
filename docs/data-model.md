@@ -84,6 +84,25 @@ erDiagram
 | user_agent  | TEXT         |                          |
 | created_at  | TIMESTAMPTZ  | NOT NULL, default: now() |
 
+## CMS Content Model
+
+CMS content (pages, taxonomies, menus, media) is managed externally by
+Drupal/Tide and accessed via the `@ripple/cms` provider pattern. It is NOT
+stored in the PostgreSQL database above — it lives in the CMS backend.
+
+The CMS content model is defined in `packages/cms/types.ts` and validated
+by Zod schemas in `packages/validation/schemas/cms.ts`. Key entities:
+
+- **CmsPage** — content page with sections, metadata, taxonomy terms
+- **PageSection** — discriminated union (wysiwyg, accordion, card-collection, timeline, call-to-action, key-dates, image, embedded-video)
+- **CmsMenu / CmsMenuItem** — hierarchical navigation menus
+- **CmsTaxonomyVocabulary / CmsTaxonomyTerm** — content classification
+- **CmsRoute** — URL path to content resolution
+- **CmsImage / CmsFile / CmsLink** — media and link references
+
+See [Provider Pattern](./provider-pattern.md) for how `MockCmsProvider` and
+`DrupalCmsProvider` implement the `CmsProvider` interface.
+
 ## Schema Files
 
 All schemas are defined as TypeScript using Drizzle ORM in `packages/db/schema/`.

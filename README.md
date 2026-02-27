@@ -28,6 +28,7 @@ pnpm dev
 | UI       | Ripple UI Core + Storybook 10 |
 | API      | Nitro server routes + tRPC    |
 | Database | PostgreSQL (Drizzle ORM)      |
+| CMS      | Drupal/Tide (JSON:API) / Mock |
 | Queue    | SQS / BullMQ / Memory         |
 | Auth     | OIDC/OAuth (oauth4webapi)     |
 | Infra    | SST v3 (Pulumi)               |
@@ -79,6 +80,7 @@ pnpm dev
 | [ADR-006](docs/adr/006-no-kubernetes.md)             | No Kubernetes                        |
 | [ADR-007](docs/adr/007-library-vs-monorepo.md)       | Hybrid monorepo + published packages |
 | [ADR-008](docs/adr/008-oidc-over-lucia.md)           | OIDC/OAuth over deprecated Lucia     |
+| [ADR-009](docs/adr/009-cms-provider-drupal.md)       | CMS provider pattern for Drupal/Tide |
 
 ## Repository Structure
 
@@ -86,6 +88,7 @@ pnpm dev
 apps/web/            — Nuxt 3 application
 packages/ui/         — Ripple UI component library
 packages/db/         — Database (Drizzle ORM)
+packages/cms/        — CMS abstraction (Drupal/Tide + Mock)
 packages/queue/      — Queue abstraction
 packages/auth/       — Authentication
 packages/storage/    — File storage

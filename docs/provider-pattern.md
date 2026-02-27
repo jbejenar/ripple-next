@@ -64,6 +64,7 @@ packages/{concern}/
 | Storage | FilesystemStorageProvider | MinioStorageProvider        | S3StorageProvider |
 | Email   | MemoryEmailProvider       | SmtpEmailProvider (Mailpit) | SesEmailProvider  |
 | Events  | MemoryEventBus            | MemoryEventBus              | EventBridgeBus    |
+| CMS     | MockCmsProvider           | MockCmsProvider             | DrupalCmsProvider |
 
 ## Usage in Tests
 

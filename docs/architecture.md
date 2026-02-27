@@ -19,6 +19,7 @@ graph TB
 
     subgraph "Infrastructure Providers"
         Auth[Auth Provider]
+        CMS[CMS Provider]
         Queue[Queue Provider]
         Storage[Storage Provider]
         Email[Email Provider]
@@ -42,6 +43,7 @@ graph TB
     SSR --> tRPC
     SSR --> Pages
     tRPC --> Auth
+    SSR --> CMS
     tRPC --> PG
     tRPC --> Redis
     Queue --> Worker
@@ -62,6 +64,7 @@ graph TB
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             |
 | Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           |
+| CMS            | Drupal/Tide JSON:API (prod) / Mock (test)               |
 | File Storage   | S3 (prod) / MinIO (local) / fs (test)                   |
 | Infrastructure | SST v3 (Pulumi/Terraform)                               |
 | Compute        | Lambda (default) + ECS Fargate (long-running)           |
