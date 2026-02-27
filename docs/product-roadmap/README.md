@@ -1,14 +1,31 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.0.0
+> Last updated: 2026-02-27 | Version: 1.1.0
 
 ## Executive Verdict
 
 **Ship-ready? Yes, with conditions.**
 
-The repo has strong foundations for an AI-first government digital platform:
+The repo has strong foundations for an **AI-first** government digital platform:
 pinned package manager + lockfile discipline, a dedicated `pnpm doctor` command,
 tiered CI, isolated preview stages, and changeset-based publishing.
+
+Top blockers before this can be the default golden path for a large AI-first fleet:
+
+1. **CMS content layer** — No Drupal/Tide integration; blocks parity with original Ripple.
+2. **Security/supply-chain gates** — Add SAST/SCA/secret scanning/SBOM/provenance in CI. *(In Progress)*
+3. **CI artifact observability** — Extend structured test/coverage artifact uploads beyond Playwright.
+4. **Fleet template/update mechanics** — Repo-template + sync bot for downstream upgrades.
+
+### Evidence Highlights
+
+- Deterministic package manager and lockfile usage present (`pnpm@9.15.4`, frozen lockfile in CI).
+- CI is tiered with change detection and high-risk routing.
+- Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
+- Changesets and private registry publish workflow in place.
+- Provider pattern enables mock/memory providers for agent-fast test loops.
+- `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics.
+- `.env.example` with `NUXT_` prefixed vars documents the full environment contract.
 
 ### Platform Maturity Overview
 
@@ -65,6 +82,48 @@ graph LR
 | 4 | No standardized env contract artifact (.env.example/schema) | High — hidden setup variance across teams/agents | **Done** |
 | 5 | CI artifact observability is partial (Playwright only, no structured reports for unit/integration) | Medium — limits CI debugging at scale | Planned |
 | 6 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
+
+---
+
+## LocalStack Assessment
+
+**Short answer: not as the default local-dev path for this repository.**
+
+This repo already uses a **provider pattern** with local-first implementations
+(memory/mock, BullMQ, MinIO, SMTP) that are faster, simpler, and generally less
+flaky for agent loops. LocalStack adds another orchestration layer and
+service-emulation drift that often slows CI and increases triage cost in
+high-concurrency setups.
+
+For AI agents, fastest path is: mock/memory for unit tests, dockerized real
+dependencies for integration tests, and isolated cloud preview stages for
+end-to-end behavior.
+
+**Recommended compromise:**
+
+- Keep LocalStack **optional**, not required.
+- Use it only for a narrow integration lane where AWS API-shape compatibility is
+  specifically under test (e.g., SQS/S3 IAM policy behavior before preview deploy).
+- Gate it behind a dedicated command/profile (`pnpm test:aws-compat`) so routine
+  agent workflows remain low-friction.
+
+## Local Runtime Reality (Agents + Developer Workstations)
+
+Given the constraint — **AWS only for deployment environments**, while agents run
+on whatever local runtime they have and developers are primarily on macOS — the
+default path is platform-agnostic and Docker-friendly rather than
+AWS-emulation-heavy.
+
+**Design principles:**
+
+- Core build/test loops runnable on macOS with just Node + pnpm (+ Docker when
+  integration tests require infra dependencies).
+- AWS treated as a **deployment target contract**, validated in preview/staging/prod,
+  not as a mandatory local dependency.
+- Local providers and mocks are first-class so ephemeral agents on heterogeneous
+  machines execute deterministic quality gates.
+- AWS-shape validation (including any LocalStack lane) reserved for targeted
+  compatibility checks, not baseline `pnpm test` workflows.
 
 ---
 
