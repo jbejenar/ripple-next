@@ -56,6 +56,7 @@ Every infrastructure concern uses a provider interface:
 - `packages/auth/providers/` → mock.ts | oidc.ts
 - `packages/storage/providers/` → filesystem.ts | minio.ts | s3.ts
 - `packages/email/providers/` → smtp.ts (includes MemoryEmailProvider) | ses.ts
+- `packages/cms/providers/` → mock.ts | drupal.ts
   Tests ALWAYS use memory/mock providers. Never depend on cloud services.
 
 ### Lambda-First Compute
@@ -167,7 +168,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 | Risk Tier | Packages | Lines/Functions/Statements | Branches |
 |---|---|---|---|
 | Tier 1 (Critical) | auth, db, queue | 60% | 50% |
-| Tier 2 (Infrastructure) | email, storage, events | 40% | 30% |
+| Tier 2 (Infrastructure) | email, storage, events, cms | 40% | 30% |
 | Tier 3 (UI/Services) | ui, worker | 20% | 10% |
 
 Never lower a threshold — only raise it.
@@ -232,6 +233,7 @@ packages/db/       — Database layer (Drizzle + Postgres)
 packages/queue/    — Queue abstraction (provider pattern)
 packages/auth/     — Authentication package
 packages/storage/  — File storage abstraction
+packages/cms/      — CMS content layer (Drupal/Tide + Mock)
 packages/email/    — Email abstraction
 packages/events/   — Domain event bus
 packages/validation/ — Shared Zod validation schemas

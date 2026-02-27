@@ -41,6 +41,8 @@ export default [
         navigateTo: 'readonly',
         definePageMeta: 'readonly',
         defineNuxtRouteMiddleware: 'readonly',
+        createError: 'readonly',
+        showError: 'readonly',
         readonly: 'readonly'
       }
     },

@@ -105,7 +105,7 @@ Tests use the [Provider Pattern](./provider-pattern.md) with in-memory implement
 ```typescript
 import { createMockProviders } from '@ripple/testing'
 
-const { queue, auth, storage, email, events } = createMockProviders()
+const { queue, auth, storage, email, events, cms } = createMockProviders()
 ```
 
 ## Related Documentation

@@ -63,7 +63,7 @@ queueConformance({
 ## Coverage Thresholds (Enforced)
 
 - **Tier 1** (auth, db, queue): 60% lines/functions/statements, 50% branches
-- **Tier 2** (email, storage, events): 40% lines/functions/statements, 30% branches
+- **Tier 2** (email, storage, events, cms): 40% lines/functions/statements, 30% branches
 - **Tier 3** (UI, services): 20% lines/functions/statements, 10% branches
 
 Never lower a threshold — only raise it.
@@ -81,3 +81,18 @@ Do NOT add manual imports for: `ref`, `computed`, `watch`, `onMounted`, `useRout
 `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`.
 
 DO manually import: anything from `@ripple/*` packages, `node_modules`, tRPC utilities.
+
+## Documentation Maintenance (Default Agent Directive)
+
+Every AI agent run that adds or modifies a subsystem MUST update documentation as
+part of the same change:
+
+1. **`docs/readiness.json`** — update subsystem status, description, blockers, coverage
+2. **`docs/product-roadmap/README.md`** — check off completed roadmap items, update status
+3. **Provider docs** (`docs/provider-pattern.md`) — add new providers to the table
+4. **API docs** (`docs/api-contracts.md`) — add new routes/endpoints
+5. **Architecture docs** (`docs/architecture.md`) — update diagrams if new subsystem added
+6. **ADRs** (`docs/adr/`) — create a new ADR for significant architectural decisions
+7. **README.md** and **AGENTS.md** — update repo structure and stack tables
+
+Run `pnpm check:readiness` after doc changes to ensure the manifest is not stale.

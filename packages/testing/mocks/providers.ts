@@ -3,6 +3,7 @@ import { MockAuthProvider } from '@ripple/auth'
 import { FilesystemStorageProvider } from '@ripple/storage'
 import { MemoryEmailProvider } from '@ripple/email'
 import { MemoryEventBus } from '@ripple/events'
+import { MockCmsProvider } from '@ripple/cms'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -13,6 +14,7 @@ export interface MockProviders {
   storage: FilesystemStorageProvider
   email: MemoryEmailProvider
   events: MemoryEventBus
+  cms: MockCmsProvider
 }
 
 /**
@@ -27,6 +29,7 @@ export function createMockProviders(): MockProviders {
     auth: new MockAuthProvider(),
     storage: new FilesystemStorageProvider(tmpDir),
     email: new MemoryEmailProvider(),
-    events: new MemoryEventBus()
+    events: new MemoryEventBus(),
+    cms: new MockCmsProvider()
   }
 }

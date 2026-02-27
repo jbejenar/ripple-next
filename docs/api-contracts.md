@@ -26,6 +26,19 @@ graph LR
 | ------ | ------------- | ------------ |
 | GET    | `/api/health` | Health check |
 
+### CMS Endpoints
+
+Content management routes that proxy to the configured CMS provider (Drupal/Tide or Mock).
+
+| Method | Path                          | Description                              |
+| ------ | ----------------------------- | ---------------------------------------- |
+| GET    | `/api/cms/page/[...slug]`     | Get a page by slug                       |
+| GET    | `/api/cms/pages`              | List pages (filter by contentType, status, taxonomy; pagination, sort) |
+| GET    | `/api/cms/menu/[name]`        | Get a menu by name                       |
+| GET    | `/api/cms/search`             | Search content (query param `q`)         |
+| GET    | `/api/cms/route`              | Resolve a URL path to a CMS route        |
+| GET    | `/api/cms/taxonomy/[vocabulary]` | Get taxonomy terms for a vocabulary   |
+
 ## Validation Schemas
 
 Shared validation schemas are in `packages/validation/`:
@@ -35,6 +48,17 @@ Shared validation schemas are in `packages/validation/`:
 - `loginSchema` — email, password
 - `createProjectSchema` — name, description, slug
 - `updateProjectSchema` — partial project updates
+
+### CMS Schemas (in `packages/validation/schemas/cms.ts`)
+
+- `cmsPageSchema` — page entity with sections, metadata, taxonomy
+- `pageSectionSchema` — discriminated union of 8 section types (wysiwyg, accordion, card-collection, timeline, call-to-action, key-dates, image, embedded-video)
+- `cmsMenuSchema` / `cmsMenuItemSchema` — menu structure with recursive children
+- `cmsSearchQuerySchema` / `cmsSearchResultSchema` — search request/response
+- `cmsListOptionsSchema` / `cmsListResultSchema` — paginated list request/response
+- `cmsTaxonomyVocabularySchema` / `cmsTaxonomyTermSchema` — taxonomy entities
+- `cmsRouteSchema` — URL-to-content route resolution
+- `cmsImageSchema` / `cmsFileSchema` / `cmsLinkSchema` — media and link entities
 
 ## Related Documentation
 

@@ -48,9 +48,9 @@
     },
     "ui": {
       "status": "partial",
-      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer). Storybook configured.",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). Storybook configured.",
       "packages": ["@ripple/ui"],
-      "blockers": ["Component library is still foundational — more components needed"],
+      "blockers": ["Component tests needed for new Tide-compatible content components"],
       "testCoverage": "component-tests-exist"
     },
     "api": {
@@ -81,7 +81,7 @@
     },
     "testing-infra": {
       "status": "implemented",
-      "description": "Mock providers bundle, test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, and events.",
+      "description": "Mock providers bundle (including CMS), test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, events, and CMS.",
       "packages": ["@ripple/testing"],
       "blockers": [],
       "testCoverage": "conformance-suites-used-by-providers"
@@ -94,16 +94,15 @@
       "testCoverage": "release-workflow-validated"
     },
     "cms": {
-      "status": "planned",
-      "description": "CMS content layer for Drupal/Tide integration. Provider pattern: CmsProvider interface, MockCmsProvider for tests, DrupalCmsProvider for JSON:API connection to Tide. Covers pages, media, taxonomies, menus, and search. Required for parity with original Ripple design system.",
+      "status": "partial",
+      "description": "CMS content layer for Drupal/Tide integration. Full provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Zod schemas for all CMS content types in @ripple/validation. Conformance test suite validates provider contract. Nuxt API routes and composables wired. Dynamic page rendering with Tide-compatible content section components (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg).",
       "packages": ["@ripple/cms"],
+      "paths": ["apps/web/server/api/cms/", "apps/web/composables/useCms.ts", "apps/web/pages/content/"],
       "blockers": [
-        "Package not yet created",
-        "CMS provider interface not yet defined",
-        "No Drupal JSON:API client",
-        "No content type schemas in @ripple/validation"
+        "No integration test with live Drupal/Tide instance",
+        "Paragraph-to-section mapping in DrupalCmsProvider is MVP (body-only)"
       ],
-      "testCoverage": "none"
+      "testCoverage": "conformance-tested"
     }
   },
   "statusLegend": {

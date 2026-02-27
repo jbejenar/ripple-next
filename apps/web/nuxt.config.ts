@@ -33,6 +33,11 @@ export default defineNuxtConfig({
     oidcClientId: '',
     oidcClientSecret: '',
     oidcRedirectUri: '',
+    // CMS / Drupal config
+    cmsBaseUrl: '',
+    cmsSiteId: '',
+    cmsAuthUser: '',
+    cmsAuthPassword: '',
     // Public config (exposed to client)
     public: {
       appName: 'Ripple Next',
