@@ -133,6 +133,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm typecheck` — TypeScript type checking (tsc --noEmit)
 - `pnpm validate:env` — Validate environment variables against Zod schema (ADR-012)
 - `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
+- `pnpm check:quarantine` — Verify flaky test quarantine policy (ADR-013, runs in CI)
 - `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations
@@ -189,7 +190,7 @@ Never lower a threshold — only raise it.
 
 The CI runs a tiered model to balance speed with safety:
 
-- **Tier 1 (every PR):** lint, typecheck, env schema validation, unit tests, readiness drift guard — skipped if no source files changed.
+- **Tier 1 (every PR):** lint, typecheck, env schema validation, unit tests, readiness drift guard, quarantine policy check — skipped if no source files changed.
 - **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
 - **Release (main only):** changesets consume version intent, bump packages, publish to private registry. CycloneDX SBOM mandatory (fail-fast) and build provenance attested.
 - **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.

@@ -1,14 +1,14 @@
 name: Deploy Preview
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, labeled]
 
 concurrency:
   group: deploy-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  # Gate job: checks whether AWS credentials are configured.
+  # Gate job: checks whether AWS credentials are configured and deploy is needed.
   # This always succeeds, so the workflow never fails when secrets are absent.
   check-secrets:
     runs-on: ubuntu-latest
@@ -26,14 +26,40 @@ jobs:
             echo "::notice::Skipping preview deploy — AWS_ROLE_ARN secret is not configured"
           fi
 
-  deploy:
-    needs: [check-secrets]
-    if: needs.check-secrets.outputs.has-aws == 'true'
+  # Check if infra files changed (allows auto-deploy without label)
+  detect-infra-changes:
     runs-on: ubuntu-latest
+    outputs:
+      infra-changed: ${{ steps.changes.outputs.infra }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            infra:
+              - 'sst.config.ts'
+              - '.github/workflows/deploy-preview.yml'
+              - '.github/workflows/deploy-staging.yml'
+              - '.github/workflows/deploy-production.yml'
+
+  deploy:
+    needs: [check-secrets, detect-infra-changes]
+    if: |
+      needs.check-secrets.outputs.has-aws == 'true' &&
+      (
+        contains(github.event.pull_request.labels.*.name, 'deploy-preview') ||
+        needs.detect-infra-changes.outputs.infra-changed == 'true'
+      )
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+      url: https://pr-${{ github.event.pull_request.number }}.preview.ripple-next.com
     permissions:
       id-token: write
       contents: read
       pull-requests: write
+      deployments: write
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
@@ -41,13 +67,35 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-southeast-2
-      - run: npx sst deploy --stage pr-${{ github.event.pull_request.number }}
-      - uses: actions/github-script@v7
+      - name: Deploy preview stage
+        run: npx sst deploy --stage pr-${{ github.event.pull_request.number }}
+      - name: Comment preview URL
+        uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const prNumber = context.issue.number;
+            const previewUrl = `https://pr-${prNumber}.preview.ripple-next.com`;
+            const body = `Preview deployed to: ${previewUrl}\n\nStage: \`pr-${prNumber}\` | Tagged with \`ttl: 7d\``;
+
+            // Update existing comment instead of creating duplicates
+            const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Preview deployed to: https://pr-${{ github.event.pull_request.number }}.preview.ripple-next.com'
-            })
+              issue_number: prNumber,
+            });
+            const existing = comments.data.find(c => c.body?.includes('Preview deployed to:'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }

@@ -122,8 +122,10 @@ The CI pipeline provides structured observability and supply-chain security:
 - **Build provenance** — Attestations via `actions/attest-build-provenance`
 - **Reusable actions** — `.github/actions/{setup,quality,test}` for fleet consistency
 - **Env schema validation** — Zod-based validation of required/optional env vars in CI quality gate
+- **Flaky test containment** — Quarantine policy with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap
+- **Preview deploy guardrails** — GitHub environment protection, label-gated deploys, infra change auto-deploy
 
-See [ADR-010](./adr/010-ci-observability-supply-chain.md) and [ADR-012](./adr/012-env-schema-validation.md) for the rationale.
+See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-env-schema-validation.md), [ADR-013](./adr/013-flaky-test-containment.md), and [ADR-014](./adr/014-preview-deploy-guardrails.md) for the rationale.
 
 ## Related Documentation
 
@@ -138,3 +140,5 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md) and [ADR-012](./adr/01
 - [ADR Index](./adr/) — all Architecture Decision Records
 - [ADR-011: CMS Decoupling](./adr/011-cms-decoupling-pull-out-drupal.md) — pull-out-Drupal strategy
 - [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment schema validation gate
+- [ADR-013: Flaky Test Containment](./adr/013-flaky-test-containment.md) — quarantine policy for flaky tests
+- [ADR-014: Preview Deploy Guardrails](./adr/014-preview-deploy-guardrails.md) — environment protection for preview deploys
