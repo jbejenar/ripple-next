@@ -91,6 +91,7 @@ pnpm dev
 | [ADR-015](docs/adr/015-localstack-assessment.md)         | LocalStack — provider pattern preferred |
 | [ADR-016](docs/adr/016-roadmap-reorganisation.md)        | Roadmap reorganisation — AI-first priority tiers |
 | [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
+| [ADR-018](docs/adr/018-ai-first-workflow-strategy.md) | AI-first workflow — runbooks, generators, error taxonomy |
 
 ## Repository Structure
 

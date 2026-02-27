@@ -22,7 +22,8 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 ## Key Files for Agent Planning
 
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
-- `docs/product-roadmap/` — product roadmap, agent-friction scorecard, improvement phases
+- `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
+- `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
@@ -85,6 +86,16 @@ Do NOT add manual imports for: `ref`, `computed`, `watch`, `onMounted`, `useRout
 `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`.
 
 DO manually import: anything from `@ripple/*` packages, `node_modules`, tRPC utilities.
+
+## AI-First Workflow Strategy (ADR-018)
+
+This platform treats AI agents as first-class developers. Three pillars:
+
+1. **Runbooks** — Codified, executable procedures for common operations (RN-039)
+2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040)
+3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041)
+
+See `docs/adr/018-ai-first-workflow-strategy.md` for the full strategy.
 
 ## Documentation Maintenance (Default Agent Directive)
 

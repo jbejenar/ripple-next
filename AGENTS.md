@@ -301,3 +301,5 @@ When making changes, match the change type to the right validation:
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |
 | Infrastructure change | `npx sst deploy --stage pr-{n}`, review SST diff |
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
+| Roadmap/docs change | `pnpm check:readiness`, update `readiness.json`, cross-reference ADRs |
+| New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md + README.md |

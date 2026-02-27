@@ -129,6 +129,21 @@ The CI pipeline provides structured observability and supply-chain security:
 
 See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-env-schema-validation.md), [ADR-013](./adr/013-flaky-test-containment.md), and [ADR-014](./adr/014-preview-deploy-guardrails.md) for the rationale.
 
+## AI-First Workflow Strategy
+
+Beyond parseable outputs and fast test loops, the platform provides agent-native
+workflow tooling ([ADR-018](./adr/018-ai-first-workflow-strategy.md)):
+
+| Pillar | Status | Roadmap Item | Description |
+|--------|--------|-------------|-------------|
+| Runbook automation | Planned | [RN-039](./product-roadmap/README.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
+| Error taxonomy | Planned | [RN-040](./product-roadmap/README.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
+| Code generators | Planned | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints |
+
+These complement the existing agent ergonomics: `pnpm doctor --json`,
+`pnpm bootstrap`, `pnpm validate:env`, provider conformance suites, and
+structured CI artifacts.
+
 ## Related Documentation
 
 - [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
@@ -139,7 +154,7 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-e
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (17 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (18 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 
 ### Key ADRs
@@ -163,3 +178,4 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-e
 | [ADR-015](./adr/015-localstack-assessment.md) | LocalStack — provider pattern preferred | Infrastructure |
 | [ADR-016](./adr/016-roadmap-reorganisation.md) | Roadmap reorganisation — AI-first tiers | Process |
 | [ADR-017](./adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, sync | Frontend |
+| [ADR-018](./adr/018-ai-first-workflow-strategy.md) | AI-first workflow strategy | Process |

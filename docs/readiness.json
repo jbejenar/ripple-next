@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.9.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27. See ADR-018 for AI-first workflow strategy.",
+  "version": "0.10.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -110,6 +110,18 @@
       "paths": ["apps/web/composables/useNavigation.ts", "apps/web/layouts/default.vue"],
       "blockers": [],
       "testCoverage": "component-tested"
+    },
+    "agent-tooling": {
+      "status": "planned",
+      "description": "AI-first agent workflow tooling: runbook automation (RN-039), structured error taxonomy (RN-040), code generation templates (RN-041), and agent session observability (RN-043). Strategy documented in ADR-018.",
+      "packages": [],
+      "paths": ["docs/runbooks/", "scripts/generate/", "docs/error-taxonomy.json"],
+      "blockers": [
+        "Runbooks not yet created (RN-039)",
+        "Error taxonomy not yet defined (RN-040)",
+        "Code generators not yet built (RN-041)"
+      ],
+      "testCoverage": "none"
     }
   },
   "statusLegend": {

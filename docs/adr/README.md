@@ -25,6 +25,7 @@
 | [015](./015-localstack-assessment.md) | LocalStack Assessment — Provider Pattern over Emulation | Accepted | Infrastructure |
 | [016](./016-roadmap-reorganisation.md) | Roadmap Reorganisation — AI-First Priority Tiers and Suggestion Governance | Accepted | Process |
 | [017](./017-upstream-ripple-component-strategy.md) | Upstream Ripple Component Strategy — Port, Own, Selectively Sync | Accepted | Frontend |
+| [018](./018-ai-first-workflow-strategy.md) | AI-First Workflow Strategy — Runbooks, Generators, Error Taxonomy | Accepted | Process |
 
 ## Categories
 
@@ -60,10 +61,11 @@
 
 ### Process
 - **ADR-016** — Roadmap reorganisation with AI-first priority tiers and suggestion governance
+- **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `017`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `018`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that
