@@ -14,12 +14,7 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', '@ripple/ui/nuxt'],
 
   // Nuxt layers for feature separation
-  extends: [
-    './layers/core',
-    './layers/auth',
-    './layers/admin',
-    './layers/public'
-  ],
+  extends: ['./layers/core', './layers/auth', './layers/admin', './layers/public'],
 
   // Nitro server config (deploys to Lambda via SST)
   // NITRO_PRESET env var overrides for e2e tests (node-server)

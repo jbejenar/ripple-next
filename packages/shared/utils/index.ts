@@ -23,7 +23,10 @@ export function truncate(text: string, maxLength: number): string {
  */
 export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
   const d = typeof date === 'string' ? new Date(date) : date
-  return d.toLocaleDateString('en-AU', options ?? { day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString(
+    'en-AU',
+    options ?? { day: 'numeric', month: 'long', year: 'numeric' }
+  )
 }
 
 /**

@@ -12,6 +12,7 @@ permissions:
 Analyze the new issue and add appropriate labels.
 
 ## Steps
+
 1. Read the issue title and description
 2. Determine the type: bug, feature, docs, infrastructure
 3. Determine priority: critical, high, medium, low

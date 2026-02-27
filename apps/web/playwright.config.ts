@@ -31,9 +31,7 @@ export default defineConfig({
       : [])
   ],
   webServer: {
-    command: process.env.CI
-      ? 'node .output/server/index.mjs'
-      : 'nuxi dev',
+    command: process.env.CI ? 'node .output/server/index.mjs' : 'nuxi dev',
     port: 3000,
     reuseExistingServer: !process.env.CI
   }

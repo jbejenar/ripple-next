@@ -54,9 +54,7 @@
       "status": "partial",
       "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer). Storybook configured.",
       "packages": ["@ripple/ui"],
-      "blockers": [
-        "Component library is still foundational — more components needed"
-      ],
+      "blockers": ["Component library is still foundational — more components needed"],
       "testCoverage": "component-tests-exist"
     },
     "api": {

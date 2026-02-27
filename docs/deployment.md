@@ -1,5 +1,19 @@
 # Deployment Guide
 
+## Deployment Pipeline
+
+```mermaid
+flowchart LR
+    PR[Pull Request] --> Preview["Preview<br/>pr-{number}"]
+    Main[Merge to main] --> Staging[Staging]
+    Staging --> Gate{Manual Approval}
+    Gate -->|Approved| Prod[Production]
+
+    style Preview fill:#e1f5fe
+    style Staging fill:#fff3e0
+    style Prod fill:#e8f5e9
+```
+
 ## Prerequisites
 
 - AWS account with appropriate IAM role
@@ -24,6 +38,8 @@ pnpm db:seed
 # Start dev server
 pnpm dev
 ```
+
+Local development uses the [Provider Pattern](./provider-pattern.md) to swap AWS services for local equivalents (BullMQ, MinIO, Mailpit).
 
 ## Preview Environments
 
@@ -56,6 +72,7 @@ npx sst deploy --stage production
 ```
 
 Production uses:
+
 - `removal: "retain"` — resources are NOT deleted on stack removal
 - `protect: true` — prevents accidental deletion
 
@@ -68,3 +85,11 @@ npx sst dev
 ```
 
 This deploys infrastructure to AWS but proxies Lambda invocations to your local machine.
+
+## Related Documentation
+
+- [Architecture](./architecture.md) — system overview
+- [Provider Pattern](./provider-pattern.md) — local dev service swapping
+- [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
+- [ADR-004: SST over CDK](./adr/004-sst-over-cdk.md) — infrastructure tool choice
+- [ADR-005: Lambda Default](./adr/005-lambda-default-ecs-escape.md) — compute strategy

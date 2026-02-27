@@ -26,13 +26,7 @@ async function handleLogin(): Promise<void> {
   <div class="rpl-page-login">
     <h1>Sign In</h1>
     <form @submit.prevent="handleLogin">
-      <RplFormInput
-        v-model="email"
-        data-testid="email"
-        label="Email"
-        type="email"
-        required
-      />
+      <RplFormInput v-model="email" data-testid="email" label="Email" type="email" required />
       <RplFormInput
         v-model="password"
         data-testid="password"
@@ -40,11 +34,7 @@ async function handleLogin(): Promise<void> {
         type="password"
         required
       />
-      <RplButton
-        data-testid="submit"
-        type="submit"
-        :disabled="isLoading"
-      >
+      <RplButton data-testid="submit" type="submit" :disabled="isLoading">
         {{ isLoading ? 'Signing in...' : 'Sign In' }}
       </RplButton>
     </form>

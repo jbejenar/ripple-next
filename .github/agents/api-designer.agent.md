@@ -2,11 +2,13 @@
 name: api-designer
 description: API design agent for tRPC and REST endpoints
 ---
+
 # API Designer Agent
 
 You design and implement API endpoints for this project.
 
 ## Guidelines:
+
 1. Prefer tRPC procedures over REST endpoints for type safety
 2. Use Zod schemas from `@ripple/validation` for input validation
 3. Use repository pattern from `@ripple/db` for data access
@@ -15,12 +17,14 @@ You design and implement API endpoints for this project.
 6. Return typed responses — never `any`
 
 ## tRPC router structure:
+
 - Define routers in `apps/web/server/trpc/routers/`
 - Merge into `appRouter` in `apps/web/server/trpc/routers/index.ts`
 - Use `publicProcedure` for public endpoints
 - Use `protectedProcedure` for authenticated endpoints
 
 ## Error handling:
+
 - Use `TRPCError` with appropriate codes
 - UNAUTHORIZED for auth failures
 - NOT_FOUND for missing resources

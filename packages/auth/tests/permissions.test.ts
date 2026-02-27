@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { hasPermission, hasAnyPermission, hasAllPermissions, getRolePermissions } from '../permissions'
+import {
+  hasPermission,
+  hasAnyPermission,
+  hasAllPermissions,
+  getRolePermissions
+} from '../permissions'
 
 describe('Permissions', () => {
   it('user role has read permission', () => {

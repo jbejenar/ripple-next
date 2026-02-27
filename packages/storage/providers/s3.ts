@@ -17,7 +17,10 @@ export class S3StorageProvider implements StorageProvider {
   private client: S3Client
   private bucket: string
 
-  constructor(bucket: string, options?: { endpoint?: string; region?: string; forcePathStyle?: boolean }) {
+  constructor(
+    bucket: string,
+    options?: { endpoint?: string; region?: string; forcePathStyle?: boolean }
+  ) {
     this.bucket = bucket
     this.client = new S3Client({
       region: options?.region ?? 'ap-southeast-2',
@@ -26,7 +29,11 @@ export class S3StorageProvider implements StorageProvider {
     })
   }
 
-  async upload(key: string, body: Buffer | Uint8Array | string, options?: UploadOptions): Promise<void> {
+  async upload(
+    key: string,
+    body: Buffer | Uint8Array | string,
+    options?: UploadOptions
+  ): Promise<void> {
     await this.client.send(
       new PutObjectCommand({
         Bucket: this.bucket,
@@ -39,24 +46,18 @@ export class S3StorageProvider implements StorageProvider {
   }
 
   async download(key: string): Promise<Buffer> {
-    const result = await this.client.send(
-      new GetObjectCommand({ Bucket: this.bucket, Key: key })
-    )
+    const result = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }))
     const bytes = await result.Body!.transformToByteArray()
     return Buffer.from(bytes)
   }
 
   async delete(key: string): Promise<void> {
-    await this.client.send(
-      new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
-    )
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }))
   }
 
   async exists(key: string): Promise<boolean> {
     try {
-      await this.client.send(
-        new HeadObjectCommand({ Bucket: this.bucket, Key: key })
-      )
+      await this.client.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }))
       return true
     } catch {
       return false
@@ -75,10 +76,8 @@ export class S3StorageProvider implements StorageProvider {
   }
 
   async getSignedUrl(key: string, expiresIn?: number): Promise<string> {
-    return getSignedUrl(
-      this.client,
-      new GetObjectCommand({ Bucket: this.bucket, Key: key }),
-      { expiresIn: expiresIn ?? 3600 }
-    )
+    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
+      expiresIn: expiresIn ?? 3600
+    })
   }
 }
