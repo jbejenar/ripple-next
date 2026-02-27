@@ -1,0 +1,50 @@
+name: Run Tests with Artifacts
+description: Run Vitest tests and upload JUnit XML + coverage reports as artifacts
+
+inputs:
+  upload-artifacts:
+    description: Whether to upload test artifacts
+    required: false
+    default: 'true'
+  coverage:
+    description: Whether to generate coverage reports
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Run tests with JUnit reporter
+      shell: bash
+      run: pnpm test:ci
+      env:
+        DATABASE_URL: ${{ env.DATABASE_URL }}
+        REDIS_URL: ${{ env.REDIS_URL }}
+
+    - name: Generate coverage report
+      if: inputs.coverage == 'true'
+      shell: bash
+      run: pnpm vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=text --coverage.reportsDirectory=test-results/coverage
+      env:
+        DATABASE_URL: ${{ env.DATABASE_URL }}
+        REDIS_URL: ${{ env.REDIS_URL }}
+
+    - name: Upload test results
+      if: inputs.upload-artifacts == 'true' && always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          test-results/
+          **/test-results/
+        retention-days: 30
+
+    - name: Upload coverage report
+      if: inputs.upload-artifacts == 'true' && inputs.coverage == 'true' && always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: |
+          test-results/coverage/
+          **/coverage/
+        retention-days: 30

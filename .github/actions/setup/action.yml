@@ -1,0 +1,27 @@
+name: Setup Node & pnpm
+description: Shared setup for Node.js 22 and pnpm with frozen lockfile install
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: '22'
+  registry-url:
+    description: npm registry URL (for publish steps)
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

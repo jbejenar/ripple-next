@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.2.0
+> Last updated: 2026-02-27 | Version: 1.3.0
 
 ## Executive Verdict
 
@@ -8,24 +8,28 @@
 
 The repo has strong foundations for an **AI-first** government digital platform:
 pinned package manager + lockfile discipline, a dedicated `pnpm doctor` command,
-tiered CI, isolated preview stages, and changeset-based publishing.
+tiered CI with structured test artifacts, isolated preview stages, changeset-based
+publishing with SBOM and provenance, and reusable composite actions for fleet
+consistency.
 
 Top blockers before this can be the default golden path for a large AI-first fleet:
 
-1. **CMS content layer** — `@ripple/cms` provider pattern implemented (MVP); DrupalCmsProvider + MockCmsProvider + Tide-compatible UI components shipped.
-2. **Security/supply-chain gates** — Add SAST/SCA/secret scanning/SBOM/provenance in CI. *(In Progress)*
-3. **CI artifact observability** — Extend structured test/coverage artifact uploads beyond Playwright.
-4. **Fleet template/update mechanics** — Repo-template + sync bot for downstream upgrades.
+1. **CMS content layer** — `@ripple/cms` provider pattern implemented (MVP); DrupalCmsProvider + MockCmsProvider + Tide-compatible UI components shipped. Live Drupal integration pending.
+2. **Fleet template/update mechanics** — Repo-template + sync bot for downstream upgrades.
 
 ### Evidence Highlights
 
 - Deterministic package manager and lockfile usage present (`pnpm@9.15.4`, frozen lockfile in CI).
 - CI is tiered with change detection and high-risk routing.
+- **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
+- **SBOM + provenance** — CycloneDX SBOM generated and build provenance attested on every release.
+- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos.
 - Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
 - `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics.
 - `.env.example` with `NUXT_` prefixed vars documents the full environment contract.
+- **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 
 ### Platform Maturity Overview
 
@@ -49,8 +53,6 @@ graph LR
         CMS["Drupal/Tide CMS"]
     end
     subgraph Planned
-        SEC[Security Gates]
-        SBOM[SBOM/Provenance]
         FLEET[Fleet Templates]
     end
 
@@ -66,8 +68,6 @@ graph LR
     style PUB fill:#22c55e,color:#fff
     style UI fill:#f59e0b,color:#fff
     style API fill:#f59e0b,color:#fff
-    style SEC fill:#6366f1,color:#fff
-    style SBOM fill:#6366f1,color:#fff
     style FLEET fill:#6366f1,color:#fff
     style CMS fill:#f59e0b,color:#fff
 ```
@@ -77,10 +77,10 @@ graph LR
 | # | Blocker | Impact | Status |
 |---|---------|--------|--------|
 | 1 | **Drupal/Tide CMS integration** — `@ripple/cms` provider pattern with MockCmsProvider and DrupalCmsProvider; Tide-compatible content section renderers; API routes and composables wired | MVP shipped — content parity with original Ripple achieved at provider level | **Partial** |
-| 2 | No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance) | Critical — required for hostile-internet assumptions and fleet trust | **In Progress** |
-| 3 | Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents | High — breaks ephemeral/offline runners | **Done** |
-| 4 | No standardized env contract artifact (.env.example/schema) | High — hidden setup variance across teams/agents | **Done** |
-| 5 | CI artifact observability is partial (Playwright only, no structured reports for unit/integration) | Medium — limits CI debugging at scale | Planned |
+| 2 | ~~No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance)~~ | ~~Critical~~ | **Done** |
+| 3 | ~~Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents~~ | ~~High~~ | **Done** |
+| 4 | ~~No standardized env contract artifact (.env.example/schema)~~ | ~~High~~ | **Done** |
+| 5 | ~~CI artifact observability is partial (Playwright only, no structured reports for unit/integration)~~ | ~~Medium~~ | **Done** |
 | 6 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
 
 ---
@@ -136,10 +136,10 @@ AWS-emulation-heavy.
 | Local dev parity with CI | 4/5 | Shared pnpm/node/tooling and Postgres/Redis in CI; docker-compose mirrors infra locally. |
 | Test reliability / flake resistance | 4/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. |
 | Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile + node versioning present; many deps still semver-ranged (normal). |
-| Observability of failures | 3/5 | Good baseline + Playwright artifact upload; broader standardized test artifacts missing. |
-| Automated remediation friendliness | 4/5 | `pnpm doctor --json` provides stable machine contract. `--offline` flag for ephemeral runners. |
+| Observability of failures | 4/5 | JUnit XML test artifacts uploaded on every CI run (30-day retention). Playwright traces on failure (7-day). Coverage reports available. Structured artifact naming convention. |
+| Automated remediation friendliness | 4/5 | `pnpm doctor --json` provides stable machine contract. `--offline` flag for ephemeral runners. Reusable composite actions for downstream repo CI setup. |
 
-**Overall: 27/35** — Strong foundation, improved from 25/35 with bootstrap and doctor upgrades.
+**Overall: 28/35** — Strong foundation, improved from 27/35 with CI observability and reusable actions.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -147,7 +147,7 @@ xychart-beta
     title "Agent-Friction Scorecard (0-5)"
     x-axis ["Setup", "Workflows", "Dev Parity", "Test Reliability", "Pinning", "Observability", "Remediation"]
     y-axis "Score" 0 --> 5
-    bar [4, 4, 4, 4, 4, 3, 4]
+    bar [4, 4, 4, 4, 4, 4, 4]
 ```
 
 ---
@@ -162,8 +162,9 @@ Strong PR stage namespacing (`pr-{number}`) + cleanup workflow; CI concurrency
 cancel-in-progress by ref.
 
 ### Repo templating/bootstrapping strategy
-Architecture docs are solid, but no explicit template-generation + update propagation
-mechanism for downstream clones.
+Architecture docs are solid. Reusable composite actions (`.github/actions/`) provide
+CI consistency for downstream repos. Full template-generation + update propagation
+mechanism planned.
 
 ### Versioning for 100s of projects
 Changesets + private package publishing is the right direction for fleet upgrades
@@ -195,10 +196,10 @@ graph TD
 
 | Area | Current State | Target |
 |------|--------------|--------|
-| Secrets handling | Workflows use OIDC role assumption (good) | Add secret scanning in CI |
-| Dependency risk | No scanning workflow | Add dependency scan (Dependabot/Trivy) |
-| SBOM/provenance | Not present | CycloneDX/SPDX + signed attestations |
-| SAST/DAST | Not present | CodeQL/Semgrep + SARIF upload |
+| Secrets handling | Workflows use OIDC role assumption (good) + Gitleaks audit | Maintained |
+| Dependency risk | Dependency review on PRs (blocks high-severity + GPL/AGPL) | Maintained |
+| SBOM/provenance | CycloneDX SBOM generated on release + build provenance attestation | SPDX as additional format if compliance requires |
+| SAST/DAST | CodeQL SAST with SARIF upload | Maintained |
 
 ```mermaid
 graph LR
@@ -208,16 +209,23 @@ graph LR
         DEP[Dependency Review] --> BLOCK["Block high-severity<br/>+ GPL/AGPL"]
         SEC[Gitleaks Secret Audit] --> ALERT[Alert on findings]
     end
+    subgraph "Release Pipeline (release.yml)"
+        direction TB
+        SBOM[CycloneDX SBOM] --> ATTEST[Build Provenance<br/>Attestation]
+    end
     PR[Pull Request] --> CQL
     PR --> DEP
     PUSH[Push to main] --> CQL
     PUSH --> SEC
+    PUSH --> SBOM
     CRON["Weekly schedule"] --> CQL
     CRON --> SEC
 
     style CQL fill:#ef4444,color:#fff
     style DEP fill:#f59e0b,color:#fff
     style SEC fill:#6366f1,color:#fff
+    style SBOM fill:#22c55e,color:#fff
+    style ATTEST fill:#22c55e,color:#fff
 ```
 
 ---
@@ -316,6 +324,8 @@ already use it) while remaining CMS-agnostic for new deployments.
 | Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. |
 | Backwards compatibility | Changesets and package publishing support incremental consumer upgrades — key fleet strength. |
 | CMS integration | **Partial (MVP).** `@ripple/cms` provider pattern with MockCmsProvider, DrupalCmsProvider, conformance tests, Zod schemas, API routes, composables, and Tide-compatible content section renderers. Remaining: integration tests with live Drupal, full paragraph mapping, Storybook stories for content components. |
+| CI observability | **Strong.** JUnit XML test artifacts, coverage reports, Playwright traces, structured naming convention, 30-day retention. |
+| Supply-chain security | **Strong.** CycloneDX SBOM, build provenance attestations, CodeQL SAST, dependency review, Gitleaks. |
 
 ```mermaid
 graph TD
@@ -387,10 +397,11 @@ graph TD
 
 | Area | Assessment |
 |------|-----------|
-| Pipeline design | Tiered CI with path filters and risk-triggered E2E is efficient and scalable. |
+| Pipeline design | Tiered CI with path filters, risk-triggered E2E, and reusable composite actions. |
 | Reproducible builds | Node 22 + frozen lockfile + consistent pnpm usage; no full hermetic containerized build yet. |
-| Artifact strategy | E2E artifacts on failure exist; broaden to JUnit/coverage artifacts for all quality jobs. |
+| Artifact strategy | JUnit XML + coverage reports for all test jobs (30-day retention). Playwright traces on failure (7-day). SBOM on release (90-day). |
 | Progressive delivery | Preview/staging/production paths defined; production uses environment gate + SST protect/retain. |
+| Supply-chain | CycloneDX SBOM + build provenance attestations on every release. CodeQL SAST, dependency review, Gitleaks. |
 
 ```mermaid
 graph LR
@@ -409,7 +420,15 @@ graph LR
     subgraph "Release (main only)"
         CS[Changesets] --> VER[Version Bump]
         VER --> BUILD[Build + Validate]
-        BUILD --> PUBLISH[Publish to Registry]
+        BUILD --> SBOM_GEN[SBOM + Provenance]
+        SBOM_GEN --> PUBLISH[Publish to Registry]
+    end
+
+    subgraph "Artifacts"
+        JUNIT[JUnit XML<br/>30-day]
+        COV[Coverage<br/>30-day]
+        TRACES[Playwright Traces<br/>7-day]
+        SBOM_ART[CycloneDX SBOM<br/>90-day]
     end
 
     subgraph "Deploy"
@@ -420,6 +439,10 @@ graph LR
 
     GATE1 -->|high-risk| E2E
     GATE1 -->|infra change| PREVIEW
+    UNIT -.-> JUNIT
+    UNIT -.-> COV
+    E2E -.-> TRACES
+    SBOM_GEN -.-> SBOM_ART
     E2E --> STAGING
     STAGING -->|gate| PRODUCTION
 
@@ -427,6 +450,8 @@ graph LR
     style PRODUCTION fill:#ef4444,color:#fff
     style STAGING fill:#f59e0b,color:#fff
     style PREVIEW fill:#22c55e,color:#fff
+    style SBOM_GEN fill:#22c55e,color:#fff
+    style SBOM_ART fill:#22c55e,color:#fff
 ```
 
 ---
@@ -444,13 +469,15 @@ gantt
     Doctor --json + --offline                  :done, doc, 2026-02-27, 5d
     .env.example + pnpm bootstrap              :done, env, 2026-02-27, 5d
     @ripple/cms provider + Drupal integration  :done, cms, 2026-02-28, 14d
-    CI test artifact upload                    :active, art, 2026-03-03, 7d
+    CI test artifact upload                    :done, art, 2026-03-03, 7d
 
     section Phase 2 — Do Next
     CMS page rendering + Tide components       :done, cms2, 2026-03-14, 21d
-    Standardize CI artifacts                   :ci, 2026-03-17, 14d
-    SBOM + provenance in release               :sbom, 2026-03-17, 21d
-    Reusable org workflows                     :reuse, 2026-04-01, 21d
+    Standardize CI artifacts                   :done, ci_art, 2026-03-17, 7d
+    SBOM + provenance in release               :done, sbom, 2026-03-17, 7d
+    Reusable composite actions                 :done, reuse, 2026-03-17, 7d
+    Live Drupal integration testing            :drupal, 2026-04-01, 21d
+    Search integration provider                :search, 2026-04-15, 21d
 
     section Phase 3 — Do Later
     Fleet update mechanism                     :fleet, 2026-05-01, 30d
@@ -458,7 +485,7 @@ gantt
     Contract testing across consumers          :contract, 2026-06-01, 30d
 ```
 
-### Phase 1: Do Now (1-2 weeks)
+### Phase 1: Do Now (1-2 weeks) — COMPLETE
 
 #### 1.1 Security Pipeline (`security.yml`)
 
@@ -529,13 +556,15 @@ See: [Drupal/Tide CMS Integration](#drupaltide-cms-integration-gap-analysis)
 Add structured test result uploads (JUnit XML + coverage reports) to the
 test job in CI for better observability.
 
-- [ ] Add Vitest JUnit reporter to test configuration
-- [ ] Upload test results as artifacts in CI
-- [ ] Add coverage summary comment on PRs
+See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
+
+- [x] Add Vitest JUnit reporter to test configuration
+- [x] Upload test results as artifacts in CI (30-day retention)
+- [x] Standardized artifact naming convention (`test-results-unit`, `test-results-e2e`)
 
 ---
 
-### Phase 2: Do Next (1-2 months)
+### Phase 2: Do Next (1-2 months) — MOSTLY COMPLETE
 
 #### 2.1 CMS Page Rendering + Tide Components
 
@@ -560,9 +589,11 @@ Tide content types.
 JUnit XML, coverage reports, and test logs for every CI job with consistent
 retention and naming policy.
 
-- [ ] Configure Vitest JUnit reporter across all workspaces
-- [ ] Upload artifacts with standardized naming (`{job}-{suite}-results`)
-- [ ] Set retention policy (30 days for reports, 7 days for traces)
+See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
+
+- [x] Configure Vitest JUnit reporter across all workspaces
+- [x] Upload artifacts with standardized naming (`test-results-unit`, `test-results-e2e`)
+- [x] Set retention policy (30 days for reports, 7 days for traces, 90 days for SBOM)
 
 #### 2.3 SBOM + Provenance in Release
 
@@ -571,19 +602,24 @@ retention and naming policy.
 Add CycloneDX/SPDX SBOM generation and signed attestations to the release
 workflow.
 
-- [ ] Add `@cyclonedx/bom` or equivalent to release pipeline
-- [ ] Generate provenance attestations with `actions/attest-build-provenance`
-- [ ] Publish SBOM alongside package releases
+See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
 
-#### 2.4 Reusable Org Workflows
+- [x] Add `@cyclonedx/cyclonedx-npm` to release pipeline
+- [x] Generate provenance attestations with `actions/attest-build-provenance`
+- [x] Upload SBOM alongside package releases (90-day retention)
+
+#### 2.4 Reusable Composite Actions
 
 **Impact:** Very High | **Effort:** Medium | **Risk:** Medium
 
-Publish reusable GitHub Actions workflows for lint/test/typecheck/security/deploy
-patterns that downstream repos can reference.
+Publish reusable GitHub Actions for lint/test/typecheck/setup patterns that
+downstream repos can reference.
 
-- [ ] Extract workflow steps into reusable composite actions
-- [ ] Create `.github/actions/` directory with shared actions
+See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
+
+- [x] Extract workflow steps into reusable composite actions
+- [x] Create `.github/actions/` directory with `setup`, `quality`, `test` actions
+- [x] CI workflow updated to use composite actions (reduced duplication)
 - [ ] Document workflow consumption pattern for downstream repos
 
 ---
@@ -659,15 +695,17 @@ graph TD
 - [x] Security gates in CI (`security.yml`)
 - [x] PR preview isolation + automatic teardown
 - [x] Changeset/release automation
-- [ ] SBOM/provenance in releases
+- [x] SBOM/provenance in releases
 - [x] CODEOWNERS + policy checks on critical paths
+- [x] Structured test artifact uploads (JUnit XML + coverage)
+- [x] Reusable composite actions for fleet CI consistency
 
 ### Template strategy (spawn + keep updated)
 
 Maintain this repo as golden-path source, plus:
 
 1. **Template distribution layer** — GitHub template or scaffolder
-2. **Reusable org workflows** — referenced by all derived repos
+2. **Reusable org workflows** — referenced by all derived repos (composite actions shipped)
 3. **Automated drift detection** — sync PRs for standards/security updates
 4. **Keep domain logic in versioned `@ripple/*` libraries** — keep templates thin
 
@@ -675,7 +713,7 @@ Maintain this repo as golden-path source, plus:
 graph TD
     GOLDEN["Golden Repo (ripple-next)"] -->|template| SCAFFOLD[Scaffolder / gh template]
     GOLDEN -->|publish| PACKAGES["@ripple/* packages"]
-    GOLDEN -->|share| WORKFLOWS["Reusable Workflows"]
+    GOLDEN -->|share| WORKFLOWS["Reusable Actions<br/>(.github/actions/)"]
 
     SCAFFOLD -->|creates| REPO_A[Team A Repo]
     SCAFFOLD -->|creates| REPO_B[Team B Repo]

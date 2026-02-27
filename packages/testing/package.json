@@ -19,8 +19,8 @@
     "fishery": "^2.2.2"
   },
   "devDependencies": {
-    "@testcontainers/postgresql": "^10.16.0",
-    "testcontainers": "^10.16.0",
+    "@testcontainers/postgresql": "^11.0.0",
+    "testcontainers": "^11.0.0",
     "typescript": "^5.7.3",
     "vitest": "^3.0.4"
   }

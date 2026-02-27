@@ -106,6 +106,19 @@ See [Lambda vs ECS](./lambda-vs-ecs.md) for the full decision guide, and [ADR-00
 
 See [Deployment Guide](./deployment.md) for details, and [ADR-004](./adr/004-sst-over-cdk.md) for why SST.
 
+## CI Observability and Supply-Chain Security
+
+The CI pipeline provides structured observability and supply-chain security:
+
+- **Test artifacts** — JUnit XML reports uploaded on every CI run (30-day retention)
+- **Coverage reports** — Available as downloadable artifacts
+- **Playwright traces** — Uploaded on E2E failure (7-day retention)
+- **SBOM** — CycloneDX SBOM generated on every release (90-day retention)
+- **Build provenance** — Attestations via `actions/attest-build-provenance`
+- **Reusable actions** — `.github/actions/{setup,quality,test}` for fleet consistency
+
+See [ADR-010](./adr/010-ci-observability-supply-chain.md) for the rationale.
+
 ## Related Documentation
 
 - [Provider Pattern](./provider-pattern.md) — core architecture pattern
