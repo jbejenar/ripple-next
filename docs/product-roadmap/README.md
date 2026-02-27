@@ -378,6 +378,50 @@ gantt
 
 ---
 
+## Tech Lead Suggestions
+
+> **This section is for human tech leads, architects, and team members** to
+> propose roadmap changes, challenge priorities, or flag concerns. AI agents
+> should read this section during planning but must not modify it — only
+> humans should add or edit entries here.
+
+### How to Suggest a Change
+
+1. Add your suggestion below using the template
+2. Include your name/handle and the date
+3. Tag it with a category: `[Priority Change]`, `[New Item]`, `[Challenge]`, `[Removal]`, or `[Question]`
+4. An AI agent or human reviewer will triage suggestions into the active roadmap during the next roadmap review
+
+### Suggestion Template
+
+```markdown
+#### [Category] Short Title
+**Author:** @yourname | **Date:** YYYY-MM-DD
+
+Description of the suggestion, rationale, and any evidence or context.
+
+**Affected items:** RN-XXX, RN-YYY (if applicable)
+**Proposed action:** What should happen (e.g., reprioritize, add new item, remove, merge)
+```
+
+### Open Suggestions
+
+_No open suggestions. Add yours above using the template._
+
+<!-- Example (remove when first real suggestion is added):
+#### [Priority Change] Elevate RN-030 above RN-019
+**Author:** @jsmith | **Date:** 2026-03-01
+
+UI component tests (RN-030) should be prioritized over navigation components
+(RN-019) because test coverage gaps are blocking the UI subsystem from moving
+to "implemented" status. Navigation can wait — test confidence cannot.
+
+**Affected items:** RN-030, RN-019
+**Proposed action:** Swap priority ordering; start RN-030 in next sprint
+-->
+
+---
+
 ## Reference Sections
 
 ### LocalStack Assessment
