@@ -6,13 +6,14 @@ Port of the Victorian government [Ripple design system](https://github.com/dpc-s
 ## Quick Start
 
 ```bash
-# Install dependencies
-pnpm install
+# One-command setup (install + doctor + validate)
+pnpm bootstrap
 
 # Start local services (Postgres, Redis, MinIO, Mailpit, MeiliSearch)
 docker compose up -d
 
-# Run migrations and seed
+# Copy env template and run migrations
+cp .env.example .env
 pnpm db:migrate && pnpm db:seed
 
 # Start development server
@@ -35,19 +36,21 @@ pnpm dev
 
 ## Commands
 
-| Command                | Description        |
-| ---------------------- | ------------------ |
-| `pnpm dev`             | Start dev server   |
-| `pnpm build`           | Build all packages |
-| `pnpm test`            | Run all tests      |
-| `pnpm test:e2e`        | Run E2E tests      |
-| `pnpm lint`            | Lint all code      |
-| `pnpm typecheck`       | Type check         |
-| `pnpm db:generate`     | Generate migration |
-| `pnpm db:migrate`      | Run migrations     |
-| `pnpm db:seed`         | Seed dev data      |
-| `pnpm storybook`       | Start Storybook    |
-| `pnpm storybook:build` | Build Storybook    |
+| Command                | Description                    |
+| ---------------------- | ------------------------------ |
+| `pnpm bootstrap`       | First-time setup (all-in-one)  |
+| `pnpm doctor`          | Validate environment readiness |
+| `pnpm dev`             | Start dev server               |
+| `pnpm build`           | Build all packages             |
+| `pnpm test`            | Run all tests                  |
+| `pnpm test:e2e`        | Run E2E tests                  |
+| `pnpm lint`            | Lint all code                  |
+| `pnpm typecheck`       | Type check                     |
+| `pnpm db:generate`     | Generate migration             |
+| `pnpm db:migrate`      | Run migrations                 |
+| `pnpm db:seed`         | Seed dev data                  |
+| `pnpm storybook`       | Start Storybook                |
+| `pnpm storybook:build` | Build Storybook                |
 
 ## Documentation
 
@@ -61,6 +64,7 @@ pnpm dev
 | [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
+| [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, scorecard, and improvement phases   |
 | [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
 
 ### Architecture Decision Records
