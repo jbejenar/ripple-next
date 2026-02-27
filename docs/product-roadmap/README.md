@@ -1,6 +1,11 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.6.0
+> Last updated: 2026-02-27 | Version: 2.0.0
+
+Every item has a unique ticket number (`RN-XXX`). Completed items live in
+[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-016).
+
+---
 
 ## Executive Verdict
 
@@ -12,30 +17,29 @@ tiered CI with structured test artifacts, isolated preview stages, changeset-bas
 publishing with SBOM and provenance, and reusable composite actions for fleet
 consistency.
 
-Top blockers before this can be the default golden path for a large AI-first fleet:
-
-1. ~~**CMS content layer**~~ — `@ripple/cms` fully implemented with Drupal decoupling architecture. Full paragraph-to-section mapping, provider factory with dynamic imports, DrupalCmsProvider unit tests. Drupal isolated to 2 files, removable without touching frontend/tests/API. See ADR-011. **Done.**
-2. **Fleet template/update mechanics** — Repo-template + sync bot for downstream upgrades.
+**Remaining blocker:** Fleet template/update mechanics — repo-template + sync bot
+for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation)).
 
 ### Evidence Highlights
 
-- Deterministic package manager and lockfile usage present (`pnpm@9.15.4`, frozen lockfile in CI).
+- Deterministic package manager and lockfile usage (`pnpm@9.15.4`, frozen lockfile in CI).
 - CI is tiered with change detection and high-risk routing.
-- **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
-- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow. Build provenance attested on every release.
-- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos.
-- **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI. See ADR-012.
-- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured.
-- Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
+- **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention ([RN-005](./ARCHIVE.md#rn-005-ci-test-artifact-upload), [RN-013](./ARCHIVE.md#rn-013-standardized-ci-artifacts)).
+- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow ([RN-006](./ARCHIVE.md#rn-006-mandatory-sbom-in-release-workflow), [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release)).
+- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos ([RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)).
+- **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI ([RN-008](./ARCHIVE.md#rn-008-env-schema-validation-gate-adr-012)). See ADR-012.
+- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured ([RN-009](./ARCHIVE.md#rn-009-devcontainer-baseline)).
+- Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close ([RN-011](./ARCHIVE.md#rn-011-preview-deploy-guardrails-adr-014)).
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
-- `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics.
-- `.env.example` with `NUXT_` prefixed vars documents the full environment contract.
-- **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
-- **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap, Tier 1 protection.
-- **Preview deploy guardrails** — GitHub environment protection, label-gated deploys, infra change auto-deploy (ADR-014).
+- `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics ([RN-002](./ARCHIVE.md#rn-002-doctor-machine-mode---json---offline), [RN-003](./ARCHIVE.md#rn-003-environment-contract-envexample--pnpm-bootstrap)).
+- **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit ([RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml)).
+- **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate ([RN-010](./ARCHIVE.md#rn-010-flaky-test-containment-policy-adr-013)).
+- **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
 
-### Platform Maturity Overview
+---
+
+## Platform Maturity Overview
 
 ```mermaid
 graph LR
@@ -76,75 +80,325 @@ graph LR
     style FLEET fill:#6366f1,color:#fff
 ```
 
-### Top Blockers
+---
 
-| # | Blocker | Impact | Status |
-|---|---------|--------|--------|
-| 1 | ~~**Drupal/Tide CMS integration**~~ — Full provider pattern with decoupling architecture: MockCmsProvider + DrupalCmsProvider + provider factory + full paragraph mapping + unit tests. Drupal isolated to 2 files, removable per ADR-011. | Content parity + decoupling achieved | **Done** |
-| 2 | ~~No security/supply-chain workflow gates (SAST/SCA/secret scanning/SBOM/provenance)~~ | ~~Critical~~ | **Done** |
-| 3 | ~~Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents~~ | ~~High~~ | **Done** |
-| 4 | ~~No standardized env contract artifact (.env.example/schema)~~ | ~~High~~ | **Done** |
-| 5 | ~~CI artifact observability is partial (Playwright only, no structured reports for unit/integration)~~ | ~~Medium~~ | **Done** |
-| 6 | ~~Preview deploy depends on long-lived repo secret naming convention~~ — GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. | Medium | **Done** |
-| 7 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
+## Completed Work (RN-001 – RN-016)
+
+16 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
+for full details on each.
+
+| ID | Item | Phase |
+|----|------|-------|
+| [RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml) | Security Pipeline | 1 |
+| [RN-002](./ARCHIVE.md#rn-002-doctor-machine-mode---json---offline) | Doctor Machine Mode | 1 |
+| [RN-003](./ARCHIVE.md#rn-003-environment-contract-envexample--pnpm-bootstrap) | Environment Contract | 1 |
+| [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms) | Drupal/Tide CMS Integration | 1 |
+| [RN-005](./ARCHIVE.md#rn-005-ci-test-artifact-upload) | CI Test Artifact Upload | 1 |
+| [RN-006](./ARCHIVE.md#rn-006-mandatory-sbom-in-release-workflow) | Mandatory SBOM in Release | 2 |
+| [RN-007](./ARCHIVE.md#rn-007-unified-ci-test-entrypoint) | Unified CI Test Entrypoint | 2 |
+| [RN-008](./ARCHIVE.md#rn-008-env-schema-validation-gate-adr-012) | Env Schema Validation (ADR-012) | 2 |
+| [RN-009](./ARCHIVE.md#rn-009-devcontainer-baseline) | Devcontainer Baseline | 2 |
+| [RN-010](./ARCHIVE.md#rn-010-flaky-test-containment-policy-adr-013) | Flaky Test Containment (ADR-013) | 2 |
+| [RN-011](./ARCHIVE.md#rn-011-preview-deploy-guardrails-adr-014) | Preview Deploy Guardrails (ADR-014) | 2 |
+| [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling) | CMS Page Rendering + Tide Components | 2 |
+| [RN-013](./ARCHIVE.md#rn-013-standardized-ci-artifacts) | Standardized CI Artifacts | 2 |
+| [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release) | SBOM + Provenance in Release | 2 |
+| [RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions) | Reusable Composite Actions | 2 |
+| [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer) | Hermetic Dev/Runtime | 3 |
 
 ---
 
-## LocalStack Assessment
+## Active Roadmap
+
+### Phase 2 Remaining — In Progress
+
+#### RN-017: Live Drupal Integration Testing
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+**Continues:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
+
+Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider
+against a live JSON:API endpoint.
+
+- [ ] Set up test Drupal instance (Docker-based or hosted)
+- [ ] Write integration test suite exercising all CMS provider methods
+- [ ] Add CI job that runs integration tests on schedule (not every PR)
+
+---
+
+#### RN-018: Search Integration Provider
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+
+Dedicated search provider (MeiliSearch for local, Elasticsearch for prod) beyond
+the basic CMS search interface.
+
+- [ ] Define `SearchProvider` interface in `packages/cms/types.ts`
+- [ ] Implement `MeiliSearchProvider` for local dev
+- [ ] Implement `ElasticsearchProvider` for production
+- [ ] Add conformance tests for search provider
+- [ ] Wire into Nuxt server context alongside CMS provider
+
+---
+
+#### RN-019: Navigation/Menu Component
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Menu rendering from CMS-provided menu structure, including primary navigation,
+footer, and sidebar menus.
+
+- [ ] Create navigation composable (`useNavigation()`)
+- [ ] Build header navigation component
+- [ ] Build footer navigation component
+- [ ] Support nested menu structures from CMS
+
+---
+
+#### RN-020: Storybook Stories for Tide Components
+
+**Impact:** Low | **Effort:** Low | **Risk:** Low
+**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Stories for all 8 Tide-compatible content components for visual regression
+testing and documentation.
+
+- [ ] Add Storybook stories for accordion, card collection, timeline
+- [ ] Add Storybook stories for CTA, key dates, image, video, wysiwyg
+- [ ] Configure Chromatic or Percy for visual regression
+
+---
+
+#### RN-021: Media Gallery + Document Download Components
+
+**Impact:** Low | **Effort:** Medium | **Risk:** Low
+**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Media gallery and document download components for Tide content types.
+
+- [ ] Build media gallery component with lightbox
+- [ ] Build document download component with file type icons
+- [ ] Integrate with CMS media content types
+
+---
+
+#### RN-022: Downstream Workflow Documentation
+
+**Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Continues:** [RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions)
+
+Document how downstream repos consume the reusable composite actions from
+`.github/actions/`.
+
+- [ ] Write consumption guide for `setup`, `quality`, `test` actions
+- [ ] Add example workflow files for downstream repos
+- [ ] Document version pinning strategy for action references
+
+---
+
+#### RN-023: Landing Page + Content Templates
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Pre-built page templates for common government content layouts (landing pages,
+content pages, campaign pages).
+
+- [ ] Build landing page template
+- [ ] Build content page template
+- [ ] Build campaign page template
+- [ ] Wire templates to CMS page type field
+
+---
+
+### Phase 3: Do Later (Quarterly)
+
+#### RN-024: Fleet Update Mechanism + Template Drift Automation
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium
+**Source:** Roadmap blocker + AI Principal Engineer review
+
+Template repo + sync bot + policy drift reporting for downstream clones. This is
+the last remaining top blocker.
+
+- [ ] Create template repository from this golden-path source
+- [ ] Build GitHub App or Action for template drift detection
+- [ ] Automated sync PRs for security/standards updates
+- [ ] Policy drift reporting dashboard
+
+---
+
+#### RN-025: Contract Testing Across Consumers
+
+**Impact:** High | **Effort:** High | **Risk:** Medium
+
+Formal compatibility contract testing across published `@ripple/*` package
+consumers.
+
+- [ ] Define contract test patterns for package consumers
+- [ ] Integrate consumer contract tests into release workflow
+- [ ] Automated breaking-change detection and notification
+
+---
+
+#### RN-026: Org-Wide Reusable Workflow Distribution
+
+**Impact:** Very High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review
+
+Centralize policy gates using `workflow_call` with versioned rollout channels
+for the entire organization.
+
+- [ ] Publish reusable workflows to a central `.github` org repo
+- [ ] Implement versioned rollout channels (stable, canary)
+- [ ] Migrate downstream repos to org-wide workflows
+
+---
+
+#### RN-027: Signed Release Bundles + Verification
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI Principal Engineer review
+
+Extend provenance with package-level signature verification commands for
+consumers.
+
+- [ ] Implement package signing in release workflow
+- [ ] Build verification CLI command (`pnpm verify:release`)
+- [ ] Document consumer-side verification workflow
+
+---
+
+#### RN-028: Golden-Path Conformance CLI
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium
+**Source:** AI Principal Engineer review
+
+One command that scores repos against required standards and auto-opens
+remediation PRs.
+
+- [ ] Define scoring rubric based on minimal repo standards checklist
+- [ ] Build CLI tool (`ripple-conform` or `pnpm conform`)
+- [ ] Implement auto-remediation PR generation
+- [ ] Integrate into fleet drift detection ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation))
+
+---
+
+#### RN-029: Validate Devcontainer in CI Runners
+
+**Impact:** Low | **Effort:** Low | **Risk:** Low
+**Continues:** [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer)
+
+Optional validation that the devcontainer works in containerized CI runners.
+
+- [ ] Add CI job that builds and validates devcontainer image
+- [ ] Run smoke test inside devcontainer in CI
+
+---
+
+## Active Items Summary
+
+| ID | Item | Phase | Priority | Impact |
+|----|------|-------|----------|--------|
+| [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 2 | Medium | Medium |
+| [RN-018](#rn-018-search-integration-provider) | Search Integration Provider | 2 | Medium | Medium |
+| [RN-019](#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 | Medium | Medium |
+| [RN-020](#rn-020-storybook-stories-for-tide-components) | Storybook Stories | 2 | Low | Low |
+| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 2 | Low | Low |
+| [RN-022](#rn-022-downstream-workflow-documentation) | Downstream Workflow Docs | 2 | Medium | Medium |
+| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 2 | Medium | Medium |
+| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 3 | **High** | **Very High** |
+| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 3 | Medium | High |
+| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 3 | Medium | Very High |
+| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 3 | Low | High |
+| [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 3 | Low | Very High |
+| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 3 | Low | Low |
+
+---
+
+## Roadmap Gantt
+
+```mermaid
+gantt
+    title Ripple Next Improvement Roadmap
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Phase 1 — Complete
+    RN-001 Security Pipeline              :done, rn001, 2026-02-27, 7d
+    RN-002 Doctor --json + --offline       :done, rn002, 2026-02-27, 5d
+    RN-003 .env.example + bootstrap        :done, rn003, 2026-02-27, 5d
+    RN-004 @ripple/cms + Drupal            :done, rn004, 2026-02-28, 14d
+    RN-005 CI test artifact upload         :done, rn005, 2026-03-03, 7d
+
+    section Phase 2 — Complete
+    RN-006 Mandatory SBOM                  :done, rn006, 2026-02-27, 1d
+    RN-007 Unified CI test entrypoint      :done, rn007, 2026-02-27, 1d
+    RN-008 Env schema validation           :done, rn008, 2026-02-27, 3d
+    RN-009 Devcontainer baseline           :done, rn009, 2026-02-27, 1d
+    RN-010 Flaky test containment          :done, rn010, 2026-02-27, 1d
+    RN-011 Preview deploy guardrails       :done, rn011, 2026-02-27, 1d
+    RN-012 CMS page rendering + Tide       :done, rn012, 2026-03-14, 21d
+    RN-013 Standardized CI artifacts       :done, rn013, 2026-03-17, 7d
+    RN-014 SBOM + provenance               :done, rn014, 2026-03-17, 7d
+    RN-015 Reusable composite actions      :done, rn015, 2026-03-17, 7d
+
+    section Phase 2 — Remaining
+    RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
+    RN-018 Search provider                 :rn018, 2026-04-15, 21d
+    RN-019 Navigation component            :rn019, 2026-04-01, 14d
+    RN-020 Storybook stories               :rn020, 2026-04-15, 14d
+    RN-021 Media gallery + downloads       :rn021, 2026-04-15, 14d
+    RN-022 Downstream workflow docs        :rn022, 2026-04-01, 7d
+    RN-023 Landing page templates          :rn023, 2026-04-15, 14d
+
+    section Phase 3 — Later
+    RN-024 Fleet update + drift            :rn024, 2026-05-01, 30d
+    RN-025 Contract testing                :rn025, 2026-06-01, 30d
+    RN-026 Org-wide workflows              :rn026, 2026-06-15, 30d
+    RN-027 Signed release bundles          :rn027, 2026-07-01, 30d
+    RN-028 Conformance CLI                 :rn028, 2026-07-15, 30d
+    RN-029 Devcontainer CI validation      :rn029, 2026-05-15, 7d
+
+    section Phase 3 — Complete
+    RN-016 Hermetic dev/runtime            :done, rn016, 2026-02-27, 1d
+```
+
+---
+
+## Reference Sections
+
+### LocalStack Assessment
 
 **Short answer: not as the default local-dev path for this repository.**
 
-This repo already uses a **provider pattern** with local-first implementations
-(memory/mock, BullMQ, MinIO, SMTP) that are faster, simpler, and generally less
-flaky for agent loops. LocalStack adds another orchestration layer and
-service-emulation drift that often slows CI and increases triage cost in
-high-concurrency setups.
-
-For AI agents, fastest path is: mock/memory for unit tests, dockerized real
-dependencies for integration tests, and isolated cloud preview stages for
-end-to-end behavior.
+This repo uses a **provider pattern** with local-first implementations
+(memory/mock, BullMQ, MinIO, SMTP) that are faster, simpler, and less
+flaky for agent loops. LocalStack adds orchestration overhead and
+service-emulation drift.
 
 **Recommended compromise:**
 
 - Keep LocalStack **optional**, not required.
-- Use it only for a narrow integration lane where AWS API-shape compatibility is
-  specifically under test (e.g., SQS/S3 IAM policy behavior before preview deploy).
-- Gate it behind a dedicated command/profile (`pnpm test:aws-compat`) so routine
-  agent workflows remain low-friction.
+- Use it only for narrow AWS API-shape compatibility testing
+  (e.g., SQS/S3 IAM policy behavior before preview deploy).
+- Gate it behind `pnpm test:aws-compat` so routine agent workflows
+  remain low-friction.
 
-## Local Runtime Reality (Agents + Developer Workstations)
-
-Given the constraint — **AWS only for deployment environments**, while agents run
-on whatever local runtime they have and developers are primarily on macOS — the
-default path is platform-agnostic and Docker-friendly rather than
-AWS-emulation-heavy.
-
-**Design principles:**
-
-- Core build/test loops runnable on macOS with just Node + pnpm (+ Docker when
-  integration tests require infra dependencies).
-- AWS treated as a **deployment target contract**, validated in preview/staging/prod,
-  not as a mandatory local dependency.
-- Local providers and mocks are first-class so ephemeral agents on heterogeneous
-  machines execute deterministic quality gates.
-- AWS-shape validation (including any LocalStack lane) reserved for targeted
-  compatibility checks, not baseline `pnpm test` workflows.
-
----
-
-## Agent-Friction Scorecard
+### Agent-Friction Scorecard
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Setup determinism | 5/5 | Strong pinning (pnpm@9.15.4, Node 22 via engines + .nvmrc), lockfile present, frozen installs in CI. `.env.example` + Zod-based env schema validation (`pnpm validate:env`). Devcontainer with all services pre-configured. |
-| One-command workflows | 5/5 | `pnpm bootstrap` provides zero-to-ready flow. Core commands clean. CMS provider factory auto-selects mock/drupal based on env config — zero setup for agents. |
-| Local dev parity with CI | 4/5 | Shared pnpm/node/tooling and Postgres/Redis in CI; docker-compose mirrors infra locally. Devcontainer available for full reproducibility. |
-| Test reliability / flake resistance | 5/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. CMS tests use mock provider — zero network flakes. Unified `pnpm test:ci` entrypoint. Explicit flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, `pnpm check:quarantine` CI gate. |
-| Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile + node versioning present; many deps still semver-ranged (normal). |
-| Observability of failures | 5/5 | JUnit XML test artifacts uploaded on every CI run (30-day retention). Playwright traces on failure (7-day). Coverage reports available. Structured artifact naming. SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. |
-| Automated remediation friendliness | 5/5 | `pnpm doctor --json` provides stable machine contract with Zod-based env schema validation. `--offline` flag for ephemeral runners. Reusable composite actions. CMS decoupling documented with mechanical removal/addition procedures (ADR-011). Provider conformance suites validate any change automatically. |
+| Setup determinism | 5/5 | Strong pinning, lockfile, `.env.example` + Zod env validation, devcontainer |
+| One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
+| Local dev parity with CI | 4/5 | Shared tooling, dockerized deps, devcontainer available |
+| Test reliability / flake resistance | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, CMS mock provider |
+| Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile; semver ranges remain (normal) |
+| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM mandatory, JSON env diagnostics |
+| Automated remediation friendliness | 5/5 | `pnpm doctor --json`, conformance suites, documented removal procedures |
 
-**Overall: 33/35** — Improved from 32/35 with flaky test containment policy (ADR-013) raising test reliability to 5/5. Preview deploy guardrails (ADR-014) further strengthen deployment safety.
+**Overall: 33/35**
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -155,212 +409,16 @@ xychart-beta
     bar [5, 5, 4, 5, 4, 5, 5]
 ```
 
----
-
-## Concurrency + Scale Readiness
-
-### Multi-team development
-Good ownership boundaries via CODEOWNERS on critical surfaces (infra/schema/auth/contracts).
-
-### Environment/deployment concurrency
-Strong PR stage namespacing (`pr-{number}`) + cleanup workflow; CI concurrency
-cancel-in-progress by ref.
-
-### Repo templating/bootstrapping strategy
-Architecture docs are solid. Reusable composite actions (`.github/actions/`) provide
-CI consistency for downstream repos. Full template-generation + update propagation
-mechanism planned.
-
-### Versioning for 100s of projects
-Changesets + private package publishing is the right direction for fleet upgrades
-without lockstep deploys.
-
-```mermaid
-graph TD
-    GR[Golden Repo<br/>ripple-next] -->|publishes| NPM["@ripple/* packages<br/>(private registry)"]
-    GR -->|spawns| T1[Team A Repo]
-    GR -->|spawns| T2[Team B Repo]
-    GR -->|spawns| T3[Team C Repo]
-    NPM -->|versioned deps| T1
-    NPM -->|versioned deps| T2
-    NPM -->|versioned deps| T3
-    T1 -->|PR| P1["Preview (pr-N)"]
-    T2 -->|PR| P2["Preview (pr-N)"]
-    T1 -->|merge| STG[Staging]
-    STG -->|gate| PROD[Production]
-
-    style GR fill:#6366f1,color:#fff
-    style NPM fill:#22c55e,color:#fff
-    style PROD fill:#ef4444,color:#fff
-    style STG fill:#f59e0b,color:#fff
-```
-
----
-
-## Security + Supply Chain
+### Security + Supply Chain
 
 | Area | Current State | Target |
 |------|--------------|--------|
-| Secrets handling | Workflows use OIDC role assumption (good) + Gitleaks audit | Maintained |
-| Dependency risk | Dependency review on PRs (blocks high-severity + GPL/AGPL) | Maintained |
-| SBOM/provenance | CycloneDX SBOM mandatory (fail-fast) on release + build provenance attestation | SPDX as additional format if compliance requires |
+| Secrets handling | OIDC role assumption + Gitleaks audit | Maintained |
+| Dependency risk | Dependency review (blocks high-severity + GPL/AGPL) | Maintained |
+| SBOM/provenance | CycloneDX SBOM mandatory (fail-fast) + build provenance attestation | SPDX as additional format if compliance requires |
 | SAST/DAST | CodeQL SAST with SARIF upload | Maintained |
 
-```mermaid
-graph LR
-    subgraph "Security Pipeline (security.yml)"
-        direction TB
-        CQL[CodeQL SAST] --> SARIF[SARIF Upload]
-        DEP[Dependency Review] --> BLOCK["Block high-severity<br/>+ GPL/AGPL"]
-        SEC[Gitleaks Secret Audit] --> ALERT[Alert on findings]
-    end
-    subgraph "Release Pipeline (release.yml)"
-        direction TB
-        SBOM[CycloneDX SBOM] --> ATTEST[Build Provenance<br/>Attestation]
-    end
-    PR[Pull Request] --> CQL
-    PR --> DEP
-    PUSH[Push to main] --> CQL
-    PUSH --> SEC
-    PUSH --> SBOM
-    CRON["Weekly schedule"] --> CQL
-    CRON --> SEC
-
-    style CQL fill:#ef4444,color:#fff
-    style DEP fill:#f59e0b,color:#fff
-    style SEC fill:#6366f1,color:#fff
-    style SBOM fill:#22c55e,color:#fff
-    style ATTEST fill:#22c55e,color:#fff
-```
-
----
-
-## Drupal/Tide CMS Integration (Decoupled Architecture)
-
-The original [Ripple design system](https://github.com/dpc-sdp/ripple) is tightly
-coupled to **Tide** — a Drupal distribution that serves as the content management
-backend for Victorian government websites. Ripple Next has a **fully decoupled CMS
-content layer** via `@ripple/cms` that:
-
-- **Supports Drupal/Tide** for existing government sites
-- **Can pull out Drupal entirely** without touching frontend, tests, or API layer
-- **Enables alternative CMS backends** (Contentful, Strapi, WordPress, etc.)
-
-### Architecture: "Pull Out Drupal"
-
-Drupal-specific code is isolated to exactly **2 files**:
-
-```
-packages/cms/providers/
-├── drupal.ts                 # DrupalCmsProvider — JSON:API client
-└── tide-paragraph-mapper.ts  # Tide paragraph → PageSection mapping
-```
-
-Everything else is CMS-agnostic: `CmsProvider` interface, `MockCmsProvider`,
-UI components, composables, API routes, conformance tests, Zod schemas.
-
-See [ADR-011](../adr/011-cms-decoupling-pull-out-drupal.md) for the full decoupling strategy.
-
-```mermaid
-graph LR
-    subgraph "CMS-Agnostic Layer (never changes)"
-        INTERFACE["CmsProvider<br/>interface"]
-        FACTORY["createCmsProvider()<br/>factory"]
-        MOCK["MockCmsProvider<br/>(tests)"]
-        UI_COMP["8 UI Components"]
-        API_ROUTES["6 API Routes"]
-        COMPOSABLE["useCms()"]
-        SCHEMAS["28 Zod Schemas"]
-        CONFORM["18 Conformance Tests"]
-    end
-
-    subgraph "Drupal Layer (2 files, removable)"
-        DRUPAL_PROV["DrupalCmsProvider"]
-        TIDE_MAP["Tide Paragraph Mapper"]
-    end
-
-    subgraph "External"
-        DRUPAL["Drupal/Tide<br/>JSON:API"]
-        ALT_CMS["Future CMS<br/>(Contentful, etc.)"]
-    end
-
-    FACTORY -->|type: mock| MOCK
-    FACTORY -->|type: drupal| DRUPAL_PROV
-    DRUPAL_PROV --> TIDE_MAP
-    DRUPAL_PROV -->|JSON:API| DRUPAL
-    INTERFACE -.->|implements| MOCK
-    INTERFACE -.->|implements| DRUPAL_PROV
-    API_ROUTES --> FACTORY
-    COMPOSABLE --> API_ROUTES
-    UI_COMP --> COMPOSABLE
-
-    style DRUPAL_PROV fill:#6366f1,color:#fff
-    style TIDE_MAP fill:#6366f1,color:#fff
-    style MOCK fill:#22c55e,color:#fff
-    style INTERFACE fill:#22c55e,color:#fff
-    style FACTORY fill:#22c55e,color:#fff
-    style DRUPAL fill:#f59e0b,color:#fff
-    style ALT_CMS fill:#94a3b8,color:#fff
-```
-
-### What was built
-
-| Component | Description | Status |
-|-----------|-------------|--------|
-| `@ripple/cms` package | CMS provider interface with content types (pages, media, taxonomies, menus, search) | **Done** |
-| `DrupalCmsProvider` | JSON:API client for Drupal/Tide with full paragraph mapping | **Done** |
-| `MockCmsProvider` | In-memory CMS for tests and local dev without Drupal | **Done** |
-| `createCmsProvider()` factory | Provider factory with dynamic imports for tree-shakeable Drupal code | **Done** |
-| Tide paragraph mapper | Full mapping of all 8 Tide paragraph types to PageSection union | **Done** |
-| DrupalCmsProvider unit tests | 20+ unit tests with JSON:API fixture data (no live Drupal needed) | **Done** |
-| Content type Zod schemas | 28 Zod schemas in `@ripple/validation/schemas/cms.ts` | **Done** |
-| CMS conformance tests | 18 conformance tests in `@ripple/testing/conformance/cms.conformance.ts` | **Done** |
-| Page rendering layer | Dynamic page route at `/content/[...slug].vue` with section component rendering | **Done** |
-| Tide-compatible components | 8 UI components (accordion, card collection, timeline, CTA, key dates, image, video, wysiwyg) | **Done** |
-| ADR-011 | CMS decoupling strategy with documented removal and addition procedures | **Done** |
-
-### What remains
-
-| Component | Description | Priority |
-|-----------|-------------|----------|
-| Live Drupal integration test | Integration test with a real Drupal/Tide instance | Medium |
-| Storybook stories | Stories for all 8 Tide-compatible content components | Medium |
-| Search provider | Dedicated search provider (MeiliSearch/Elasticsearch) beyond CMS search | Medium |
-| Landing page templates | Pre-built page templates for common government content layouts | Low |
-| Navigation component | Menu rendering from CMS-provided menu structure | Low |
-
-### Drupal removal procedure (ADR-011)
-
-To completely remove Drupal from Ripple Next:
-
-1. Delete `packages/cms/providers/drupal.ts` + `tide-paragraph-mapper.ts`
-2. Remove `'drupal'` case from `packages/cms/factory.ts`
-3. Remove `DrupalCmsProvider` export from `packages/cms/index.ts`
-4. Remove CMS env vars from `.env.example`
-5. Delete `packages/cms/tests/drupal.test.ts`
-
-**Nothing else changes.** All tests pass. All UI components work. All API routes work.
-
-### Adding a new CMS backend
-
-1. Create `packages/cms/providers/{cms-name}.ts` implementing `CmsProvider`
-2. Add the new type to `packages/cms/factory.ts`
-3. Run conformance suite — all 18 tests must pass
-4. No changes needed to UI, composables, API routes, or existing tests
-
----
-
-## Architecture + Maintainability
-
-| Area | Assessment |
-|------|-----------|
-| Module boundaries | **Very strong.** Hybrid monorepo with provider/repository patterns and explicit package segmentation. |
-| API contracts | tRPC + repository pattern + health endpoint guidance is clear; readiness manifest records subsystem maturity. |
-| Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. Env schema validation via Zod (ADR-012). |
-| Backwards compatibility | Changesets and package publishing support incremental consumer upgrades — key fleet strength. |
-| CMS integration | **Implemented (Decoupled).** `@ripple/cms` with full provider pattern, provider factory with dynamic imports, full Tide paragraph mapping, DrupalCmsProvider unit tests. Drupal isolated to 2 files, removable per ADR-011. |
-| CI observability | **Strong.** JUnit XML test artifacts, coverage reports, Playwright traces, structured naming convention, 30-day retention. |
-| Supply-chain security | **Very strong.** CycloneDX SBOM mandatory (fail-fast), build provenance attestations, CodeQL SAST, dependency review, Gitleaks. |
+### Architecture Overview
 
 ```mermaid
 graph TD
@@ -426,310 +484,43 @@ graph TD
     style DRUPAL fill:#f59e0b,color:#fff
 ```
 
----
+### Drupal/Tide CMS — Decoupled Architecture
 
-## CI/CD and Release Engineering
+Drupal-specific code is isolated to exactly **2 files** (`packages/cms/providers/drupal.ts`
+and `packages/cms/providers/tide-paragraph-mapper.ts`). Everything else is CMS-agnostic.
 
-| Area | Assessment |
-|------|-----------|
-| Pipeline design | Tiered CI with path filters, risk-triggered E2E, env schema validation, and reusable composite actions. |
-| Reproducible builds | Node 22 + frozen lockfile + consistent pnpm usage + devcontainer for hermetic local runtime. |
-| Artifact strategy | JUnit XML + coverage reports for all test jobs (30-day retention). Playwright traces on failure (7-day). SBOM on release (90-day). |
-| Progressive delivery | Preview/staging/production paths defined; production uses environment gate + SST protect/retain. |
-| Supply-chain | CycloneDX SBOM mandatory (fail-fast) + build provenance attestations on every release. CodeQL SAST, dependency review, Gitleaks. |
+See [ADR-011](../adr/011-cms-decoupling-pull-out-drupal.md) for the full decoupling
+strategy, removal procedure, and addition procedure.
 
 ```mermaid
 graph LR
-    subgraph "Tier 1 (Every PR)"
-        LINT[Lint] --> GATE1{Pass?}
-        TYPE[Typecheck] --> GATE1
-        ENVGATE[Env Schema] --> GATE1
-        UNIT[Unit Tests] --> GATE1
-        READY[Readiness Guard] --> GATE1
-        SECURITY[Security Scan] --> GATE1
+    subgraph "CMS-Agnostic Layer"
+        INTERFACE["CmsProvider interface"]
+        FACTORY["createCmsProvider()"]
+        MOCK["MockCmsProvider (tests)"]
+        UI_COMP["8 UI Components"]
+        SCHEMAS["28 Zod Schemas"]
+        CONFORM["18 Conformance Tests"]
     end
 
-    subgraph "Tier 2 (High-risk / merge)"
-        E2E[E2E Playwright]
+    subgraph "Drupal Layer (2 files, removable)"
+        DRUPAL_PROV["DrupalCmsProvider"]
+        TIDE_MAP["Tide Paragraph Mapper"]
     end
 
-    subgraph "Release (main only)"
-        CS[Changesets] --> VER[Version Bump]
-        VER --> BUILD[Build + Validate]
-        BUILD --> SBOM_GEN[SBOM + Provenance]
-        SBOM_GEN --> PUBLISH[Publish to Registry]
-    end
+    FACTORY -->|type: mock| MOCK
+    FACTORY -->|type: drupal| DRUPAL_PROV
+    DRUPAL_PROV --> TIDE_MAP
+    INTERFACE -.->|implements| MOCK
+    INTERFACE -.->|implements| DRUPAL_PROV
 
-    subgraph "Artifacts"
-        JUNIT[JUnit XML<br/>30-day]
-        COV[Coverage<br/>30-day]
-        TRACES[Playwright Traces<br/>7-day]
-        SBOM_ART[CycloneDX SBOM<br/>90-day]
-    end
-
-    subgraph "Deploy"
-        PREVIEW["Preview<br/>(pr-N)"]
-        STAGING[Staging]
-        PRODUCTION[Production]
-    end
-
-    GATE1 -->|high-risk| E2E
-    GATE1 -->|infra change| PREVIEW
-    UNIT -.-> JUNIT
-    UNIT -.-> COV
-    E2E -.-> TRACES
-    SBOM_GEN -.-> SBOM_ART
-    E2E --> STAGING
-    STAGING -->|gate| PRODUCTION
-
-    style SECURITY fill:#ef4444,color:#fff
-    style PRODUCTION fill:#ef4444,color:#fff
-    style STAGING fill:#f59e0b,color:#fff
-    style PREVIEW fill:#22c55e,color:#fff
-    style SBOM_GEN fill:#22c55e,color:#fff
-    style SBOM_ART fill:#22c55e,color:#fff
+    style DRUPAL_PROV fill:#6366f1,color:#fff
+    style TIDE_MAP fill:#6366f1,color:#fff
+    style MOCK fill:#22c55e,color:#fff
+    style INTERFACE fill:#22c55e,color:#fff
 ```
 
----
-
-## Roadmap Phases
-
-```mermaid
-gantt
-    title Ripple Next Improvement Roadmap
-    dateFormat YYYY-MM-DD
-    axisFormat %b %Y
-
-    section Phase 1 — Do Now
-    Security pipeline (security.yml)           :done, sec, 2026-02-27, 7d
-    Doctor --json + --offline                  :done, doc, 2026-02-27, 5d
-    .env.example + pnpm bootstrap              :done, env, 2026-02-27, 5d
-    @ripple/cms provider + Drupal integration  :done, cms, 2026-02-28, 14d
-    CI test artifact upload                    :done, art, 2026-03-03, 7d
-
-    section Phase 2 — Do Next
-    CMS page rendering + Tide components       :done, cms2, 2026-03-14, 21d
-    Full paragraph mapping + decoupling        :done, para, 2026-03-14, 14d
-    CMS provider factory + unit tests          :done, factory, 2026-03-14, 7d
-    ADR-011 CMS decoupling strategy            :done, adr11, 2026-03-14, 3d
-    Standardize CI artifacts                   :done, ci_art, 2026-03-17, 7d
-    SBOM + provenance in release               :done, sbom, 2026-03-17, 7d
-    Reusable composite actions                 :done, reuse, 2026-03-17, 7d
-    Mandatory SBOM in release workflow         :done, sbom_mandatory, 2026-02-27, 1d
-    Unified CI test entrypoint                 :done, unified_test, 2026-02-27, 1d
-    Env schema validation gate (ADR-012)       :done, env_schema, 2026-02-27, 3d
-    Devcontainer baseline                      :done, devcontainer, 2026-02-27, 1d
-    Flaky test containment policy (ADR-013)    :done, flaky, 2026-02-27, 1d
-    Preview deploy guardrails (ADR-014)        :done, preview_guard, 2026-02-27, 1d
-    Live Drupal integration testing            :drupal, 2026-04-01, 21d
-    Search integration provider                :search, 2026-04-15, 21d
-
-    section Phase 3 — Do Later
-    Fleet update mechanism                     :fleet, 2026-05-01, 30d
-    Contract testing across consumers          :contract, 2026-06-01, 30d
-    Org-wide reusable workflow distribution    :orgwf, 2026-06-15, 30d
-    Signed release bundles + verification      :signed, 2026-07-01, 30d
-    Golden-path conformance CLI                :conformance, 2026-07-15, 30d
-```
-
-### Phase 1: Do Now (1-2 weeks) — COMPLETE
-
-#### 1.1 Security Pipeline (`security.yml`)
-
-**Impact:** Very High | **Effort:** Medium | **Risk:** Low
-
-Add a security workflow with CodeQL/Semgrep for SAST, dependency scanning,
-and secret scanning with SARIF upload to GitHub Security tab.
-
-See: `.github/workflows/security.yml` (added with this roadmap)
-
-- [x] Create security.yml with CodeQL, dependency review, and Gitleaks
-- [ ] Enable GitHub Advanced Security on the repository
-- [ ] Validate SARIF upload produces findings in Security tab
-- [ ] Add branch protection rule requiring security checks to pass
-
-#### 1.2 Doctor Machine Mode (`--json`)
-
-**Impact:** High | **Effort:** Medium | **Risk:** Low
-
-Upgrade `scripts/doctor.sh` to support `--json` flag for machine-readable
-output and resilient network checks (soft-fail on network when `--offline`
-is passed).
-
-See: `scripts/doctor.sh` (updated with this roadmap)
-
-- [x] Add `--json` flag for structured output
-- [x] Add `--offline` flag for ephemeral runners
-- [x] Demote network check from hard-fail to warning
-- [ ] Update CI workflows to use `pnpm doctor --json` where appropriate
-
-#### 1.3 Environment Contract (`.env.example`)
-
-**Impact:** High | **Effort:** Medium | **Risk:** Low
-
-Add `.env.example` documenting all environment variables with defaults and
-descriptions. Add `pnpm bootstrap` command for zero-to-ready setup.
-
-See: `.env.example` (added with this roadmap)
-
-- [x] Create `.env.example` with all env vars documented
-- [x] Add `pnpm bootstrap` command to package.json
-- [ ] Verify docker-compose uses matching env var names
-
-#### 1.4 Drupal/Tide CMS Integration (`@ripple/cms`)
-
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-
-The original Ripple design system is built on Drupal/Tide. Ripple Next must
-provide a CMS content layer to serve government content publishing use cases.
-Following the provider pattern, create `@ripple/cms` with Drupal JSON:API
-integration and a mock provider for testing.
-
-See: [Drupal/Tide CMS Integration](#drupaltide-cms-integration-gap-analysis)
-
-- [x] Create `packages/cms/` with CMS provider interface (`types.ts`)
-- [x] Implement `MockCmsProvider` for tests and local dev
-- [x] Implement `DrupalCmsProvider` with JSON:API client for Tide
-- [x] Add CMS conformance test suite to `packages/testing/conformance/`
-- [x] Add content type Zod schemas to `packages/validation/`
-- [x] Wire CMS provider into Nuxt server context
-- [x] Add `NUXT_CMS_BASE_URL` to `.env.example` and runtime config
-- [x] Update `readiness.json` with CMS subsystem entry
-
-#### 1.5 CI Test Artifact Upload
-
-**Impact:** Medium | **Effort:** Low | **Risk:** Low
-
-Add structured test result uploads (JUnit XML + coverage reports) to the
-test job in CI for better observability.
-
-See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
-
-- [x] Add Vitest JUnit reporter to test configuration
-- [x] Upload test results as artifacts in CI (30-day retention)
-- [x] Standardized artifact naming convention (`test-results-unit`, `test-results-e2e`)
-
----
-
-### Phase 2: Do Next (1-2 months) — MOSTLY COMPLETE
-
-#### 2.0 AI-Suggested Improvements — COMPLETE
-
-**Impact:** High | **Effort:** Low-Medium | **Risk:** Low
-
-Implemented all "Do Now" and "Do Next" recommendations from the AI Principal Engineer
-review. See ADR-012, ADR-013, ADR-014.
-
-- [x] Make SBOM mandatory in release workflow (removed `continue-on-error: true`)
-- [x] Unify CI test entrypoint (single `pnpm test:ci` with optional coverage flags)
-- [x] Add Zod-based env schema validation gate (`pnpm validate:env` + CI integration)
-- [x] Devcontainer baseline (`.devcontainer/` — already existed, now documented in roadmap)
-- [x] Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, `pnpm check:quarantine` CI gate
-- [x] Preview deploy environment guardrails (ADR-014): GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention
-
-#### 2.1 CMS Page Rendering + Tide Components + Decoupling
-
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-
-Build Nuxt pages and UI components that render content from the CMS provider,
-achieving visual and functional parity with the original Ripple design system's
-Tide content types. Implement full decoupling architecture.
-
-- [x] Create dynamic page route (`/[...slug].vue`) that fetches from CMS provider
-- [x] Implement Tide-compatible components (accordion, card collection, timeline, etc.)
-- [x] Full Tide paragraph-to-section mapping (all 8 paragraph types)
-- [x] Provider factory with dynamic imports (`createCmsProvider()`)
-- [x] DrupalCmsProvider unit tests with JSON:API fixture data
-- [x] ADR-011: CMS decoupling strategy with removal/addition procedures
-- [ ] Add landing page and content page templates
-- [ ] Media gallery and document download components
-- [ ] Navigation/menu rendering from CMS-provided menu structure
-- [ ] Search integration provider (MeiliSearch for local, Elasticsearch for prod)
-- [ ] Storybook stories for all new Tide-compatible components
-
-#### 2.2 Standardize CI Artifacts
-
-**Impact:** High | **Effort:** Medium | **Risk:** Low
-
-JUnit XML, coverage reports, and test logs for every CI job with consistent
-retention and naming policy.
-
-See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
-
-- [x] Configure Vitest JUnit reporter across all workspaces
-- [x] Upload artifacts with standardized naming (`test-results-unit`, `test-results-e2e`)
-- [x] Set retention policy (30 days for reports, 7 days for traces, 90 days for SBOM)
-
-#### 2.3 SBOM + Provenance in Release
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium
-
-Add CycloneDX/SPDX SBOM generation and signed attestations to the release
-workflow.
-
-See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
-
-- [x] Add `@cyclonedx/cyclonedx-npm` to release pipeline
-- [x] Generate provenance attestations with `actions/attest-build-provenance`
-- [x] Upload SBOM alongside package releases (90-day retention)
-
-#### 2.4 Reusable Composite Actions
-
-**Impact:** Very High | **Effort:** Medium | **Risk:** Medium
-
-Publish reusable GitHub Actions for lint/test/typecheck/setup patterns that
-downstream repos can reference.
-
-See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
-
-- [x] Extract workflow steps into reusable composite actions
-- [x] Create `.github/actions/` directory with `setup`, `quality`, `test` actions
-- [x] CI workflow updated to use composite actions (reduced duplication)
-- [ ] Document workflow consumption pattern for downstream repos
-
----
-
-### Phase 3: Do Later (Quarterly)
-
-#### 3.1 Fleet Update Mechanism
-
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-
-Template repo + sync bot + policy drift reporting for downstream clones.
-
-- [ ] Create template repository from this golden-path source
-- [ ] Build GitHub App or Action for template drift detection
-- [ ] Automated sync PRs for security/standards updates
-
-#### ~~3.2 Hermetic Dev/Runtime~~ — DONE (devcontainer shipped)
-
-**Impact:** High | **Effort:** High | **Risk:** Medium
-
-Devcontainer baseline shipped in `.devcontainer/` with Node 22, Docker-in-Docker,
-GitHub CLI, AWS CLI, and all local services (Postgres, Redis, MinIO, Mailpit,
-MeiliSearch) pre-configured. Post-create script runs install, migrations, seed,
-and Nuxt type generation.
-
-- [x] Evaluate devcontainer vs Nix for agent runner reproducibility — devcontainer chosen
-- [x] Create hermetic profile that pins all system dependencies
-- [ ] Validate in CI with containerized runners (optional — devcontainer primarily for local dev)
-
-#### 3.3 Contract Testing Across Consumers
-
-**Impact:** High | **Effort:** High | **Risk:** Medium
-
-Formal compatibility contract testing across published `@ripple/*` package
-consumers.
-
-- [ ] Define contract test patterns for package consumers
-- [ ] Integrate consumer contract tests into release workflow
-- [ ] Automated breaking-change detection and notification
-
----
-
-## Proposed Golden Path
-
-### Ideal developer/agent workflow
+### Proposed Golden Path
 
 ```mermaid
 graph TD
@@ -754,11 +545,11 @@ graph TD
     style I fill:#22c55e,color:#fff
 ```
 
-### Minimal required repo standards checklist
+### Minimal Required Repo Standards
 
 - [x] Pinned runtime/package manager + lockfile enforced
 - [x] Non-interactive bootstrap + doctor(json)
-- [x] Env contract (`.env.example`) + Zod-based env schema validation (`pnpm validate:env`)
+- [x] Env contract (`.env.example`) + Zod-based env schema validation
 - [x] Tiered CI with path filtering
 - [x] Security gates in CI (`security.yml`)
 - [x] PR preview isolation + automatic teardown
@@ -769,141 +560,15 @@ graph TD
 - [x] Reusable composite actions for fleet CI consistency
 - [x] Devcontainer for hermetic local development
 - [x] Unified CI test entrypoint (`pnpm test:ci`)
-- [x] Flaky test containment policy with quarantine check (`pnpm check:quarantine`)
-- [x] Preview deploy environment guardrails (label-gated + infra auto-deploy)
+- [x] Flaky test containment policy with quarantine check
+- [x] Preview deploy environment guardrails
 
-### Template strategy (spawn + keep updated)
+### Template Strategy
 
 Maintain this repo as golden-path source, plus:
 
-1. **Template distribution layer** — GitHub template or scaffolder
-2. **Reusable org workflows** — referenced by all derived repos (composite actions shipped)
-3. **Automated drift detection** — sync PRs for standards/security updates
-4. **Keep domain logic in versioned `@ripple/*` libraries** — keep templates thin
-
-```mermaid
-graph TD
-    GOLDEN["Golden Repo (ripple-next)"] -->|template| SCAFFOLD[Scaffolder / gh template]
-    GOLDEN -->|publish| PACKAGES["@ripple/* packages"]
-    GOLDEN -->|share| WORKFLOWS["Reusable Actions<br/>(.github/actions/)"]
-
-    SCAFFOLD -->|creates| REPO_A[Team A Repo]
-    SCAFFOLD -->|creates| REPO_B[Team B Repo]
-    SCAFFOLD -->|creates| REPO_N[Team N Repo]
-
-    PACKAGES -->|consumed by| REPO_A
-    PACKAGES -->|consumed by| REPO_B
-    PACKAGES -->|consumed by| REPO_N
-
-    WORKFLOWS -->|referenced by| REPO_A
-    WORKFLOWS -->|referenced by| REPO_B
-    WORKFLOWS -->|referenced by| REPO_N
-
-    SYNC["Drift Detection Bot"] -->|sync PRs| REPO_A
-    SYNC -->|sync PRs| REPO_B
-    SYNC -->|sync PRs| REPO_N
-
-    style GOLDEN fill:#6366f1,color:#fff
-    style PACKAGES fill:#22c55e,color:#fff
-    style WORKFLOWS fill:#f59e0b,color:#fff
-    style SYNC fill:#ef4444,color:#fff
-```
-
----
-
-## Additional AI Suggestions (Principal Engineer + Platform Architect Review)
-
-### 1. Executive verdict
-- **Ship-ready?** **Yes with conditions.**
-- **Top 5 blockers:**
-  1. **Missing fleet-template sync automation** (`docs/product-roadmap/README.md`, `.github/workflows/*`): no automated mechanism to push policy/security updates into downstream generated repos.
-  2. ~~**No hermetic/devcontainer baseline**~~ — `.devcontainer/` now ships with Node 22, Docker-in-Docker, all services. **Done.**
-  3. ~~**Release workflow tolerance is too lenient for SBOM generation**~~ — `continue-on-error: true` removed; SBOM is now fail-fast mandatory. **Done.**
-  4. ~~**Preview deploy depends on long-lived repo secret naming convention**~~ — GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. **Done.**
-  5. ~~**Test command surface is slightly fragmented**~~ — Unified to single `pnpm test:ci` invocation with optional coverage flags. **Done.**
-
-### 2. Agent-Friction Scorecard (0–5 each, with justification)
-- **Setup determinism: 5/5** — `pnpm@9.15.4`, Node 22, frozen lockfile, doctor checks, Zod-based env schema validation (`pnpm validate:env`), devcontainer for hermetic runtime. *(was 4/5)*
-- **One-command workflows: 5/5** — `pnpm bootstrap` gives deterministic, non-interactive bootstrapping.
-- **Local dev parity with CI: 4/5** — shared scripts and dockerized dependencies; devcontainer available for full reproducibility. Browser install + GitHub-hosted runner assumptions still differ.
-- **Test reliability / flake resistance: 5/5** — tiered CI and artifacted failures are solid; unified `pnpm test:ci` entrypoint. Explicit flaky-test quarantine policy with `pnpm check:quarantine` CI gate (ADR-013). *(was 4/5)*
-- **Dependency + toolchain pinning: 4/5** — lockfile + package manager pinned; broad semver ranges for dev deps remain expected but can introduce drift.
-- **Observability of failures: 5/5** — JUnit and Playwright artifacts present; SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. *(was 4/5)*
-- **Automated remediation friendliness: 5/5** — `pnpm doctor -- --json` with Zod-based env schema validation and clear non-interactive scripts provide agent-friendly contracts.
-
-### 3. Concurrency + Scale Readiness
-- **Multi-team development:** good boundary controls via CODEOWNERS on critical surfaces and modular package layout.
-- **Environment and deployment concurrency:** strong PR-stage namespacing (`pr-{number}`) and workflow-level concurrency controls reduce collisions.
-- **Repo templating / bootstrapping strategy:** partial — documentation and reusable actions exist, but no end-to-end template drift sync bot/process is implemented.
-- **Versioning strategy across hundreds of projects:** strong package-level changesets + private registry model; this is fleet-friendly when combined with automated dependency update bots.
-
-### 4. Security + Supply Chain
-- **Secrets handling:** strong (OIDC + scoped permissions). Preview deploy now uses GitHub environment protection with label-gated deploys and infra change auto-deploy (ADR-014).
-- **Dependency risk controls:** dependency-review with severity/license policy is in place; good baseline.
-- **SBOM / provenance:** present and mandatory — SBOM generation is now fail-fast in release path (fixed per AI recommendation).
-- **SAST/DAST and policy gates:** CodeQL and Gitleaks are present; DAST/runtime policy checks are not yet visible as mandatory gates.
-
-### 5. Architecture + Maintainability
-- **Module boundaries:** strong package segmentation and provider pattern.
-- **API contracts:** explicit router/repository conventions are documented and align with maintainability goals.
-- **Configuration strategy:** `.env.example` + doctor checks + Zod-based env schema validation gate in CI (`pnpm validate:env`). See ADR-012.
-- **Backwards compatibility + upgrade paths:** changesets and ADR discipline are solid; downstream template update strategy remains the key gap.
-
-### 6. CI/CD and Release Engineering
-- **Pipeline design:** tiered CI with change detection and selective E2E is high quality.
-- **Reproducible builds:** frozen lockfile and pinned runtime are strong; devcontainer shipped in `.devcontainer/` for hermetic local/agent runtime.
-- **Artifact strategy:** unit and e2e artifact uploads are implemented; release artifacts should include explicit checksums/manifest indexing for faster incident triage.
-- **Progressive delivery + rollbacks:** preview/staging/production workflows exist; rollback playbooks should be codified as scripts with stage-specific smoke checks.
-
-### 7. Concrete recommendations
-
-#### Do now (1–2 weeks) — COMPLETE
-1. ~~**Make SBOM mandatory in release**~~ (`.github/workflows/release.yml`): removed `continue-on-error`, SBOM/provenance now fail-fast. **Done.**
-2. ~~**Unify CI test entrypoint**~~ (`.github/actions/test/action.yml`): single `pnpm test:ci` with optional coverage flags. **Done.**
-3. ~~**Add machine-readable env schema gate**~~ (`pnpm validate:env` + Zod schemas in `@ripple/validation`): fail with structured JSON diagnostics when required env contract is invalid. See ADR-012. **Done.**
-
-#### Do next (1–2 months) — MOSTLY COMPLETE
-1. **Implement template drift automation**: a bot/workflow that opens sync PRs in downstream repos for shared CI/security/agent standards. **Impact: High × Effort: Medium × Risk: Medium**.
-2. ~~**Ship devcontainer baseline**~~ (`.devcontainer/`): shipped with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, all services. **Done.**
-3. ~~**Add flaky test containment policy**~~: quarantine convention with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap, Tier 1 protection, mandatory issue linkage. See ADR-013. **Done.**
-4. ~~**Preview deploy environment guardrails**~~: GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. **Done.**
-
-#### Do later (quarterly)
-1. **Org-wide reusable workflow distribution** (`workflow_call`): centralize policy gates with versioned rollout channels. **Impact: Very High × Effort: Medium × Risk: Medium**.
-2. **Signed release bundles + verification tooling**: extend provenance with package-level signature verification commands for consumers. **Impact: High × Effort: Medium × Risk: Medium**.
-3. **Golden-path conformance CLI**: one command that scores repos against required standards and auto-opens remediation PRs. **Impact: Very High × Effort: High × Risk: Medium**.
-
-### 8. Proposed Golden Path
-- **Ideal developer/agent workflow (commands + lifecycle):**
-  1. `pnpm bootstrap`
-  2. `pnpm doctor -- --json`
-  3. `pnpm lint && pnpm typecheck && pnpm test:ci`
-  4. `pnpm test:e2e` (conditional by risk lane)
-  5. `pnpm changeset` (if published package behavior changes)
-  6. PR → tiered CI + security gates → preview deploy (`pr-{number}`) → staged promotion.
-
-- **Minimal required repo standards checklist:**
-  - pinned runtime + package manager + lockfile
-  - single non-interactive bootstrap + doctor (`--json`)
-  - env schema validation with machine-readable failures
-  - tiered CI with artifacts + concurrency isolation
-  - mandatory SAST/SCA/secret scanning + SBOM + provenance
-  - reproducible local runtime profile (devcontainer/Nix/asdf)
-  - versioned release process + rollback scripts
-  - template drift automation for downstream repos
-
-- **Template strategy (spawn + keep updated):**
-  - use this repo as source-of-truth golden path,
-  - generate downstream repos via template/scaffolder,
-  - push central policy changes via automated sync PRs,
-  - keep reusable domain capabilities in versioned `@ripple/*` packages,
-  - enforce conformance checks continuously across the fleet.
-
-### Evidence appendix (explicit extraction)
-- **Entry points (build/test/run):** root scripts in `package.json` (`dev`, `build`, `test`, `test:ci`, `lint`, `typecheck`, `doctor`, `bootstrap`).
-- **Toolchain:** Node 22 (`.nvmrc`, `engines`), pnpm 9 (`packageManager`), lockfile (`pnpm-lock.yaml`), Turbo (`turbo.json`).
-- **CI/CD:** tiered pipelines + artifacts in `.github/workflows/ci.yml`; security gates in `.github/workflows/security.yml`; publish/SBOM/provenance in `.github/workflows/release.yml`; preview lifecycle in `.github/workflows/deploy-preview.yml` + `cleanup-preview.yml`.
-- **Environment config:** `.env.example`, dockerized local dependencies via `docker-compose.yml`, prerequisite validation via `scripts/doctor.sh`.
-- **Release strategy:** changesets config in `.changeset/config.json`, release automation in `.github/workflows/release.yml`.
-- **Security posture:** CodeQL, dependency review, Gitleaks (`.github/workflows/security.yml`), OIDC role assumption in deploy workflows.
-- **Project spawning posture:** documented intent in roadmap and reusable composite actions in `.github/actions/*`; full template sync automation still outstanding.
+1. **Template distribution layer** — GitHub template or scaffolder ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation))
+2. **Reusable org workflows** — referenced by all derived repos ([RN-026](#rn-026-org-wide-reusable-workflow-distribution))
+3. **Automated drift detection** — sync PRs for standards/security updates ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation))
+4. **Conformance scoring** — automated repo health checks ([RN-028](#rn-028-golden-path-conformance-cli))
+5. **Keep domain logic in versioned `@ripple/*` libraries** — keep templates thin
