@@ -139,7 +139,7 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-e
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (15 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (17 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 
 ### Key ADRs
@@ -161,3 +161,5 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-e
 | [ADR-013](./adr/013-flaky-test-containment.md) | Flaky test containment policy | Testing |
 | [ADR-014](./adr/014-preview-deploy-guardrails.md) | Preview deploy guardrails | Deployment |
 | [ADR-015](./adr/015-localstack-assessment.md) | LocalStack — provider pattern preferred | Infrastructure |
+| [ADR-016](./adr/016-roadmap-reorganisation.md) | Roadmap reorganisation — AI-first tiers | Process |
+| [ADR-017](./adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, sync | Frontend |
