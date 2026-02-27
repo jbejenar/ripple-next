@@ -25,6 +25,7 @@
     "db:studio": "pnpm --filter @ripple/db db:studio",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
+    "doctor": "bash scripts/doctor.sh",
     "prepare": "husky"
   },
   "devDependencies": {
