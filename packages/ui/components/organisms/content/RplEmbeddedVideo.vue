@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+
 const props = defineProps<{
   url: string
   title?: string

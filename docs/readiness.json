@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -13,10 +13,10 @@
     },
     "database": {
       "status": "implemented",
-      "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log. Repository pattern implemented. Migrations working.",
+      "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log, sessions. Repository pattern implemented. Migrations working. Testcontainers integration tests for UserRepository and ProjectRepository validate CRUD, unique constraints, and foreign key relationships against real PostgreSQL 17.",
       "packages": ["@ripple/db"],
-      "blockers": ["No integration tests for repositories using testcontainers"],
-      "testCoverage": "minimal"
+      "blockers": [],
+      "testCoverage": "integration-tested"
     },
     "queue": {
       "status": "implemented",
@@ -47,25 +47,25 @@
       "testCoverage": "conformance-tested"
     },
     "ui": {
-      "status": "partial",
-      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). Storybook stories with autodocs for all 15 components. Storybook configured.",
+      "status": "implemented",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput), molecules (Card, HeroHeader, Navigation), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 16 components total. Storybook stories with autodocs for all components. Vue Test Utils component tests for all components with coverage of props, events, accessibility, and interactive state.",
       "packages": ["@ripple/ui"],
-      "blockers": ["Vue Test Utils component tests needed for Tide content components (RN-030)"],
-      "testCoverage": "storybook-stories-complete"
+      "blockers": [],
+      "testCoverage": "component-tested + storybook-stories"
     },
     "api": {
       "status": "partial",
-      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes.",
+      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes. Database repositories have Testcontainers integration tests.",
       "packages": [],
       "paths": ["apps/web/server/trpc/", "apps/web/server/api/"],
       "blockers": [
-        "No integration tests with real DB (testcontainers)"
+        "No integration tests for tRPC routers with real DB (Testcontainers)"
       ],
-      "testCoverage": "contract-tested"
+      "testCoverage": "contract-tested + db-integration-tested"
     },
     "infrastructure": {
       "status": "implemented",
-      "description": "SST v3 config with VPC, Aurora Postgres, Redis, DynamoDB, S3, SQS queues, EventBridge, Lambda consumers, ECS Fargate services, Cron jobs, Nuxt app.",
+      "description": "SST v3 config with VPC, Aurora Postgres, Redis, DynamoDB, S3, SQS queues, EventBridge, Lambda consumers, ECS Fargate services, Cron jobs, Nuxt app. LocalStack explicitly not required (ADR-015).",
       "packages": [],
       "paths": ["sst.config.ts"],
       "blockers": [],
@@ -81,7 +81,7 @@
     },
     "testing-infra": {
       "status": "implemented",
-      "description": "Mock providers bundle (including CMS), test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, events, and CMS. Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, pnpm check:quarantine CI gate.",
+      "description": "Mock providers bundle (including CMS), test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, events, and CMS. Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, pnpm check:quarantine CI gate. Testcontainers integration tests for database repositories.",
       "packages": ["@ripple/testing"],
       "blockers": [],
       "testCoverage": "conformance-suites-used-by-providers"
@@ -95,13 +95,21 @@
     },
     "cms": {
       "status": "implemented",
-      "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) — removable without touching frontend, tests, or API layer. See ADR-011.",
+      "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide), SearchEnhancedCmsProvider (decorator for dedicated search engines). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) — removable without touching frontend, tests, or API layer. MeiliSearch integration for local dev search. See ADR-011.",
       "packages": ["@ripple/cms"],
-      "paths": ["apps/web/server/api/cms/", "apps/web/composables/useCms.ts", "apps/web/pages/content/"],
+      "paths": ["apps/web/server/api/cms/", "apps/web/composables/useCms.ts", "apps/web/composables/useNavigation.ts", "apps/web/pages/content/"],
       "blockers": [
-        "No integration test with live Drupal/Tide instance"
+        "No integration test with live Drupal/Tide instance (awaiting URLs)"
       ],
-      "testCoverage": "conformance-tested + unit-tested"
+      "testCoverage": "conformance-tested + unit-tested + search-tested"
+    },
+    "navigation": {
+      "status": "implemented",
+      "description": "Navigation composable (useNavigation) loads header and footer menus from CMS provider. RplNavigation component supports horizontal (header) and vertical (footer) variants with nested menu structures. Wired into default layout. Fully tested with Vue Test Utils.",
+      "packages": ["@ripple/ui"],
+      "paths": ["apps/web/composables/useNavigation.ts", "apps/web/layouts/default.vue"],
+      "blockers": [],
+      "testCoverage": "component-tested"
     }
   },
   "statusLegend": {

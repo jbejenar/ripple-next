@@ -43,7 +43,10 @@ export default [
         defineNuxtRouteMiddleware: 'readonly',
         createError: 'readonly',
         showError: 'readonly',
-        readonly: 'readonly'
+        readonly: 'readonly',
+        useAuth: 'readonly',
+        useCms: 'readonly',
+        useNavigation: 'readonly'
       }
     },
     plugins: {

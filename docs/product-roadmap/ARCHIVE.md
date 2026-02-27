@@ -70,7 +70,7 @@ The original Ripple design system is built on Drupal/Tide. Created `@ripple/cms`
 with Drupal JSON:API integration and a mock provider for testing, following the
 provider pattern. Full decoupling architecture isolates Drupal to 2 files.
 
-**Reference:** `packages/cms/`, [ADR-009](../adr/009-cms-provider-drupal-tide.md), [ADR-011](../adr/011-cms-decoupling-pull-out-drupal.md)
+**Reference:** `packages/cms/`, [ADR-009](../adr/009-cms-provider-drupal.md), [ADR-011](../adr/011-cms-decoupling-pull-out-drupal.md)
 
 - [x] Create `packages/cms/` with CMS provider interface (`types.ts`)
 - [x] Implement `MockCmsProvider` for tests and local dev
@@ -320,6 +320,78 @@ workflow files (minimal CI, tiered CI, publish), version pinning strategy
 
 ---
 
+### RN-018: Search Integration Provider
+
+**Phase:** 2 | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+
+Dedicated search provider layer with `SearchEngine` interface, `MeiliSearchEngine`
+for local dev, and `SearchEnhancedCmsProvider` decorator that wraps any `CmsProvider`
+and delegates search queries to the external engine while forwarding all other
+operations to the inner provider.
+
+**Reference:** `packages/cms/providers/search.ts`, `packages/cms/tests/search.test.ts`
+
+- [x] Define `SearchEngine` interface and `SearchDocument` type
+- [x] Implement `MeiliSearchEngine` for local dev (MeiliSearch HTTP API)
+- [x] Implement `SearchEnhancedCmsProvider` decorator pattern
+- [x] Add unit tests for search provider (MemorySearchEngine + integration)
+- [x] Export search provider from `@ripple/cms` package
+
+---
+
+### RN-019: Navigation/Menu Component
+
+**Phase:** 2 | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Continues:** [RN-012](#rn-012-cms-page-rendering--tide-components--decoupling)
+
+Navigation components and composable for rendering CMS-provided menu structures
+in header and footer, with nested menu support.
+
+**Reference:** `packages/ui/components/molecules/RplNavigation.vue`, `apps/web/composables/useNavigation.ts`
+
+- [x] Create `useNavigation()` composable with header/footer menu loading
+- [x] Build `RplNavigation` component with horizontal/vertical variants
+- [x] Wire navigation into default layout (header + footer slots)
+- [x] Support nested menu structures from CMS (with depth flattening)
+- [x] Add Vue Test Utils tests for navigation component
+
+---
+
+### RN-030: UI Component Test Suite
+
+**Phase:** 2 | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** AI agent gap analysis
+**Continues:** [RN-020](#rn-020-storybook-stories-for-tide-components)
+
+Vue Test Utils component tests for all 16 UI components — atoms, molecules,
+organisms, and all 8 Tide content section renderers. Moves the UI subsystem
+from "partial" to "implemented" status.
+
+**Reference:** `packages/ui/tests/`
+
+- [x] Add component tests for atoms (RplButton, RplFormInput, RplIcon)
+- [x] Add component tests for molecules (RplCard, RplHeroHeader, RplNavigation)
+- [x] Add component tests for organisms (RplHeader, RplFooter)
+- [x] Add component tests for Tide content (Accordion, CardCollection, CTA, Wysiwyg, Image, Video, KeyDates, Timeline)
+
+---
+
+### RN-031: Testcontainers Integration Tests for DB + API
+
+**Phase:** 2 | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** AI agent gap analysis
+
+Integration tests using Testcontainers for `@ripple/db` repositories. Tests run
+against a real PostgreSQL 17 container — no mocking of database behavior.
+
+**Reference:** `packages/db/tests/integration/`
+
+- [x] Add Testcontainers-based integration tests for UserRepository (9 tests)
+- [x] Add Testcontainers-based integration tests for ProjectRepository (8 tests)
+- [x] Validate CRUD operations, unique constraints, and foreign key relationships
+
+---
+
 ## Summary
 
 | ID | Item | Phase | Status |
@@ -340,5 +412,9 @@ workflow files (minimal CI, tiered CI, publish), version pinning strategy
 | [RN-014](#rn-014-sbom--provenance-in-release) | SBOM + Provenance in Release | 2 | **Done** |
 | [RN-015](#rn-015-reusable-composite-actions) | Reusable Composite Actions | 2 | **Done** |
 | [RN-016](#rn-016-hermetic-devruntime-devcontainer) | Hermetic Dev/Runtime | 3 | **Done** |
+| [RN-018](#rn-018-search-integration-provider) | Search Integration Provider | 2 | **Done** |
+| [RN-019](#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 | **Done** |
 | [RN-020](#rn-020-storybook-stories-for-tide-components) | Storybook Stories (Tide) | 2 | **Done** |
 | [RN-022](#rn-022-downstream-workflow-documentation) | Downstream Workflow Docs | 2 | **Done** |
+| [RN-030](#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 | **Done** |
+| [RN-031](#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 | **Done** |
