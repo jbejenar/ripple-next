@@ -11,6 +11,7 @@ app.get('/health', (c) => {
 // Using Hono's WebSocket support for persistent connections
 
 const port = Number(process.env.PORT ?? 3001)
+// eslint-disable-next-line no-console -- startup message for server process
 console.log(`WebSocket server starting on port ${port}`)
 
 export default {

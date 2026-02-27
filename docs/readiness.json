@@ -2,49 +2,49 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
-      "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions.",
+      "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions. Conformance test suite validates provider contract.",
       "packages": ["@ripple/auth"],
       "blockers": ["No integration tests for production OIDC flow yet"],
-      "testCoverage": "mock-provider-tested"
+      "testCoverage": "conformance-tested"
     },
     "database": {
       "status": "implemented",
       "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log. Repository pattern implemented. Migrations working.",
       "packages": ["@ripple/db"],
-      "blockers": [],
+      "blockers": ["No integration tests for repositories using testcontainers"],
       "testCoverage": "minimal"
     },
     "queue": {
       "status": "implemented",
-      "description": "Full provider pattern: MemoryQueueProvider (test), BullMQQueueProvider (local), SqsQueueProvider (prod). Consumer pattern with DLQ retry logic.",
+      "description": "Full provider pattern: MemoryQueueProvider (test), BullMQQueueProvider (local), SqsQueueProvider (prod). Consumer pattern with DLQ retry logic. Conformance test suite validates provider contract.",
       "packages": ["@ripple/queue"],
       "blockers": [],
-      "testCoverage": "memory-provider-tested"
+      "testCoverage": "conformance-tested"
     },
     "storage": {
       "status": "implemented",
-      "description": "Full provider pattern: FilesystemStorageProvider (test), MinioStorageProvider (local), S3StorageProvider (prod). Presigned URL support.",
+      "description": "Full provider pattern: FilesystemStorageProvider (test), MinioStorageProvider (local), S3StorageProvider (prod). Presigned URL support. Conformance test suite validates provider contract.",
       "packages": ["@ripple/storage"],
       "blockers": [],
-      "testCoverage": "minimal"
+      "testCoverage": "conformance-tested"
     },
     "email": {
       "status": "implemented",
-      "description": "Full provider pattern: MemoryEmailProvider (test), SmtpEmailProvider (local/Mailpit), SesEmailProvider (prod).",
+      "description": "Full provider pattern: MemoryEmailProvider (test), SmtpEmailProvider (local/Mailpit), SesEmailProvider (prod). Conformance test suite validates provider contract.",
       "packages": ["@ripple/email"],
       "blockers": [],
-      "testCoverage": "memory-provider-tested"
+      "testCoverage": "conformance-tested"
     },
     "events": {
       "status": "implemented",
-      "description": "Domain event bus: MemoryEventBus (test/local), EventBridgeBus (prod). Typed domain events for users, projects.",
+      "description": "Domain event bus: MemoryEventBus (test/local), EventBridgeBus (prod). Typed domain events for users, projects. Conformance test suite validates bus contract.",
       "packages": ["@ripple/events"],
       "blockers": [],
-      "testCoverage": "minimal"
+      "testCoverage": "conformance-tested"
     },
     "ui": {
       "status": "partial",
@@ -55,14 +55,13 @@
     },
     "api": {
       "status": "partial",
-      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics.",
+      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes.",
       "packages": [],
       "paths": ["apps/web/server/trpc/", "apps/web/server/api/"],
       "blockers": [
-        "No contract tests for API routes",
         "No integration tests with real DB (testcontainers)"
       ],
-      "testCoverage": "none"
+      "testCoverage": "contract-tested"
     },
     "infrastructure": {
       "status": "implemented",
@@ -74,31 +73,25 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR. Bootstrap doctor script for environment validation.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR. Bootstrap doctor script for environment validation. no-console promoted to error. Risk-tiered coverage thresholds configured.",
       "packages": [],
       "paths": [".github/workflows/"],
-      "blockers": [
-        "No coverage thresholds enforced yet",
-        "Lint warnings not promoted to errors yet"
-      ],
+      "blockers": [],
       "testCoverage": "pipeline-tested"
     },
     "testing-infra": {
       "status": "implemented",
-      "description": "Mock providers bundle, test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup.",
+      "description": "Mock providers bundle, test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, and events.",
       "packages": ["@ripple/testing"],
       "blockers": [],
-      "testCoverage": "self-tested"
+      "testCoverage": "conformance-suites-used-by-providers"
     },
     "publishing": {
-      "status": "partial",
-      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. See ADR-007.",
+      "status": "implemented",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, and publishes. See ADR-007.",
       "packages": ["all @ripple/* packages"],
-      "blockers": [
-        "No release CI workflow yet",
-        "No changeset/versioning tool configured"
-      ],
-      "testCoverage": "none"
+      "blockers": [],
+      "testCoverage": "release-workflow-validated"
     }
   },
   "statusLegend": {

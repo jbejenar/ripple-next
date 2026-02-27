@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Version & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@ripple'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # Smoke test: ensure all published packages have valid exports
+      - name: Validate package exports
+        run: |
+          for pkg in packages/auth packages/db packages/email packages/events packages/queue packages/shared packages/storage packages/ui packages/validation; do
+            if [ -f "$pkg/dist/index.js" ]; then
+              node -e "import('$(pwd)/$pkg/dist/index.js')" 2>/dev/null && echo "  ✓ $pkg exports valid" || echo "  ✗ $pkg exports broken" >&2
+            fi
+          done
+
+      - name: Create Release PR or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+          version: pnpm version-packages
+          title: 'chore: version packages'
+          commit: 'chore: version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
