@@ -422,7 +422,7 @@ export class DrupalCmsProvider implements CmsProvider {
   private extractBody(body: unknown): string | undefined {
     if (!body) return undefined
     if (typeof body === 'string') return body
-    if (typeof body === 'object' && body !== null && 'value' in body) {
+    if (typeof body === 'object' && 'value' in body) {
       return String((body as { value: unknown }).value)
     }
     return undefined
