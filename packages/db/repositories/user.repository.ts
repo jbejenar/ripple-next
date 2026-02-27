@@ -7,7 +7,7 @@ export class UserRepository {
 
   async create(data: NewUser): Promise<User> {
     const [user] = await this.db.insert(users).values(data).returning()
-    return user
+    return user!
   }
 
   async findById(id: string): Promise<User | undefined> {
@@ -30,6 +30,11 @@ export class UserRepository {
       .set({ ...data, updatedAt: new Date() })
       .where(eq(users.id, id))
       .returning()
+    return user!
+  }
+
+  async findByOidcSub(oidcSub: string): Promise<User | undefined> {
+    const [user] = await this.db.select().from(users).where(eq(users.oidcSub, oidcSub))
     return user
   }
 

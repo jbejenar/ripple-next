@@ -25,7 +25,7 @@ Status values: `implemented` | `partial` | `scaffold` | `planned`.
 - API: Nitro server routes + tRPC-nuxt
 - DB: PostgreSQL (Drizzle ORM), DynamoDB (ElectroDB), Redis
 - Queue: SQS (prod) / BullMQ (local) / Memory (test)
-- Auth: Lucia Auth v3 + Cognito
+- Auth: OIDC/OAuth (oauth4webapi) — provider-agnostic
 - Infra: SST v3 (Pulumi/Terraform) — NOT CDK, NOT CloudFormation
 - Compute: Lambda (default) + ECS Fargate (long-running only)
 - Testing: Vitest, Vue Test Utils, Playwright, Testcontainers
@@ -37,7 +37,7 @@ Status values: `implemented` | `partial` | `scaffold` | `planned`.
 Every infrastructure concern uses a provider interface:
 
 - `packages/queue/providers/` → memory.ts | bullmq.ts | sqs.ts
-- `packages/auth/providers/` → mock.ts | lucia.ts | cognito.ts
+- `packages/auth/providers/` → mock.ts | oidc.ts
 - `packages/storage/providers/` → filesystem.ts | minio.ts | s3.ts
 - `packages/email/providers/` → smtp.ts (includes MemoryEmailProvider) | ses.ts
   Tests ALWAYS use memory/mock providers. Never depend on cloud services.

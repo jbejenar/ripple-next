@@ -29,6 +29,10 @@ export default defineNuxtConfig({
     databaseUrl: '',
     redisUrl: '',
     sessionSecret: '',
+    oidcIssuerUrl: '',
+    oidcClientId: '',
+    oidcClientSecret: '',
+    oidcRedirectUri: '',
     // Public config (exposed to client)
     public: {
       appName: 'Ripple Next',

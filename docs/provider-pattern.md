@@ -57,13 +57,13 @@ packages/{concern}/
 
 ## Available Providers
 
-| Concern | Test                      | Local Dev                   | Production          |
-| ------- | ------------------------- | --------------------------- | ------------------- |
-| Queue   | MemoryQueueProvider       | BullMQQueueProvider         | SqsQueueProvider    |
-| Auth    | MockAuthProvider          | LuciaAuthProvider           | CognitoAuthProvider |
-| Storage | FilesystemStorageProvider | MinioStorageProvider        | S3StorageProvider   |
-| Email   | MemoryEmailProvider       | SmtpEmailProvider (Mailpit) | SesEmailProvider    |
-| Events  | MemoryEventBus            | MemoryEventBus              | EventBridgeBus      |
+| Concern | Test                      | Local Dev                   | Production        |
+| ------- | ------------------------- | --------------------------- | ----------------- |
+| Queue   | MemoryQueueProvider       | BullMQQueueProvider         | SqsQueueProvider  |
+| Auth    | MockAuthProvider          | OidcAuthProvider            | OidcAuthProvider  |
+| Storage | FilesystemStorageProvider | MinioStorageProvider        | S3StorageProvider |
+| Email   | MemoryEmailProvider       | SmtpEmailProvider (Mailpit) | SesEmailProvider  |
+| Events  | MemoryEventBus            | MemoryEventBus              | EventBridgeBus    |
 
 ## Usage in Tests
 

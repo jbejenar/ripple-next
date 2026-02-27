@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "lucia": "^3.2.2"
+    "oauth4webapi": "^3.1.4"
   },
   "devDependencies": {
     "typescript": "^5.7.3",
