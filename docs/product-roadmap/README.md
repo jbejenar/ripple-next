@@ -274,133 +274,98 @@ Optional validation that the devcontainer works in containerized CI runners.
 
 ## Additional AI Suggestions (Principal Engineer + Platform Architecture Review)
 
-### 1) Executive verdict
+> Structured in roadmap feature style so these can be triaged, scheduled, and extended like RN-017…RN-031.
 
-- **Ship-ready?** **Yes, with conditions.**
-- **Top 5 blockers:**
-  1. **No codified fleet-template sync mechanism yet** (tracked as RN-024, but still pending). Suggested pattern exists in roadmap, not yet implemented.
-  2. **Toolchain pinning is strong but not fully hermetic across diverse runners** (`engines` are ranges; CI pins major Node, not exact patch).
-  3. **Preview cleanup workflow assumes AWS secret availability** and lacks a guard path equivalent to deploy-preview; this can produce noisy failed runs in forks.
-  4. **Release hardening could go further with package signature verification for consumers** (RN-027 is pending).
-  5. **Org-wide policy distribution is documented but not centralized yet** (RN-026 pending), limiting fleet-wide enforceability.
+### Executive Verdict
 
-### 2) Agent-Friction Scorecard (0–5)
+**Ship-ready? Yes, with conditions.**
 
-| Dimension | Score | Justification |
-|---|---:|---|
-| Setup determinism | 4.5 | `pnpm bootstrap`, lockfile install, doctor checks, env schema validation are excellent; still range-based runtime constraints (`>=22`, `>=9`). |
-| One-command workflows | 5.0 | `pnpm bootstrap` and clear root scripts cover setup/build/test/lint/typecheck. |
-| Local dev parity with CI | 4.5 | Good parity via shared commands + docker services + testcontainers; slight drift from CI-specific reporters/flows (`test:ci`, CI-only artifacts). |
-| Test reliability / flake resistance | 5.0 | Quarantine policy + gate, conformance suites, tiered CI, explicit artifact retention. |
-| Dependency + toolchain pinning | 4.0 | `packageManager` + lockfile + overrides are strong; runtime/toolchain still mostly major/range pinned. |
-| Observability of failures | 5.0 | JUnit/test artifacts, Playwright traces, SBOM artifact, CodeQL/Gitleaks workflows. |
-| Automated remediation friendliness | 4.5 | Machine-readable doctor/env validation/readiness checks are strong; rollback/remediation runbooks can be more explicit for agents. |
+Top blockers from the review are now represented as discrete roadmap items below.
 
-### 3) Concurrency + Scale Readiness
+### AI Suggestions — Feature Backlog
 
-- **Multi-team development:** Strong monorepo + package publish strategy (`@ripple/*` with changesets) supports decoupled upgrades; governance is present via ADRs and CODEOWNERS references.
-- **Environment/deployment concurrency:** Good PR stage isolation (`pr-{number}`), workflow concurrency groups, and preview lifecycle automation.
-- **Repo templating/bootstrapping strategy:** Clear intent, but implementation remains pending (RN-024). This is the biggest scale blocker.
-- **Versioning across hundreds of projects:** Changesets + private registry approach is correct; next maturity step is automated downstream compatibility and sync channels.
+#### RN-032: Toolchain Pinning Hardening (Exact Runtime Contract)
 
-### 4) Security + Supply Chain
+**Impact:** High | **Effort:** Low | **Risk:** Low  
+**Source:** AI Principal Engineer review
 
-- **Secrets handling:** OIDC role assumption in deploy workflows is good; add consistent “secret missing => soft skip” handling for all preview lifecycle workflows.
-- **Dependency risk controls:** Dependency review + deny-licenses + pnpm overrides are solid baseline.
-- **SBOM/provenance:** CycloneDX + attestations already implemented in release pipeline; this is above average.
-- **SAST/DAST and policy gates:** CodeQL + secret scanning present; recommend adding explicit IaC policy scanning for `sst.config.ts` changes and drift policy checks as blocking gates.
+Harden reproducibility by moving from major/range-based runtime constraints to exact, enforceable toolchain contracts across local, CI, and devcontainer environments.
 
-### 5) Architecture + Maintainability
-
-- **Module boundaries:** Provider and repository patterns are clear and suitable for agent-driven extension.
-- **API contracts:** Good split between REST/tRPC and shared validation package; contract testing across consumers remains pending (RN-025).
-- **Configuration strategy:** Strong env schema validation and doctor checks. Consider introducing environment profile manifests per stage to reduce ad hoc env composition in large fleets.
-- **Backwards compatibility/upgrades:** Changesets and ADR process exist; missing piece is automated consumer impact analysis and fleet rollout orchestration.
-
-### 6) CI/CD and Release Engineering
-
-- **Pipeline design:** Tiered CI with change detection is efficient and concurrency-aware.
-- **Reproducible builds:** Frozen lockfile + setup action help; full hermetic reproducibility would benefit from exact toolchain pinning (or devcontainer CI enforcement).
-- **Artifact strategy:** Structured upload and retention are strong, especially for test reports and SBOM.
-- **Progressive delivery + rollbacks:** Preview/staging/prod flow is good; add an explicit automated rollback playbook + command contract for agent executors.
-
-### 7) Concrete recommendations
-
-#### Do now (1–2 weeks)
-
-1. **Add preview cleanup secret guard parity** (`cleanup-preview.yml` soft-skip if AWS role missing).  
-   - Impact: High | Effort: Low | Risk: Low
-2. **Pin runtime versions more strictly** (exact Node/pnpm in CI + documented local runtime manager such as mise/asdf/Volta).  
-   - Impact: High | Effort: Low | Risk: Low
-3. **Standardize machine-readable failure outputs for all quality gates** (lint/typecheck/test wrappers emitting JSON summaries).  
-   - Impact: Medium | Effort: Medium | Risk: Low
-
-#### Do next (1–2 months)
-
-1. **Deliver RN-024 and RN-026 together** (template drift + org-wide reusable workflow distribution).  
-   - Impact: Very High | Effort: High | Risk: Medium
-2. **Implement consumer contract test matrix (RN-025)** in release preflight before publish.  
-   - Impact: High | Effort: Medium | Risk: Medium
-3. **Add signed package verification workflow (RN-027)** with a consumer-side verify command.  
-   - Impact: High | Effort: Medium | Risk: Medium
-
-#### Do later (quarterly)
-
-1. **Golden-path conformance CLI (RN-028)** with auto-remediation PRs for fleet repos.  
-   - Impact: Very High | Effort: High | Risk: Medium
-2. **Devcontainer conformance in CI (RN-029)** as a fleet reproducibility gate.  
-   - Impact: Medium | Effort: Low | Risk: Low
-3. **Policy-as-code bundle for SST/IAM/deployment guardrails** with org-level rollout channels.  
-   - Impact: High | Effort: Medium | Risk: Medium
-
-### 8) Proposed Golden Path
-
-#### Ideal developer/agent workflow
-
-```bash
-pnpm bootstrap
-pnpm validate:env -- --json
-pnpm build
-pnpm lint && pnpm typecheck
-pnpm test:ci
-pnpm test:e2e        # when web/high-risk surfaces change
-```
-
-For infra changes:
-
-```bash
-npx sst deploy --stage pr-<number>
-# validate preview + tests
-npx sst remove --stage pr-<number>
-```
-
-#### Minimal required repo standards checklist
-
-- [ ] Single non-interactive bootstrap command with deterministic exit codes.
-- [ ] Doctor command with machine-readable output.
-- [ ] Locked package manager + lockfile + pinned runtime strategy.
-- [ ] Tiered CI with structured artifacts and high-risk routing.
-- [ ] Preview environment namespacing + automatic cleanup.
-- [ ] Supply chain gates: dependency review + SBOM + provenance + secret scan.
-- [ ] Flake containment policy + quarantine governance.
-- [ ] Changesets (or equivalent) for version intent + release automation.
-- [ ] Reusable workflow/actions strategy for downstream repos.
-
-#### Template strategy for new projects
-
-1. Treat this repository as **golden-path source**, and generate downstream repos from a template branch.
-2. Use a **drift bot** to open automated sync PRs for policy/security/tooling updates.
-3. Version workflow packs (stable/canary) so downstream teams can opt into staged upgrades.
-4. Add conformance scoring per downstream repo and block releases below threshold.
-
-#### Evidence sources reviewed
-
-- Entry points/toolchain: `package.json`, `turbo.json`, `pnpm-lock.yaml`, `scripts/doctor.sh`.
-- CI/CD/security/release: `.github/workflows/ci.yml`, `security.yml`, `release.yml`, `deploy-preview.yml`, `cleanup-preview.yml`, `.github/actions/*`.
-- Environment and deployment model: `README.md`, `docs/deployment.md`, `docker-compose.yml`, `.devcontainer/*`.
-- Architecture/versioning/roadmap: `docs/architecture.md`, ADRs, `.changeset/config.json`, `docs/product-roadmap/README.md`.
+- [ ] Pin exact Node version in CI and document a single local version manager strategy (Volta/asdf/mise)
+- [ ] Pin exact pnpm version in all execution paths
+- [ ] Add a guard check in `pnpm doctor` for exact versions (not only minimums)
+- [ ] Document upgrade procedure for runtime bumps
 
 ---
+
+#### RN-033: Preview Cleanup Guardrails Parity
+
+**Impact:** High | **Effort:** Low | **Risk:** Low  
+**Source:** AI Principal Engineer review
+
+Align `cleanup-preview` behavior with deploy-preview guardrails so missing AWS credentials produce a safe, explainable skip rather than noisy failures.
+
+- [ ] Add secret/credential presence gate to cleanup workflow
+- [ ] Emit explicit notice when cleanup is skipped due to missing credentials
+- [ ] Add test/validation checklist entry for preview lifecycle workflows
+- [ ] Update deployment docs with failure/skip behavior
+
+---
+
+#### RN-034: Machine-Readable Quality Gate Summaries
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low  
+**Source:** AI Principal Engineer review
+
+Improve automated remediation friendliness by standardizing JSON summaries for lint/typecheck/test outcomes (similar to doctor/env checks).
+
+- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
+- [ ] Include machine-readable status in CI artifacts
+- [ ] Ensure non-zero exits remain authoritative for gating
+- [ ] Document schema for downstream automation consumers
+
+---
+
+#### RN-035: Rollback and Recovery Command Contract
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium  
+**Source:** AI Principal Engineer review
+
+Define and automate rollback procedures for staging/production so agents can execute safe recovery paths without ad hoc human interpretation.
+
+- [ ] Add explicit rollback runbook with command examples
+- [ ] Provide scripted rollback entrypoint(s) for common failure modes
+- [ ] Add post-deploy health validation + rollback trigger criteria
+- [ ] Capture rollback evidence as CI/CD artifacts
+
+---
+
+#### RN-036: IaC Policy Scanning for SST Changes
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium  
+**Source:** AI Principal Engineer review
+
+Add blocking policy-as-code checks for infrastructure changes to strengthen security and compliance posture.
+
+- [ ] Add IaC policy scan job for `sst.config.ts` changes
+- [ ] Define baseline policy set (least privilege, restricted public exposure, encryption)
+- [ ] Route violations to clear, machine-readable diagnostics
+- [ ] Document exception workflow and approvals
+
+---
+
+### AI Suggestions Summary
+
+| ID | Item | Phase | Priority | Impact | Status |
+|----|------|-------|----------|--------|--------|
+| [RN-032](#rn-032-toolchain-pinning-hardening-exact-runtime-contract) | Toolchain Pinning Hardening | 3 | High | High | Pending |
+| [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 3 | High | High | Pending |
+| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 3 | Medium | Medium | Pending |
+| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 3 | Medium | High | Pending |
+| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 3 | Medium | High | Pending |
+
+---
+
 
 ## Roadmap Gantt
 
