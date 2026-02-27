@@ -24,15 +24,7 @@ const tier3Coverage = {
 
 export default defineWorkspace([
   'apps/web/vitest.config.ts',
-  {
-    test: {
-      name: 'ui',
-      root: './packages/ui',
-      environment: 'happy-dom',
-      include: ['tests/**/*.test.ts'],
-      coverage: tier3Coverage
-    }
-  },
+  'packages/ui/vitest.config.ts',
   {
     test: {
       name: 'db',

@@ -75,7 +75,7 @@ jobs:
         run: pnpm db:migrate
 
       - name: Run tests with JUnit reporter
-        run: pnpm test -- --reporter=default --reporter=junit --outputFile=test-results/junit.xml
+        run: pnpm test:ci
 
       - name: Upload test results
         if: always()
