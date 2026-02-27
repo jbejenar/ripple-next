@@ -11,6 +11,7 @@ pnpm lint            # lint all packages
 pnpm typecheck       # type check all packages
 pnpm validate:env    # validate env vars against Zod schema
 pnpm check:readiness # verify readiness.json is not stale
+pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
 ```
 
 ## Project Overview
@@ -39,7 +40,8 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 2. `pnpm lint` — zero errors (no-console is an error, not a warning)
 3. `pnpm typecheck` — zero type errors
 4. `pnpm check:readiness` — manifest must not drift
-5. If you changed a published package's API: `pnpm changeset` to add version intent
+5. `pnpm check:quarantine` — quarantine policy must be satisfied
+6. If you changed a published package's API: `pnpm changeset` to add version intent
 
 ## Provider Pattern (Critical)
 

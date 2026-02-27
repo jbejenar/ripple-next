@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.5.0
+> Last updated: 2026-02-27 | Version: 1.6.0
 
 ## Executive Verdict
 
@@ -32,6 +32,8 @@ Top blockers before this can be the default golden path for a large AI-first fle
 - `pnpm doctor --json` and `pnpm bootstrap` provide non-interactive agent ergonomics.
 - `.env.example` with `NUXT_` prefixed vars documents the full environment contract.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
+- **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap, Tier 1 protection.
+- **Preview deploy guardrails** — GitHub environment protection, label-gated deploys, infra change auto-deploy (ADR-014).
 
 ### Platform Maturity Overview
 
@@ -83,7 +85,8 @@ graph LR
 | 3 | ~~Doctor has non-resilient network check (npm ping hard-fails), no machine-readable output for agents~~ | ~~High~~ | **Done** |
 | 4 | ~~No standardized env contract artifact (.env.example/schema)~~ | ~~High~~ | **Done** |
 | 5 | ~~CI artifact observability is partial (Playwright only, no structured reports for unit/integration)~~ | ~~Medium~~ | **Done** |
-| 6 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
+| 6 | ~~Preview deploy depends on long-lived repo secret naming convention~~ — GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. | Medium | **Done** |
+| 7 | Fleet template/update mechanics underdefined (no "template sync" for downstream repos) | Medium — impacts fleet-scale operations | Planned |
 
 ---
 
@@ -136,12 +139,12 @@ AWS-emulation-heavy.
 | Setup determinism | 5/5 | Strong pinning (pnpm@9.15.4, Node 22 via engines + .nvmrc), lockfile present, frozen installs in CI. `.env.example` + Zod-based env schema validation (`pnpm validate:env`). Devcontainer with all services pre-configured. |
 | One-command workflows | 5/5 | `pnpm bootstrap` provides zero-to-ready flow. Core commands clean. CMS provider factory auto-selects mock/drupal based on env config — zero setup for agents. |
 | Local dev parity with CI | 4/5 | Shared pnpm/node/tooling and Postgres/Redis in CI; docker-compose mirrors infra locally. Devcontainer available for full reproducibility. |
-| Test reliability / flake resistance | 4/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. CMS tests use mock provider — zero network flakes. Unified `pnpm test:ci` entrypoint. |
+| Test reliability / flake resistance | 5/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. CMS tests use mock provider — zero network flakes. Unified `pnpm test:ci` entrypoint. Explicit flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, `pnpm check:quarantine` CI gate. |
 | Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile + node versioning present; many deps still semver-ranged (normal). |
 | Observability of failures | 5/5 | JUnit XML test artifacts uploaded on every CI run (30-day retention). Playwright traces on failure (7-day). Coverage reports available. Structured artifact naming. SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. |
 | Automated remediation friendliness | 5/5 | `pnpm doctor --json` provides stable machine contract with Zod-based env schema validation. `--offline` flag for ephemeral runners. Reusable composite actions. CMS decoupling documented with mechanical removal/addition procedures (ADR-011). Provider conformance suites validate any change automatically. |
 
-**Overall: 32/35** — Improved from 30/35 with env schema validation gate, mandatory SBOM, devcontainer, and unified CI test entrypoint.
+**Overall: 33/35** — Improved from 32/35 with flaky test containment policy (ADR-013) raising test reliability to 5/5. Preview deploy guardrails (ADR-014) further strengthen deployment safety.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -149,7 +152,7 @@ xychart-beta
     title "Agent-Friction Scorecard (0-5)"
     x-axis ["Setup", "Workflows", "Dev Parity", "Test Reliability", "Pinning", "Observability", "Remediation"]
     y-axis "Score" 0 --> 5
-    bar [5, 5, 4, 4, 4, 5, 5]
+    bar [5, 5, 4, 5, 4, 5, 5]
 ```
 
 ---
@@ -516,9 +519,10 @@ gantt
     Unified CI test entrypoint                 :done, unified_test, 2026-02-27, 1d
     Env schema validation gate (ADR-012)       :done, env_schema, 2026-02-27, 3d
     Devcontainer baseline                      :done, devcontainer, 2026-02-27, 1d
+    Flaky test containment policy (ADR-013)    :done, flaky, 2026-02-27, 1d
+    Preview deploy guardrails (ADR-014)        :done, preview_guard, 2026-02-27, 1d
     Live Drupal integration testing            :drupal, 2026-04-01, 21d
     Search integration provider                :search, 2026-04-15, 21d
-    Flaky test containment policy              :flaky, 2026-04-01, 14d
 
     section Phase 3 — Do Later
     Fleet update mechanism                     :fleet, 2026-05-01, 30d
@@ -609,17 +613,19 @@ See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
 
 ### Phase 2: Do Next (1-2 months) — MOSTLY COMPLETE
 
-#### 2.0 AI-Suggested Improvements (Do Now batch) — COMPLETE
+#### 2.0 AI-Suggested Improvements — COMPLETE
 
 **Impact:** High | **Effort:** Low-Medium | **Risk:** Low
 
-Implemented the three "Do Now" recommendations from the AI Principal Engineer review,
-plus discovered an existing devcontainer. See ADR-012.
+Implemented all "Do Now" and "Do Next" recommendations from the AI Principal Engineer
+review. See ADR-012, ADR-013, ADR-014.
 
 - [x] Make SBOM mandatory in release workflow (removed `continue-on-error: true`)
 - [x] Unify CI test entrypoint (single `pnpm test:ci` with optional coverage flags)
 - [x] Add Zod-based env schema validation gate (`pnpm validate:env` + CI integration)
 - [x] Devcontainer baseline (`.devcontainer/` — already existed, now documented in roadmap)
+- [x] Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, `pnpm check:quarantine` CI gate
+- [x] Preview deploy environment guardrails (ADR-014): GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention
 
 #### 2.1 CMS Page Rendering + Tide Components + Decoupling
 
@@ -763,6 +769,8 @@ graph TD
 - [x] Reusable composite actions for fleet CI consistency
 - [x] Devcontainer for hermetic local development
 - [x] Unified CI test entrypoint (`pnpm test:ci`)
+- [x] Flaky test containment policy with quarantine check (`pnpm check:quarantine`)
+- [x] Preview deploy environment guardrails (label-gated + infra auto-deploy)
 
 ### Template strategy (spawn + keep updated)
 
@@ -811,14 +819,14 @@ graph TD
   1. **Missing fleet-template sync automation** (`docs/product-roadmap/README.md`, `.github/workflows/*`): no automated mechanism to push policy/security updates into downstream generated repos.
   2. ~~**No hermetic/devcontainer baseline**~~ — `.devcontainer/` now ships with Node 22, Docker-in-Docker, all services. **Done.**
   3. ~~**Release workflow tolerance is too lenient for SBOM generation**~~ — `continue-on-error: true` removed; SBOM is now fail-fast mandatory. **Done.**
-  4. **Preview deploy depends on long-lived repo secret naming convention** (`.github/workflows/deploy-preview.yml`), lacking explicit environment-level guardrails per stage.
+  4. ~~**Preview deploy depends on long-lived repo secret naming convention**~~ — GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. **Done.**
   5. ~~**Test command surface is slightly fragmented**~~ — Unified to single `pnpm test:ci` invocation with optional coverage flags. **Done.**
 
 ### 2. Agent-Friction Scorecard (0–5 each, with justification)
 - **Setup determinism: 5/5** — `pnpm@9.15.4`, Node 22, frozen lockfile, doctor checks, Zod-based env schema validation (`pnpm validate:env`), devcontainer for hermetic runtime. *(was 4/5)*
 - **One-command workflows: 5/5** — `pnpm bootstrap` gives deterministic, non-interactive bootstrapping.
 - **Local dev parity with CI: 4/5** — shared scripts and dockerized dependencies; devcontainer available for full reproducibility. Browser install + GitHub-hosted runner assumptions still differ.
-- **Test reliability / flake resistance: 4/5** — tiered CI and artifacted failures are solid; unified `pnpm test:ci` entrypoint. No explicit flaky-test quarantine policy yet.
+- **Test reliability / flake resistance: 5/5** — tiered CI and artifacted failures are solid; unified `pnpm test:ci` entrypoint. Explicit flaky-test quarantine policy with `pnpm check:quarantine` CI gate (ADR-013). *(was 4/5)*
 - **Dependency + toolchain pinning: 4/5** — lockfile + package manager pinned; broad semver ranges for dev deps remain expected but can introduce drift.
 - **Observability of failures: 5/5** — JUnit and Playwright artifacts present; SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. *(was 4/5)*
 - **Automated remediation friendliness: 5/5** — `pnpm doctor -- --json` with Zod-based env schema validation and clear non-interactive scripts provide agent-friendly contracts.
@@ -830,7 +838,7 @@ graph TD
 - **Versioning strategy across hundreds of projects:** strong package-level changesets + private registry model; this is fleet-friendly when combined with automated dependency update bots.
 
 ### 4. Security + Supply Chain
-- **Secrets handling:** mostly strong (OIDC + scoped permissions), but preview deploy still hinges on repository secret wiring and should include environment protection rules.
+- **Secrets handling:** strong (OIDC + scoped permissions). Preview deploy now uses GitHub environment protection with label-gated deploys and infra change auto-deploy (ADR-014).
 - **Dependency risk controls:** dependency-review with severity/license policy is in place; good baseline.
 - **SBOM / provenance:** present and mandatory — SBOM generation is now fail-fast in release path (fixed per AI recommendation).
 - **SAST/DAST and policy gates:** CodeQL and Gitleaks are present; DAST/runtime policy checks are not yet visible as mandatory gates.
@@ -854,10 +862,11 @@ graph TD
 2. ~~**Unify CI test entrypoint**~~ (`.github/actions/test/action.yml`): single `pnpm test:ci` with optional coverage flags. **Done.**
 3. ~~**Add machine-readable env schema gate**~~ (`pnpm validate:env` + Zod schemas in `@ripple/validation`): fail with structured JSON diagnostics when required env contract is invalid. See ADR-012. **Done.**
 
-#### Do next (1–2 months) — PARTIALLY COMPLETE
+#### Do next (1–2 months) — MOSTLY COMPLETE
 1. **Implement template drift automation**: a bot/workflow that opens sync PRs in downstream repos for shared CI/security/agent standards. **Impact: High × Effort: Medium × Risk: Medium**.
 2. ~~**Ship devcontainer baseline**~~ (`.devcontainer/`): shipped with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, all services. **Done.**
-3. **Add flaky test containment policy**: quarantine lane, retry budget, and mandatory issue linkage for quarantined tests. **Impact: Medium × Effort: Medium × Risk: Low**.
+3. ~~**Add flaky test containment policy**~~: quarantine convention with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap, Tier 1 protection, mandatory issue linkage. See ADR-013. **Done.**
+4. ~~**Preview deploy environment guardrails**~~: GitHub environment protection, label-gated deploys, infra change auto-deploy, duplicate comment prevention. See ADR-014. **Done.**
 
 #### Do later (quarterly)
 1. **Org-wide reusable workflow distribution** (`workflow_call`): centralize policy gates with versioned rollout channels. **Impact: Very High × Effort: Medium × Risk: Medium**.

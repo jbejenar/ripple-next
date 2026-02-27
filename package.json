@@ -32,6 +32,7 @@
     "doctor": "bash scripts/doctor.sh",
     "bootstrap": "pnpm install --frozen-lockfile && pnpm doctor && echo '\\nBootstrap complete. Run pnpm dev to start.'",
     "check:readiness": "node scripts/check-readiness.mjs",
+    "check:quarantine": "node scripts/check-quarantine.mjs",
     "validate:env": "node scripts/validate-env.mjs",
     "prepare": "husky"
   },

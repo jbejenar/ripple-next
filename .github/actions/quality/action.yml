@@ -1,5 +1,5 @@
 name: Quality Gates
-description: Run lint, typecheck, and readiness drift guard
+description: Run lint, typecheck, readiness drift guard, and quarantine policy check
 
 runs:
   using: composite
@@ -15,3 +15,7 @@ runs:
     - name: Readiness drift guard
       shell: bash
       run: pnpm check:readiness
+
+    - name: Quarantine policy check
+      shell: bash
+      run: pnpm check:quarantine

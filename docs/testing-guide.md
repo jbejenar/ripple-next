@@ -108,6 +108,43 @@ import { createMockProviders } from '@ripple/testing'
 const { queue, auth, storage, email, events, cms } = createMockProviders()
 ```
 
+## Flaky Test Containment (ADR-013)
+
+When a test becomes flaky, follow the quarantine policy:
+
+### Quarantining a test
+
+```typescript
+// Vitest — annotate with .skip and mandatory metadata
+describe.skip('flaky: MyFeature #123', () => {
+  // QUARANTINED: https://github.com/org/ripple-next/issues/123
+  // QUARANTINE_DATE: 2026-02-27
+  // REASON: Intermittent timeout on CI due to race condition
+})
+
+// Playwright — same convention
+test.skip('flaky: user login flow #124', async ({ page }) => {
+  // QUARANTINED: https://github.com/org/ripple-next/issues/124
+  // QUARANTINE_DATE: 2026-02-27
+})
+```
+
+### Quarantine rules
+
+- **Maximum duration**: 14 days — fix or permanently remove with justification
+- **Mandatory issue link**: Every quarantined test must reference a GitHub issue labeled `flaky-test`
+- **Budget cap**: No more than 5% of total tests may be quarantined at any time
+- **Tier 1 protection**: Tests in `packages/auth`, `packages/db`, `packages/queue` may NOT be quarantined — fix immediately or revert the PR
+
+### Checking quarantine health
+
+```bash
+pnpm check:quarantine            # human-readable output
+pnpm check:quarantine -- --json  # machine-readable JSON for agents
+```
+
+This check runs in CI as part of the quality composite action.
+
 ## Related Documentation
 
 - [Developer Guide](./developer-guide.md) — full setup and quality gate reference
@@ -115,3 +152,4 @@ const { queue, auth, storage, email, events, cms } = createMockProviders()
 - [Provider Pattern](./provider-pattern.md) — how mock providers work
 - [Data Model](./data-model.md) — schema reference for integration tests
 - [ADR-003: Provider Pattern](./adr/003-provider-pattern.md) — why memory providers
+- [ADR-013: Flaky Test Containment](./adr/013-flaky-test-containment.md) — quarantine policy

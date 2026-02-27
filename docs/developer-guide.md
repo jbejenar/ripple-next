@@ -252,6 +252,7 @@ Additional quality commands:
 | `pnpm format:check`    | Check formatting without writing                                                     |
 | `pnpm validate:env`    | Validate env vars against Zod schema ([ADR-012](./adr/012-env-schema-validation.md)) |
 | `pnpm check:readiness` | Verify `docs/readiness.json` is not stale                                            |
+| `pnpm check:quarantine`| Verify flaky test quarantine policy ([ADR-013](./adr/013-flaky-test-containment.md)) |
 
 ### Coverage thresholds
 
