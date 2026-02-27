@@ -56,19 +56,21 @@ graph TB
 
 ## Stack
 
-| Layer          | Technology                                              |
-| -------------- | ------------------------------------------------------- |
-| Frontend       | Nuxt 3 + Vue 3 (Composition API) + TypeScript           |
-| UI Components  | Ripple UI Core + Storybook 10                           |
-| API            | Nitro server routes + tRPC-nuxt                         |
-| Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis |
-| Queue          | SQS (prod) / BullMQ (local) / Memory (test)             |
-| Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           |
-| CMS            | Drupal/Tide JSON:API (prod) / Mock (test) — decoupled, removable (ADR-011) |
-| File Storage   | S3 (prod) / MinIO (local) / fs (test)                   |
-| Infrastructure | SST v3 (Pulumi/Terraform)                               |
-| Compute        | Lambda (default) + ECS Fargate (long-running)           |
-| Testing        | Vitest + Vue Test Utils + Playwright + Testcontainers   |
+| Layer          | Technology                                              | ADR |
+| -------------- | ------------------------------------------------------- | --- |
+| Frontend       | Nuxt 3 + Vue 3 (Composition API) + TypeScript           | [ADR-001](./adr/001-nuxt-over-next.md) |
+| UI Components  | Ripple UI Core + Storybook 10                           | — |
+| API            | Nitro server routes + tRPC-nuxt                         | — |
+| Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis | [ADR-002](./adr/002-drizzle-over-prisma.md) |
+| Queue          | SQS (prod) / BullMQ (local) / Memory (test)             | [ADR-003](./adr/003-provider-pattern.md) |
+| Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           | [ADR-008](./adr/008-oidc-over-lucia.md) |
+| CMS            | Drupal/Tide JSON:API (prod) / Mock (test) — decoupled   | [ADR-009](./adr/009-cms-provider-drupal.md), [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) |
+| Search         | MeiliSearch (local) / CMS fallback (mock/test)           | — |
+| File Storage   | S3 (prod) / MinIO (local) / fs (test)                   | [ADR-003](./adr/003-provider-pattern.md) |
+| Infrastructure | SST v3 (Pulumi/Terraform)                               | [ADR-004](./adr/004-sst-over-cdk.md) |
+| Compute        | Lambda (default) + ECS Fargate (long-running)           | [ADR-005](./adr/005-lambda-default-ecs-escape.md), [ADR-006](./adr/006-no-kubernetes.md) |
+| Local Dev      | Provider pattern (no LocalStack required)                | [ADR-015](./adr/015-localstack-assessment.md) |
+| Testing        | Vitest + Vue Test Utils + Playwright + Testcontainers   | [ADR-013](./adr/013-flaky-test-containment.md) |
 
 ## Provider Pattern
 
@@ -137,9 +139,25 @@ See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-e
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/) — all Architecture Decision Records
-- [ADR-011: CMS Decoupling](./adr/011-cms-decoupling-pull-out-drupal.md) — pull-out-Drupal strategy
-- [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment schema validation gate
-- [ADR-013: Flaky Test Containment](./adr/013-flaky-test-containment.md) — quarantine policy for flaky tests
-- [ADR-014: Preview Deploy Guardrails](./adr/014-preview-deploy-guardrails.md) — environment protection for preview deploys
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (15 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
+
+### Key ADRs
+
+| ADR | Decision | Category |
+|-----|----------|----------|
+| [ADR-001](./adr/001-nuxt-over-next.md) | Nuxt 3 over Next.js | Frontend |
+| [ADR-002](./adr/002-drizzle-over-prisma.md) | Drizzle ORM over Prisma | Database |
+| [ADR-003](./adr/003-provider-pattern.md) | Provider pattern for all infra concerns | Architecture |
+| [ADR-004](./adr/004-sst-over-cdk.md) | SST v3 over CDK/CloudFormation | Infrastructure |
+| [ADR-005](./adr/005-lambda-default-ecs-escape.md) | Lambda default, ECS escape hatch | Compute |
+| [ADR-006](./adr/006-no-kubernetes.md) | No Kubernetes (EKS) | Compute |
+| [ADR-007](./adr/007-library-vs-monorepo.md) | Hybrid monorepo, publish as libraries | Architecture |
+| [ADR-008](./adr/008-oidc-over-lucia.md) | OIDC/OAuth via oauth4webapi | Auth |
+| [ADR-009](./adr/009-cms-provider-drupal.md) | CMS provider for Drupal/Tide | CMS |
+| [ADR-010](./adr/010-ci-observability-supply-chain.md) | CI observability + supply chain | CI/CD |
+| [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) | CMS decoupling — pull-out-Drupal | CMS |
+| [ADR-012](./adr/012-env-schema-validation.md) | Env schema validation gate | CI/CD |
+| [ADR-013](./adr/013-flaky-test-containment.md) | Flaky test containment policy | Testing |
+| [ADR-014](./adr/014-preview-deploy-guardrails.md) | Preview deploy guardrails | Deployment |
+| [ADR-015](./adr/015-localstack-assessment.md) | LocalStack — provider pattern preferred | Infrastructure |

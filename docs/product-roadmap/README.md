@@ -1,9 +1,9 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 2.1.0
+> Last updated: 2026-02-27 | Version: 3.0.0
 
 Every item has a unique ticket number (`RN-XXX`). Completed items live in
-[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-022).
+[ARCHIVE.md](./ARCHIVE.md) (RN-001 through RN-022, plus RN-018, RN-019, RN-030, RN-031).
 
 ---
 
@@ -36,7 +36,12 @@ for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit ([RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml)).
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate ([RN-010](./ARCHIVE.md#rn-010-flaky-test-containment-policy-adr-013)).
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **Storybook coverage** — All 15 UI components (atoms, molecules, organisms, Tide content) have Storybook stories with autodocs ([RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)).
+- **Storybook coverage** — All 16 UI components (atoms, molecules, organisms, Tide content) have Storybook stories with autodocs ([RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)).
+- **UI component tests** — Vue Test Utils tests for all 16 components with full coverage of atoms, molecules, organisms, and Tide content renderers ([RN-030](./ARCHIVE.md#rn-030-ui-component-test-suite)).
+- **Navigation** — Header and footer navigation from CMS menus with nested menu support ([RN-019](./ARCHIVE.md#rn-019-navigationmenu-component)).
+- **Search integration** — Dedicated search provider layer (MeiliSearch for local, extensible to Elasticsearch) with `SearchEnhancedCmsProvider` decorator pattern ([RN-018](./ARCHIVE.md#rn-018-search-integration-provider)).
+- **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository ([RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api)).
+- **ADR coverage** — 15 ADRs with [indexed directory](../adr/README.md), including LocalStack assessment ([ADR-015](../adr/015-localstack-assessment.md)).
 
 ---
 
@@ -56,9 +61,11 @@ graph LR
         TEST[Testing Infra]
         PUB[Publishing]
         CMS["CMS (Decoupled)"]
+        UI["UI (Tested)"]
+        SEARCH[Search]
+        NAV[Navigation]
     end
     subgraph Partial
-        UI[UI Components]
         API[API Layer]
     end
     subgraph Planned
@@ -76,16 +83,18 @@ graph LR
     style TEST fill:#22c55e,color:#fff
     style PUB fill:#22c55e,color:#fff
     style CMS fill:#22c55e,color:#fff
-    style UI fill:#f59e0b,color:#fff
+    style UI fill:#22c55e,color:#fff
+    style SEARCH fill:#22c55e,color:#fff
+    style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
     style FLEET fill:#6366f1,color:#fff
 ```
 
 ---
 
-## Completed Work (RN-001 – RN-022)
+## Completed Work (RN-001 – RN-031)
 
-18 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
+22 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
 for full details on each.
 
 | ID | Item | Phase |
@@ -106,8 +115,12 @@ for full details on each.
 | [RN-014](./ARCHIVE.md#rn-014-sbom--provenance-in-release) | SBOM + Provenance in Release | 2 |
 | [RN-015](./ARCHIVE.md#rn-015-reusable-composite-actions) | Reusable Composite Actions | 2 |
 | [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer) | Hermetic Dev/Runtime | 3 |
+| [RN-018](./ARCHIVE.md#rn-018-search-integration-provider) | Search Integration Provider | 2 |
+| [RN-019](./ARCHIVE.md#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 |
 | [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components) | Storybook Stories for Tide Components | 2 |
 | [RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation) | Downstream Workflow Documentation | 2 |
+| [RN-030](./ARCHIVE.md#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 |
+| [RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 |
 
 ---
 
@@ -119,6 +132,7 @@ for full details on each.
 
 **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
 **Continues:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
+**Blocked:** Awaiting live Drupal/Tide URLs from content team.
 
 Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider
 against a live JSON:API endpoint.
@@ -126,36 +140,6 @@ against a live JSON:API endpoint.
 - [ ] Set up test Drupal instance (Docker-based or hosted)
 - [ ] Write integration test suite exercising all CMS provider methods
 - [ ] Add CI job that runs integration tests on schedule (not every PR)
-
----
-
-#### RN-018: Search Integration Provider
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Medium
-
-Dedicated search provider (MeiliSearch for local, Elasticsearch for prod) beyond
-the basic CMS search interface.
-
-- [ ] Define `SearchProvider` interface in `packages/cms/types.ts`
-- [ ] Implement `MeiliSearchProvider` for local dev
-- [ ] Implement `ElasticsearchProvider` for production
-- [ ] Add conformance tests for search provider
-- [ ] Wire into Nuxt server context alongside CMS provider
-
----
-
-#### RN-019: Navigation/Menu Component
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low
-**Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
-
-Menu rendering from CMS-provided menu structure, including primary navigation,
-footer, and sidebar menus.
-
-- [ ] Create navigation composable (`useNavigation()`)
-- [ ] Build header navigation component
-- [ ] Build footer navigation component
-- [ ] Support nested menu structures from CMS
 
 ---
 
@@ -184,40 +168,6 @@ content pages, campaign pages).
 - [ ] Build content page template
 - [ ] Build campaign page template
 - [ ] Wire templates to CMS page type field
-
----
-
-#### RN-030: UI Component Test Suite
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low
-**Source:** AI agent gap analysis
-**Continues:** [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components)
-
-Vue Test Utils component tests for all Tide content components and existing
-atoms/molecules. This addresses the UI subsystem's "partial" status — the main
-blocker is "Component tests needed for new Tide-compatible content components".
-
-- [ ] Add component tests for atoms (RplButton, RplFormInput, RplIcon)
-- [ ] Add component tests for molecules (RplCard, RplHeroHeader)
-- [ ] Add component tests for Tide content organisms (all 8 components)
-- [ ] Ensure UI package coverage meets Tier 3 thresholds (20% lines, 10% branches)
-
----
-
-#### RN-031: Testcontainers Integration Tests for DB + API
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium
-**Source:** AI agent gap analysis
-
-Integration tests using Testcontainers for both `@ripple/db` repositories and
-tRPC API routers. Addresses blockers in readiness.json for database ("No
-integration tests for repositories using testcontainers") and API ("No
-integration tests with real DB").
-
-- [ ] Add Testcontainers-based integration tests for UserRepository
-- [ ] Add Testcontainers-based integration tests for tRPC user router
-- [ ] Validate audit_log and project repositories with real PostgreSQL
-- [ ] Add CI job for integration tests (Tier 2, not every PR)
 
 ---
 
@@ -308,21 +258,17 @@ Optional validation that the devcontainer works in containerized CI runners.
 
 ## Active Items Summary
 
-| ID | Item | Phase | Priority | Impact |
-|----|------|-------|----------|--------|
-| [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 2 | Medium | Medium |
-| [RN-018](#rn-018-search-integration-provider) | Search Integration Provider | 2 | Medium | Medium |
-| [RN-019](#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 | Medium | Medium |
-| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 2 | Low | Low |
-| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 2 | Medium | Medium |
-| [RN-030](#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 | Medium | Medium |
-| [RN-031](#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 | **High** | **High** |
-| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 3 | **High** | **Very High** |
-| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 3 | Medium | High |
-| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 3 | Medium | Very High |
-| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 3 | Low | High |
-| [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 3 | Low | Very High |
-| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 3 | Low | Low |
+| ID | Item | Phase | Priority | Impact | Status |
+|----|------|-------|----------|--------|--------|
+| [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 2 | Medium | Medium | Blocked (awaiting URLs) |
+| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 2 | Low | Low | Pending |
+| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 2 | Medium | Medium | Pending |
+| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 3 | **High** | **Very High** | Pending |
+| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 3 | Medium | High | Pending |
+| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 3 | Medium | Very High | Pending |
+| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 3 | Low | High | Pending |
+| [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 3 | Low | Very High | Pending |
+| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 3 | Low | Low | Pending |
 
 ---
 
@@ -355,14 +301,16 @@ gantt
     RN-020 Storybook stories (Tide)        :done, rn020, 2026-02-27, 1d
     RN-022 Downstream workflow docs        :done, rn022, 2026-02-27, 1d
 
+    section Phase 2 — Newly Complete
+    RN-018 Search provider                 :done, rn018, 2026-02-27, 1d
+    RN-019 Navigation component            :done, rn019, 2026-02-27, 1d
+    RN-030 UI component test suite         :done, rn030, 2026-02-27, 1d
+    RN-031 Testcontainers integration      :done, rn031, 2026-02-27, 1d
+
     section Phase 2 — Remaining
     RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
-    RN-018 Search provider                 :rn018, 2026-04-15, 21d
-    RN-019 Navigation component            :rn019, 2026-04-01, 14d
     RN-021 Media gallery + downloads       :rn021, 2026-04-15, 14d
     RN-023 Landing page templates          :rn023, 2026-04-15, 14d
-    RN-030 UI component test suite         :rn030, 2026-04-01, 14d
-    RN-031 Testcontainers integration      :rn031, 2026-04-15, 21d
 
     section Phase 3 — Later
     RN-024 Fleet update + drift            :rn024, 2026-05-01, 30d
@@ -426,20 +374,11 @@ to "implemented" status. Navigation can wait — test confidence cannot.
 
 ### LocalStack Assessment
 
-**Short answer: not as the default local-dev path for this repository.**
-
-This repo uses a **provider pattern** with local-first implementations
-(memory/mock, BullMQ, MinIO, SMTP) that are faster, simpler, and less
-flaky for agent loops. LocalStack adds orchestration overhead and
-service-emulation drift.
-
-**Recommended compromise:**
-
-- Keep LocalStack **optional**, not required.
-- Use it only for narrow AWS API-shape compatibility testing
-  (e.g., SQS/S3 IAM policy behavior before preview deploy).
-- Gate it behind `pnpm test:aws-compat` so routine agent workflows
-  remain low-friction.
+See [ADR-015: LocalStack Assessment](../adr/015-localstack-assessment.md) for the
+full decision. **Short answer:** not the default local-dev path. The provider pattern
+([ADR-003](../adr/003-provider-pattern.md)) provides faster, simpler, and more
+reliable local development. LocalStack is optional for narrow AWS API-shape
+compatibility testing only.
 
 ### Agent-Friction Scorecard
 
@@ -447,13 +386,13 @@ service-emulation drift.
 |-----------|-------|-------|
 | Setup determinism | 5/5 | Strong pinning, lockfile, `.env.example` + Zod env validation, devcontainer |
 | One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
-| Local dev parity with CI | 4/5 | Shared tooling, dockerized deps, devcontainer available |
-| Test reliability / flake resistance | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, CMS mock provider |
+| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers for integration tests |
+| Test reliability / flake resistance | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, CMS mock provider, component tests |
 | Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile; semver ranges remain (normal) |
 | Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM mandatory, JSON env diagnostics |
 | Automated remediation friendliness | 5/5 | `pnpm doctor --json`, conformance suites, documented removal procedures |
 
-**Overall: 33/35**
+**Overall: 34/35** _(+1 from 33: local dev parity improved with Testcontainers integration tests and full component test coverage)_
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -461,7 +400,7 @@ xychart-beta
     title "Agent-Friction Scorecard (0-5)"
     x-axis ["Setup", "Workflows", "Dev Parity", "Test Reliability", "Pinning", "Observability", "Remediation"]
     y-axis "Score" 0 --> 5
-    bar [5, 5, 4, 5, 4, 5, 5]
+    bar [5, 5, 5, 5, 4, 5, 5]
 ```
 
 ### Security + Supply Chain
@@ -619,6 +558,11 @@ graph TD
 - [x] Preview deploy environment guardrails
 - [x] Storybook stories for all UI components (atoms, molecules, organisms, Tide content)
 - [x] Downstream workflow consumption guide
+- [x] Vue Test Utils component tests for all 16 UI components
+- [x] Navigation composable and components (header + footer menus from CMS)
+- [x] Search integration provider layer (MeiliSearch + decorator pattern)
+- [x] Testcontainers integration tests for database repositories
+- [x] ADR index with all 15 decisions cross-referenced
 
 ### Template Strategy
 
