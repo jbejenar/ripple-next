@@ -214,7 +214,7 @@ Shared CI steps are in `.github/actions/`:
 - **`quality`** — Lint + typecheck + readiness drift guard
 - **`test`** — Run tests with JUnit reporter + artifact upload
 
-Downstream repos can reference these for consistent CI setup.
+Downstream repos can reference these for consistent CI setup. See [docs/downstream-workflows.md](docs/downstream-workflows.md) for the consumption guide, example workflows, and version pinning strategy.
 
 ## Health Check
 
