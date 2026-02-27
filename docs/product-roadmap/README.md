@@ -272,6 +272,101 @@ Optional validation that the devcontainer works in containerized CI runners.
 
 ---
 
+## Additional AI Suggestions (Principal Engineer + Platform Architecture Review)
+
+> Structured in roadmap feature style so these can be triaged, scheduled, and extended like RN-017…RN-031.
+
+### Executive Verdict
+
+**Ship-ready? Yes, with conditions.**
+
+Top blockers from the review are now represented as discrete roadmap items below.
+
+### AI Suggestions — Feature Backlog
+
+#### RN-032: Toolchain Pinning Hardening (Exact Runtime Contract)
+
+**Impact:** High | **Effort:** Low | **Risk:** Low  
+**Source:** AI Principal Engineer review
+
+Harden reproducibility by moving from major/range-based runtime constraints to exact, enforceable toolchain contracts across local, CI, and devcontainer environments.
+
+- [ ] Pin exact Node version in CI and document a single local version manager strategy (Volta/asdf/mise)
+- [ ] Pin exact pnpm version in all execution paths
+- [ ] Add a guard check in `pnpm doctor` for exact versions (not only minimums)
+- [ ] Document upgrade procedure for runtime bumps
+
+---
+
+#### RN-033: Preview Cleanup Guardrails Parity
+
+**Impact:** High | **Effort:** Low | **Risk:** Low  
+**Source:** AI Principal Engineer review
+
+Align `cleanup-preview` behavior with deploy-preview guardrails so missing AWS credentials produce a safe, explainable skip rather than noisy failures.
+
+- [ ] Add secret/credential presence gate to cleanup workflow
+- [ ] Emit explicit notice when cleanup is skipped due to missing credentials
+- [ ] Add test/validation checklist entry for preview lifecycle workflows
+- [ ] Update deployment docs with failure/skip behavior
+
+---
+
+#### RN-034: Machine-Readable Quality Gate Summaries
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low  
+**Source:** AI Principal Engineer review
+
+Improve automated remediation friendliness by standardizing JSON summaries for lint/typecheck/test outcomes (similar to doctor/env checks).
+
+- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
+- [ ] Include machine-readable status in CI artifacts
+- [ ] Ensure non-zero exits remain authoritative for gating
+- [ ] Document schema for downstream automation consumers
+
+---
+
+#### RN-035: Rollback and Recovery Command Contract
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium  
+**Source:** AI Principal Engineer review
+
+Define and automate rollback procedures for staging/production so agents can execute safe recovery paths without ad hoc human interpretation.
+
+- [ ] Add explicit rollback runbook with command examples
+- [ ] Provide scripted rollback entrypoint(s) for common failure modes
+- [ ] Add post-deploy health validation + rollback trigger criteria
+- [ ] Capture rollback evidence as CI/CD artifacts
+
+---
+
+#### RN-036: IaC Policy Scanning for SST Changes
+
+**Impact:** High | **Effort:** Medium | **Risk:** Medium  
+**Source:** AI Principal Engineer review
+
+Add blocking policy-as-code checks for infrastructure changes to strengthen security and compliance posture.
+
+- [ ] Add IaC policy scan job for `sst.config.ts` changes
+- [ ] Define baseline policy set (least privilege, restricted public exposure, encryption)
+- [ ] Route violations to clear, machine-readable diagnostics
+- [ ] Document exception workflow and approvals
+
+---
+
+### AI Suggestions Summary
+
+| ID | Item | Phase | Priority | Impact | Status |
+|----|------|-------|----------|--------|--------|
+| [RN-032](#rn-032-toolchain-pinning-hardening-exact-runtime-contract) | Toolchain Pinning Hardening | 3 | High | High | Pending |
+| [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 3 | High | High | Pending |
+| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 3 | Medium | Medium | Pending |
+| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 3 | Medium | High | Pending |
+| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 3 | Medium | High | Pending |
+
+---
+
+
 ## Roadmap Gantt
 
 ```mermaid
