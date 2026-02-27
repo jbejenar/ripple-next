@@ -147,10 +147,10 @@ This check runs in CI as part of the quality composite action.
 
 ## Storybook Stories
 
-All 15 UI components have Storybook stories with `autodocs` enabled:
+All 16 UI components have Storybook stories with `autodocs` enabled:
 
 - **Atoms**: RplButton, RplFormInput, RplIcon
-- **Molecules**: RplCard, RplHeroHeader
+- **Molecules**: RplCard, RplHeroHeader, RplNavigation
 - **Organisms**: RplHeader, RplFooter
 - **Tide Content**: RplAccordion, RplCardCollection, RplTimeline, RplCallToAction, RplKeyDates, RplContentImage, RplEmbeddedVideo, RplContentWysiwyg
 

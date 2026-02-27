@@ -66,6 +66,7 @@ pnpm dev
 | [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
+| [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
 | [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, scorecard, and improvement phases   |
 | [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
 
@@ -84,6 +85,10 @@ pnpm dev
 | [ADR-009](docs/adr/009-cms-provider-drupal.md)       | CMS provider pattern for Drupal/Tide |
 | [ADR-010](docs/adr/010-ci-observability-supply-chain.md) | CI observability + supply chain  |
 | [ADR-011](docs/adr/011-cms-decoupling-pull-out-drupal.md) | CMS decoupling — pull out Drupal |
+| [ADR-012](docs/adr/012-env-schema-validation.md)         | Env schema validation gate       |
+| [ADR-013](docs/adr/013-flaky-test-containment.md)        | Flaky test containment policy    |
+| [ADR-014](docs/adr/014-preview-deploy-guardrails.md)     | Preview deploy guardrails        |
+| [ADR-015](docs/adr/015-localstack-assessment.md)         | LocalStack — provider pattern preferred |
 
 ## Repository Structure
 

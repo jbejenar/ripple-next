@@ -5,6 +5,7 @@
 ```mermaid
 erDiagram
     users ||--o{ projects : "owns"
+    users ||--o{ sessions : "has"
     users ||--o{ audit_log : "performs"
 
     users {
@@ -16,6 +17,14 @@ erDiagram
         boolean is_active
         timestamptz created_at
         timestamptz updated_at
+    }
+
+    sessions {
+        uuid id PK
+        uuid user_id FK
+        varchar token UK
+        timestamptz expires_at
+        timestamptz created_at
     }
 
     projects {
@@ -69,6 +78,16 @@ erDiagram
 | status      | VARCHAR(50)  | NOT NULL, default: 'draft' |
 | created_at  | TIMESTAMPTZ  | NOT NULL, default: now()   |
 | updated_at  | TIMESTAMPTZ  | NOT NULL, default: now()   |
+
+### sessions
+
+| Column     | Type         | Constraints                          |
+| ---------- | ------------ | ------------------------------------ |
+| id         | UUID         | PK, auto-generated                   |
+| user_id    | UUID         | FK → users.id (cascade), NOT NULL    |
+| token      | VARCHAR(255) | UNIQUE, NOT NULL                     |
+| expires_at | TIMESTAMPTZ  | NOT NULL                             |
+| created_at | TIMESTAMPTZ  | NOT NULL, default: now()             |
 
 ### audit_log
 
