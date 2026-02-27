@@ -773,3 +773,101 @@ graph TD
     style WORKFLOWS fill:#f59e0b,color:#fff
     style SYNC fill:#ef4444,color:#fff
 ```
+
+---
+
+## Additional AI Suggestions (Principal Engineer + Platform Architect Review)
+
+### 1. Executive verdict
+- **Ship-ready?** **Yes with conditions.**
+- **Top 5 blockers:**
+  1. **Missing fleet-template sync automation** (`docs/product-roadmap/README.md`, `.github/workflows/*`): no automated mechanism to push policy/security updates into downstream generated repos.
+  2. **No hermetic/devcontainer baseline** (repo root): setup is strong, but no canonical containerized runtime for cross-machine determinism.
+  3. **Release workflow tolerance is too lenient for SBOM generation** (`.github/workflows/release.yml` uses `continue-on-error: true`), which weakens supply-chain guarantees.
+  4. **Preview deploy depends on long-lived repo secret naming convention** (`.github/workflows/deploy-preview.yml`), lacking explicit environment-level guardrails per stage.
+  5. **Test command surface is slightly fragmented** (`package.json`, `.github/actions/test/action.yml`), with overlapping root/CI test entrypoints that can drift.
+
+### 2. Agent-Friction Scorecard (0–5 each, with justification)
+- **Setup determinism: 4/5** — `pnpm@9.15.4`, Node 22, frozen lockfile installs, and doctor checks exist; missing hermetic runtime standard.
+- **One-command workflows: 5/5** — `pnpm bootstrap` gives deterministic, non-interactive bootstrapping.
+- **Local dev parity with CI: 4/5** — shared scripts and dockerized dependencies; browser install + GitHub-hosted runner assumptions still differ.
+- **Test reliability / flake resistance: 4/5** — tiered CI and artifacted failures are solid; no explicit flaky-test quarantine policy yet.
+- **Dependency + toolchain pinning: 4/5** — lockfile + package manager pinned; broad semver ranges for dev deps remain expected but can introduce drift.
+- **Observability of failures: 4/5** — JUnit and Playwright artifacts are present; release-stage diagnostics for publish/attest paths could be richer.
+- **Automated remediation friendliness: 5/5** — `pnpm doctor -- --json` and clear non-interactive scripts provide agent-friendly contracts.
+
+### 3. Concurrency + Scale Readiness
+- **Multi-team development:** good boundary controls via CODEOWNERS on critical surfaces and modular package layout.
+- **Environment and deployment concurrency:** strong PR-stage namespacing (`pr-{number}`) and workflow-level concurrency controls reduce collisions.
+- **Repo templating / bootstrapping strategy:** partial — documentation and reusable actions exist, but no end-to-end template drift sync bot/process is implemented.
+- **Versioning strategy across hundreds of projects:** strong package-level changesets + private registry model; this is fleet-friendly when combined with automated dependency update bots.
+
+### 4. Security + Supply Chain
+- **Secrets handling:** mostly strong (OIDC + scoped permissions), but preview deploy still hinges on repository secret wiring and should include environment protection rules.
+- **Dependency risk controls:** dependency-review with severity/license policy is in place; good baseline.
+- **SBOM / provenance:** present and valuable, but SBOM generation currently non-blocking in release path.
+- **SAST/DAST and policy gates:** CodeQL and Gitleaks are present; DAST/runtime policy checks are not yet visible as mandatory gates.
+
+### 5. Architecture + Maintainability
+- **Module boundaries:** strong package segmentation and provider pattern.
+- **API contracts:** explicit router/repository conventions are documented and align with maintainability goals.
+- **Configuration strategy:** `.env.example` + doctor checks are good; recommend adding schema validation as a hard gate in CI.
+- **Backwards compatibility + upgrade paths:** changesets and ADR discipline are solid; downstream template update strategy remains the key gap.
+
+### 6. CI/CD and Release Engineering
+- **Pipeline design:** tiered CI with change detection and selective E2E is high quality.
+- **Reproducible builds:** frozen lockfile and pinned runtime are strong; no standardized devcontainer/Nix profile yet.
+- **Artifact strategy:** unit and e2e artifact uploads are implemented; release artifacts should include explicit checksums/manifest indexing for faster incident triage.
+- **Progressive delivery + rollbacks:** preview/staging/production workflows exist; rollback playbooks should be codified as scripts with stage-specific smoke checks.
+
+### 7. Concrete recommendations
+
+#### Do now (1–2 weeks)
+1. **Make SBOM mandatory in release** (`.github/workflows/release.yml`): remove `continue-on-error` and fail fast when SBOM/provenance cannot be produced. **Impact: High × Effort: Low × Risk: Low**.
+2. **Unify CI test entrypoint** (`package.json`, `.github/actions/test/action.yml`): define one canonical `pnpm test:ci` contract for both local and CI to reduce script drift. **Impact: Medium × Effort: Low × Risk: Low**.
+3. **Add machine-readable env schema gate** (e.g., zod/envsafe in bootstrap + CI): fail with structured diagnostics when required env contract is invalid. **Impact: High × Effort: Medium × Risk: Low**.
+
+#### Do next (1–2 months)
+1. **Implement template drift automation**: a bot/workflow that opens sync PRs in downstream repos for shared CI/security/agent standards. **Impact: High × Effort: Medium × Risk: Medium**.
+2. **Ship devcontainer baseline** (`.devcontainer/`): pin OS/tooling/runtime for deterministic local/agent execution. **Impact: High × Effort: Medium × Risk: Low**.
+3. **Add flaky test containment policy**: quarantine lane, retry budget, and mandatory issue linkage for quarantined tests. **Impact: Medium × Effort: Medium × Risk: Low**.
+
+#### Do later (quarterly)
+1. **Org-wide reusable workflow distribution** (`workflow_call`): centralize policy gates with versioned rollout channels. **Impact: Very High × Effort: Medium × Risk: Medium**.
+2. **Signed release bundles + verification tooling**: extend provenance with package-level signature verification commands for consumers. **Impact: High × Effort: Medium × Risk: Medium**.
+3. **Golden-path conformance CLI**: one command that scores repos against required standards and auto-opens remediation PRs. **Impact: Very High × Effort: High × Risk: Medium**.
+
+### 8. Proposed Golden Path
+- **Ideal developer/agent workflow (commands + lifecycle):**
+  1. `pnpm bootstrap`
+  2. `pnpm doctor -- --json`
+  3. `pnpm lint && pnpm typecheck && pnpm test:ci`
+  4. `pnpm test:e2e` (conditional by risk lane)
+  5. `pnpm changeset` (if published package behavior changes)
+  6. PR → tiered CI + security gates → preview deploy (`pr-{number}`) → staged promotion.
+
+- **Minimal required repo standards checklist:**
+  - pinned runtime + package manager + lockfile
+  - single non-interactive bootstrap + doctor (`--json`)
+  - env schema validation with machine-readable failures
+  - tiered CI with artifacts + concurrency isolation
+  - mandatory SAST/SCA/secret scanning + SBOM + provenance
+  - reproducible local runtime profile (devcontainer/Nix/asdf)
+  - versioned release process + rollback scripts
+  - template drift automation for downstream repos
+
+- **Template strategy (spawn + keep updated):**
+  - use this repo as source-of-truth golden path,
+  - generate downstream repos via template/scaffolder,
+  - push central policy changes via automated sync PRs,
+  - keep reusable domain capabilities in versioned `@ripple/*` packages,
+  - enforce conformance checks continuously across the fleet.
+
+### Evidence appendix (explicit extraction)
+- **Entry points (build/test/run):** root scripts in `package.json` (`dev`, `build`, `test`, `test:ci`, `lint`, `typecheck`, `doctor`, `bootstrap`).
+- **Toolchain:** Node 22 (`.nvmrc`, `engines`), pnpm 9 (`packageManager`), lockfile (`pnpm-lock.yaml`), Turbo (`turbo.json`).
+- **CI/CD:** tiered pipelines + artifacts in `.github/workflows/ci.yml`; security gates in `.github/workflows/security.yml`; publish/SBOM/provenance in `.github/workflows/release.yml`; preview lifecycle in `.github/workflows/deploy-preview.yml` + `cleanup-preview.yml`.
+- **Environment config:** `.env.example`, dockerized local dependencies via `docker-compose.yml`, prerequisite validation via `scripts/doctor.sh`.
+- **Release strategy:** changesets config in `.changeset/config.json`, release automation in `.github/workflows/release.yml`.
+- **Security posture:** CodeQL, dependency review, Gitleaks (`.github/workflows/security.yml`), OIDC role assumption in deploy workflows.
+- **Project spawning posture:** documented intent in roadmap and reusable composite actions in `.github/actions/*`; full template sync automation still outstanding.
