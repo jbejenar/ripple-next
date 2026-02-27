@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-26.",
-  "version": "0.1.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
+  "version": "0.2.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -54,14 +54,13 @@
       "testCoverage": "component-tests-exist"
     },
     "api": {
-      "status": "scaffold",
-      "description": "tRPC routers defined with auth middleware. User router returns placeholder data (not wired to repositories). Health endpoint is basic (no dependency checks).",
+      "status": "partial",
+      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics.",
       "packages": [],
       "paths": ["apps/web/server/trpc/", "apps/web/server/api/"],
       "blockers": [
-        "tRPC routers not wired to @ripple/db repositories",
-        "Health endpoint does not check DB/Redis/queue readiness",
-        "No contract tests for API routes"
+        "No contract tests for API routes",
+        "No integration tests with real DB (testcontainers)"
       ],
       "testCoverage": "none"
     },
@@ -75,7 +74,7 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR. Bootstrap doctor script for environment validation.",
       "packages": [],
       "paths": [".github/workflows/"],
       "blockers": [
@@ -92,14 +91,12 @@
       "testCoverage": "self-tested"
     },
     "publishing": {
-      "status": "planned",
-      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. See ADR-007.",
+      "status": "partial",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. See ADR-007.",
       "packages": ["all @ripple/* packages"],
       "blockers": [
-        "publishConfig not yet added to package.json files",
         "No release CI workflow yet",
-        "No changeset/versioning tool configured",
-        "Packages need dist/ build step (currently raw .ts exports)"
+        "No changeset/versioning tool configured"
       ],
       "testCoverage": "none"
     }

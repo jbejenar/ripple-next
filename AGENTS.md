@@ -18,10 +18,21 @@ no coordinated redeployments needed. See [ADR-007](docs/adr/007-library-vs-monor
 Check `docs/readiness.json` for machine-readable status of each subsystem.
 Status values: `implemented` | `partial` | `scaffold` | `planned`.
 
+## Agent-First Bootstrap
+
+Before starting work, validate the environment:
+
+```bash
+pnpm doctor    # checks Node, pnpm, registry, Docker, env vars, turbo
+```
+
+If `pnpm doctor` fails, fix the failures before running quality gates.
+The doctor script is the single source of truth for environment readiness.
+
 ## Tech Stack
 
 - Frontend: Nuxt 3 + Vue 3 Composition API + TypeScript
-- UI: Ripple UI Core (forked), UnoCSS, Storybook 8
+- UI: Ripple UI Core (forked), UnoCSS, Storybook 10
 - API: Nitro server routes + tRPC-nuxt
 - DB: PostgreSQL (Drizzle ORM), DynamoDB (ElectroDB), Redis
 - Queue: SQS (prod) / BullMQ (local) / Memory (test)
@@ -60,6 +71,19 @@ import { Resource } from 'sst'
 
 In tests, use mock providers. In local dev, use docker-compose services.
 
+### Repository Pattern
+
+All database access goes through repositories in `packages/db/repositories/`.
+tRPC routers receive the database connection via context (`ctx.db`) and
+instantiate repositories per-request:
+
+```ts
+const repo = new UserRepository(ctx.db)
+const user = await repo.findById(input.id)
+```
+
+Never access the database directly from route handlers.
+
 ## Nuxt Auto-Imports
 
 Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
@@ -89,6 +113,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 ## Commands
 
 - `pnpm install` — Install all dependencies
+- `pnpm doctor` — Validate environment readiness (run before quality gates)
 - `pnpm dev` — Start Nuxt dev + docker-compose services
 - `pnpm build` — Build all packages and apps
 - `pnpm test` — Run all Vitest tests (unit + integration)
@@ -145,6 +170,24 @@ The CI runs a tiered model to balance speed with safety:
 - **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
 - **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.
 
+## Health Check
+
+The `/api/health` endpoint reports service readiness:
+
+- `GET /api/health` — full check (DB + Redis connectivity with latency)
+- `GET /api/health?quick` — liveness probe only (no dependency checks)
+
+Returns `{ status: "ok"|"degraded"|"unhealthy", timestamp, checks }`.
+Use the full check in deployment validation and monitoring.
+
+## Package Publishing
+
+All `@ripple/*` packages include `publishConfig`, `exports`, `types`, and `files`
+fields for npm publishing. Packages build to `dist/` via `tsc`.
+
+Current status: publishConfig ready, release workflow pending.
+See `docs/readiness.json` → `publishing` for blockers.
+
 ## File Naming
 
 - Components: PascalCase (`UserProfile.vue`)
@@ -175,6 +218,7 @@ services/websocket/ — WebSocket service (ECS Fargate)
 services/cron/     — Cron job handlers (Lambda)
 services/events/   — EventBridge event handlers (Lambda)
 docs/              — Architecture docs, ADRs, readiness manifest
+scripts/           — Developer/agent tooling (doctor, etc.)
 ```
 
 ## Shared Package Ownership
@@ -186,3 +230,17 @@ Critical shared surfaces require review from owning teams (see `.github/CODEOWNE
 - **Auth package**: platform + security teams
 - **Provider interfaces** (`types.ts` in each package): platform team
 - **Shared types/validation**: platform team
+
+## Agent Task Routing
+
+When making changes, match the change type to the right validation:
+
+| Change Type | Required Validation |
+|---|---|
+| New API endpoint | `pnpm test`, `pnpm typecheck`, integration test with testcontainers |
+| New provider implementation | Unit test with mock, `pnpm typecheck` |
+| DB schema change | `pnpm db:generate`, migration test, `pnpm typecheck` |
+| New Vue component | Component test, `pnpm lint`, Storybook story |
+| Lambda handler | Unit test with mock providers, `pnpm typecheck` |
+| Infrastructure change | `npx sst deploy --stage pr-{n}`, review SST diff |
+| Package interface change | All downstream consumer tests, `pnpm typecheck` |

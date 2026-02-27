@@ -1,4 +1,6 @@
 import type { H3Event } from 'h3'
+import type { Database } from '@ripple/db'
+import { getDatabase } from '@ripple/db'
 import { getSessionFromEvent } from '../utils/auth'
 
 export interface Session {
@@ -12,6 +14,7 @@ export interface Session {
 export interface Context {
   event: H3Event
   session: Session | null
+  db: Database | undefined
 }
 
 export async function createContext(event: H3Event): Promise<Context> {
@@ -27,8 +30,15 @@ export async function createContext(event: H3Event): Promise<Context> {
       }
     : null
 
+  const config = useRuntimeConfig()
+  let db: Database | undefined
+  if (config.databaseUrl) {
+    db = getDatabase(config.databaseUrl)
+  }
+
   return {
     event,
-    session
+    session,
+    db
   }
 }
