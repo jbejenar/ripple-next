@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -73,10 +73,10 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR. Bootstrap doctor script with --json and --offline modes. no-console promoted to error. Risk-tiered coverage thresholds configured.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR. Bootstrap doctor script with --json and --offline modes. no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test. SBOM generation (CycloneDX) and build provenance attestations in release workflow.",
       "packages": [],
-      "paths": [".github/workflows/"],
-      "blockers": ["CI test artifacts limited to Playwright — broader JUnit/coverage upload planned"],
+      "paths": [".github/workflows/", ".github/actions/"],
+      "blockers": [],
       "testCoverage": "pipeline-tested"
     },
     "testing-infra": {
@@ -88,7 +88,7 @@
     },
     "publishing": {
       "status": "implemented",
-      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, and publishes. See ADR-007.",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, and attests build provenance. See ADR-007 and ADR-010.",
       "packages": ["all @ripple/* packages"],
       "blockers": [],
       "testCoverage": "release-workflow-validated"

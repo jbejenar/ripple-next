@@ -1,0 +1,17 @@
+name: Quality Gates
+description: Run lint, typecheck, and readiness drift guard
+
+runs:
+  using: composite
+  steps:
+    - name: Lint
+      shell: bash
+      run: pnpm lint
+
+    - name: Typecheck
+      shell: bash
+      run: pnpm typecheck
+
+    - name: Readiness drift guard
+      shell: bash
+      run: pnpm check:readiness

@@ -43,16 +43,8 @@ jobs:
     if: needs.detect-changes.outputs.any-package == 'true' || github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - name: Readiness drift guard
-        run: pnpm check:readiness
+      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/quality
 
   test:
     runs-on: ubuntu-latest
@@ -72,26 +64,33 @@ jobs:
         image: redis:7-alpine
         ports:
           - '6379:6379'
+    env:
+      DATABASE_URL: postgres://test:test@localhost:5432/test
+      REDIS_URL: redis://localhost:6379
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup
+
+      - name: Run migrations
+        run: pnpm db:migrate
+
+      - name: Run tests with JUnit reporter
+        run: pnpm test -- --reporter=default --reporter=junit --outputFile=test-results/junit.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm db:migrate
-        env:
-          DATABASE_URL: postgres://test:test@localhost:5432/test
-      - run: pnpm test
-        env:
-          DATABASE_URL: postgres://test:test@localhost:5432/test
-          REDIS_URL: redis://localhost:6379
+          name: test-results-unit
+          path: |
+            test-results/
+            **/test-results/
+          retention-days: 30
 
   # ─── Tier 2: Full E2E ────────────────────────────────────────
   # Always runs on push to main.
   # On PRs: only when high-risk surfaces or web app are touched.
-  # Uploads Playwright report on failure.
+  # Uploads Playwright report on failure + JUnit results always.
 
   e2e:
     runs-on: ubuntu-latest
@@ -102,12 +101,7 @@ jobs:
       needs.detect-changes.outputs.apps-web == 'true'
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm --filter @ripple/web exec playwright install --with-deps chromium
       - run: pnpm build
         env:
@@ -117,8 +111,14 @@ jobs:
           CI: true
           NITRO_PRESET: node-server
       - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-e2e
+          path: apps/web/test-results/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
-          path: apps/web/test-results/
+          name: playwright-traces
+          path: apps/web/test-results/**/*.zip
           retention-days: 7

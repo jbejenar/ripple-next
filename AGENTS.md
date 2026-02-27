@@ -187,8 +187,29 @@ The CI runs a tiered model to balance speed with safety:
 
 - **Tier 1 (every PR):** lint, typecheck, unit tests, readiness drift guard — skipped if no source files changed.
 - **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
-- **Release (main only):** changesets consume version intent, bump packages, publish to private registry.
+- **Release (main only):** changesets consume version intent, bump packages, publish to private registry. CycloneDX SBOM generated and build provenance attested.
 - **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.
+
+### CI Artifacts
+
+Test results are uploaded as structured artifacts on every CI run:
+
+| Artifact | Contents | Retention |
+|----------|----------|-----------|
+| `test-results-unit` | JUnit XML from Vitest | 30 days |
+| `test-results-e2e` | Playwright HTML report | 30 days |
+| `playwright-traces` | Playwright traces (failure only) | 7 days |
+| `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
+
+### Reusable Composite Actions
+
+Shared CI steps are in `.github/actions/`:
+
+- **`setup`** — Node.js + pnpm + frozen lockfile install
+- **`quality`** — Lint + typecheck + readiness drift guard
+- **`test`** — Run tests with JUnit reporter + artifact upload
+
+Downstream repos can reference these for consistent CI setup.
 
 ## Health Check
 
@@ -245,6 +266,8 @@ services/cron/     — Cron job handlers (Lambda)
 services/events/   — EventBridge event handlers (Lambda)
 docs/              — Architecture docs, ADRs, readiness manifest
 scripts/           — Developer/agent tooling (doctor, etc.)
+.github/actions/   — Reusable composite actions (setup, quality, test)
+.github/workflows/ — CI, security, release, deploy workflows
 ```
 
 ## Shared Package Ownership

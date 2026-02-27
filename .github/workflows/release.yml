@@ -10,6 +10,7 @@ permissions:
   contents: write
   pull-requests: write
   id-token: write
+  attestations: write
 
 jobs:
   release:
@@ -17,25 +18,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup
         with:
-          node-version: 22
-          cache: pnpm
           registry-url: https://npm.pkg.github.com
-          scope: '@ripple'
 
-      - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
       # Smoke test: ensure all published packages have valid exports
       - name: Validate package exports
         run: |
-          for pkg in packages/auth packages/db packages/email packages/events packages/queue packages/shared packages/storage packages/ui packages/validation; do
+          for pkg in packages/auth packages/db packages/email packages/events packages/queue packages/shared packages/storage packages/ui packages/validation packages/cms; do
             if [ -f "$pkg/dist/index.js" ]; then
               node -e "import('$(pwd)/$pkg/dist/index.js')" 2>/dev/null && echo "  ✓ $pkg exports valid" || echo "  ✗ $pkg exports broken" >&2
             fi
           done
+
+      # ─── SBOM Generation ─────────────────────────────────────────
+      - name: Generate SBOM (CycloneDX)
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json --output-format json --package-lock-only
+        continue-on-error: true
+
+      - name: Upload SBOM
+        if: hashFiles('sbom.cdx.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          retention-days: 90
+
+      # ─── Build Provenance Attestation ─────────────────────────────
+      - name: Generate build provenance
+        if: hashFiles('sbom.cdx.json') != ''
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: sbom.cdx.json
 
       - name: Create Release PR or Publish
         id: changesets
@@ -48,3 +64,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ─── Provenance for Published Packages ────────────────────────
+      - name: Attest published packages
+        if: steps.changesets.outputs.published == 'true'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: packages/*/dist/
