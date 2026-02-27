@@ -42,4 +42,15 @@ describe('MockAuthProvider', () => {
     expect(user?.role).toBe('editor')
     expect(user?.name).toBe('Custom User')
   })
+
+  it('returns an authorization URL', async () => {
+    const url = await auth.getAuthorizationUrl('test-state', 'test-verifier')
+    expect(url).toBeInstanceOf(URL)
+    expect(url.searchParams.get('state')).toBe('test-state')
+  })
+
+  it('returns default user from handleCallback', async () => {
+    const user = await auth.handleCallback('test-code', 'test-verifier')
+    expect(user.email).toBe('test@example.com')
+  })
 })

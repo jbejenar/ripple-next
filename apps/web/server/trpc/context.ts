@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import { getSessionFromEvent } from '../utils/auth'
 
 export interface Session {
   user: {
@@ -14,9 +15,17 @@ export interface Context {
 }
 
 export async function createContext(event: H3Event): Promise<Context> {
-  // Session will be resolved from auth middleware
-  // In production, this uses SST Resource for DB connections
-  const session: Session | null = null
+  const authSession = await getSessionFromEvent(event)
+
+  const session: Session | null = authSession
+    ? {
+        user: {
+          id: authSession.user.id,
+          email: authSession.user.email,
+          role: authSession.user.role
+        }
+      }
+    : null
 
   return {
     event,

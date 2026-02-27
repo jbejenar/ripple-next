@@ -61,7 +61,7 @@ graph TB
 | API            | Nitro server routes + tRPC-nuxt                         |
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             |
-| Auth           | Lucia Auth v3 + AWS Cognito                             |
+| Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           |
 | File Storage   | S3 (prod) / MinIO (local) / fs (test)                   |
 | Infrastructure | SST v3 (Pulumi/Terraform)                               |
 | Compute        | Lambda (default) + ECS Fargate (long-running)           |

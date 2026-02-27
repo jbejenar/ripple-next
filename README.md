@@ -28,7 +28,7 @@ pnpm dev
 | API      | Nitro server routes + tRPC    |
 | Database | PostgreSQL (Drizzle ORM)      |
 | Queue    | SQS / BullMQ / Memory         |
-| Auth     | Lucia Auth v3                 |
+| Auth     | OIDC/OAuth (oauth4webapi)     |
 | Infra    | SST v3 (Pulumi)               |
 | Compute  | Lambda + ECS Fargate          |
 | Testing  | Vitest + Playwright           |
@@ -74,6 +74,7 @@ pnpm dev
 | [ADR-005](docs/adr/005-lambda-default-ecs-escape.md) | Lambda default, ECS escape hatch     |
 | [ADR-006](docs/adr/006-no-kubernetes.md)             | No Kubernetes                        |
 | [ADR-007](docs/adr/007-library-vs-monorepo.md)       | Hybrid monorepo + published packages |
+| [ADR-008](docs/adr/008-oidc-over-lucia.md)           | OIDC/OAuth over deprecated Lucia     |
 
 ## Repository Structure
 

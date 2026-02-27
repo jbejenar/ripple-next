@@ -9,21 +9,31 @@ export function useAuth() {
   const user = useState<AuthUser | null>('auth-user', () => null)
   const isAuthenticated = computed(() => !!user.value)
 
-  async function login(email: string, password: string): Promise<void> {
-    // Will be implemented with @ripple/auth
-    void email
-    void password
+  async function login(): Promise<void> {
+    await navigateTo('/auth/redirect', { external: true })
   }
 
   async function logout(): Promise<void> {
+    await $fetch('/auth/logout', { method: 'POST' })
     user.value = null
     await navigateTo('/auth/login')
+  }
+
+  async function fetchUser(): Promise<void> {
+    try {
+      const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
+      const data = await $fetch<{ result: { data: AuthUser } }>('/api/trpc/user.me', { headers })
+      user.value = data?.result?.data ?? null
+    } catch {
+      user.value = null
+    }
   }
 
   return {
     user: readonly(user),
     isAuthenticated,
     login,
-    logout
+    logout,
+    fetchUser
   }
 }

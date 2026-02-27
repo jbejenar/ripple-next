@@ -5,15 +5,11 @@
   "version": "0.1.0",
   "subsystems": {
     "auth": {
-      "status": "partial",
-      "description": "Auth provider interface defined. MockAuthProvider fully functional for tests. LuciaAuthProvider and CognitoAuthProvider are placeholders (throw 'Not yet implemented').",
+      "status": "implemented",
+      "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions.",
       "packages": ["@ripple/auth"],
-      "blockers": [
-        "LuciaAuthProvider methods not implemented",
-        "CognitoAuthProvider methods not implemented",
-        "No integration tests for production auth flow"
-      ],
-      "testCoverage": "mock-only"
+      "blockers": ["No integration tests for production OIDC flow yet"],
+      "testCoverage": "mock-provider-tested"
     },
     "database": {
       "status": "implemented",

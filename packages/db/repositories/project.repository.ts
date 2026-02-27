@@ -7,7 +7,7 @@ export class ProjectRepository {
 
   async create(data: NewProject): Promise<Project> {
     const [project] = await this.db.insert(projects).values(data).returning()
-    return project
+    return project!
   }
 
   async findById(id: string): Promise<Project | undefined> {
@@ -30,7 +30,7 @@ export class ProjectRepository {
       .set({ ...data, updatedAt: new Date() })
       .where(eq(projects.id, id))
       .returning()
-    return project
+    return project!
   }
 
   async delete(id: string): Promise<void> {

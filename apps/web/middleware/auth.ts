@@ -1,4 +1,11 @@
 export default defineNuxtRouteMiddleware(async () => {
-  // Auth check will be implemented via @ripple/auth package
-  // For now, allow all navigation
+  const { isAuthenticated, fetchUser } = useAuth()
+
+  if (import.meta.server) {
+    await fetchUser()
+  }
+
+  if (!isAuthenticated.value) {
+    return navigateTo('/auth/login')
+  }
 })
