@@ -267,7 +267,7 @@ export class DrupalCmsProvider implements CmsProvider {
     const items = response.data.map((item) => ({
       id: item.id,
       title: String(item.attributes['title'] ?? ''),
-      summary: String(item.attributes['field_summary'] ?? item.attributes['body']?.toString().slice(0, 200) ?? ''),
+      summary: String(item.attributes['field_summary'] ?? this.extractBody(item.attributes['body'])?.slice(0, 200) ?? ''),
       url: String(item.attributes['path'] ?? `/${item.id}`),
       contentType: this.extractContentType(item.type),
       updated: String(item.attributes['changed'] ?? item.attributes['created'] ?? '')

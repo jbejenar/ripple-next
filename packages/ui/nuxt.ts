@@ -23,6 +23,7 @@ export default defineNuxtModule({
     addComponentsDir({
       path: resolve('./components/organisms'),
       prefix: '',
+      pathPrefix: false,
       global: true
     })
 
