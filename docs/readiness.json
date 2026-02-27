@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -73,7 +73,7 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR. Bootstrap doctor script with --json and --offline modes. no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test. SBOM generation (CycloneDX) and build provenance attestations in release workflow.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR. Bootstrap doctor script with --json and --offline modes. Zod-based env schema validation gate (ADR-012). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test. SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
       "packages": [],
       "paths": [".github/workflows/", ".github/actions/"],
       "blockers": [],

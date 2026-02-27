@@ -33,13 +33,11 @@ jobs:
             fi
           done
 
-      # ─── SBOM Generation ─────────────────────────────────────────
+      # ─── SBOM Generation (mandatory — fail-fast on supply-chain issues) ───
       - name: Generate SBOM (CycloneDX)
         run: npx --yes @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json --output-format json --package-lock-only
-        continue-on-error: true
 
       - name: Upload SBOM
-        if: hashFiles('sbom.cdx.json') != ''
         uses: actions/upload-artifact@v4
         with:
           name: sbom-cyclonedx
@@ -48,7 +46,6 @@ jobs:
 
       # ─── Build Provenance Attestation ─────────────────────────────
       - name: Generate build provenance
-        if: hashFiles('sbom.cdx.json') != ''
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: sbom.cdx.json

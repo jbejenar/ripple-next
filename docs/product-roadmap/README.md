@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 1.4.0
+> Last updated: 2026-02-27 | Version: 1.5.0
 
 ## Executive Verdict
 
@@ -22,8 +22,10 @@ Top blockers before this can be the default golden path for a large AI-first fle
 - Deterministic package manager and lockfile usage present (`pnpm@9.15.4`, frozen lockfile in CI).
 - CI is tiered with change detection and high-risk routing.
 - **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
-- **SBOM + provenance** — CycloneDX SBOM generated and build provenance attested on every release.
+- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow. Build provenance attested on every release.
 - **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos.
+- **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI. See ADR-012.
+- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured.
 - Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
@@ -131,15 +133,15 @@ AWS-emulation-heavy.
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
-| Setup determinism | 4/5 | Strong pinning (pnpm@9.15.4, Node 22 via engines + .nvmrc), lockfile present, frozen installs in CI. `.env.example` added. |
+| Setup determinism | 5/5 | Strong pinning (pnpm@9.15.4, Node 22 via engines + .nvmrc), lockfile present, frozen installs in CI. `.env.example` + Zod-based env schema validation (`pnpm validate:env`). Devcontainer with all services pre-configured. |
 | One-command workflows | 5/5 | `pnpm bootstrap` provides zero-to-ready flow. Core commands clean. CMS provider factory auto-selects mock/drupal based on env config — zero setup for agents. |
-| Local dev parity with CI | 4/5 | Shared pnpm/node/tooling and Postgres/Redis in CI; docker-compose mirrors infra locally. |
-| Test reliability / flake resistance | 4/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. CMS tests use mock provider — zero network flakes. |
+| Local dev parity with CI | 4/5 | Shared pnpm/node/tooling and Postgres/Redis in CI; docker-compose mirrors infra locally. Devcontainer available for full reproducibility. |
+| Test reliability / flake resistance | 4/5 | Playwright retries, CI single worker, trace/screenshot on failure; coverage thresholds by risk tier. CMS tests use mock provider — zero network flakes. Unified `pnpm test:ci` entrypoint. |
 | Dependency + toolchain pinning | 4/5 | `packageManager` + lockfile + node versioning present; many deps still semver-ranged (normal). |
-| Observability of failures | 4/5 | JUnit XML test artifacts uploaded on every CI run (30-day retention). Playwright traces on failure (7-day). Coverage reports available. Structured artifact naming convention. |
-| Automated remediation friendliness | 5/5 | `pnpm doctor --json` provides stable machine contract. `--offline` flag for ephemeral runners. Reusable composite actions. CMS decoupling documented with mechanical removal/addition procedures (ADR-011). Provider conformance suites validate any change automatically. |
+| Observability of failures | 5/5 | JUnit XML test artifacts uploaded on every CI run (30-day retention). Playwright traces on failure (7-day). Coverage reports available. Structured artifact naming. SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. |
+| Automated remediation friendliness | 5/5 | `pnpm doctor --json` provides stable machine contract with Zod-based env schema validation. `--offline` flag for ephemeral runners. Reusable composite actions. CMS decoupling documented with mechanical removal/addition procedures (ADR-011). Provider conformance suites validate any change automatically. |
 
-**Overall: 30/35** — Improved from 28/35 with CMS decoupling, provider factory auto-selection, and documented remediation procedures.
+**Overall: 32/35** — Improved from 30/35 with env schema validation gate, mandatory SBOM, devcontainer, and unified CI test entrypoint.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -147,7 +149,7 @@ xychart-beta
     title "Agent-Friction Scorecard (0-5)"
     x-axis ["Setup", "Workflows", "Dev Parity", "Test Reliability", "Pinning", "Observability", "Remediation"]
     y-axis "Score" 0 --> 5
-    bar [4, 5, 4, 4, 4, 4, 5]
+    bar [5, 5, 4, 4, 4, 5, 5]
 ```
 
 ---
@@ -198,7 +200,7 @@ graph TD
 |------|--------------|--------|
 | Secrets handling | Workflows use OIDC role assumption (good) + Gitleaks audit | Maintained |
 | Dependency risk | Dependency review on PRs (blocks high-severity + GPL/AGPL) | Maintained |
-| SBOM/provenance | CycloneDX SBOM generated on release + build provenance attestation | SPDX as additional format if compliance requires |
+| SBOM/provenance | CycloneDX SBOM mandatory (fail-fast) on release + build provenance attestation | SPDX as additional format if compliance requires |
 | SAST/DAST | CodeQL SAST with SARIF upload | Maintained |
 
 ```mermaid
@@ -351,11 +353,11 @@ To completely remove Drupal from Ripple Next:
 |------|-----------|
 | Module boundaries | **Very strong.** Hybrid monorepo with provider/repository patterns and explicit package segmentation. |
 | API contracts | tRPC + repository pattern + health endpoint guidance is clear; readiness manifest records subsystem maturity. |
-| Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. |
+| Configuration strategy | SST centralizes infra and stage behavior; good defaults for production protect/retain. Env schema validation via Zod (ADR-012). |
 | Backwards compatibility | Changesets and package publishing support incremental consumer upgrades — key fleet strength. |
 | CMS integration | **Implemented (Decoupled).** `@ripple/cms` with full provider pattern, provider factory with dynamic imports, full Tide paragraph mapping, DrupalCmsProvider unit tests. Drupal isolated to 2 files, removable per ADR-011. |
 | CI observability | **Strong.** JUnit XML test artifacts, coverage reports, Playwright traces, structured naming convention, 30-day retention. |
-| Supply-chain security | **Strong.** CycloneDX SBOM, build provenance attestations, CodeQL SAST, dependency review, Gitleaks. |
+| Supply-chain security | **Very strong.** CycloneDX SBOM mandatory (fail-fast), build provenance attestations, CodeQL SAST, dependency review, Gitleaks. |
 
 ```mermaid
 graph TD
@@ -427,17 +429,18 @@ graph TD
 
 | Area | Assessment |
 |------|-----------|
-| Pipeline design | Tiered CI with path filters, risk-triggered E2E, and reusable composite actions. |
-| Reproducible builds | Node 22 + frozen lockfile + consistent pnpm usage; no full hermetic containerized build yet. |
+| Pipeline design | Tiered CI with path filters, risk-triggered E2E, env schema validation, and reusable composite actions. |
+| Reproducible builds | Node 22 + frozen lockfile + consistent pnpm usage + devcontainer for hermetic local runtime. |
 | Artifact strategy | JUnit XML + coverage reports for all test jobs (30-day retention). Playwright traces on failure (7-day). SBOM on release (90-day). |
 | Progressive delivery | Preview/staging/production paths defined; production uses environment gate + SST protect/retain. |
-| Supply-chain | CycloneDX SBOM + build provenance attestations on every release. CodeQL SAST, dependency review, Gitleaks. |
+| Supply-chain | CycloneDX SBOM mandatory (fail-fast) + build provenance attestations on every release. CodeQL SAST, dependency review, Gitleaks. |
 
 ```mermaid
 graph LR
     subgraph "Tier 1 (Every PR)"
         LINT[Lint] --> GATE1{Pass?}
         TYPE[Typecheck] --> GATE1
+        ENVGATE[Env Schema] --> GATE1
         UNIT[Unit Tests] --> GATE1
         READY[Readiness Guard] --> GATE1
         SECURITY[Security Scan] --> GATE1
@@ -509,13 +512,20 @@ gantt
     Standardize CI artifacts                   :done, ci_art, 2026-03-17, 7d
     SBOM + provenance in release               :done, sbom, 2026-03-17, 7d
     Reusable composite actions                 :done, reuse, 2026-03-17, 7d
+    Mandatory SBOM in release workflow         :done, sbom_mandatory, 2026-02-27, 1d
+    Unified CI test entrypoint                 :done, unified_test, 2026-02-27, 1d
+    Env schema validation gate (ADR-012)       :done, env_schema, 2026-02-27, 3d
+    Devcontainer baseline                      :done, devcontainer, 2026-02-27, 1d
     Live Drupal integration testing            :drupal, 2026-04-01, 21d
     Search integration provider                :search, 2026-04-15, 21d
+    Flaky test containment policy              :flaky, 2026-04-01, 14d
 
     section Phase 3 — Do Later
     Fleet update mechanism                     :fleet, 2026-05-01, 30d
-    Hermetic dev/runtime                       :hermetic, 2026-05-15, 30d
     Contract testing across consumers          :contract, 2026-06-01, 30d
+    Org-wide reusable workflow distribution    :orgwf, 2026-06-15, 30d
+    Signed release bundles + verification      :signed, 2026-07-01, 30d
+    Golden-path conformance CLI                :conformance, 2026-07-15, 30d
 ```
 
 ### Phase 1: Do Now (1-2 weeks) — COMPLETE
@@ -599,6 +609,18 @@ See: [ADR-010](../adr/010-ci-observability-supply-chain.md)
 
 ### Phase 2: Do Next (1-2 months) — MOSTLY COMPLETE
 
+#### 2.0 AI-Suggested Improvements (Do Now batch) — COMPLETE
+
+**Impact:** High | **Effort:** Low-Medium | **Risk:** Low
+
+Implemented the three "Do Now" recommendations from the AI Principal Engineer review,
+plus discovered an existing devcontainer. See ADR-012.
+
+- [x] Make SBOM mandatory in release workflow (removed `continue-on-error: true`)
+- [x] Unify CI test entrypoint (single `pnpm test:ci` with optional coverage flags)
+- [x] Add Zod-based env schema validation gate (`pnpm validate:env` + CI integration)
+- [x] Devcontainer baseline (`.devcontainer/` — already existed, now documented in roadmap)
+
 #### 2.1 CMS Page Rendering + Tide Components + Decoupling
 
 **Impact:** Very High | **Effort:** High | **Risk:** Medium
@@ -673,15 +695,18 @@ Template repo + sync bot + policy drift reporting for downstream clones.
 - [ ] Build GitHub App or Action for template drift detection
 - [ ] Automated sync PRs for security/standards updates
 
-#### 3.2 Hermetic Dev/Runtime
+#### ~~3.2 Hermetic Dev/Runtime~~ — DONE (devcontainer shipped)
 
 **Impact:** High | **Effort:** High | **Risk:** Medium
 
-Devcontainer/Nix/asdf profile for deterministic agent runners at scale.
+Devcontainer baseline shipped in `.devcontainer/` with Node 22, Docker-in-Docker,
+GitHub CLI, AWS CLI, and all local services (Postgres, Redis, MinIO, Mailpit,
+MeiliSearch) pre-configured. Post-create script runs install, migrations, seed,
+and Nuxt type generation.
 
-- [ ] Evaluate devcontainer vs Nix for agent runner reproducibility
-- [ ] Create hermetic profile that pins all system dependencies
-- [ ] Validate in CI with containerized runners
+- [x] Evaluate devcontainer vs Nix for agent runner reproducibility — devcontainer chosen
+- [x] Create hermetic profile that pins all system dependencies
+- [ ] Validate in CI with containerized runners (optional — devcontainer primarily for local dev)
 
 #### 3.3 Contract Testing Across Consumers
 
@@ -702,7 +727,7 @@ consumers.
 
 ```mermaid
 graph TD
-    A["pnpm bootstrap"] --> B["pnpm lint && pnpm typecheck && pnpm test"]
+    A["pnpm bootstrap"] --> B["pnpm lint && pnpm typecheck && pnpm validate:env && pnpm test"]
     B --> C{High-risk<br/>changes?}
     C -->|Yes| D["pnpm test:e2e"]
     C -->|No| E{Public API<br/>changed?}
@@ -727,15 +752,17 @@ graph TD
 
 - [x] Pinned runtime/package manager + lockfile enforced
 - [x] Non-interactive bootstrap + doctor(json)
-- [x] Env contract (`.env.example`)
+- [x] Env contract (`.env.example`) + Zod-based env schema validation (`pnpm validate:env`)
 - [x] Tiered CI with path filtering
 - [x] Security gates in CI (`security.yml`)
 - [x] PR preview isolation + automatic teardown
 - [x] Changeset/release automation
-- [x] SBOM/provenance in releases
+- [x] SBOM/provenance in releases (mandatory, fail-fast)
 - [x] CODEOWNERS + policy checks on critical paths
 - [x] Structured test artifact uploads (JUnit XML + coverage)
 - [x] Reusable composite actions for fleet CI consistency
+- [x] Devcontainer for hermetic local development
+- [x] Unified CI test entrypoint (`pnpm test:ci`)
 
 ### Template strategy (spawn + keep updated)
 
@@ -782,19 +809,19 @@ graph TD
 - **Ship-ready?** **Yes with conditions.**
 - **Top 5 blockers:**
   1. **Missing fleet-template sync automation** (`docs/product-roadmap/README.md`, `.github/workflows/*`): no automated mechanism to push policy/security updates into downstream generated repos.
-  2. **No hermetic/devcontainer baseline** (repo root): setup is strong, but no canonical containerized runtime for cross-machine determinism.
-  3. **Release workflow tolerance is too lenient for SBOM generation** (`.github/workflows/release.yml` uses `continue-on-error: true`), which weakens supply-chain guarantees.
+  2. ~~**No hermetic/devcontainer baseline**~~ — `.devcontainer/` now ships with Node 22, Docker-in-Docker, all services. **Done.**
+  3. ~~**Release workflow tolerance is too lenient for SBOM generation**~~ — `continue-on-error: true` removed; SBOM is now fail-fast mandatory. **Done.**
   4. **Preview deploy depends on long-lived repo secret naming convention** (`.github/workflows/deploy-preview.yml`), lacking explicit environment-level guardrails per stage.
-  5. **Test command surface is slightly fragmented** (`package.json`, `.github/actions/test/action.yml`), with overlapping root/CI test entrypoints that can drift.
+  5. ~~**Test command surface is slightly fragmented**~~ — Unified to single `pnpm test:ci` invocation with optional coverage flags. **Done.**
 
 ### 2. Agent-Friction Scorecard (0–5 each, with justification)
-- **Setup determinism: 4/5** — `pnpm@9.15.4`, Node 22, frozen lockfile installs, and doctor checks exist; missing hermetic runtime standard.
+- **Setup determinism: 5/5** — `pnpm@9.15.4`, Node 22, frozen lockfile, doctor checks, Zod-based env schema validation (`pnpm validate:env`), devcontainer for hermetic runtime. *(was 4/5)*
 - **One-command workflows: 5/5** — `pnpm bootstrap` gives deterministic, non-interactive bootstrapping.
-- **Local dev parity with CI: 4/5** — shared scripts and dockerized dependencies; browser install + GitHub-hosted runner assumptions still differ.
-- **Test reliability / flake resistance: 4/5** — tiered CI and artifacted failures are solid; no explicit flaky-test quarantine policy yet.
+- **Local dev parity with CI: 4/5** — shared scripts and dockerized dependencies; devcontainer available for full reproducibility. Browser install + GitHub-hosted runner assumptions still differ.
+- **Test reliability / flake resistance: 4/5** — tiered CI and artifacted failures are solid; unified `pnpm test:ci` entrypoint. No explicit flaky-test quarantine policy yet.
 - **Dependency + toolchain pinning: 4/5** — lockfile + package manager pinned; broad semver ranges for dev deps remain expected but can introduce drift.
-- **Observability of failures: 4/5** — JUnit and Playwright artifacts are present; release-stage diagnostics for publish/attest paths could be richer.
-- **Automated remediation friendliness: 5/5** — `pnpm doctor -- --json` and clear non-interactive scripts provide agent-friendly contracts.
+- **Observability of failures: 5/5** — JUnit and Playwright artifacts present; SBOM mandatory (fail-fast) in release. Env validation diagnostics in JSON. *(was 4/5)*
+- **Automated remediation friendliness: 5/5** — `pnpm doctor -- --json` with Zod-based env schema validation and clear non-interactive scripts provide agent-friendly contracts.
 
 ### 3. Concurrency + Scale Readiness
 - **Multi-team development:** good boundary controls via CODEOWNERS on critical surfaces and modular package layout.
@@ -805,31 +832,31 @@ graph TD
 ### 4. Security + Supply Chain
 - **Secrets handling:** mostly strong (OIDC + scoped permissions), but preview deploy still hinges on repository secret wiring and should include environment protection rules.
 - **Dependency risk controls:** dependency-review with severity/license policy is in place; good baseline.
-- **SBOM / provenance:** present and valuable, but SBOM generation currently non-blocking in release path.
+- **SBOM / provenance:** present and mandatory — SBOM generation is now fail-fast in release path (fixed per AI recommendation).
 - **SAST/DAST and policy gates:** CodeQL and Gitleaks are present; DAST/runtime policy checks are not yet visible as mandatory gates.
 
 ### 5. Architecture + Maintainability
 - **Module boundaries:** strong package segmentation and provider pattern.
 - **API contracts:** explicit router/repository conventions are documented and align with maintainability goals.
-- **Configuration strategy:** `.env.example` + doctor checks are good; recommend adding schema validation as a hard gate in CI.
+- **Configuration strategy:** `.env.example` + doctor checks + Zod-based env schema validation gate in CI (`pnpm validate:env`). See ADR-012.
 - **Backwards compatibility + upgrade paths:** changesets and ADR discipline are solid; downstream template update strategy remains the key gap.
 
 ### 6. CI/CD and Release Engineering
 - **Pipeline design:** tiered CI with change detection and selective E2E is high quality.
-- **Reproducible builds:** frozen lockfile and pinned runtime are strong; no standardized devcontainer/Nix profile yet.
+- **Reproducible builds:** frozen lockfile and pinned runtime are strong; devcontainer shipped in `.devcontainer/` for hermetic local/agent runtime.
 - **Artifact strategy:** unit and e2e artifact uploads are implemented; release artifacts should include explicit checksums/manifest indexing for faster incident triage.
 - **Progressive delivery + rollbacks:** preview/staging/production workflows exist; rollback playbooks should be codified as scripts with stage-specific smoke checks.
 
 ### 7. Concrete recommendations
 
-#### Do now (1–2 weeks)
-1. **Make SBOM mandatory in release** (`.github/workflows/release.yml`): remove `continue-on-error` and fail fast when SBOM/provenance cannot be produced. **Impact: High × Effort: Low × Risk: Low**.
-2. **Unify CI test entrypoint** (`package.json`, `.github/actions/test/action.yml`): define one canonical `pnpm test:ci` contract for both local and CI to reduce script drift. **Impact: Medium × Effort: Low × Risk: Low**.
-3. **Add machine-readable env schema gate** (e.g., zod/envsafe in bootstrap + CI): fail with structured diagnostics when required env contract is invalid. **Impact: High × Effort: Medium × Risk: Low**.
+#### Do now (1–2 weeks) — COMPLETE
+1. ~~**Make SBOM mandatory in release**~~ (`.github/workflows/release.yml`): removed `continue-on-error`, SBOM/provenance now fail-fast. **Done.**
+2. ~~**Unify CI test entrypoint**~~ (`.github/actions/test/action.yml`): single `pnpm test:ci` with optional coverage flags. **Done.**
+3. ~~**Add machine-readable env schema gate**~~ (`pnpm validate:env` + Zod schemas in `@ripple/validation`): fail with structured JSON diagnostics when required env contract is invalid. See ADR-012. **Done.**
 
-#### Do next (1–2 months)
+#### Do next (1–2 months) — PARTIALLY COMPLETE
 1. **Implement template drift automation**: a bot/workflow that opens sync PRs in downstream repos for shared CI/security/agent standards. **Impact: High × Effort: Medium × Risk: Medium**.
-2. **Ship devcontainer baseline** (`.devcontainer/`): pin OS/tooling/runtime for deterministic local/agent execution. **Impact: High × Effort: Medium × Risk: Low**.
+2. ~~**Ship devcontainer baseline**~~ (`.devcontainer/`): shipped with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, all services. **Done.**
 3. **Add flaky test containment policy**: quarantine lane, retry budget, and mandatory issue linkage for quarantined tests. **Impact: Medium × Effort: Medium × Risk: Low**.
 
 #### Do later (quarterly)

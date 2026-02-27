@@ -135,6 +135,7 @@ Additional quality commands:
 | `pnpm lint:fix` | Auto-fix lint issues |
 | `pnpm format` | Prettier format all files |
 | `pnpm format:check` | Check formatting without writing |
+| `pnpm validate:env` | Validate env vars against Zod schema ([ADR-012](./adr/012-env-schema-validation.md)) |
 | `pnpm check:readiness` | Verify `docs/readiness.json` is not stale |
 
 ### Coverage thresholds
@@ -331,11 +332,11 @@ See [Deployment Guide](./deployment.md) for more details, [Lambda vs ECS](./lamb
 
 The CI pipeline runs automatically on every PR:
 
-**Tier 1 (every PR)**: lint, typecheck, readiness drift guard, unit tests
+**Tier 1 (every PR)**: lint, typecheck, env schema validation, readiness drift guard, unit tests
 **Tier 2 (main or high-risk changes)**: Playwright E2E tests
 
 The release pipeline generates:
-- CycloneDX SBOM (90-day retention)
+- CycloneDX SBOM mandatory (fail-fast, 90-day retention)
 - Build provenance attestations
 - Automated package publishing via Changesets
 
@@ -426,3 +427,4 @@ If a port is in use, either stop the conflicting service or change the port mapp
 - [Product Roadmap](./product-roadmap/) — platform roadmap and scorecard
 - [AGENTS.md](../AGENTS.md) — AI agent conventions
 - [ADR Index](./adr/) — all Architecture Decision Records
+- [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment variable validation gate

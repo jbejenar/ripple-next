@@ -9,6 +9,7 @@ pnpm install         # install deps (if doctor passes)
 pnpm test            # run all tests
 pnpm lint            # lint all packages
 pnpm typecheck       # type check all packages
+pnpm validate:env    # validate env vars against Zod schema
 pnpm check:readiness # verify readiness.json is not stale
 ```
 

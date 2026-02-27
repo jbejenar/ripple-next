@@ -14,17 +14,14 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Run tests with JUnit reporter
+    - name: Run tests with JUnit reporter and coverage
       shell: bash
-      run: pnpm test:ci
-      env:
-        DATABASE_URL: ${{ env.DATABASE_URL }}
-        REDIS_URL: ${{ env.REDIS_URL }}
-
-    - name: Generate coverage report
-      if: inputs.coverage == 'true'
-      shell: bash
-      run: pnpm vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=text --coverage.reportsDirectory=test-results/coverage
+      run: |
+        if [ "${{ inputs.coverage }}" = "true" ]; then
+          pnpm test:ci --coverage --coverage.reporter=json-summary --coverage.reporter=text --coverage.reportsDirectory=test-results/coverage
+        else
+          pnpm test:ci
+        fi
       env:
         DATABASE_URL: ${{ env.DATABASE_URL }}
         REDIS_URL: ${{ env.REDIS_URL }}
