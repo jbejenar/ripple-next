@@ -10,7 +10,7 @@ export function useAuth() {
   const isAuthenticated = computed(() => !!user.value)
 
   async function login(): Promise<void> {
-    await navigateTo('/auth/login', { external: true })
+    await navigateTo('/auth/redirect', { external: true })
   }
 
   async function logout(): Promise<void> {
@@ -21,7 +21,8 @@ export function useAuth() {
 
   async function fetchUser(): Promise<void> {
     try {
-      const data = await $fetch<{ result: { data: AuthUser } }>('/api/trpc/user.me')
+      const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
+      const data = await $fetch<{ result: { data: AuthUser } }>('/api/trpc/user.me', { headers })
       user.value = data?.result?.data ?? null
     } catch {
       user.value = null

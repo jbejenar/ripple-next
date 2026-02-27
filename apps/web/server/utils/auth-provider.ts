@@ -9,8 +9,17 @@ export function getAuthProvider(): AuthProvider {
 
   const config = useRuntimeConfig()
 
-  if (process.env.NODE_ENV === 'test') {
-    provider = new MockAuthProvider()
+  if (process.env.NODE_ENV === 'test' || !config.oidcIssuerUrl) {
+    const mock = new MockAuthProvider()
+    // Override getAuthorizationUrl to redirect back to our own callback
+    // so the full OIDC flow works in E2E tests without a real IdP
+    mock.getAuthorizationUrl = async (state: string, _codeVerifier: string): Promise<URL> => {
+      return new URL(
+        `/auth/callback?code=mock&state=${encodeURIComponent(state)}`,
+        'http://localhost:3000'
+      )
+    }
+    provider = mock
     return provider
   }
 

@@ -27,10 +27,11 @@ export default defineEventHandler(async (event) => {
   const auth = getAuthProvider()
   const user = await auth.handleCallback(code, codeVerifier)
   const session = await auth.createSession(user.id)
+  const isSecure = process.env.NODE_ENV === 'production'
 
   setCookie(event, 'session_token', session.id, {
     httpOnly: true,
-    secure: true,
+    secure: isSecure,
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60,
     path: '/'

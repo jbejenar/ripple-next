@@ -5,17 +5,18 @@ import { getAuthProvider } from '../../utils/auth-provider'
 export default defineEventHandler(async (event) => {
   const state = crypto.randomUUID()
   const codeVerifier = generateRandomCodeVerifier()
+  const isSecure = process.env.NODE_ENV === 'production'
 
   setCookie(event, 'oidc_state', state, {
     httpOnly: true,
-    secure: true,
+    secure: isSecure,
     sameSite: 'lax',
     maxAge: 600,
     path: '/'
   })
   setCookie(event, 'oidc_verifier', codeVerifier, {
     httpOnly: true,
-    secure: true,
+    secure: isSecure,
     sameSite: 'lax',
     maxAge: 600,
     path: '/'
