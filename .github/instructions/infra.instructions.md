@@ -1,7 +1,9 @@
 ---
-applyTo: "sst.config.ts,infra/**"
+applyTo: 'sst.config.ts,infra/**'
 ---
+
 # Infrastructure Instructions
+
 - This project uses SST v3 (Pulumi engine) — NEVER use CDK, CloudFormation, or SAM
 - Infrastructure is defined in TypeScript in sst.config.ts
 - Use SST high-level components (sst.aws.Nuxt, sst.aws.Queue, sst.aws.Postgres, etc.)

@@ -2,6 +2,26 @@
 
 ## Test Pyramid
 
+```mermaid
+graph TB
+    E2E["E2E Tests<br/>(Playwright)<br/>Slowest, fewest"]
+    Component["Component Tests<br/>(Vue Test Utils)"]
+    Handler["Lambda Handler Tests<br/>(Vitest + mock providers)"]
+    Integration["Integration Tests<br/>(Vitest + Testcontainers)"]
+    Unit["Unit Tests<br/>(Vitest)<br/>Fastest, most numerous"]
+
+    E2E --- Component
+    Component --- Handler
+    Handler --- Integration
+    Integration --- Unit
+
+    style Unit fill:#e8f5e9
+    style Integration fill:#c8e6c9
+    style Handler fill:#fff3e0
+    style Component fill:#ffe0b2
+    style E2E fill:#ffcdd2
+```
+
 1. **Unit tests** (fastest, most numerous) — Vitest
 2. **Integration tests** (real DB) — Vitest + Testcontainers
 3. **Component tests** — Vue Test Utils
@@ -79,10 +99,18 @@ const users = userFactory.buildList(5)
 
 ## Mock Providers
 
-All mock providers are available from `packages/testing/mocks/providers.ts`:
+All mock providers are available from `packages/testing/mocks/providers.ts`.
+Tests use the [Provider Pattern](./provider-pattern.md) with in-memory implementations for speed.
 
 ```typescript
 import { createMockProviders } from '@ripple/testing'
 
 const { queue, auth, storage, email, events } = createMockProviders()
 ```
+
+## Related Documentation
+
+- [Architecture](./architecture.md) — system overview
+- [Provider Pattern](./provider-pattern.md) — how mock providers work
+- [Data Model](./data-model.md) — schema reference for integration tests
+- [ADR-003: Provider Pattern](./adr/003-provider-pattern.md) — why memory providers

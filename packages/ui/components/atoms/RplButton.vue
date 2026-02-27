@@ -20,11 +20,7 @@ defineEmits<{
 
 <template>
   <button
-    :class="[
-      'rpl-button',
-      `rpl-button--${variant}`,
-      `rpl-button--${size}`
-    ]"
+    :class="['rpl-button', `rpl-button--${variant}`, `rpl-button--${size}`]"
     :type="type"
     :disabled="disabled"
     @click="$emit('click', $event)"
@@ -43,7 +39,10 @@ defineEmits<{
   border: 2px solid transparent;
   border-radius: var(--rpl-border-radius, 4px);
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .rpl-button:disabled {

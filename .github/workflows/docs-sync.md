@@ -19,6 +19,7 @@ safe-outputs:
 When schemas, types, or infrastructure change, update the relevant documentation.
 
 ## Check and update:
+
 - `docs/data-model.md` when `packages/db/schema/` changes
 - `docs/api-contracts.md` when tRPC routers change
 - `docs/architecture.md` when `sst.config.ts` changes

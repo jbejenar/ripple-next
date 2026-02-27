@@ -1,7 +1,9 @@
 ---
-applyTo: "**/*.test.ts,**/*.spec.ts"
+applyTo: '**/*.test.ts,**/*.spec.ts'
 ---
+
 # Testing Instructions
+
 - Use Vitest for all unit and integration tests
 - Use Playwright for E2E tests
 - Use Vue Test Utils for component tests

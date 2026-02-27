@@ -1,21 +1,25 @@
 # Project: Ripple Next
 
 ## Overview
+
 A full-stack government digital platform built with Nuxt 3, Ripple UI,
 and TypeScript. Deployed to AWS via SST v3 (Pulumi — NOT CDK/CloudFormation).
 Port of the Victorian government Ripple design system to an AI-agent-first architecture.
 
 ## Architecture Model
+
 **Hybrid monorepo** — this repo is the development hub for all `@ripple/*` packages.
 Packages are published to a private npm registry so external projects consume versioned
 releases (e.g. `"@ripple/auth": "^0.2.0"`). Consumer teams upgrade at their own pace —
 no coordinated redeployments needed. See [ADR-007](docs/adr/007-library-vs-monorepo.md).
 
 ## Subsystem Status
+
 Check `docs/readiness.json` for machine-readable status of each subsystem.
 Status values: `implemented` | `partial` | `scaffold` | `planned`.
 
 ## Tech Stack
+
 - Frontend: Nuxt 3 + Vue 3 Composition API + TypeScript
 - UI: Ripple UI Core (forked), UnoCSS, Storybook 8
 - API: Nitro server routes + tRPC-nuxt
@@ -29,25 +33,31 @@ Status values: `implemented` | `partial` | `scaffold` | `planned`.
 ## Critical Architecture Patterns
 
 ### Provider Pattern
+
 Every infrastructure concern uses a provider interface:
+
 - `packages/queue/providers/` → memory.ts | bullmq.ts | sqs.ts
 - `packages/auth/providers/` → mock.ts | lucia.ts | cognito.ts
 - `packages/storage/providers/` → filesystem.ts | minio.ts | s3.ts
 - `packages/email/providers/` → smtp.ts (includes MemoryEmailProvider) | ses.ts
-Tests ALWAYS use memory/mock providers. Never depend on cloud services.
+  Tests ALWAYS use memory/mock providers. Never depend on cloud services.
 
 ### Lambda-First Compute
+
 - Default: Lambda via Nitro (request-response, <15 min)
 - Escape hatch: ECS Fargate (long-running, WebSocket, batch)
 - Never: EKS/Kubernetes
 - SST handles all wiring — `sst.aws.Nuxt`, `queue.subscribe()`, `sst.aws.Cron`
 
 ### SST Resource Linking
+
 In production, access infrastructure via SST's `Resource` object:
+
 ```ts
-import { Resource } from "sst"
+import { Resource } from 'sst'
 // Resource.Database.connectionString, Resource.EmailQueue.url, etc.
 ```
+
 In tests, use mock providers. In local dev, use docker-compose services.
 
 ## Nuxt Auto-Imports
@@ -55,24 +65,29 @@ In tests, use mock providers. In local dev, use docker-compose services.
 Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
 
 ### Auto-imported by Nuxt core (no import statement needed):
+
 - **Vue APIs**: `ref`, `computed`, `watch`, `watchEffect`, `reactive`, `toRef`, `toRefs`, `onMounted`, `onUnmounted`, `nextTick`, `defineProps`, `defineEmits`, `withDefaults`
 - **Nuxt composables**: `useRuntimeConfig`, `useFetch`, `useAsyncData`, `useLazyFetch`, `useLazyAsyncData`, `useRoute`, `useRouter`, `useState`, `useHead`, `useSeoMeta`, `useNuxtApp`, `navigateTo`, `createError`, `definePageMeta`, `defineNuxtRouteMiddleware`
 - **Nitro server utils**: `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`
 
 ### Auto-imported from project directories:
+
 - `composables/**` — all exports (e.g. `useAuth()`)
 - `stores/**` — all Pinia stores
 - `~/components/**` — all Vue components (no pathPrefix)
 
 ### NOT auto-imported (you must import explicitly):
+
 - Anything from `@ripple/*` packages (e.g. `import { AuthProvider } from '@ripple/auth'`)
 - Anything from `node_modules` (e.g. `import { z } from 'zod'`)
 - Server-side tRPC utilities (e.g. `import { router, protectedProcedure } from '../trpc/trpc'`)
 
 ### If you see import errors:
+
 Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 
 ## Commands
+
 - `pnpm install` — Install all dependencies
 - `pnpm dev` — Start Nuxt dev + docker-compose services
 - `pnpm build` — Build all packages and apps
@@ -92,6 +107,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `npx sst deploy --stage production` — Deploy to production
 
 ## Code Conventions
+
 - All components use `<script setup lang="ts">` (Composition API only)
 - UI components follow atomic design: atoms → molecules → organisms
 - CSS uses BEM with `rpl-` prefix for Ripple components, `app-` for app components
@@ -104,6 +120,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - ECS services have a Dockerfile in their service directory
 
 ## Testing Requirements
+
 - Every new feature needs: unit test + integration test (minimum)
 - Every new API endpoint needs: integration test with real DB (testcontainers)
 - Every new component needs: component test with Vue Test Utils
@@ -113,6 +130,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - Always run `pnpm test` and `pnpm typecheck` before considering work done
 
 ## Infrastructure Changes
+
 - All infra is in `sst.config.ts` (TypeScript, NOT YAML, NOT CloudFormation)
 - Lambda is the default compute — use `queue.subscribe()` or `sst.aws.Cron`
 - Only use ECS Fargate for jobs >15min or WebSocket services
@@ -120,12 +138,15 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - Test infra changes with `npx sst deploy --stage pr-123` (isolated per PR)
 
 ## CI Pipeline (Tiered)
+
 The CI runs a tiered model to balance speed with safety:
+
 - **Tier 1 (every PR):** lint, typecheck, unit tests — skipped if no source files changed.
 - **Tier 2 (merge to main + high-risk PRs):** full E2E via Playwright. High-risk = changes to `packages/auth`, `packages/db`, `packages/queue`, or `sst.config.ts`.
 - **Preview deploys:** PRs that touch infra get an isolated `pr-{number}` AWS environment.
 
 ## File Naming
+
 - Components: PascalCase (`UserProfile.vue`)
 - Composables: camelCase with `use` prefix (`useAuth.ts`)
 - Lambda handlers: kebab-case with `.handler.ts` suffix (`email.handler.ts`)
@@ -136,6 +157,7 @@ The CI runs a tiered model to balance speed with safety:
 - Dockerfiles: in the service directory they belong to
 
 ## Repository Structure
+
 ```
 apps/web/          — Nuxt 3 application (deploys to Lambda)
 packages/ui/       — Ripple-based UI component library
@@ -156,7 +178,9 @@ docs/              — Architecture docs, ADRs, readiness manifest
 ```
 
 ## Shared Package Ownership
+
 Critical shared surfaces require review from owning teams (see `.github/CODEOWNERS`):
+
 - **Infrastructure** (`sst.config.ts`, workflows, root configs): platform team
 - **Database schema/migrations**: platform + data teams
 - **Auth package**: platform + security teams

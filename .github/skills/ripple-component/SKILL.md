@@ -1,15 +1,19 @@
 # Ripple Component Skill
 
 ## When to use
+
 When creating new UI components for the Ripple design system.
 
 ## Component structure
+
 ```
 packages/ui/components/{level}/Rpl{Name}.vue
 ```
+
 Where `{level}` is `atoms`, `molecules`, or `organisms`.
 
 ## Steps
+
 1. Create the `.vue` file with `<script setup lang="ts">`
 2. Define props interface with `Rpl{Name}Props`
 3. Use `rpl-` BEM prefix for CSS classes
@@ -19,6 +23,7 @@ Where `{level}` is `atoms`, `molecules`, or `organisms`.
 7. Create a Storybook story (optional)
 
 ## Conventions
+
 - Props use TypeScript interfaces, not runtime validators
 - Emit events with typed `defineEmits`
 - Use scoped styles

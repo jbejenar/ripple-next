@@ -36,9 +36,7 @@ export class EventBridgeBus implements EventBus {
   }
 
   async publish(event: DomainEvent): Promise<void> {
-    const { EventBridgeClient, PutEventsCommand } = await import(
-      '@aws-sdk/client-eventbridge'
-    )
+    const { EventBridgeClient, PutEventsCommand } = await import('@aws-sdk/client-eventbridge')
     const client = new EventBridgeClient({ region: 'ap-southeast-2' })
     await client.send(
       new PutEventsCommand({

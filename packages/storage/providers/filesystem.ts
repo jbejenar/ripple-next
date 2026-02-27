@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync, readdirSync, statSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  unlinkSync,
+  readdirSync,
+  statSync
+} from 'node:fs'
 import { join, dirname } from 'node:path'
 import type { StorageProvider, StorageObject, UploadOptions } from '../types'
 
@@ -20,7 +28,11 @@ export class FilesystemStorageProvider implements StorageProvider {
     return join(this.basePath, key)
   }
 
-  async upload(key: string, body: Buffer | Uint8Array | string, _options?: UploadOptions): Promise<void> {
+  async upload(
+    key: string,
+    body: Buffer | Uint8Array | string,
+    _options?: UploadOptions
+  ): Promise<void> {
     const path = this.resolve(key)
     mkdirSync(dirname(path), { recursive: true })
     writeFileSync(path, body)

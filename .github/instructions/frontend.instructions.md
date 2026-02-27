@@ -1,7 +1,9 @@
 ---
-applyTo: "apps/web/pages/**,apps/web/components/**,apps/web/composables/**,apps/web/layouts/**"
+applyTo: 'apps/web/pages/**,apps/web/components/**,apps/web/composables/**,apps/web/layouts/**'
 ---
+
 # Frontend Instructions
+
 - Use `<script setup lang="ts">` for all components
 - Use Vue 3 Composition API — never Options API
 - Components auto-import from `packages/ui/` and `apps/web/components/`

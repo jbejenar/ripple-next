@@ -9,7 +9,7 @@
 
 We have two competing models for scaling ripple-next across many projects and teams:
 
-1. **Stay pure monorepo** — all projects in one repo, workspace:* links everywhere.
+1. **Stay pure monorepo** — all projects in one repo, workspace:\* links everywhere.
 2. **Extract to published libraries** — publish `@ripple/*` packages to a private registry, each project installs them like any npm dependency.
 3. **Hybrid** — keep the monorepo as the development hub, but publish stable packages to a private registry so external projects can consume them independently.
 
@@ -47,29 +47,32 @@ We have two competing models for scaling ripple-next across many projects and te
 
 ### Why Hybrid Wins
 
-| Concern | Pure Monorepo | Pure Library (split repos) | Hybrid |
-|---|---|---|---|
-| Cross-package refactoring | Instant | Multi-repo coordination | Instant (in monorepo) |
-| Consumer upgrade control | None (always HEAD) | Full (semver) | Full (semver) |
-| Build isolation | Shared CI load | Independent | Independent for consumers |
-| Agent context window | One big repo | Many small repos | Bounded packages |
-| Redeployment on upgrade | Everyone redeploys | Each team decides | Each team decides |
-| Breaking change detection | Immediate in CI | Only when consumer upgrades | Immediate in monorepo, controlled for consumers |
+| Concern                   | Pure Monorepo      | Pure Library (split repos)  | Hybrid                                          |
+| ------------------------- | ------------------ | --------------------------- | ----------------------------------------------- |
+| Cross-package refactoring | Instant            | Multi-repo coordination     | Instant (in monorepo)                           |
+| Consumer upgrade control  | None (always HEAD) | Full (semver)               | Full (semver)                                   |
+| Build isolation           | Shared CI load     | Independent                 | Independent for consumers                       |
+| Agent context window      | One big repo       | Many small repos            | Bounded packages                                |
+| Redeployment on upgrade   | Everyone redeploys | Each team decides           | Each team decides                               |
+| Breaking change detection | Immediate in CI    | Only when consumer upgrades | Immediate in monorepo, controlled for consumers |
 
 ## Consequences
 
 ### Positive
+
 - Teams upgrade `@ripple/*` packages independently — no forced redeployments.
 - Breaking changes are caught in the monorepo CI before publishing.
 - Consumers can pin versions and upgrade when ready.
 - The monorepo remains the single development environment with fast iteration.
 
 ### Negative
+
 - Need to set up a publish pipeline (CI job on tag/release).
 - Need semver discipline — every package change must be classified as patch/minor/major.
 - Changelog generation becomes important for consumers.
 
 ### Implementation Requirements
+
 - Add `publishConfig` to each package's `package.json` pointing to private registry.
 - Add a `release` CI workflow that builds, tests, and publishes tagged packages.
 - Add changesets or similar tool for version management.
@@ -78,10 +81,18 @@ We have two competing models for scaling ripple-next across many projects and te
 ## Alternatives Considered
 
 ### Nx-style affected-only builds
+
 Would help with monorepo-only scaling but doesn't solve the "many separate projects" problem. Turborepo already provides affected-only caching.
 
 ### Git submodules
+
 Worst of both worlds. Hard for agents to navigate, merge conflicts everywhere, no version pinning semantic.
 
 ### Copy-paste / vendoring
+
 Anti-pattern. Leads to drift across teams.
+
+## Related
+
+- [Architecture](../architecture.md) — system overview
+- [Critique Evaluation](../critique-evaluation.md) — the review that prompted this ADR

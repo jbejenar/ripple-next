@@ -1,7 +1,9 @@
 ---
-applyTo: "apps/web/server/**"
+applyTo: 'apps/web/server/**'
 ---
+
 # API Instructions
+
 - tRPC procedures go in `apps/web/server/trpc/routers/`
 - REST endpoints go in `apps/web/server/api/` (file-based routing)
 - Use `publicProcedure` for unauthenticated endpoints

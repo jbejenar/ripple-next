@@ -48,7 +48,12 @@ describe('email.handler', () => {
         {
           messageId: '1',
           receiptHandle: 'r1',
-          body: JSON.stringify({ type: 'send-email', to: 'a@test.com', template: 'welcome', data: {} }),
+          body: JSON.stringify({
+            type: 'send-email',
+            to: 'a@test.com',
+            template: 'welcome',
+            data: {}
+          }),
           attributes: {} as never,
           messageAttributes: {},
           md5OfBody: '',
@@ -59,7 +64,12 @@ describe('email.handler', () => {
         {
           messageId: '2',
           receiptHandle: 'r2',
-          body: JSON.stringify({ type: 'send-email', to: 'b@test.com', template: 'reset', data: {} }),
+          body: JSON.stringify({
+            type: 'send-email',
+            to: 'b@test.com',
+            template: 'reset',
+            data: {}
+          }),
           attributes: {} as never,
           messageAttributes: {},
           md5OfBody: '',

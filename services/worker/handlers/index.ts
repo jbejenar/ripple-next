@@ -16,10 +16,14 @@ async function startWorker(): Promise<void> {
   // Continuous polling loop
   while (true) {
     try {
-      await consumeMessages(provider, async (message) => {
-        console.log(`Processing message: ${message.id}`, message.body)
-        // Dispatch to appropriate handler based on message type
-      }, { queue: 'long-running' })
+      await consumeMessages(
+        provider,
+        async (message) => {
+          console.log(`Processing message: ${message.id}`, message.body)
+          // Dispatch to appropriate handler based on message type
+        },
+        { queue: 'long-running' }
+      )
     } catch (error) {
       console.error('Worker error:', error)
     }

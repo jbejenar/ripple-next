@@ -14,8 +14,8 @@ async function runMigrations(): Promise<void> {
   }
 
   const migrationsFolder = resolve(__dirname, './migrations')
-  const hasMigrations = existsSync(migrationsFolder) &&
-    readdirSync(migrationsFolder).some((f) => f.endsWith('.sql'))
+  const hasMigrations =
+    existsSync(migrationsFolder) && readdirSync(migrationsFolder).some((f) => f.endsWith('.sql'))
 
   if (!hasMigrations) {
     console.log('No migration files found, skipping.')

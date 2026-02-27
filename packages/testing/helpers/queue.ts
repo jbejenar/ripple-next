@@ -3,7 +3,11 @@ import { MemoryQueueProvider, type QueueMessage } from '@ripple/queue'
 /**
  * Assert that a queue has a specific number of messages.
  */
-export function assertQueueLength(queue: MemoryQueueProvider, name: string, expected: number): void {
+export function assertQueueLength(
+  queue: MemoryQueueProvider,
+  name: string,
+  expected: number
+): void {
   const count = queue.getMessageCount(name)
   if (count !== expected) {
     throw new Error(`Expected queue "${name}" to have ${expected} messages, but found ${count}`)
