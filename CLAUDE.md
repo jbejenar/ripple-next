@@ -3,6 +3,7 @@
 ## Quick Start
 
 ```bash
+pnpm bootstrap       # install + doctor + validate (first-time setup)
 pnpm doctor          # validate environment
 pnpm install         # install deps (if doctor passes)
 pnpm test            # run all tests
@@ -19,9 +20,11 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 ## Key Files for Agent Planning
 
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
+- `docs/product-roadmap/` — product roadmap, agent-friction scorecard, improvement phases
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
 - `.changeset/config.json` — version management config
+- `.env.example` — environment variable contract with defaults
 
 ## Before Making Changes
 

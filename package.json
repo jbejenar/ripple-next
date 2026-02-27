@@ -29,6 +29,7 @@
     "version-packages": "changeset version",
     "release": "turbo build && changeset publish",
     "doctor": "bash scripts/doctor.sh",
+    "bootstrap": "pnpm install --frozen-lockfile && pnpm doctor && echo '\\nBootstrap complete. Run pnpm dev to start.'",
     "check:readiness": "node scripts/check-readiness.mjs",
     "prepare": "husky"
   },

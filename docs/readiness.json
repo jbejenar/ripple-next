@@ -73,10 +73,10 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Preview deploys per PR. Bootstrap doctor script for environment validation. no-console promoted to error. Risk-tiered coverage thresholds configured.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/unit on every PR with path filtering + readiness drift guard), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR. Bootstrap doctor script with --json and --offline modes. no-console promoted to error. Risk-tiered coverage thresholds configured.",
       "packages": [],
       "paths": [".github/workflows/"],
-      "blockers": [],
+      "blockers": ["CI test artifacts limited to Playwright — broader JUnit/coverage upload planned"],
       "testCoverage": "pipeline-tested"
     },
     "testing-infra": {
