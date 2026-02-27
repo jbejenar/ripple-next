@@ -89,6 +89,8 @@ pnpm dev
 | [ADR-013](docs/adr/013-flaky-test-containment.md)        | Flaky test containment policy    |
 | [ADR-014](docs/adr/014-preview-deploy-guardrails.md)     | Preview deploy guardrails        |
 | [ADR-015](docs/adr/015-localstack-assessment.md)         | LocalStack — provider pattern preferred |
+| [ADR-016](docs/adr/016-roadmap-reorganisation.md)        | Roadmap reorganisation — AI-first priority tiers |
+| [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
 
 ## Repository Structure
 

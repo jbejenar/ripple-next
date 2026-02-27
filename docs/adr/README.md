@@ -24,6 +24,7 @@
 | [014](./014-preview-deploy-guardrails.md) | Preview Deploy Environment Guardrails | Accepted | Deployment |
 | [015](./015-localstack-assessment.md) | LocalStack Assessment — Provider Pattern over Emulation | Accepted | Infrastructure |
 | [016](./016-roadmap-reorganisation.md) | Roadmap Reorganisation — AI-First Priority Tiers and Suggestion Governance | Accepted | Process |
+| [017](./017-upstream-ripple-component-strategy.md) | Upstream Ripple Component Strategy — Port, Own, Selectively Sync | Accepted | Frontend |
 
 ## Categories
 
@@ -33,6 +34,7 @@
 
 ### Frontend
 - **ADR-001** — Nuxt 3 chosen over Next.js for Vue ecosystem alignment
+- **ADR-017** — Upstream Ripple 2 components: port, own, selectively sync (no runtime dependency)
 
 ### Database
 - **ADR-002** — Drizzle ORM chosen over Prisma for type safety and migration control
@@ -61,7 +63,7 @@
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `016`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `017`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that
