@@ -85,73 +85,645 @@ Typical platform tasks:
 - Update infra in `sst.config.ts`
 - Improve docs in `docs/*`
 
-## 1B. Consumer app workflow (separate repo) — example
+## 1B. Consumer app workflow (separate repo)
 
-If your team is building a product _with_ Ripple libraries, create a separate repo. Do **not** copy the whole monorepo.
+If your team is building a product _with_ Ripple libraries, create a **separate repo**. Do **not** copy or fork the monorepo — that is only for platform contributors.
 
-### Example: create a Nuxt consumer app
+The Ripple platform publishes `@ripple/*` packages to a private npm registry. Your consumer repo installs them like any other dependency, upgrades on its own schedule, and deploys independently. See [ADR-007](./adr/007-library-vs-monorepo.md) for the rationale.
+
+---
+
+### Choose your consumer workflow
+
+| Workflow | When to choose | What you install | Run locally | Deploy |
+|----------|---------------|-----------------|-------------|--------|
+| **Frontend-only** (Nuxt) | Building a website or portal that calls existing APIs | `@ripple/ui`, `@ripple/validation`, `@ripple/shared`, optionally `@ripple/auth` | `pnpm dev` (Nuxt) | Static/SSR host (Vercel, Netlify, Lambda, etc.) |
+| **Backend-service-only** | Building an API, worker, or automation that has no UI | `@ripple/validation`, `@ripple/shared`, optionally `@ripple/auth`, `@ripple/queue`, `@ripple/db` | `pnpm dev` (Node server) | Container, Lambda, or VM |
+| **Full-stack** (UI + service) | Building a complete product with its own frontend and backend | All of the above, organised in a pnpm workspace | `pnpm dev` (starts both) | UI + API deployed independently |
+
+All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9** (`corepack enable pnpm`).
+
+---
+
+### Private registry setup (all workflows)
+
+`@ripple/*` packages are published to a private npm registry. Before you can install them, create a `.npmrc` in your project root:
+
+```ini
+# .npmrc — private registry auth for @ripple/* packages
+# Replace the URL and token with values from your platform team.
+@ripple:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${RIPPLE_NPM_TOKEN}
+```
+
+> **Assumption:** This guide uses GitHub Packages as the registry URL. Your organisation may use AWS CodeArtifact or another host — substitute the URL accordingly. The `RIPPLE_NPM_TOKEN` environment variable should be set in your shell profile or CI secrets; never commit a real token.
+
+After creating `.npmrc`, verify access:
 
 ```bash
-# Create a new app repo
-mkdir my-service-portal && cd my-service-portal
+export RIPPLE_NPM_TOKEN=<your-token>
+pnpm info @ripple/shared --registry https://npm.pkg.github.com
+```
+
+---
+
+### A. Frontend-only consumer app (Nuxt)
+
+A Nuxt app that uses Ripple UI components and validation schemas. No backend of its own.
+
+#### 1. Scaffold
+
+```bash
+mkdir my-portal && cd my-portal
 git init
 
-# Create a Nuxt app
 pnpm dlx nuxi@latest init .
 pnpm install
 
-# Configure private registry auth (org-specific)
-# Usually done via ~/.npmrc or project .npmrc
-
-# Install Ripple packages you need
-pnpm add @ripple/auth @ripple/ui @ripple/validation
+# Install Ripple packages
+pnpm add @ripple/ui @ripple/validation @ripple/shared
 ```
 
-Create a page using Ripple packages:
+#### 2. Folder layout
+
+```
+my-portal/
+├── .npmrc                # Private registry auth (see above)
+├── package.json
+├── nuxt.config.ts
+├── pages/
+│   └── index.vue         # Example page
+├── tests/
+│   └── index.test.ts     # Example unit test
+├── tsconfig.json
+└── .env.example          # Document env vars your app needs
+```
+
+#### 3. Hello Ripple page
 
 ```vue
 <!-- pages/index.vue -->
 <script setup lang="ts">
-import { z } from 'zod'
+import { RplButton, RplHeroHeader } from '@ripple/ui'
 import { loginSchema } from '@ripple/validation'
+import { formatDate } from '@ripple/shared'
 
-const status = ref<'idle' | 'valid'>('idle')
+const status = ref<'idle' | 'valid' | 'invalid'>('idle')
 
-const validateExample = (): void => {
-  const candidate = { email: 'user@example.com', password: 'example-password' }
-  const mergedSchema = loginSchema.and(z.object({ password: z.string().min(8) }))
-  mergedSchema.parse(candidate)
-  status.value = 'valid'
+function validate(): void {
+  const result = loginSchema.safeParse({
+    email: 'user@example.com',
+    password: 'secure-password-123'
+  })
+  status.value = result.success ? 'valid' : 'invalid'
+}
+</script>
+
+<template>
+  <RplHeroHeader title="My Service Portal" :description="`Today is ${formatDate(new Date())}`">
+    <RplButton label="Validate login payload" @click="validate" />
+    <p style="margin-top: 1rem">Validation: {{ status }}</p>
+  </RplHeroHeader>
+</template>
+```
+
+#### 4. Run
+
+```bash
+pnpm dev        # Nuxt dev server on http://localhost:3000
+```
+
+#### 5. Quality gates
+
+Add these scripts to `package.json`:
+
+```jsonc
+{
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "nuxi typecheck"
+  }
+}
+```
+
+Install dev tooling:
+
+```bash
+pnpm add -D vitest @vue/test-utils happy-dom eslint typescript
+```
+
+Run quality gates before every commit:
+
+```bash
+pnpm test        # Unit tests (Vitest)
+pnpm lint        # ESLint
+pnpm typecheck   # TypeScript strict mode
+```
+
+| Gate | What it verifies |
+|------|-----------------|
+| `pnpm test` | Your unit tests pass; Ripple schemas/utilities work as expected |
+| `pnpm lint` | No lint errors (consider adopting `no-console: error` from the platform) |
+| `pnpm typecheck` | Zero type errors; catches breaking changes from Ripple upgrades early |
+
+#### 6. Deploy
+
+A frontend-only Nuxt app can be deployed as:
+
+- **SSR** — Lambda (via `npx sst deploy`), Vercel, or any Node host
+- **Static** — `nuxi generate` then deploy to S3/CloudFront, Netlify, or GitHub Pages
+
+---
+
+### B. Backend-service-only consumer repo
+
+A standalone Node service (API or worker) that uses `@ripple/*` packages for validation, auth, shared types, or queue processing — no UI.
+
+#### 1. Scaffold
+
+```bash
+mkdir my-api && cd my-api
+git init
+pnpm init
+
+# Install Ripple packages
+pnpm add @ripple/validation @ripple/shared @ripple/auth
+
+# Install dev tooling
+pnpm add -D typescript vitest tsx @types/node
+```
+
+#### 2. Folder layout
+
+```
+my-api/
+├── .npmrc                 # Private registry auth (see above)
+├── .env.example           # Document all env vars (the contract)
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── server.ts          # HTTP entry point
+│   └── routes/
+│       ├── health.ts      # GET /health
+│       └── validate.ts    # POST /validate
+└── tests/
+    └── validate.test.ts   # Unit tests
+```
+
+#### 3. `.env.example`
+
+Document every environment variable your service needs. This file is the authoritative contract — the same pattern used throughout the Ripple platform (see [ADR-012](./adr/012-env-schema-validation.md)).
+
+```bash
+# .env.example — authoritative env var contract for this service
+NODE_ENV=development
+PORT=4000
+
+# Auth (leave empty to skip auth checks locally)
+OIDC_ISSUER_URL=
+OIDC_CLIENT_ID=
+
+# Database (optional — only if your service needs its own DB)
+# DATABASE_URL=postgres://myapi:devpassword@localhost:5432/myapi
+```
+
+#### 4. Minimal server
+
+This example uses Node's built-in `node:http` module to keep dependencies minimal. Substitute Express, Fastify, or Hono if your team prefers — the Ripple package usage is the same.
+
+```typescript
+// src/server.ts
+import { createServer } from 'node:http'
+import { healthHandler } from './routes/health.js'
+import { validateHandler } from './routes/validate.js'
+
+const port = Number(process.env.PORT ?? 4000)
+
+const server = createServer((req, res) => {
+  if (req.url === '/health' && req.method === 'GET') {
+    return healthHandler(req, res)
+  }
+  if (req.url === '/validate' && req.method === 'POST') {
+    return validateHandler(req, res)
+  }
+  res.writeHead(404, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ error: 'Not found' }))
+})
+
+server.listen(port, () => {
+  console.log(`API listening on http://localhost:${port}`)
+})
+```
+
+```typescript
+// src/routes/health.ts
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { APP_NAME } from '@ripple/shared'
+
+export function healthHandler(_req: IncomingMessage, res: ServerResponse): void {
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({ status: 'ok', platform: APP_NAME }))
+}
+```
+
+```typescript
+// src/routes/validate.ts
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { createUserSchema } from '@ripple/validation'
+
+export function validateHandler(req: IncomingMessage, res: ServerResponse): void {
+  let body = ''
+  req.on('data', (chunk: Buffer) => { body += chunk.toString() })
+  req.on('end', () => {
+    const result = createUserSchema.safeParse(JSON.parse(body))
+    if (result.success) {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ valid: true, data: result.data }))
+    } else {
+      res.writeHead(422, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ valid: false, errors: result.error.issues }))
+    }
+  })
+}
+```
+
+#### 5. `package.json` scripts
+
+```jsonc
+{
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  }
+}
+```
+
+#### 6. Unit test
+
+```typescript
+// tests/validate.test.ts
+import { describe, it, expect } from 'vitest'
+import { createUserSchema } from '@ripple/validation'
+
+describe('createUserSchema', () => {
+  it('accepts valid user input', () => {
+    const result = createUserSchema.safeParse({
+      email: 'dev@example.com',
+      name: 'Test User'
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects missing email', () => {
+    const result = createUserSchema.safeParse({ name: 'Test User' })
+    expect(result.success).toBe(false)
+  })
+})
+```
+
+#### 7. Run
+
+```bash
+pnpm dev         # Starts server on http://localhost:4000 with hot reload
+pnpm test        # Run unit tests
+pnpm typecheck   # Type-check the project
+```
+
+#### 8. DB optional: Docker Compose for local services
+
+If your service needs a database or Redis, add a `docker-compose.yml`:
+
+```yaml
+# docker-compose.yml — local dev services for this API
+services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: myapi
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: myapi
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
+```
+
+Then start services before your API:
+
+```bash
+docker compose up -d
+pnpm dev
+```
+
+#### 9. Deploy
+
+A backend-only service can be deployed as:
+
+- **Container** — Docker image to ECS Fargate, Cloud Run, or any container host
+- **Lambda** — bundle with esbuild, deploy via SST or Serverless Framework
+- **VM** — `pnpm build && node dist/server.js` behind a reverse proxy
+
+---
+
+### C. Full-stack consumer repo (UI + service)
+
+A pnpm workspace with a Nuxt frontend and a backend API in one repo, sharing types and schemas.
+
+#### 1. Scaffold
+
+```bash
+mkdir my-product && cd my-product
+git init
+
+# Initialise the workspace root
+pnpm init
+mkdir -p apps/web services/api packages/shared
+```
+
+#### 2. Folder layout
+
+```
+my-product/
+├── .npmrc                    # Private registry auth (see above)
+├── .env.example              # Root-level env var contract
+├── package.json              # Root scripts (dev, test, lint, typecheck)
+├── pnpm-workspace.yaml
+├── turbo.json                # Optional: Turborepo for task orchestration
+├── apps/
+│   └── web/                  # Nuxt frontend
+│       ├── nuxt.config.ts
+│       ├── pages/
+│       │   └── index.vue
+│       ├── package.json
+│       └── tests/
+├── services/
+│   └── api/                  # Backend API
+│       ├── src/
+│       │   └── server.ts
+│       ├── package.json
+│       └── tests/
+└── packages/
+    └── shared/               # Local types/schemas shared across apps and services
+        ├── index.ts
+        └── package.json
+```
+
+#### 3. `pnpm-workspace.yaml`
+
+```yaml
+packages:
+  - "apps/*"
+  - "services/*"
+  - "packages/*"
+```
+
+#### 4. Root `package.json`
+
+```jsonc
+{
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
+```
+
+> **Tip:** If you have more than two workspace packages, add [Turborepo](https://turbo.build) (`pnpm add -D turbo`) and replace the root scripts with `turbo dev`, `turbo test`, etc. for cached, parallel builds. The Ripple platform monorepo uses this pattern.
+
+#### 5. Frontend (`apps/web/package.json`)
+
+```jsonc
+{
+  "name": "@my-product/web",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "nuxi typecheck"
+  },
+  "dependencies": {
+    "@ripple/ui": "^0.1.0",
+    "@ripple/validation": "^0.1.0",
+    "@ripple/shared": "^0.1.0",
+    "@my-product/shared": "workspace:*"
+  }
+}
+```
+
+#### 6. Backend (`services/api/package.json`)
+
+```jsonc
+{
+  "name": "@my-product/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ripple/validation": "^0.1.0",
+    "@ripple/shared": "^0.1.0",
+    "@ripple/auth": "^0.1.0",
+    "@my-product/shared": "workspace:*"
+  }
+}
+```
+
+#### 7. Shared types (`packages/shared/index.ts`)
+
+```typescript
+// packages/shared/index.ts
+// Local types shared between frontend and backend in this repo.
+// These are NOT published — they use workspace:* links.
+
+export interface ProductConfig {
+  siteName: string
+  apiBaseUrl: string
+}
+
+export const defaultConfig: ProductConfig = {
+  siteName: 'My Product',
+  apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:4000'
+}
+```
+
+With a minimal `packages/shared/package.json`:
+
+```jsonc
+{
+  "name": "@my-product/shared",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts"
+}
+```
+
+#### 8. UI calls service (env var pattern)
+
+In the Nuxt app, configure the API base URL via environment variable:
+
+```typescript
+// apps/web/nuxt.config.ts
+export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000'
+    }
+  }
+})
+```
+
+```vue
+<!-- apps/web/pages/index.vue -->
+<script setup lang="ts">
+import { RplButton } from '@ripple/ui'
+
+const config = useRuntimeConfig()
+
+const result = ref<string>('—')
+
+async function callApi(): Promise<void> {
+  const res = await $fetch(`${config.public.apiBaseUrl}/health`)
+  result.value = JSON.stringify(res)
 }
 </script>
 
 <template>
   <main>
-    <h1>Service Portal</h1>
-    <button type="button" @click="validateExample">Validate sample login payload</button>
-    <p>Validation state: {{ status }}</p>
+    <h1>My Product</h1>
+    <RplButton label="Call API" @click="callApi" />
+    <pre>{{ result }}</pre>
   </main>
 </template>
 ```
 
-Run the consumer app:
+#### 9. `.env.example` (root)
 
 ```bash
+# .env.example — env var contract for the full-stack repo
+NODE_ENV=development
+
+# Frontend
+NUXT_PUBLIC_API_BASE_URL=http://localhost:4000
+
+# Backend
+PORT=4000
+
+# Auth (leave empty for local dev without auth)
+OIDC_ISSUER_URL=
+OIDC_CLIENT_ID=
+```
+
+#### 10. Run
+
+```bash
+pnpm install
+cp .env.example .env
+
+# Start both frontend and backend concurrently
 pnpm dev
+
+# Nuxt on http://localhost:3000
+# API  on http://localhost:4000
 ```
 
-### How consumer apps should track Ripple updates
+#### 11. Deployment topology
 
-1. Keep Ripple dependencies versioned normally (for example, `^0.2.0`).
-2. Let platform team publish updates from this monorepo.
-3. Upgrade on your schedule:
+The frontend and backend deploy and version independently:
+
+| Component | Build command | Deploy target | Notes |
+|-----------|--------------|---------------|-------|
+| `apps/web` | `nuxi build` | SSR host (Lambda, Vercel, Netlify) or static (`nuxi generate` to S3) | Set `NUXT_PUBLIC_API_BASE_URL` to the production API URL |
+| `services/api` | `tsc` | Container (ECS, Cloud Run), Lambda, or VM | Set `PORT`, auth, and DB vars per environment |
+
+A frontend deploy does not require a backend redeploy, and vice versa. Use environment variables (not hardcoded URLs) to wire them together in each environment.
+
+---
+
+### Dependency and upgrade policy (all consumer workflows)
+
+This section applies to all three consumer archetypes: frontend-only, backend-only, and full-stack.
+
+#### Version strategy
+
+| Strategy | When to use | Example |
+|----------|-------------|---------|
+| **Caret range** (`^0.2.0`) | Default for most teams — accepts compatible minor/patch updates | `"@ripple/ui": "^0.2.0"` |
+| **Exact pin** (`0.2.3`) | High-stability environments where any change must be deliberate | `"@ripple/ui": "0.2.3"` |
+| **Tilde range** (`~0.2.0`) | Accept patches only, reject new features | `"@ripple/ui": "~0.2.0"` |
+
+> **Recommendation:** Use caret ranges (`^`) and upgrade monthly. This balances stability with staying current on bug fixes and security patches.
+
+#### Upgrade cadence
+
+- **Monthly (recommended):** Run the upgrade checklist below on a regular cadence.
+- **On-demand:** Upgrade immediately when a security advisory or breaking change affects you.
+- **Never delay major versions** for more than one quarter — the platform team may drop support for older majors.
+
+#### Safe upgrade checklist
 
 ```bash
-pnpm up @ripple/auth @ripple/ui @ripple/validation
+# 1. Update all @ripple/* packages to latest compatible versions
+pnpm up '@ripple/*'
+
+# 2. Verify nothing broke
 pnpm test
+pnpm typecheck
+pnpm lint
+
+# 3. Review what changed
+pnpm outdated '@ripple/*'          # See current vs latest versions
+# Check the platform changelog/release notes for breaking changes
+
+# 4. Commit the updated lockfile
+git add pnpm-lock.yaml package.json
+git commit -m "chore: upgrade @ripple/* packages"
 ```
 
-This is the core hybrid-monorepo model in [ADR-007](./adr/007-library-vs-monorepo.md): platform code evolves here; consumer apps upgrade independently.
+#### Rollback strategy
+
+If an upgrade breaks your app:
+
+```bash
+# Revert to the previous lockfile
+git checkout HEAD~1 -- pnpm-lock.yaml package.json
+pnpm install
+pnpm test   # Confirm the rollback works
+```
+
+The lockfile (`pnpm-lock.yaml`) is your safety net. Always commit it, and always run tests after modifying it.
+
+This is the core hybrid-monorepo model from [ADR-007](./adr/007-library-vs-monorepo.md): platform code evolves in the monorepo; consumer apps upgrade independently on their own schedule.
 
 ## 2. Configure Environment
 
