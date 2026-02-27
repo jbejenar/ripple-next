@@ -23,11 +23,16 @@ Status values: `implemented` | `partial` | `scaffold` | `planned`.
 Before starting work, validate the environment:
 
 ```bash
-pnpm doctor    # checks Node, pnpm, registry, Docker, env vars, turbo
+pnpm bootstrap          # install + doctor + validate (recommended for first setup)
+pnpm doctor             # checks Node, pnpm, registry, Docker, env vars, turbo
+pnpm doctor -- --json   # machine-readable output for CI agents
+pnpm doctor -- --offline # skip network checks (ephemeral/offline runners)
 ```
 
 If `pnpm doctor` fails, fix the failures before running quality gates.
 The doctor script is the single source of truth for environment readiness.
+
+Copy `.env.example` to `.env` for local development defaults.
 
 ## Tech Stack
 

@@ -65,8 +65,8 @@ const { subsystems } = readiness
 for (const [name, sub] of Object.entries(subsystems)) {
   console.log(`[${name}]`)
 
-  // Check referenced packages exist
-  if (sub.packages?.length > 0) {
+  // Check referenced packages exist (skip for "planned" subsystems — they don't exist yet)
+  if (sub.packages?.length > 0 && sub.status !== 'planned') {
     for (const pkg of sub.packages) {
       if (pkg === 'all @ripple/* packages') {
         // Special case for publishing subsystem
@@ -89,8 +89,8 @@ for (const [name, sub] of Object.entries(subsystems)) {
     }
   }
 
-  // Check referenced paths exist
-  if (sub.paths?.length > 0) {
+  // Check referenced paths exist (skip for "planned" subsystems)
+  if (sub.paths?.length > 0 && sub.status !== 'planned') {
     for (const p of sub.paths) {
       const fullPath = join(ROOT, p)
       if (existsSync(fullPath)) {
