@@ -6,6 +6,14 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'en'
+      }
+    }
+  },
+
   typescript: {
     strict: true,
     typeCheck: false // Type checking runs separately via `pnpm typecheck`
