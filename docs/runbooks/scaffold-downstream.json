@@ -1,0 +1,104 @@
+{
+  "name": "scaffold-downstream",
+  "description": "Bootstrap a downstream repository with the full ripple-next DX infrastructure — AI-first docs, quality gates, CI/CD, documentation structure, and config files.",
+  "args": {
+    "TARGET_DIR": "Absolute path to the target repository directory",
+    "NAME": "Project name in kebab-case (optional, defaults to directory basename)",
+    "ORG": "GitHub organization name (optional, defaults to 'your-org')"
+  },
+  "preconditions": [
+    {
+      "description": "Target directory exists",
+      "command": "test -d ${TARGET_DIR}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "ripple-next environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:scaffold ${TARGET_DIR} --name=${NAME} --org=${ORG} --dry-run",
+      "description": "Preview scaffold output (dry-run) to verify files before generation"
+    },
+    {
+      "order": 2,
+      "command": "pnpm generate:scaffold ${TARGET_DIR} --name=${NAME} --org=${ORG}",
+      "description": "Generate all scaffold files (AI docs, quality gates, CI/CD, config)"
+    },
+    {
+      "order": 3,
+      "command": "echo 'Review and customize CLAUDE.md and AGENTS.md for your project'",
+      "description": "Adapt AI configuration files to match your project's architecture and conventions"
+    },
+    {
+      "order": 4,
+      "command": "echo 'Update .github/CODEOWNERS with your team structure'",
+      "description": "Set correct code ownership for your GitHub organization"
+    },
+    {
+      "order": 5,
+      "command": "echo 'Copy .env.example to .env and fill in environment variables'",
+      "description": "Configure environment variables for local development"
+    },
+    {
+      "order": 6,
+      "command": "cd ${TARGET_DIR} && bash scripts/doctor.sh",
+      "description": "Validate that the downstream environment meets prerequisites"
+    },
+    {
+      "order": 7,
+      "command": "echo 'Update docs/readiness.json with your actual subsystems'",
+      "description": "Replace the placeholder subsystem with your project's real subsystems"
+    },
+    {
+      "order": 8,
+      "command": "echo 'Update docs/product-roadmap/README.md with your roadmap items'",
+      "description": "Define your project's roadmap milestones"
+    }
+  ],
+  "validation": [
+    {
+      "description": "CLAUDE.md exists in target",
+      "command": "test -f ${TARGET_DIR}/CLAUDE.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "AGENTS.md exists in target",
+      "command": "test -f ${TARGET_DIR}/AGENTS.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Quality scripts exist",
+      "command": "test -f ${TARGET_DIR}/scripts/verify.mjs && test -f ${TARGET_DIR}/scripts/doctor.sh",
+      "expect": "exit 0"
+    },
+    {
+      "description": "CI workflows exist",
+      "command": "test -f ${TARGET_DIR}/.github/workflows/ci.yml",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Readiness manifest exists",
+      "command": "test -f ${TARGET_DIR}/docs/readiness.json",
+      "expect": "exit 0"
+    }
+  ],
+  "postActions": [
+    "Run fleet-sync to verify ongoing governance: pnpm check:fleet-drift -- --target=${TARGET_DIR}",
+    "Commit scaffolded files in the downstream repo",
+    "Invite team members to review CLAUDE.md and AGENTS.md"
+  ],
+  "related": [
+    "scripts/generate/scaffold.mjs",
+    "scripts/generate/scaffold/ai.mjs",
+    "scripts/generate/scaffold/docs.mjs",
+    "scripts/generate/scaffold/scripts.mjs",
+    "scripts/generate/scaffold/ci.mjs",
+    "scripts/generate/scaffold/config.mjs",
+    ".github/template-config.json"
+  ]
+}

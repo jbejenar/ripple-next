@@ -393,6 +393,44 @@ individually instead of the composite `quality` action. The reusable quality
 workflow runs `check:readiness` and `check:quarantine` with `continue-on-error`,
 so missing scripts won't block the pipeline.
 
+## Bootstrapping a Downstream Repository
+
+Before consuming reusable workflows and composite actions, downstream repos need
+the supporting infrastructure — quality gate scripts, documentation structure,
+AI agent configuration, and project config files.
+
+The **scaffold generator** creates all of this in one command:
+
+```bash
+# From the ripple-next repo:
+pnpm generate:scaffold /path/to/downstream-repo \
+  --name=my-project \
+  --org=my-github-org \
+  --description="My downstream project"
+```
+
+This generates ~30 files across 5 categories:
+
+| Category | What's Generated |
+|----------|-----------------|
+| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/`, `.github/instructions/`, `.github/prompts/`, Copilot instructions |
+| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates, product roadmap template |
+| Quality Gates | `scripts/verify.mjs`, `scripts/doctor.sh`, `scripts/check-readiness.mjs`, `scripts/validate-env.mjs` |
+| CI / CD | `.github/workflows/ci.yml`, `.github/workflows/security.yml`, composite actions, PR template, CODEOWNERS |
+| Config | `.env.example`, `.nvmrc`, `eslint.config.js`, `.changeset/config.json`, `.gitignore` |
+
+After scaffolding, use `--dry-run` to preview and `--force` to update existing files.
+
+For **ongoing governance**, use fleet-sync to detect drift and keep downstream
+repos aligned with the golden path:
+
+```bash
+pnpm check:fleet-drift -- --target=/path/to/downstream-repo
+pnpm fleet:sync -- --target=/path/to/downstream-repo
+```
+
+See `pnpm runbook scaffold-downstream` for the full step-by-step procedure.
+
 ## Related Documentation
 
 - [Reusable Composite Actions (RN-015)](./product-roadmap/ARCHIVE.md#rn-015-reusable-composite-actions)
@@ -401,3 +439,4 @@ so missing scripts won't block the pipeline.
 - [Flaky Test Containment (ADR-013)](./adr/013-flaky-test-containment.md)
 - [Fleet Governance (ADR-019)](./adr/019-fleet-governance.md)
 - [Release Verification (RN-027)](./release-verification.md)
+- [Code Generation Templates (RN-041)](./product-roadmap/README.md#rn-041-code-generation-templates)

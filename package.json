@@ -43,6 +43,7 @@
     "generate:provider": "node scripts/generate/index.mjs provider",
     "generate:endpoint": "node scripts/generate/index.mjs endpoint",
     "generate:package": "node scripts/generate/index.mjs package",
+    "generate:scaffold": "node scripts/generate/index.mjs scaffold",
     "runbook": "node scripts/runbook.mjs",
     "test:a11y": "node scripts/a11y-audit.mjs",
     "session:start": "node scripts/session-logger.mjs start",

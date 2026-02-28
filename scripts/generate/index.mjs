@@ -8,6 +8,7 @@
  *   pnpm generate:provider <package> <name> [--dry-run]
  *   pnpm generate:endpoint <router> <procedure> [--dry-run]
  *   pnpm generate:package <name> [--dry-run]
+ *   pnpm generate:scaffold <target-dir> [--name=<name>] [--org=<org>] [--dry-run]
  *
  * All generators support --dry-run to preview files without writing.
  * Zero external dependencies — uses only Node.js built-ins.
@@ -29,6 +30,10 @@ const GENERATORS = {
   package: {
     usage: 'pnpm generate:package <name> [--dry-run]',
     description: 'Full package scaffold (types, index, tests, package.json, tsconfig)'
+  },
+  scaffold: {
+    usage: 'pnpm generate:scaffold <target-dir> [--name=<name>] [--org=<org>] [--description=<text>] [--dry-run] [--force]',
+    description: 'Scaffold a downstream repo with AI-first DX infrastructure'
   }
 }
 
@@ -97,6 +102,24 @@ switch (command) {
       process.exit(1)
     }
     mod.generatePackage(name, { dryRun })
+    break
+  }
+  case 'scaffold': {
+    const target = positional[0]
+    if (!target) {
+      console.error('Usage: ' + GENERATORS.scaffold.usage)
+      process.exit(1)
+    }
+    const nameArg = [...flags].find((f) => f.startsWith('--name='))
+    const orgArg = [...flags].find((f) => f.startsWith('--org='))
+    const descArg = [...flags].find((f) => f.startsWith('--description='))
+    mod.generateScaffold(target, {
+      name: nameArg ? nameArg.split('=').slice(1).join('=') : null,
+      org: orgArg ? orgArg.split('=').slice(1).join('=') : null,
+      description: descArg ? descArg.split('=').slice(1).join('=') : null,
+      dryRun,
+      force: flags.has('--force'),
+    })
     break
   }
 }
