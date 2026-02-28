@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and ADR-021 for API contract strategy (oRPC, OpenAPI-first).",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -169,7 +169,7 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 49 classified failure modes across 13 categories including fleet governance, accessibility, session observability, scaffold, and documentation codes (RN-040, RN-042, RN-043, RN-044), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020). Strategy documented in ADR-018 and ADR-020.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 51 classified failure modes across 14 categories including fleet governance, accessibility, session observability, scaffold, documentation, and API contract codes (RN-040, RN-042, RN-043, RN-044, RN-051), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020). Strategy documented in ADR-018 and ADR-020.",
       "packages": [],
       "paths": [
         "scripts/verify.mjs",

@@ -179,14 +179,16 @@ but no Core Web Vitals monitoring. Lighthouse CI provides the performance analog
 
 **Impact:** High | **Effort:** High | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Depends on:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) (oRPC migration produces the OpenAPI spec used for contract testing)
 
 Formal compatibility contract testing across published `@ripple/*` package
-consumers. Becomes actionable after API integration tests (RN-046) establish the
-test infrastructure.
+consumers. Uses the OpenAPI spec from ADR-021 as the contract format.
+Becomes actionable after oRPC migration (RN-046) generates `docs/api/openapi.json`.
 
-- [ ] Define contract test patterns for package consumers
+- [ ] Define contract test patterns for package consumers (OpenAPI-based)
 - [ ] Integrate consumer contract tests into release workflow
-- [ ] Automated breaking-change detection and notification
+- [ ] Automated breaking-change detection via OpenAPI spec diffing
+- [ ] Portal publication pipeline (Phase 4 of ADR-021)
 
 ---
 
