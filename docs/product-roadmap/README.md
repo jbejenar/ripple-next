@@ -302,19 +302,23 @@ logic, and use our design token system.
 
 ---
 
-#### RN-038: Upstream Ripple Selective Sync Workflow
+#### RN-038: Upstream Ripple Selective Sync Workflow ✅
 
 **Priority:** Medium | **Impact:** Medium | **Effort:** Low | **Risk:** Low
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents follow a documented procedure for upstream change adoption
+**Status:** Done (2026-02-28)
 
-Establish a repeatable process for monitoring and selectively adopting
-improvements from the upstream [Ripple 2](https://github.com/dpc-sdp/ripple)
-design system without taking a runtime dependency.
+Quarterly upstream review procedure documented in `CONTRIBUTING.md` with sync
+checklist (always/conditional/never categories), porting conventions, and
+component gap tracking in `readiness.json`. Builds on ADR-017's strategic
+framework with operational procedures.
 
-- [ ] Document quarterly upstream review procedure in `CONTRIBUTING.md`
-- [ ] Create sync checklist (accessibility fixes, design token updates, new patterns)
-- [ ] Define criteria for what to sync vs what to skip (no SDP/Tide coupling)
-- [ ] Add upstream version tracking to `docs/readiness.json`
+- [x] Document quarterly upstream review procedure in `CONTRIBUTING.md`
+- [x] Create sync checklist (accessibility fixes, design token updates, new patterns)
+- [x] Define criteria for what to sync vs what to skip (no SDP/Tide coupling)
+- [x] Add upstream version tracking to `docs/readiness.json`
+
+**Verification:** `CONTRIBUTING.md` has upstream sync section; `readiness.json` has `upstreamRipple` tracking block; all gates pass.
 
 ---
 
@@ -552,7 +556,7 @@ continuously improve agent ergonomics.
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Pending |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
-| [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
+| [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
@@ -613,7 +617,7 @@ gantt
     RN-035 Rollback/recovery contract      :rn035, 2026-04-07, 14d
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
-    RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
+    RN-038 Upstream sync workflow          :done, rn038, 2026-02-28, 1d
     RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
     RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
     RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
