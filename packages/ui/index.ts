@@ -35,6 +35,8 @@ export { default as RplStatisticsGrid } from './components/molecules/RplStatisti
 export { default as RplCategoryGrid } from './components/molecules/RplCategoryGrid.vue'
 export { default as RplResultsListing } from './components/molecules/RplResultsListing.vue'
 export { default as RplDetailList } from './components/molecules/RplDetailList.vue'
+export { default as RplMediaGallery } from './components/molecules/RplMediaGallery.vue'
+export { default as RplDocumentDownload } from './components/molecules/RplDocumentDownload.vue'
 
 // Organisms
 export { default as RplHeader } from './components/organisms/RplHeader.vue'

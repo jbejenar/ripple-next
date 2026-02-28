@@ -437,16 +437,24 @@ on `page.contentType`.
 
 ---
 
-#### RN-021: Media Gallery + Document Download Components
+#### RN-021: Media Gallery + Document Download Components ✅
 
 **Priority:** Medium | **Impact:** Low | **Effort:** Medium | **Risk:** Low
 **Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+**Status:** Done (2026-02-28)
 
-Media gallery and document download components for Tide content types.
+Two new molecule components for Tide content types: `RplMediaGallery` (grid
+layout with keyboard-accessible lightbox, navigation, responsive columns) and
+`RplDocumentDownload` (download list with file type icons, size formatting,
+accessible labels). CMS integration via new `media-gallery` and
+`document-download` PageSection types. Wired into all three page templates.
+44 total components, 478 UI tests.
 
-- [ ] Build media gallery component with lightbox
-- [ ] Build document download component with file type icons
-- [ ] Integrate with CMS media content types
+- [x] Build media gallery component with lightbox (`RplMediaGallery` — grid, lightbox overlay, keyboard nav, responsive)
+- [x] Build document download component with file type icons (`RplDocumentDownload` — 6 file type icon classes, size formatting)
+- [x] Integrate with CMS media content types (`MediaGalleryItem`, `DocumentItem` types, PageSection union, all 3 templates)
+
+**Verification:** 28 new tests passing (12 gallery + 16 download); 478 UI tests total; `pnpm lint && pnpm typecheck && pnpm test` all pass; Storybook stories with autodocs for both components.
 
 ---
 
@@ -465,20 +473,25 @@ against a live JSON:API endpoint.
 
 ---
 
-#### RN-042: Accessibility Audit Pipeline
+#### RN-042: Accessibility Audit Pipeline ✅
 
 **Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents receive structured WCAG violations with remediation guidance in CI
+**Status:** Done (2026-02-28)
 
-Integrate automated WCAG 2.1 AA accessibility checks into the CI pipeline and
-Storybook, providing machine-readable violation reports that agents can act on.
+Automated WCAG 2.1 AA accessibility audit pipeline with three layers: Storybook
+addon (`@storybook/addon-a11y`), Playwright E2E tests (`axe-core`), and standalone
+audit script (`pnpm test:a11y`) emitting `ripple-a11y-report/v1` JSON. CI gate
+blocks on critical/serious violations. Error taxonomy entries RPL-A11Y-001/002.
 
-- [ ] Add `axe-core` integration to Playwright E2E tests
-- [ ] Add `@storybook/addon-a11y` to Storybook configuration
-- [ ] Create `pnpm test:a11y` command for standalone accessibility audit
-- [ ] Emit structured JSON report (violation, impact, selector, remediation)
-- [ ] Add accessibility gate to Tier 2 CI (block on critical/serious violations)
-- [ ] Document WCAG compliance requirements in `docs/accessibility.md`
+- [x] Add `axe-core` integration to Playwright E2E tests (`apps/web/tests/e2e/accessibility.spec.ts`)
+- [x] Add `@storybook/addon-a11y` to Storybook configuration (`.storybook/main.ts`)
+- [x] Create `pnpm test:a11y` command for standalone accessibility audit (`scripts/a11y-audit.mjs`)
+- [x] Emit structured JSON report (`ripple-a11y-report/v1` — violation, impact, selector, remediation)
+- [x] Add accessibility gate to Tier 2 CI (block on critical/serious violations, `a11y-report` artifact)
+- [x] Document WCAG compliance requirements in `docs/accessibility.md`
+
+**Verification:** `pnpm test:a11y -- --json` emits valid `ripple-a11y-report/v1` JSON; E2E accessibility spec validates WCAG 2.1 AA; Storybook has a11y addon; error taxonomy has 41 entries across 10 categories; all quality gates pass.
 
 ---
 
@@ -588,9 +601,9 @@ continuously improve agent ergonomics.
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Done |
-| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
+| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Done |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
-| [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Pending |
+| [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Done |
 | [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
@@ -651,9 +664,9 @@ gantt
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :done, rn023, 2026-02-28, 1d
-    RN-021 Media gallery + downloads       :rn021, 2026-05-19, 14d
+    RN-021 Media gallery + downloads       :done, rn021, 2026-02-28, 1d
     RN-017 Live Drupal integration         :rn017, 2026-06-01, 21d
-    RN-042 Accessibility audit pipeline    :rn042, 2026-05-12, 14d
+    RN-042 Accessibility audit pipeline    :done, rn042, 2026-02-28, 1d
 
     section Tier 4 — Backlog
     RN-026 Org-wide workflows              :rn026, 2026-07-01, 30d
@@ -946,7 +959,7 @@ graph TD
 - [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
 - [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
 - [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
-- [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
+- [x] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 
 ### Template Strategy
 
