@@ -1,0 +1,82 @@
+name: Fleet Drift Detection
+on:
+  schedule:
+    # Run weekly on Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      target-repo:
+        description: 'Target repository (owner/repo) to check for drift'
+        required: false
+        type: string
+      target-ref:
+        description: 'Target repository ref (branch/tag/SHA)'
+        required: false
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  drift-detection:
+    name: Detect fleet drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout golden-path source
+        uses: actions/checkout@v4
+        with:
+          path: golden-path
+
+      - name: Checkout target repository
+        if: inputs.target-repo != ''
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.target-repo }}
+          ref: ${{ inputs.target-ref }}
+          path: target-repo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: golden-path/.nvmrc
+
+      - name: Run fleet drift detection (self-check)
+        if: inputs.target-repo == ''
+        working-directory: golden-path
+        run: node scripts/check-fleet-drift.mjs --json --ci
+
+      - name: Run fleet drift detection (target repo)
+        if: inputs.target-repo != ''
+        working-directory: golden-path
+        run: node scripts/check-fleet-drift.mjs --target=../target-repo --json --ci
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-drift-report
+          path: golden-path/fleet-drift-report.json
+          retention-days: 30
+
+      - name: Write job summary
+        if: always()
+        working-directory: golden-path
+        run: |
+          if [ -f fleet-drift-report.json ]; then
+            echo "## Fleet Drift Report" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            SCORE=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8')); process.stdout.write(String(r.complianceScore))")
+            TOTAL=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8')); process.stdout.write(String(r.summary.total))")
+            COMPLIANT=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8')); process.stdout.write(String(r.summary.compliant))")
+            DRIFTED=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8')); process.stdout.write(String(r.summary.drifted))")
+            MISSING=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8')); process.stdout.write(String(r.summary.missing))")
+            echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Compliance Score | ${SCORE}% |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Total Surfaces | ${TOTAL} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Compliant | ${COMPLIANT} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Drifted | ${DRIFTED} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Missing | ${MISSING} |" >> "$GITHUB_STEP_SUMMARY"
+          fi

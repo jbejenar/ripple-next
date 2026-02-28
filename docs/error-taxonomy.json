@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 31 classified error codes across 8 categories. See ADR-018.",
-  "version": "1.1.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 39 classified error codes across 9 categories. See ADR-018 and ADR-019.",
+  "version": "1.2.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -17,7 +17,8 @@
     "BUILD": "Build and compilation failures",
     "DEPLOY": "Deployment and infrastructure failures",
     "POLICY": "Policy gate and governance failures",
-    "IAC": "Infrastructure-as-code policy violations (sst.config.ts)"
+    "IAC": "Infrastructure-as-code policy violations (sst.config.ts)",
+    "FLEET": "Fleet governance and template drift violations (RN-024)"
   },
   "errors": [
     {
@@ -446,6 +447,86 @@
         "Database and cache resources must reference the VPC",
         "Pattern: new sst.aws.Postgres('Name', { vpc })",
         "Pattern: new sst.aws.Redis('Name', { vpc })"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FLEET-001",
+      "category": "FLEET",
+      "severity": "error",
+      "message": "Security-critical fleet drift detected — governed surface has diverged from golden path",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm check:fleet-drift --json to see full drift report",
+        "Security-critical surfaces: composite actions, toolchain pins, security config, IaC policies",
+        "Accept the automated sync PR or manually update the drifted files",
+        "SLA: fix within 7 days"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-FLEET-002",
+      "category": "FLEET",
+      "severity": "error",
+      "message": "Standards-required fleet drift detected — governed surface has diverged from golden path",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm check:fleet-drift --json to see full drift report",
+        "Standards surfaces: CI workflows, quality scripts, ESLint config, error taxonomy",
+        "Accept the automated sync PR or manually update the drifted files",
+        "SLA: fix within 30 days"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-FLEET-003",
+      "category": "FLEET",
+      "severity": "warning",
+      "message": "Recommended fleet drift detected — advisory surface has diverged from golden path",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm check:fleet-drift --json to see drift details",
+        "Recommended drifts are advisory only and do not block CI",
+        "Consider updating to stay aligned with golden path best practices"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-FLEET-004",
+      "category": "FLEET",
+      "severity": "error",
+      "message": "Fleet policy manifest missing or invalid",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Ensure docs/fleet-policy.json exists and is valid JSON",
+        "The fleet policy manifest defines governed surfaces and sync strategies",
+        "Copy from the golden-path repo if missing: docs/fleet-policy.json"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-FLEET-005",
+      "category": "FLEET",
+      "severity": "warning",
+      "message": "Fleet policy exception has expired",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Fleet policy exceptions expire after 90 days",
+        "Review the exception and either renew it with updated justification or fix the drift",
+        "Exception format: // fleet-policy-exception: <SURFACE-ID> — <justification>"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FLEET-006",
+      "category": "FLEET",
+      "severity": "info",
+      "message": "Fleet compliance score below target threshold",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm fleet:compliance --json to see per-repo compliance scores",
+        "Target: minimum 80% compliance score",
+        "Address security-critical drifts first, then standards-required"
       ],
       "automatable": false
     }

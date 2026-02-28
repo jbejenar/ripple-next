@@ -199,18 +199,22 @@ credentials produce a safe, explainable skip rather than noisy failures.
 
 ---
 
-#### RN-024: Fleet Update Mechanism + Template Drift Automation
+#### RN-024: Fleet Update Mechanism + Template Drift Automation ✅
 
 **Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** Roadmap blocker + AI Principal Engineer review | **AI-first benefit:** Enables agent-driven fleet governance
+**Status:** Done (2026-02-28)
 
-Template repo + sync bot + policy drift reporting for downstream clones. This is
-the **last remaining top blocker** for ship-ready status.
+Fleet governance mechanism with manifest-driven drift detection, sync PR
+automation, and JSON compliance reporting. Action-first approach (not GitHub App).
+8 governed surfaces across 3 severity levels. See ADR-019.
 
-- [ ] Create template repository from this golden-path source
-- [ ] Build GitHub App or Action for template drift detection
-- [ ] Automated sync PRs for security/standards updates
-- [ ] Policy drift reporting dashboard
+- [x] Create template repository from this golden-path source (`.github/template-config.json`, `docs/fleet-policy.json`)
+- [x] Build GitHub Action for template drift detection (`scripts/check-fleet-drift.mjs`, `.github/workflows/fleet-drift.yml`, `.github/actions/fleet-drift/action.yml`)
+- [x] Automated sync PRs for security/standards updates (`scripts/fleet-sync.mjs`, `.github/workflows/fleet-sync.yml`)
+- [x] Policy drift reporting dashboard (`scripts/fleet-compliance.mjs`, JSON artifact + CI summary)
+
+**Verification:** `pnpm check:fleet-drift --json` emits valid `ripple-fleet-drift/v1` JSON; `pnpm fleet:compliance --json` emits valid `ripple-fleet-compliance/v1` JSON; `pnpm runbook fleet-sync` renders steps; all quality gates pass.
 
 ---
 
@@ -563,7 +567,7 @@ continuously improve agent ergonomics.
 |----|------|------|----------|--------|--------|--------|
 | [RN-032](#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | 1 | Critical | High | Low | Done |
 | [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 1 | Critical | High | Low | Done |
-| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
+| [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Done |
 | [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Done |
@@ -622,7 +626,7 @@ gantt
     section Tier 1 — Immediate
     RN-032 Toolchain pinning               :done, rn032, 2026-02-28, 1d
     RN-033 Preview cleanup parity          :done, rn033, 2026-02-28, 1d
-    RN-024 Fleet update + drift            :rn024, 2026-03-08, 30d
+    RN-024 Fleet update + drift            :done, rn024, 2026-02-28, 1d
 
     section Tier 2 — Next Sprint
     RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
@@ -937,8 +941,8 @@ graph TD
 
 Maintain this repo as golden-path source, plus:
 
-1. **Template distribution layer** — GitHub template or scaffolder ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation))
+1. **Template distribution layer** — manifest-driven fleet governance with `fleet-policy.json` ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) ✅)
 2. **Reusable org workflows** — referenced by all derived repos ([RN-026](#rn-026-org-wide-reusable-workflow-distribution))
-3. **Automated drift detection** — sync PRs for standards/security updates ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation))
+3. **Automated drift detection** — `check-fleet-drift.mjs` + sync PRs for security/standards updates ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) ✅)
 4. **Conformance scoring** — automated repo health checks ([RN-028](#rn-028-golden-path-conformance-cli))
 5. **Keep domain logic in versioned `@ripple/*` libraries** — keep templates thin

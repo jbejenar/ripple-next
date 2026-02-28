@@ -1,0 +1,65 @@
+name: Fleet Drift Detection
+description: Check a downstream repository for drift against the Ripple Next golden-path source
+
+inputs:
+  golden-path-ref:
+    description: 'Golden-path repository ref (SHA, tag, or branch)'
+    required: false
+    default: 'main'
+  golden-path-repo:
+    description: 'Golden-path repository (owner/repo)'
+    required: false
+    default: ''
+  json-output:
+    description: 'Output JSON report (true/false)'
+    required: false
+    default: 'true'
+
+outputs:
+  compliance-score:
+    description: 'Compliance score (0-100)'
+    value: ${{ steps.drift.outputs.score }}
+  status:
+    description: 'Overall status (compliant/drifted)'
+    value: ${{ steps.drift.outputs.status }}
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout golden-path source
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.golden-path-repo || github.repository }}
+        ref: ${{ inputs.golden-path-ref }}
+        path: .fleet-golden-path
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .fleet-golden-path/.nvmrc
+
+    - name: Run drift detection
+      id: drift
+      shell: bash
+      run: |
+        REPORT=$(node .fleet-golden-path/scripts/check-fleet-drift.mjs --target=. --json 2>/dev/null || true)
+        echo "$REPORT" > fleet-drift-report.json
+
+        SCORE=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{process.stdout.write(String(JSON.parse(d).complianceScore))}catch{process.stdout.write('0')}})")
+        echo "score=$SCORE" >> "$GITHUB_OUTPUT"
+
+        DRIFTED=$(echo "$REPORT" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const r=JSON.parse(d);process.stdout.write(r.summary.drifted+r.summary.missing>0?'drifted':'compliant')}catch{process.stdout.write('unknown')}})")
+        echo "status=$DRIFTED" >> "$GITHUB_OUTPUT"
+
+    - name: Upload drift report
+      if: inputs.json-output == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: fleet-drift-report
+        path: fleet-drift-report.json
+        retention-days: 30
+
+    - name: Cleanup
+      if: always()
+      shell: bash
+      run: rm -rf .fleet-golden-path

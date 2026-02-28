@@ -13,8 +13,12 @@ pnpm validate:env    # validate env vars against Zod schema
 pnpm check:readiness # verify readiness.json is not stale
 pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
 pnpm check:iac       # IaC policy scan for sst.config.ts (RN-036)
+pnpm check:fleet-drift # fleet drift detection (RN-024)
+pnpm fleet:sync      # generate sync PRs for downstream repos
+pnpm fleet:compliance # fleet-wide compliance report
 pnpm verify          # run ALL quality gates with summary (RN-034)
 pnpm verify -- --json # machine-readable JSON gate summary
+pnpm verify -- --fleet # include fleet drift in quality gates
 ```
 
 ## Project Overview
@@ -27,7 +31,8 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
 - `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
-- `docs/error-taxonomy.json` — 24 classified error codes with remediation steps (RPL-*-NNN format)
+- `docs/error-taxonomy.json` — 39 classified error codes across 9 categories (RPL-*-NNN format)
+- `docs/fleet-policy.json` — fleet governance contract: governed surfaces, sync strategies (RN-024)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
@@ -121,10 +126,32 @@ pnpm runbook add-new-provider       # Scaffold + implement provider
 pnpm runbook add-new-component      # Scaffold + implement UI component
 pnpm runbook add-api-endpoint       # Scaffold + implement tRPC endpoint
 pnpm runbook onboard-new-package    # Scaffold full @ripple/* package
+pnpm runbook fleet-sync             # Fleet drift detection + sync PR
 pnpm runbook <name> -- --json       # Machine-readable JSON output
 ```
 
 See `docs/adr/018-ai-first-workflow-strategy.md` for the full strategy.
+
+## Fleet Governance (ADR-019, RN-024)
+
+Downstream repos are governed by `docs/fleet-policy.json` which defines 8
+governed surfaces across 3 severity levels:
+
+- **Security-critical** (immediate PR): composite actions, toolchain pins, security config, IaC policies
+- **Standards-required** (weekly batch): CI workflows, quality scripts, ESLint config, error taxonomy
+- **Recommended** (report only): future advisory surfaces
+
+Fleet commands:
+```bash
+pnpm check:fleet-drift                          # self-check (golden path)
+pnpm check:fleet-drift -- --target=/path/to/repo # check downstream repo
+pnpm check:fleet-drift -- --json                 # JSON drift report
+pnpm fleet:sync -- --target=/path/to/repo        # apply sync to downstream
+pnpm fleet:sync -- --dry-run                     # preview sync actions
+pnpm fleet:compliance -- --json                  # fleet-wide compliance report
+```
+
+Exception workflow: `// fleet-policy-exception: FLEET-SURF-NNN — justification` (90-day expiry).
 
 ## Documentation Maintenance (Default Agent Directive)
 

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy.",
-  "version": "0.15.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy and ADR-019 for fleet governance.",
+  "version": "0.16.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -75,7 +75,7 @@
       "status": "implemented",
       "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes, exact version guards for Node.js (.nvmrc) and pnpm (packageManager). Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). IaC policy scanning with 7 policies for SST config (RN-036). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test — all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
       "packages": [],
-      "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md"],
+      "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md", "docs/fleet-policy.json"],
       "blockers": [],
       "testCoverage": "pipeline-tested"
     },
@@ -113,9 +113,17 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 31 classified failure modes including IaC policy codes and doctor taxonomy codes (RN-040), runbook library with 6 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 39 classified failure modes across 9 categories including fleet governance codes (RN-040), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
       "packages": [],
       "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json"],
+      "blockers": [],
+      "testCoverage": "gate-tested"
+    },
+    "fleet-governance": {
+      "status": "implemented",
+      "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 8 governed surfaces across 3 severity levels. Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Error taxonomy integration (RPL-FLEET-* codes). Fleet sync runbook. See ADR-019.",
+      "packages": [],
+      "paths": ["docs/fleet-policy.json", "scripts/check-fleet-drift.mjs", "scripts/fleet-sync.mjs", "scripts/fleet-compliance.mjs", ".github/workflows/fleet-drift.yml", ".github/workflows/fleet-sync.yml", ".github/actions/fleet-drift/action.yml", "docs/runbooks/fleet-sync.json"],
       "blockers": [],
       "testCoverage": "gate-tested"
     }

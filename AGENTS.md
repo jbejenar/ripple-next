@@ -138,9 +138,16 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
 - `pnpm check:quarantine` — Verify flaky test quarantine policy (ADR-013, runs in CI)
 - `pnpm check:iac` — IaC policy scan for sst.config.ts (RN-036, runs in CI on infra changes)
+- `pnpm check:fleet-drift` — Fleet drift detection against golden-path source (RN-024)
+- `pnpm check:fleet-drift -- --target=<path>` — Check a downstream repo for drift
+- `pnpm check:fleet-drift -- --json` — Machine-readable drift report (`ripple-fleet-drift/v1`)
+- `pnpm fleet:sync -- --target=<path>` — Generate sync actions for a downstream repo
+- `pnpm fleet:sync -- --dry-run` — Preview sync actions without making changes
+- `pnpm fleet:compliance -- --json` — Fleet-wide compliance report (`ripple-fleet-compliance/v1`)
 - `pnpm verify` — Run all quality gates with structured summary (RN-034)
 - `pnpm verify -- --json` — Machine-readable JSON gate summary (`ripple-gate-summary/v1`)
 - `pnpm verify -- --ci` — Write `gate-summary.json` for CI artifact upload
+- `pnpm verify -- --fleet` — Include fleet drift gate in quality checks
 - `pnpm generate:component <name>` — Scaffold Vue SFC + test + story + index export (RN-041)
 - `pnpm generate:provider <package> <name>` — Scaffold provider class + conformance test
 - `pnpm generate:endpoint <router> <procedure>` — Scaffold tRPC router + validation + test
@@ -224,6 +231,8 @@ Test results are uploaded as structured artifacts on every CI run:
 | `health-report-staging` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `health-report-production` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
+| `fleet-drift-report` | Fleet drift detection JSON (`ripple-fleet-drift/v1`) | 30 days |
+| `fleet-sync-plan` | Fleet sync PR plan JSON (`ripple-fleet-sync/v1`) | 30 days |
 
 ### Reusable Composite Actions
 
@@ -232,6 +241,7 @@ Shared CI steps are in `.github/actions/`:
 - **`setup`** — Node.js + pnpm + frozen lockfile install
 - **`quality`** — Lint + typecheck + readiness drift guard
 - **`test`** — Run tests with JUnit reporter + artifact upload
+- **`fleet-drift`** — Fleet drift detection against golden-path source (RN-024)
 
 Downstream repos can reference these for consistent CI setup. See [docs/downstream-workflows.md](docs/downstream-workflows.md) for the consumption guide, example workflows, and version pinning strategy.
 
@@ -361,3 +371,5 @@ When making changes, match the change type to the right validation:
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
 | Roadmap/docs change | `pnpm check:readiness`, update `readiness.json`, cross-reference ADRs |
 | New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md + README.md |
+| Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift`, update downstream docs |
+| New governed surface | Add to `fleet-policy.json`, add error taxonomy code, update ADR-019 |
