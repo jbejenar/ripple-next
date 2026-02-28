@@ -34,6 +34,7 @@
     "check:iac": "node scripts/iac-policy-scan.mjs",
     "check:readiness": "node scripts/check-readiness.mjs",
     "check:quarantine": "node scripts/check-quarantine.mjs",
+    "check:context-size": "node scripts/check-context-size.mjs",
     "check:fleet-drift": "node scripts/check-fleet-drift.mjs",
     "fleet:sync": "node scripts/fleet-sync.mjs",
     "fleet:compliance": "node scripts/fleet-compliance.mjs",

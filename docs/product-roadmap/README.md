@@ -72,7 +72,8 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **UI component tests** — Vue Test Utils tests for all 44 components (650 tests across 63 test files) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks, MediaGallery, DocumentDownload), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
-- **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).
+- **ADR coverage** — 20 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018), fleet governance (ADR-019), and context file minimalism (ADR-020).
+- **Context file minimalism** — CLAUDE.md and AGENTS.md trimmed based on empirical research ([arXiv:2602.11988](https://arxiv.org/abs/2602.11988)), with machine-enforced line-count gate to prevent re-bloat (RN-044, ADR-020).
 
 ---
 
@@ -123,9 +124,9 @@ graph LR
 
 ---
 
-## Completed Work (40 Items)
+## Completed Work (41 Items)
 
-40 items have been completed across all tiers. See **[ARCHIVE.md](./ARCHIVE.md)**
+41 items have been completed across all tiers. See **[ARCHIVE.md](./ARCHIVE.md)**
 for full details on each.
 
 | ID | Item | Phase/Tier |
@@ -170,6 +171,7 @@ for full details on each.
 | [RN-041](./ARCHIVE.md#rn-041-code-generation-templates) | Code Generation Templates | Tier 2 |
 | [RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | Tier 3 |
 | [RN-043](./ARCHIVE.md#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 |
+| [RN-044](#rn-044-context-file-minimalism-adr-020) | Context File Minimalism | Tier 2 |
 
 ---
 
@@ -437,6 +439,33 @@ scaffolding — all with `--dry-run` support and convention-compliant output.
 
 ---
 
+#### RN-044: Context File Minimalism (ADR-020) ✅
+
+**Priority:** High | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Source:** [arXiv:2602.11988](https://arxiv.org/abs/2602.11988) — Gloaguen et al., ETH Zurich (Feb 2026) | **AI-first benefit:** ~20% inference cost reduction, fewer unnecessary exploration steps, improved task success rates
+**Status:** Done (2026-02-28)
+
+Trimmed CLAUDE.md (177→~45 lines) and AGENTS.md (431→~185 lines) based on
+empirical evidence that over-specified context files reduce agent success rates.
+Relocated domain-specific guidance to `.github/instructions/` and doc maintenance
+checklist to docs-writer agent persona. Machine-enforced line-count gate prevents
+re-bloat. See [ADR-020](../adr/020-context-file-minimalism.md).
+
+- [x] Evaluate paper findings against current context files
+- [x] Create ADR-020 with paper citation and evidence summary
+- [x] Trim CLAUDE.md to minimal hard constraints (~45 lines)
+- [x] Trim AGENTS.md to architecture + task routing (~185 lines)
+- [x] Push Nuxt auto-imports to `frontend.instructions.md`
+- [x] Push coverage thresholds to `tests.instructions.md`
+- [x] Relocate Documentation Maintenance to `docs-writer.agent.md`
+- [x] Add anti-bloat breadcrumbs: HTML headers, task routing entry, line-count gate
+- [x] Add RPL-DOCS-001/002 error taxonomy entries for context file size violations
+- [x] Update readiness.json, architecture.md, roadmap, and ADR index
+
+**Verification:** `pnpm check:context-size` passes; `pnpm verify` passes all gates; CLAUDE.md < 60 lines; AGENTS.md < 220 lines; ADR-020 indexed.
+
+---
+
 ### Tier 3: Scheduled — Feature Completeness
 
 > Content delivery and integration items. Important for product completeness
@@ -657,6 +686,7 @@ continuously improve agent ergonomics.
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
+| [RN-044](#rn-044-context-file-minimalism-adr-020) | Context File Minimalism | 2 | High | Medium | Low | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Done |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Done |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
@@ -718,6 +748,7 @@ gantt
     RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
     RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
     RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
+    RN-044 Context file minimalism       :done, rn044, 2026-02-28, 1d
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :done, rn023, 2026-02-28, 1d
@@ -1012,7 +1043,7 @@ graph TD
 - [x] Testcontainers integration tests for database repositories
 - [x] ADR index with all 19 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
-- [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
+- [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy; ADR-020: context file minimalism)
 - [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
 - [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
 - [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))

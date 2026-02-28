@@ -14,3 +14,6 @@ applyTo: 'apps/web/pages/**,apps/web/components/**,apps/web/composables/**,apps/
 - CSS follows BEM: `rpl-` prefix for Ripple, `app-` prefix for app components
 - All form inputs should have accessible labels and error states
 - Data fetching uses `useFetch` or `useAsyncData` with tRPC client
+- Nuxt auto-imports (do NOT add manual imports for): ref, computed, watch, onMounted, useRoute, useRouter, useFetch, useState, navigateTo, definePageMeta, defineEventHandler, getQuery, readBody, createError, setResponseStatus
+- DO manually import: @ripple/* packages, node_modules, tRPC utilities
+- Import errors? Run: `npx nuxi prepare apps/web`
