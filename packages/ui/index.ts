@@ -13,10 +13,14 @@ export { default as RplTextarea } from './components/atoms/RplTextarea.vue'
 export { default as RplFileUpload } from './components/atoms/RplFileUpload.vue'
 export { default as RplFormAlert } from './components/atoms/RplFormAlert.vue'
 export { default as RplOptionButton } from './components/atoms/RplOptionButton.vue'
+export { default as RplBreadcrumb } from './components/atoms/RplBreadcrumb.vue'
+export { default as RplSkipLink } from './components/atoms/RplSkipLink.vue'
 
 // Molecules
 export { default as RplCard } from './components/molecules/RplCard.vue'
 export { default as RplHeroHeader } from './components/molecules/RplHeroHeader.vue'
+export { default as RplPagination } from './components/molecules/RplPagination.vue'
+export { default as RplInPageNavigation } from './components/molecules/RplInPageNavigation.vue'
 
 // Organisms
 export { default as RplHeader } from './components/organisms/RplHeader.vue'
