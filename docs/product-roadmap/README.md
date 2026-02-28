@@ -64,7 +64,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **UI component tests** — Vue Test Utils tests for all 42 components (449 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
+- **UI component tests** — Vue Test Utils tests for all 42 components (450 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
 - **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).
@@ -416,18 +416,24 @@ support and convention-compliant output.
 > Content delivery and integration items. Important for product completeness
 > but not blockers for platform maturity.
 
-#### RN-023: Landing Page + Content Templates
+#### RN-023: Landing Page + Content Templates ✅
 
 **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+**Status:** Done (2026-02-28)
 
-Pre-built page templates for common government content layouts (landing pages,
-content pages, campaign pages).
+Pre-built page templates for common government content layouts. Three template
+components (`PageTemplateLanding`, `PageTemplateContent`, `PageTemplateCampaign`)
+in `apps/web/components/templates/` compose existing `@ripple/ui` building blocks
+into distinct layouts. The `[...slug].vue` catch-all page switches template based
+on `page.contentType`.
 
-- [ ] Build landing page template
-- [ ] Build content page template
-- [ ] Build campaign page template
-- [ ] Wire templates to CMS page type field
+- [x] Build landing page template — full-width layout with hero background image, alternating section backgrounds, 1200px inner containers
+- [x] Build content page template — 960px readable-width layout with hero, dynamic sections, taxonomy tags
+- [x] Build campaign page template — featured sections (CTA, key-dates) separated from body, hero background image, taxonomy tags
+- [x] Wire templates to CMS page type field — `[...slug].vue` switches on `contentType`: `landing_page` → Landing, `campaign` → Campaign, default → Content
+
+**Verification:** 18 template tests passing; `pnpm verify` passes all 7 quality gates; 622 total tests across the repo.
 
 ---
 
@@ -581,7 +587,7 @@ continuously improve agent ergonomics.
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
-| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
+| [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Done |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
 | [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Pending |
@@ -644,7 +650,7 @@ gantt
     RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
 
     section Tier 3 — Scheduled
-    RN-023 Landing page templates          :rn023, 2026-05-05, 14d
+    RN-023 Landing page templates          :done, rn023, 2026-02-28, 1d
     RN-021 Media gallery + downloads       :rn021, 2026-05-19, 14d
     RN-017 Live Drupal integration         :rn017, 2026-06-01, 21d
     RN-042 Accessibility audit pipeline    :rn042, 2026-05-12, 14d
@@ -930,7 +936,7 @@ graph TD
 - [x] Preview deploy environment guardrails
 - [x] Storybook stories for all UI components (atoms, molecules, organisms, Tide content)
 - [x] Downstream workflow consumption guide
-- [x] Vue Test Utils component tests for all 37 UI components
+- [x] Vue Test Utils component tests for all 42 UI components (450 tests)
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories

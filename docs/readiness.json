@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy and ADR-019 for fleet governance.",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -48,10 +48,11 @@
     },
     "ui": {
       "status": "implemented",
-      "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 42 components total. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs for all components. Vue Test Utils component tests for all components (449 tests) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state.",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 42 components total. Page templates (RN-023): 3 content-type-aware templates (Landing, Content, Campaign) in apps/web/components/templates/ — compose UI components into distinct layouts, switched by CMS page contentType field. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs for all components. Vue Test Utils component tests for all components (450 tests) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state.",
       "packages": ["@ripple/ui"],
+      "paths": ["apps/web/components/templates/"],
       "blockers": [],
-      "testCoverage": "component-tested + storybook-stories"
+      "testCoverage": "component-tested + storybook-stories + template-tested"
     },
     "api": {
       "status": "partial",

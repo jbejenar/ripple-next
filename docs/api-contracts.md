@@ -42,6 +42,17 @@ See [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) for decoupling detail
 | GET    | `/api/cms/route`              | Resolve a URL path to a CMS route        |
 | GET    | `/api/cms/taxonomy/[vocabulary]` | Get taxonomy terms for a vocabulary   |
 
+### Page Template Selection
+
+The `contentType` field from `GET /api/cms/page/[...slug]` determines which page
+template renders the content. Mapping (`apps/web/pages/content/[...slug].vue`):
+
+| contentType | Template | Layout |
+|-------------|----------|--------|
+| `landing_page` | `PageTemplateLanding` | Full-width, hero background, alternating sections |
+| `campaign` | `PageTemplateCampaign` | Featured sections (CTA/key-dates) + body |
+| (default) | `PageTemplateContent` | 960px readable width, taxonomy tags |
+
 ## Validation Schemas
 
 Shared validation schemas are in `packages/validation/`:
