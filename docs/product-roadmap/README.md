@@ -25,8 +25,9 @@ tiered CI with structured test artifacts, isolated preview stages, changeset-bas
 publishing with SBOM and provenance, and reusable composite actions for fleet
 consistency.
 
-**Remaining blocker:** Fleet template/update mechanics — repo-template + sync bot
-for downstream upgrades ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation)).
+**All critical blockers resolved.** Fleet governance ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) ✅),
+agent workflow tooling ([RN-039](#rn-039-agent-runbook-automation)–[RN-041](#rn-041-code-generation-templates) ✅),
+and quality gate summaries ([RN-034](#rn-034-machine-readable-quality-gate-summaries) ✅) are all complete.
 
 ### AI-First Strategy
 
@@ -66,7 +67,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **UI component tests** — Vue Test Utils tests for all 37 components (381 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
-- **ADR coverage** — 18 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018).
+- **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).
 
 ---
 
@@ -90,12 +91,10 @@ graph LR
         SEARCH[Search]
         NAV[Navigation]
         AGENT_DX[Agent Tooling]
+        FLEET[Fleet Governance]
     end
     subgraph Partial
         API[API Layer]
-    end
-    subgraph Planned
-        FLEET[Fleet Templates]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -113,7 +112,7 @@ graph LR
     style SEARCH fill:#22c55e,color:#fff
     style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
-    style FLEET fill:#6366f1,color:#fff
+    style FLEET fill:#22c55e,color:#fff
     style AGENT_DX fill:#22c55e,color:#fff
 ```
 
@@ -280,7 +279,7 @@ RPL-IAC-007). Integrated into `pnpm verify` gate runner.
 - [x] Route violations to clear, machine-readable diagnostics (`ripple-iac-report/v1` JSON schema)
 - [x] Document exception workflow and approvals (`docs/deployment.md` → "IaC Policy Scanning" section)
 
-**Verification:** `pnpm check:iac` passes (0 errors, 1 warning); `pnpm check:iac -- --json` emits valid JSON; CI workflow includes `iac-policy` job; `docs/deployment.md` has policy scan + exception docs; error taxonomy has 31 entries; all gates pass.
+**Verification:** `pnpm check:iac` passes (0 errors, 1 warning); `pnpm check:iac -- --json` emits valid JSON; CI workflow includes `iac-policy` job; `docs/deployment.md` has policy scan + exception docs; error taxonomy has 39 entries; all gates pass.
 
 ---
 
@@ -346,8 +345,8 @@ framework with operational procedures.
 
 Structured, machine-parseable runbooks (`docs/runbooks/*.json`) with preconditions,
 ordered steps, validation criteria, and related file references. CLI runner
-(`pnpm runbook`) prints steps in human-readable or JSON format. Six runbooks
-covering deployment, rollback, and all scaffolding operations.
+(`pnpm runbook`) prints steps in human-readable or JSON format. Seven runbooks
+covering deployment, rollback, fleet sync, and all scaffolding operations.
 
 - [x] Create `docs/runbooks/` directory with standardised template
 - [x] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
@@ -356,9 +355,10 @@ covering deployment, rollback, and all scaffolding operations.
 - [x] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
 - [x] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
 - [x] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
+- [x] Write runbook: **fleet-sync** (drift detection, sync PR generation, compliance report)
 - [x] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
 
-**Verification:** `pnpm runbook --list` shows 6 runbooks; `pnpm runbook <name> -- --json` emits valid JSON; all gates pass.
+**Verification:** `pnpm runbook --list` shows 7 runbooks; `pnpm runbook <name> -- --json` emits valid JSON; all gates pass.
 
 ---
 
@@ -368,19 +368,21 @@ covering deployment, rollback, and all scaffolding operations.
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
 **Status:** Done (2026-02-28)
 
-Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 24 classified
-failure modes across 7 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY).
-Each error includes code, severity, remediation steps, and automatable flag.
-Doctor `--json` output now includes `taxonomyCode` fields.
+Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 39 classified
+failure modes across 9 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY,
+IAC, FLEET). Each error includes code, severity, remediation steps, and
+automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 
 - [x] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
-- [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 12 error codes
+- [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 16 error codes
 - [x] Categorise build failures (compilation, bundling, missing deps) — 3 error codes
 - [x] Categorise deployment failures (health check, resource limit, permission) — 3 error codes
+- [x] Categorise IaC policy violations (RPL-IAC-001 through RPL-IAC-007) — 7 error codes
+- [x] Categorise fleet governance failures (RPL-FLEET-001 through RPL-FLEET-006) — 6 error codes
 - [x] Wire `pnpm doctor --json` output to use taxonomy codes (`taxonomyCode` field)
 - [x] Remediation steps documented per error (actionable commands in each entry)
 
-**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 24 entries; `pnpm verify` passes all gates.
+**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 39 entries across 9 categories; `pnpm verify` passes all gates.
 
 ---
 
@@ -757,9 +759,9 @@ compatibility testing only.
 | Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc) + pnpm (packageManager) pinning with doctor guards ([RN-032](#rn-032-toolchain-pinning-hardening)) |
 | Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics |
 | Automated remediation friendliness | 5/5 | `pnpm doctor --json`, conformance suites, documented procedures |
-| Agent workflow integration | 4/5 | Runbooks ([RN-039](#rn-039-agent-runbook-automation)), generators ([RN-041](#rn-041-code-generation-templates)), error taxonomy ([RN-040](#rn-040-structured-error-taxonomy)) planned |
+| Agent workflow integration | 5/5 | Runbooks ([RN-039](#rn-039-agent-runbook-automation) ✅), generators ([RN-041](#rn-041-code-generation-templates) ✅), error taxonomy ([RN-040](#rn-040-structured-error-taxonomy) ✅) |
 
-**Overall: 39/40** _(v5.1.0: toolchain pinning raised to 5/5 via RN-032; see [ADR-018](../adr/018-ai-first-workflow-strategy.md))_
+**Overall: 40/40** _(v5.0.0: all dimensions at 5/5 — toolchain pinning via RN-032, agent workflows via RN-039/040/041; see [ADR-018](../adr/018-ai-first-workflow-strategy.md))_
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1'}}}%%
@@ -767,7 +769,7 @@ xychart-beta
     title "Agent-Friction Scorecard (0-5)"
     x-axis ["Setup", "Workflows", "Parity", "Tests", "Pinning", "Observe", "Remediate", "Agent DX"]
     y-axis "Score" 0 --> 5
-    bar [5, 5, 5, 5, 5, 5, 5, 4]
+    bar [5, 5, 5, 5, 5, 5, 5, 5]
 ```
 
 ### Security + Supply Chain
@@ -929,7 +931,7 @@ graph TD
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories
-- [x] ADR index with all 18 decisions cross-referenced
+- [x] ADR index with all 19 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
 - [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))

@@ -195,7 +195,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 | Risk Tier | Packages | Lines/Functions/Statements | Branches |
 |---|---|---|---|
 | Tier 1 (Critical) | auth, db, queue | 60% | 50% |
-| Tier 2 (Infrastructure) | email, storage, events, cms | 40% | 30% |
+| Tier 2 (Infrastructure) | cms, email, storage, events, validation | 40% | 30% |
 | Tier 3 (UI/Services) | ui, worker | 20% | 10% |
 
 Never lower a threshold — only raise it.

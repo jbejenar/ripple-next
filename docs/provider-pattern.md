@@ -3,7 +3,7 @@
 ## Overview
 
 The provider pattern is the core architecture pattern of this project. Every
-infrastructure concern (queue, auth, storage, email, events) gets an interface,
+infrastructure concern (queue, auth, storage, email, events, CMS) gets an interface,
 and each interface has multiple implementations for different environments.
 
 See [ADR-003](./adr/003-provider-pattern.md) for the rationale behind this decision.

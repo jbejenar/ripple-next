@@ -92,6 +92,7 @@ pnpm dev
 | [ADR-016](docs/adr/016-roadmap-reorganisation.md)        | Roadmap reorganisation — AI-first priority tiers |
 | [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
 | [ADR-018](docs/adr/018-ai-first-workflow-strategy.md) | AI-first workflow — runbooks, generators, error taxonomy |
+| [ADR-019](docs/adr/019-fleet-governance.md) | Fleet governance — drift detection + sync automation |
 
 ## Repository Structure
 
