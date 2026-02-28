@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and RN-051 for pending API boundary ADR.",
-  "version": "0.19.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and ADR-021 for API contract strategy (oRPC, OpenAPI-first).",
+  "version": "0.20.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -74,15 +74,18 @@
     },
     "api": {
       "status": "partial",
-      "description": "tRPC routers wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes. Database repositories have Testcontainers integration tests.",
+      "description": "oRPC adopted as canonical API boundary (ADR-021). OpenAPI-first contracts with public/internal classification. Currently tRPC routers (pre-migration) wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes. API contract drift gate (check:api-contract) ready — activates after oRPC migration (RN-046).",
       "packages": [],
       "paths": [
         "apps/web/server/trpc/",
-        "apps/web/server/api/"
+        "apps/web/server/api/",
+        "docs/adr/021-api-contract-strategy.md",
+        "scripts/generate-openapi.mjs",
+        "scripts/check-api-contract.mjs"
       ],
       "blockers": [
-        "No ADR deciding API boundary strategy — oRPC vs tRPC, public vs internal classification (RN-051, prerequisite for external APIs)",
-        "No integration tests for tRPC routers with real DB (Testcontainers)"
+        "oRPC migration not yet executed — tRPC routers still active (RN-046, Phase 2 of ADR-021)",
+        "No integration tests for routers with real DB (Testcontainers, RN-046)"
       ],
       "testCoverage": "contract-tested + db-integration-tested"
     },
@@ -166,7 +169,7 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 49 classified failure modes across 13 categories including fleet governance, accessibility, session observability, scaffold, and documentation codes (RN-040, RN-042, RN-043, RN-044), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020). Strategy documented in ADR-018 and ADR-020.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 51 classified failure modes across 14 categories including fleet governance, accessibility, session observability, scaffold, documentation, and API contract codes (RN-040, RN-042, RN-043, RN-044, RN-051), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020). Strategy documented in ADR-018 and ADR-020.",
       "packages": [],
       "paths": [
         "scripts/verify.mjs",

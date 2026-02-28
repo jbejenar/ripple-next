@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> v6.2.0 | 2026-02-28
+> v6.3.0 | 2026-02-28
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
@@ -20,8 +20,8 @@ gantt
     axisFormat %b %Y
 
     section Now (0–6 weeks)
-    RN-051 ADR: API boundary strategy       :crit, rn051, 2026-03-01, 14d
-    RN-046 tRPC router integration harness  :rn046, after rn051, 28d
+    RN-051 ADR: API boundary strategy       :done, rn051, 2026-02-28, 1d
+    RN-046 oRPC migration + integration     :crit, rn046, 2026-03-01, 28d
 
     section Next (6–12 weeks)
     RN-045 OIDC auth integration tests      :rn045, 2026-04-13, 21d
@@ -62,7 +62,7 @@ across the fleet.
 
 ## Themes
 
-1. **Production confidence** — decide the API boundary (oRPC vs tRPC), close integration test gaps
+1. **Production confidence** — execute oRPC migration (ADR-021), close integration test gaps
 2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
 3. **Quality depth** — performance budgets, live CMS validation
 
@@ -72,66 +72,66 @@ across the fleet.
 
 > Items that close the remaining platform gap. Agents should start here.
 
-### RN-051: ADR — API Boundary Strategy (oRPC vs tRPC, Public vs Internal + Portal Publishing)
+### RN-051: ADR — API Boundary Strategy (oRPC vs tRPC, Public vs Internal + Portal Publishing) ✓
 
 **Impact:** Very High | **Effort:** Medium | **Risk:** High | **Priority:** P0
 **Source:** Tech-lead directive — external integrator requirement | **Date:** 2026-02-28
+**Completed:** 2026-02-28 | **ADR:** [ADR-021](../adr/021-api-contract-strategy.md)
 **AI-first benefit:** Contracts must be deterministic, tool-neutral, and low-friction for autonomous agents (Codex + Claude parity). A single canonical boundary prevents agent confusion from dual-stack patterns.
 
-#### Problem
+#### Decision Summary
 
-We will have external integrators who need discoverable, publishable interfaces
-in an API portal/registry. The repo is AI-first: contracts must be
-deterministic, tool-neutral, and low-friction for autonomous agents. We must
-avoid dual-stack bloat (two competing API patterns) unless there is a clear
-thin-adapter rationale.
+ADR-021 selects **oRPC** as the canonical API boundary framework with OpenAPI 3.1.1
+as the first-class contract artifact. Key decisions:
 
-**This ADR is a prerequisite for any further work that exposes external APIs.**
-
-#### Decision Scope — ADR Must Answer
-
-1. **Canonical contract boundary** — OpenAPI-first or TS-first for public interfaces?
-2. **Framework choice** — oRPC, tRPC, or hybrid? If hybrid, what is the strict boundary rule?
-3. **Artifact generation & publishing** — OpenAPI spec location, `generate:openapi` command, CI publication to portal/registry, versioning strategy.
-4. **Contract drift prevention** — CI gates for breaking-change detection, semver/changesets integration, deprecation policy.
-5. **Endpoint classification** — public vs internal taxonomy, ensuring only public surfaces are published.
-6. **Migration path** — if we start with one approach and later switch, what is the incremental migration plan?
+- **oRPC replaces tRPC** — single framework, no dual-stack
+- **Public/internal classification** via route metadata (`visibility: 'public' | 'internal'`)
+- **`pnpm generate:openapi`** generates deterministic `docs/api/openapi.json`
+- **`pnpm check:api-contract`** CI gate prevents contract drift (wired into `pnpm verify`)
+- **Error taxonomy** expanded: RPL-API-001 (spec drift), RPL-API-002 (breaking change)
+- **4-phase migration**: ADR → oRPC migration (RN-046) → endpoint classification → contract testing (RN-025)
 
 #### Definition of Done
 
-- [ ] ADR-021 created in `docs/adr/021-api-boundary-strategy.md`, following repo template
-- [ ] ADR includes: context, decision drivers, options considered (tRPC, oRPC, gateway, hybrid), decision, consequences, rollout plan
-- [ ] Add a `generate:openapi` command (if applicable) with deterministic output
-- [ ] Add a CI gate for breaking-change detection / contract drift
-- [ ] Add follow-up roadmap items for any required refactors/migrations
-- [ ] Roadmap updated with ADR status and links; `readiness.json` updated
-- [ ] Commands and gates described in ADR are feasible within current toolchain constraints (no new bloat)
+- [x] ADR-021 created in `docs/adr/021-api-contract-strategy.md`
+- [x] ADR includes: context, decision drivers, options considered (tRPC, oRPC, gateway, hybrid), decision, consequences, rollout plan
+- [x] `pnpm generate:openapi` command added with deterministic output
+- [x] `pnpm check:api-contract` CI gate added for contract drift detection
+- [x] Follow-up roadmap items identified (RN-046 updated, RN-025 dependency noted)
+- [x] Roadmap updated with ADR status and links; `readiness.json` updated
+- [x] Commands and gates feasible within current toolchain (no new dependencies)
 
-**Prerequisite for:** [RN-046](#rn-046-trpc-router-integration-harness-testcontainers), [RN-025](#rn-025-contract-testing-across-consumers)
+**Prerequisite for:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers), [RN-025](#rn-025-contract-testing-across-consumers)
 
 **Verification:** ADR reviewed for completeness; `pnpm verify` passes; readiness.json updated.
 
 ---
 
-### RN-046: tRPC Router Integration Harness (Testcontainers)
+### RN-046: oRPC Migration + Router Integration Harness (Testcontainers)
 
 **Impact:** High | **Effort:** Medium | **Risk:** Low
-**Source:** GPT-5.2-Codex API topology review | **Date:** 2026-02-28
-**AI-first benefit:** Gives agents production-semantics confidence when refactoring router logic.
-**Depends on:** [RN-051](#rn-051-adr--api-boundary-strategy-orpc-vs-trpc-public-vs-internal--portal-publishing) (API boundary ADR determines the router framework)
+**Source:** GPT-5.2-Codex API topology review + ADR-021 | **Date:** 2026-02-28
+**AI-first benefit:** Gives agents production-semantics confidence when refactoring router logic. Activates OpenAPI contract generation.
+**Depends on:** [RN-051](#rn-051-adr--api-boundary-strategy-orpc-vs-trpc-public-vs-internal--portal-publishing) (ADR-021, completed)
 
-API layer is the only "partial" subsystem. Repository-level DB integration tests
-exist ([RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api)),
-but router-level transaction and auth-path behaviour is contract-tested only.
+ADR-021 Phase 2: install oRPC, migrate the user router (4 procedures) from tRPC,
+generate the first `openapi.json`, and add Testcontainers integration tests.
+API layer is the only "partial" subsystem.
 
 **Affected items:** [RN-025](#rn-025-contract-testing-across-consumers)
 
+- [ ] Install `@orpc/server`, `@orpc/openapi`, `@orpc/zod` — update `apps/web/package.json`
+- [ ] Create `apps/web/server/orpc/router.ts` — migrate user router from tRPC
+- [ ] Add `generateOpenAPI()` export to router for `pnpm generate:openapi`
+- [ ] Classify routes: user CRUD as `visibility: 'public'`, health as `visibility: 'internal'`
+- [ ] Generate and commit first `docs/api/openapi.json`
 - [ ] Add shared `createIntegrationCtx()` — provisions Postgres, runs migrations, isolates DB state per suite
 - [ ] Integration tests for critical router paths (auth/session/audit-log-touching procedures first)
 - [ ] CI job with `DATABASE_URL` env and path filters for deterministic scoping
 - [ ] Update `docs/readiness.json` API status to "implemented" when blocker resolved
+- [ ] Update `generate:endpoint` generator to emit oRPC boilerplate instead of tRPC
 
-**Verification:** `pnpm test:integration` passes with Testcontainers; `readiness.json` updated; `pnpm verify` passes.
+**Verification:** `pnpm generate:openapi` produces valid OpenAPI 3.1.1; `pnpm check:api-contract` passes; `pnpm test:integration` passes with Testcontainers; `readiness.json` updated; `pnpm verify` passes.
 
 ---
 
@@ -179,14 +179,16 @@ but no Core Web Vitals monitoring. Lighthouse CI provides the performance analog
 
 **Impact:** High | **Effort:** High | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Depends on:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) (oRPC migration produces the OpenAPI spec used for contract testing)
 
 Formal compatibility contract testing across published `@ripple/*` package
-consumers. Becomes actionable after API integration tests (RN-046) establish the
-test infrastructure.
+consumers. Uses the OpenAPI spec from ADR-021 as the contract format.
+Becomes actionable after oRPC migration (RN-046) generates `docs/api/openapi.json`.
 
-- [ ] Define contract test patterns for package consumers
+- [ ] Define contract test patterns for package consumers (OpenAPI-based)
 - [ ] Integrate consumer contract tests into release workflow
-- [ ] Automated breaking-change detection and notification
+- [ ] Automated breaking-change detection via OpenAPI spec diffing
+- [ ] Portal publication pipeline (Phase 4 of ADR-021)
 
 ---
 
@@ -238,8 +240,8 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | Risk | Mitigation |
 |------|------------|
 | RN-017 blocked on content team indefinitely | Docker Tide fixture as fallback by Q2 2026 |
-| API boundary undecided (oRPC vs tRPC) | **RN-051 (P0)** — ADR must land before external APIs are exposed |
-| API layer "partial" status | RN-046 in Now addresses this (blocked on RN-051) |
+| ~~API boundary undecided (oRPC vs tRPC)~~ | ~~RN-051 (P0)~~ **Resolved** — ADR-021 selects oRPC with OpenAPI-first contracts |
+| API layer "partial" status | RN-046 in Now addresses this (oRPC migration + integration tests) |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
 | ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
 | Licensing drift (RN-049) | Keep SPDX-standard; reject custom non-commercial wording |
