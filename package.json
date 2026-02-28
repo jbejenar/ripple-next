@@ -45,6 +45,10 @@
     "generate:package": "node scripts/generate/index.mjs package",
     "runbook": "node scripts/runbook.mjs",
     "test:a11y": "node scripts/a11y-audit.mjs",
+    "session:start": "node scripts/session-logger.mjs start",
+    "session:end": "node scripts/session-logger.mjs end",
+    "session:snapshot": "node scripts/session-logger.mjs snapshot",
+    "agent:metrics": "node scripts/agent-metrics.mjs",
     "deploy:health-check": "node scripts/deploy-health-check.mjs",
     "prepare": "husky"
   },

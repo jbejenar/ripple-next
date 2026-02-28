@@ -17,6 +17,9 @@ pnpm check:fleet-drift # fleet drift detection (RN-024)
 pnpm test:a11y       # WCAG 2.1 AA accessibility audit (RN-042)
 pnpm fleet:sync      # generate sync PRs for downstream repos
 pnpm fleet:compliance # fleet-wide compliance report
+pnpm session:start   # start agent session tracking (RN-043)
+pnpm session:end     # end session + capture metrics (--run-gates for gate results)
+pnpm agent:metrics   # aggregate session metrics for friction analysis
 pnpm verify          # run ALL quality gates with summary (RN-034)
 pnpm verify -- --json # machine-readable JSON gate summary
 pnpm verify -- --fleet # include fleet drift in quality gates

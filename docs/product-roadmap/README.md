@@ -568,20 +568,28 @@ Optional validation that the devcontainer works in containerised CI runners.
 
 ---
 
-#### RN-043: Agent Session Observability
+#### RN-043: Agent Session Observability ✅
 
 **Priority:** Low | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Platform teams understand agent effectiveness and identify bottlenecks
+**Status:** Done — implemented 2026-02-28.
 
 Track and aggregate metrics from AI agent sessions — files changed, tests run,
 quality gate pass/fail rates, common failure patterns, time-to-green — to
 continuously improve agent ergonomics.
 
-- [ ] Define session metrics schema (files changed, commands run, outcomes)
-- [ ] Create lightweight session logger (opt-in, privacy-respecting)
-- [ ] Build aggregation script (`pnpm agent:metrics`) for session summaries
-- [ ] Identify top friction points from aggregated data
-- [ ] Feed insights back into roadmap prioritisation
+- [x] Define session metrics schema (files changed, commands run, outcomes) — `ripple-session-log/v1` and `ripple-session-metrics/v1`
+- [x] Create lightweight session logger (opt-in, privacy-respecting) — `scripts/session-logger.mjs` with start/end/snapshot actions
+- [x] Build aggregation script (`pnpm agent:metrics`) for session summaries — `scripts/agent-metrics.mjs` with friction analysis
+- [x] Identify top friction points from aggregated data — automated recommendations in metrics report
+- [x] Feed insights back into roadmap prioritisation — recommendations include error taxonomy codes and gate-level failure rates
+
+**Verification:**
+- `pnpm session:start` creates session file in `.sessions/`
+- `pnpm session:end -- --run-gates` captures full session with gate results
+- `pnpm agent:metrics -- --json` emits `ripple-session-metrics/v1` with friction insights
+- RPL-SESSION-001/002/003 error codes in taxonomy (v1.4.0, 44 codes, 11 categories)
+- `docs/session-observability.md` documents schemas, flags, and integration patterns
 
 ---
 
@@ -609,7 +617,7 @@ continuously improve agent ergonomics.
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
 | [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Pending |
-| [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Pending |
+| [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Done |
 
 ---
 

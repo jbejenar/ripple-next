@@ -114,9 +114,9 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 41 classified failure modes across 10 categories including fleet governance and accessibility codes (RN-040, RN-042), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 44 classified failure modes across 11 categories including fleet governance, accessibility, and session observability codes (RN-040, RN-042, RN-043), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043). Strategy documented in ADR-018.",
       "packages": [],
-      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "scripts/a11y-audit.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json", "docs/accessibility.md"],
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "scripts/a11y-audit.mjs", "scripts/session-logger.mjs", "scripts/agent-metrics.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json", "docs/accessibility.md", "docs/session-observability.md"],
       "blockers": [],
       "testCoverage": "gate-tested"
     },

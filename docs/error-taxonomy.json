@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 41 classified error codes across 10 categories. See ADR-018, ADR-019, and docs/accessibility.md.",
-  "version": "1.3.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 44 classified error codes across 11 categories. See ADR-018, ADR-019, docs/accessibility.md, and docs/session-observability.md.",
+  "version": "1.4.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -19,7 +19,8 @@
     "POLICY": "Policy gate and governance failures",
     "IAC": "Infrastructure-as-code policy violations (sst.config.ts)",
     "FLEET": "Fleet governance and template drift violations (RN-024)",
-    "A11Y": "Accessibility and WCAG compliance violations (RN-042)"
+    "A11Y": "Accessibility and WCAG compliance violations (RN-042)",
+    "SESSION": "Agent session observability and metrics failures (RN-043)"
   },
   "errors": [
     {
@@ -555,6 +556,45 @@
         "Run: pnpm test:a11y -- --json to see violation details",
         "Moderate/minor violations are non-blocking but should be addressed",
         "Review the helpUrl for each violation for specific remediation guidance"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-SESSION-001",
+      "category": "SESSION",
+      "severity": "error",
+      "message": "Session logger initialization failed (missing .sessions directory or write permission)",
+      "gate": "session:start",
+      "remediation": [
+        "Ensure .sessions/ directory exists and is writable",
+        "Run: mkdir -p .sessions",
+        "Check disk space and file permissions"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-SESSION-002",
+      "category": "SESSION",
+      "severity": "warning",
+      "message": "Session log file corrupted or unreadable",
+      "gate": "agent:metrics",
+      "remediation": [
+        "Check .sessions/ for malformed JSON files",
+        "Remove corrupt files: find .sessions -name '*.json' -empty -delete",
+        "Corrupted files are skipped during aggregation — no data loss for other sessions"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-SESSION-003",
+      "category": "SESSION",
+      "severity": "info",
+      "message": "No session data available for aggregation",
+      "gate": "agent:metrics",
+      "remediation": [
+        "Start tracking sessions: pnpm session:start",
+        "End sessions to record data: pnpm session:end -- --run-gates",
+        "Session data is opt-in — no action required if observability is not needed"
       ],
       "automatable": false
     }

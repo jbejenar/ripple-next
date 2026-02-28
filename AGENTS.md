@@ -165,6 +165,10 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `npx sst deploy --stage staging` — Deploy to staging
 - `npx sst deploy --stage production` — Deploy to production
 - `pnpm test:a11y` — Standalone WCAG 2.1 AA accessibility audit with axe-core (RN-042)
+- `pnpm session:start` — Start agent session tracking (RN-043)
+- `pnpm session:end` — End session and capture metrics (`--run-gates` to include gate results)
+- `pnpm session:snapshot` — Mid-session checkpoint of current progress
+- `pnpm agent:metrics` — Aggregate session metrics for friction analysis (`--json` for machine-readable)
 - `pnpm deploy:health-check <url>` — Post-deploy health validation with retries (RN-035)
 
 ## Code Conventions
@@ -235,6 +239,7 @@ Test results are uploaded as structured artifacts on every CI run:
 | `a11y-report` | Accessibility audit JSON (`ripple-a11y-report/v1`) | 30 days |
 | `fleet-drift-report` | Fleet drift detection JSON (`ripple-fleet-drift/v1`) | 30 days |
 | `fleet-sync-plan` | Fleet sync PR plan JSON (`ripple-fleet-sync/v1`) | 30 days |
+| `session-metrics` | Agent session metrics JSON (`ripple-session-metrics/v1`) | 30 days |
 
 ### Reusable Composite Actions
 
