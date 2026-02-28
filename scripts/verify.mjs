@@ -58,6 +58,7 @@ const GATES = [
   { name: 'test', command: 'pnpm test', category: 'tests' },
   { name: 'check:readiness', command: 'pnpm check:readiness', category: 'policy' },
   { name: 'check:quarantine', command: 'pnpm check:quarantine', category: 'policy' },
+  { name: 'check:iac', command: 'pnpm check:iac', category: 'policy' },
 ]
 
 // ── Gate runner ──────────────────────────────────────────────────────

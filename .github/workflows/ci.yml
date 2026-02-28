@@ -19,6 +19,7 @@ jobs:
       any-package: ${{ steps.changes.outputs.any-package }}
       apps-web: ${{ steps.changes.outputs.apps-web }}
       high-risk: ${{ steps.changes.outputs.high-risk }}
+      infra: ${{ steps.changes.outputs.infra }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -36,6 +37,9 @@ jobs:
               - 'packages/db/**'
               - 'packages/queue/**'
               - 'sst.config.ts'
+            infra:
+              - 'sst.config.ts'
+              - 'docs/iac-policies.json'
 
   quality:
     runs-on: ubuntu-latest
@@ -101,6 +105,30 @@ jobs:
           path: |
             test-results/
             **/test-results/
+          retention-days: 30
+
+  # ─── IaC Policy Scan ─────────────────────────────────────────
+  # Runs when sst.config.ts or IaC policies change. Blocks on
+  # error-severity violations; warnings are non-blocking.
+  # Uploads machine-readable report as CI artifact.
+
+  iac-policy:
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.infra == 'true' || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - name: Run IaC policy scan
+        run: pnpm check:iac -- --ci
+
+      - name: Upload IaC policy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iac-policy-report
+          path: iac-policy-report.json
           retention-days: 30
 
   # ─── Tier 2: Full E2E ────────────────────────────────────────

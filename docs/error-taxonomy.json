@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. See ADR-018.",
-  "version": "1.0.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 31 classified error codes across 8 categories. See ADR-018.",
+  "version": "1.1.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -16,7 +16,8 @@
     "TEST": "Test execution failures",
     "BUILD": "Build and compilation failures",
     "DEPLOY": "Deployment and infrastructure failures",
-    "POLICY": "Policy gate and governance failures"
+    "POLICY": "Policy gate and governance failures",
+    "IAC": "Infrastructure-as-code policy violations (sst.config.ts)"
   },
   "errors": [
     {
@@ -356,6 +357,97 @@
         "Commit the generated .changeset/*.md file with your PR"
       ],
       "automatable": true
+    },
+    {
+      "code": "RPL-IAC-001",
+      "category": "IAC",
+      "severity": "error",
+      "message": "Production stage missing protection flags (removal: retain, protect: true)",
+      "gate": "check:iac",
+      "remediation": [
+        "Ensure app() returns removal: 'retain' and protect: true for production stage",
+        "Pattern: removal: input?.stage === 'production' ? 'retain' : 'remove'",
+        "Pattern: protect: input?.stage === 'production'"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-002",
+      "category": "IAC",
+      "severity": "warning",
+      "message": "S3 bucket uses wildcard CORS origins",
+      "gate": "check:iac",
+      "remediation": [
+        "Replace allowOrigins: ['*'] with specific domain origins",
+        "Example: allowOrigins: ['https://example.vic.gov.au']",
+        "Or add exception comment: // iac-policy-exception: IAC-002 — <justification>"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-003",
+      "category": "IAC",
+      "severity": "error",
+      "message": "Public-facing service listens on HTTP instead of HTTPS",
+      "gate": "check:iac",
+      "remediation": [
+        "Ensure public-facing services use HTTPS (port 443)",
+        "Pattern: listen: '443/https'",
+        "Do not expose HTTP (port 80) publicly"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-004",
+      "category": "IAC",
+      "severity": "warning",
+      "message": "ECS or database scaling exceeds policy limits",
+      "gate": "check:iac",
+      "remediation": [
+        "ECS: scaling max should not exceed 50 instances",
+        "Database: max ACU should not exceed 32",
+        "Review docs/iac-policies.json for current limits"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-005",
+      "category": "IAC",
+      "severity": "warning",
+      "message": "Lambda timeout exceeds 15-minute limit",
+      "gate": "check:iac",
+      "remediation": [
+        "Lambda has a hard 15-minute execution limit",
+        "Use ECS Fargate for longer workloads",
+        "See docs/lambda-vs-ecs.md for the compute decision framework"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-006",
+      "category": "IAC",
+      "severity": "error",
+      "message": "Hardcoded AWS ARN or account ID found in SST config",
+      "gate": "check:iac",
+      "remediation": [
+        "Use SST Resource linking instead of hardcoded ARNs",
+        "Pattern: link: [resource] instead of arn: 'arn:aws:...'",
+        "Never embed AWS account IDs in configuration"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-IAC-007",
+      "category": "IAC",
+      "severity": "error",
+      "message": "Database or cache resource deployed without VPC",
+      "gate": "check:iac",
+      "remediation": [
+        "Database and cache resources must reference the VPC",
+        "Pattern: new sst.aws.Postgres('Name', { vpc })",
+        "Pattern: new sst.aws.Redis('Name', { vpc })"
+      ],
+      "automatable": false
     }
   ]
 }
