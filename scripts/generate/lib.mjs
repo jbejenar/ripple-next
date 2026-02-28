@@ -41,13 +41,17 @@ export function toKebabCase(str) {
  * In dry-run mode, prints what would be written instead.
  */
 export function writeFile(absPath, content, dryRun = false) {
-  const relPath = absPath.replace(ROOT + '/', '')
+  const resolved = resolve(absPath)
+  if (!resolved.startsWith(ROOT)) {
+    throw new Error(`Path traversal blocked: ${resolved} is outside repo root`)
+  }
+  const relPath = resolved.replace(ROOT + '/', '')
   if (dryRun) {
     console.log(`  [dry-run] Would create: ${relPath}`)
     return
   }
-  mkdirSync(dirname(absPath), { recursive: true })
-  writeFileSync(absPath, content)
+  mkdirSync(dirname(resolved), { recursive: true })
+  writeFileSync(resolved, content)
   console.log(`  Created: ${relPath}`)
 }
 
@@ -56,17 +60,21 @@ export function writeFile(absPath, content, dryRun = false) {
  * Useful for adding exports to index.ts files.
  */
 export function appendToFile(absPath, line, dryRun = false) {
-  const relPath = absPath.replace(ROOT + '/', '')
-  if (!existsSync(absPath)) {
+  const resolved = resolve(absPath)
+  if (!resolved.startsWith(ROOT)) {
+    throw new Error(`Path traversal blocked: ${resolved} is outside repo root`)
+  }
+  const relPath = resolved.replace(ROOT + '/', '')
+  if (!existsSync(resolved)) {
     if (dryRun) {
       console.log(`  [dry-run] Would create: ${relPath}`)
       return
     }
-    writeFile(absPath, line + '\n')
+    writeFile(resolved, line + '\n')
     return
   }
 
-  const existing = readFileSync(absPath, 'utf-8')
+  const existing = readFileSync(resolved, 'utf-8')
   if (existing.includes(line.trim())) {
     console.log(`  Skipped (already exists): ${relPath}`)
     return
@@ -79,7 +87,7 @@ export function appendToFile(absPath, line, dryRun = false) {
 
   // Ensure file ends with newline before appending
   const separator = existing.endsWith('\n') ? '' : '\n'
-  writeFileSync(absPath, existing + separator + line + '\n')
+  writeFileSync(resolved, existing + separator + line + '\n')
   console.log(`  Updated: ${relPath}`)
 }
 

@@ -22,6 +22,9 @@ import { existsSync } from 'node:fs'
 import { ROOT, toPascalCase, toKebabCase, writeFile, parseArgs } from './lib.mjs'
 
 export function generatePackage(name, options = {}) {
+  if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(name)) {
+    throw new Error('Package name must be alphanumeric with optional hyphens')
+  }
   const dryRun = options.dryRun || false
   const kebab = toKebabCase(name)
   const pascal = toPascalCase(name)

@@ -22,6 +22,9 @@ import { ROOT, toPascalCase, toKebabCase, writeFile, appendToFile, parseArgs } f
 const VALID_TIERS = ['atoms', 'molecules', 'organisms']
 
 export function generateComponent(name, options = {}) {
+  if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(name)) {
+    throw new Error('Component name must be alphanumeric with optional hyphens')
+  }
   const pascal = toPascalCase(name)
   const componentName = pascal.startsWith('Rpl') ? pascal : `Rpl${pascal}`
   const displayName = componentName.replace(/^Rpl/, '')

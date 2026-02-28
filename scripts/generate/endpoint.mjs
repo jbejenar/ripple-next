@@ -14,11 +14,15 @@
  *   apps/web/server/trpc/routers/{router}.ts (created or appended)
  *   apps/web/tests/unit/trpc/{router}-router.test.ts (created if new)
  */
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { ROOT, toPascalCase, toCamelCase, writeFile, parseArgs } from './lib.mjs'
 
 export function generateEndpoint(routerName, procedureName, options = {}) {
+  // Validate names contain only safe characters (alphanumeric, hyphens)
+  if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(routerName) || !/^[a-zA-Z][a-zA-Z0-9]*$/.test(procedureName)) {
+    throw new Error('Router and procedure names must be alphanumeric (hyphens allowed in router name)')
+  }
   const dryRun = options.dryRun || false
   const camelRouter = toCamelCase(routerName)
   const routerFile = join(ROOT, 'apps/web/server/trpc/routers', `${routerName}.ts`)

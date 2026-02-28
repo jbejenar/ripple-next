@@ -19,6 +19,9 @@ import { existsSync, readFileSync } from 'node:fs'
 import { ROOT, toPascalCase, writeFile, parseArgs } from './lib.mjs'
 
 export function generateProvider(packageName, providerName, options = {}) {
+  if (!/^[a-zA-Z][a-zA-Z0-9-]*$/.test(packageName) || !/^[a-zA-Z][a-zA-Z0-9-]*$/.test(providerName)) {
+    throw new Error('Package and provider names must be alphanumeric with optional hyphens')
+  }
   const dryRun = options.dryRun || false
   const pascal = toPascalCase(providerName)
   const pkgDir = join(ROOT, 'packages', packageName)

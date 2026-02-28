@@ -19,6 +19,7 @@
 // ──────────────────────────────────────────────────────────────────────
 
 import { writeFileSync } from 'node:fs'
+import { resolve, basename } from 'node:path'
 
 const args = process.argv.slice(2)
 const baseUrl = args.find((a) => !a.startsWith('--'))
@@ -43,7 +44,20 @@ if (!baseUrl) {
   process.exit(1)
 }
 
-const healthUrl = `${baseUrl.replace(/\/$/, '')}/api/health`
+// Validate URL is well-formed HTTPS (or HTTP for local dev)
+let parsedUrl
+try {
+  parsedUrl = new URL(baseUrl)
+} catch {
+  process.stderr.write(`Error: "${baseUrl}" is not a valid URL.\n`)
+  process.exit(1)
+}
+if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
+  process.stderr.write(`Error: URL must use http or https protocol.\n`)
+  process.exit(1)
+}
+
+const healthUrl = `${parsedUrl.origin}/api/health`
 
 async function checkHealth() {
   const start = Date.now()
@@ -196,9 +210,12 @@ async function main() {
   }
 
   if (outputPath) {
-    writeFileSync(outputPath, JSON.stringify(report, null, 2) + '\n')
+    // Sanitize output path — only allow writing to the current working directory
+    const safeName = basename(outputPath)
+    const safePath = resolve(process.cwd(), safeName)
+    writeFileSync(safePath, JSON.stringify(report, null, 2) + '\n')
     if (!jsonMode) {
-      process.stdout.write(`\nReport written to ${outputPath}\n`)
+      process.stdout.write(`\nReport written to ${safePath}\n`)
     }
   }
 
