@@ -15,6 +15,10 @@ export { default as RplFormAlert } from './components/atoms/RplFormAlert.vue'
 export { default as RplOptionButton } from './components/atoms/RplOptionButton.vue'
 export { default as RplBreadcrumb } from './components/atoms/RplBreadcrumb.vue'
 export { default as RplSkipLink } from './components/atoms/RplSkipLink.vue'
+export { default as RplAlert } from './components/atoms/RplAlert.vue'
+export { default as RplCallout } from './components/atoms/RplCallout.vue'
+export { default as RplAcknowledgement } from './components/atoms/RplAcknowledgement.vue'
+export { default as RplBlockQuote } from './components/atoms/RplBlockQuote.vue'
 
 // Molecules
 export { default as RplCard } from './components/molecules/RplCard.vue'
