@@ -273,7 +273,7 @@ security and compliance posture.
 **Priority:** High | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents can build complete government pages without external component gaps
 
-Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple-framework)
+Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple)
 into `@ripple/ui`, rewritten to follow our conventions (Composition API,
 `--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~30-component
 gap** between our 16-component library and upstream's ~46 components.
@@ -308,7 +308,7 @@ logic, and use our design token system.
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents follow a documented procedure for upstream change adoption
 
 Establish a repeatable process for monitoring and selectively adopting
-improvements from the upstream [Ripple 2](https://github.com/dpc-sdp/ripple-framework)
+improvements from the upstream [Ripple 2](https://github.com/dpc-sdp/ripple)
 design system without taking a runtime dependency.
 
 - [ ] Document quarterly upstream review procedure in `CONTRIBUTING.md`
