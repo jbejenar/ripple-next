@@ -136,9 +136,9 @@ workflow tooling ([ADR-018](./adr/018-ai-first-workflow-strategy.md)):
 
 | Pillar | Status | Roadmap Item | Description |
 |--------|--------|-------------|-------------|
-| Runbook automation | Planned | [RN-039](./product-roadmap/README.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
-| Error taxonomy | Planned | [RN-040](./product-roadmap/README.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
-| Code generators | Planned | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints |
+| Runbook automation | Done | [RN-039](./product-roadmap/README.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
+| Error taxonomy | Done | [RN-040](./product-roadmap/README.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
+| Code generators | Done | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints |
 
 These complement the existing agent ergonomics: `pnpm doctor --json`,
 `pnpm bootstrap`, `pnpm validate:env`, provider conformance suites, and
@@ -154,7 +154,7 @@ structured CI artifacts.
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (18 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (19 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 
 ### Key ADRs
@@ -179,3 +179,4 @@ structured CI artifacts.
 | [ADR-016](./adr/016-roadmap-reorganisation.md) | Roadmap reorganisation — AI-first tiers | Process |
 | [ADR-017](./adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, sync | Frontend |
 | [ADR-018](./adr/018-ai-first-workflow-strategy.md) | AI-first workflow strategy | Process |
+| [ADR-019](./adr/019-fleet-governance.md) | Fleet governance — drift detection + sync | Process |

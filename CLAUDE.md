@@ -83,7 +83,7 @@ queueConformance({
 ## Coverage Thresholds (Enforced)
 
 - **Tier 1** (auth, db, queue): 60% lines/functions/statements, 50% branches
-- **Tier 2** (email, storage, events, cms): 40% lines/functions/statements, 30% branches
+- **Tier 2** (cms, email, storage, events, validation): 40% lines/functions/statements, 30% branches
 - **Tier 3** (UI, services): 20% lines/functions/statements, 10% branches
 
 Never lower a threshold — only raise it.

@@ -3,7 +3,7 @@ import { defineWorkspace } from 'vitest/config'
 /**
  * Coverage thresholds by risk tier:
  *   Tier 1 (critical — auth, db, queue): 60% minimum
- *   Tier 2 (infrastructure — email, storage, events): 40% minimum
+ *   Tier 2 (infrastructure — cms, email, storage, events, validation): 40% minimum
  *   Tier 3 (UI, services): 20% minimum
  *
  * These thresholds ratchet up as test coverage improves.
