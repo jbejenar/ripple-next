@@ -33,7 +33,7 @@ describe('email.handler', () => {
       data: { name: 'Test User' }
     })
 
-    await handler(event, {} as never, () => {})
+    await handler(event)
 
     expect(emailProvider.sent).toHaveLength(1)
     expect(emailProvider.sent[0].to).toBe('user@example.com')
@@ -80,7 +80,7 @@ describe('email.handler', () => {
       ]
     }
 
-    await handler(event, {} as never, () => {})
+    await handler(event)
     expect(emailProvider.sent).toHaveLength(2)
   })
 })

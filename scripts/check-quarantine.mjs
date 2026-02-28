@@ -17,7 +17,7 @@
  *   1 — policy violations found
  */
 
-import { readdir, readFile, stat } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 
 const JSON_MODE = process.argv.includes('--json')

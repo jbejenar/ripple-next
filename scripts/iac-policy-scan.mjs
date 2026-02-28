@@ -203,7 +203,6 @@ function checkBoundedScaling() {
   }
 
   // Check ECS scaling max
-  const scalingMaxRe = /max:\s*(\d+)/g
   let inScaling = false
   for (let i = 0; i < lines.length; i++) {
     if (/scaling:\s*\{/.test(lines[i])) inScaling = true

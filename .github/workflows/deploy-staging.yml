@@ -4,7 +4,25 @@ on:
     branches: [main]
 
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      has-credentials: ${{ steps.check.outputs.has-credentials }}
+    steps:
+      - id: check
+        env:
+          AWS_ROLE: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+          if [ -n "$AWS_ROLE" ]; then
+            echo "has-credentials=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-credentials=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deployment skipped — AWS_ROLE_ARN secret is not configured"
+          fi
+
   deploy:
+    needs: preflight
+    if: needs.preflight.outputs.has-credentials == 'true'
     runs-on: ubuntu-latest
     permissions:
       id-token: write

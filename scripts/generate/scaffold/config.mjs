@@ -8,7 +8,7 @@ import { join } from 'node:path'
 import { writeFileExternal, copyFileFromSource } from '../lib.mjs'
 
 export function scaffoldConfig(targetDir, config, options = {}) {
-  const { name, org } = config
+  const { name } = config
   const opts = { dryRun: options.dryRun, force: options.force }
 
   console.log('\n  Config Files')

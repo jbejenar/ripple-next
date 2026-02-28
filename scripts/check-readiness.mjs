@@ -18,7 +18,7 @@
  *   - Paths referenced must exist
  *   - CI workflow files must exist if ci is "implemented"
  */
-import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')

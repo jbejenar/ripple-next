@@ -5,7 +5,7 @@
  * PR template, and CODEOWNERS.
  */
 import { join } from 'node:path'
-import { writeFileExternal, copyFileFromSource } from '../lib.mjs'
+import { writeFileExternal } from '../lib.mjs'
 
 export function scaffoldCi(targetDir, config, options = {}) {
   const { name, org } = config
