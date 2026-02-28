@@ -89,8 +89,9 @@
     },
     "publishing": {
       "status": "implemented",
-      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, and attests build provenance. See ADR-007 and ADR-010.",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, attests build provenance, and generates per-package SHA-256 checksums (RN-027). Verification CLI (pnpm verify:release) validates installed packages against checksums manifest. See ADR-007, ADR-010, and docs/release-verification.md.",
       "packages": ["all @ripple/* packages"],
+      "paths": ["scripts/verify-release.mjs", "docs/release-verification.md"],
       "blockers": [],
       "testCoverage": "release-workflow-validated"
     },

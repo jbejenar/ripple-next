@@ -542,17 +542,25 @@ remediation PRs.
 
 ---
 
-#### RN-027: Signed Release Bundles + Verification
+#### RN-027: Signed Release Bundles + Verification ✅
 
 **Priority:** Low | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Status:** Done — implemented 2026-02-28.
 
 Extend provenance with package-level signature verification commands for
 consumers.
 
-- [ ] Implement package signing in release workflow
-- [ ] Build verification CLI command (`pnpm verify:release`)
-- [ ] Document consumer-side verification workflow
+- [x] Implement package signing in release workflow — SHA-256 checksums per package, attested via sigstore
+- [x] Build verification CLI command (`pnpm verify:release`) — `scripts/verify-release.mjs` with generate and verify modes
+- [x] Document consumer-side verification workflow — `docs/release-verification.md`
+
+**Verification:**
+- Release workflow generates `release-checksums.json` with per-file SHA-256 digests
+- Checksums attested via `actions/attest-build-provenance@v2` (sigstore-backed)
+- `pnpm verify:release -- --generate` creates checksums after build
+- `pnpm verify:release -- --checksums=path` verifies installed packages
+- `ripple-release-checksums/v1` and `ripple-release-verification/v1` JSON schemas
 
 ---
 
@@ -621,7 +629,7 @@ continuously improve agent ergonomics.
 | [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
-| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
+| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Done |
 | [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Done |
 | [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Done |
 

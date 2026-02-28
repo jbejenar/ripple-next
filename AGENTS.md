@@ -169,6 +169,8 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm session:end` — End session and capture metrics (`--run-gates` to include gate results)
 - `pnpm session:snapshot` — Mid-session checkpoint of current progress
 - `pnpm agent:metrics` — Aggregate session metrics for friction analysis (`--json` for machine-readable)
+- `pnpm verify:release` — Verify installed @ripple/* packages against checksums manifest (RN-027)
+- `pnpm verify:release -- --generate` — Generate SHA-256 checksums for built packages
 - `pnpm deploy:health-check <url>` — Post-deploy health validation with retries (RN-035)
 
 ## Code Conventions
@@ -240,6 +242,7 @@ Test results are uploaded as structured artifacts on every CI run:
 | `fleet-drift-report` | Fleet drift detection JSON (`ripple-fleet-drift/v1`) | 30 days |
 | `fleet-sync-plan` | Fleet sync PR plan JSON (`ripple-fleet-sync/v1`) | 30 days |
 | `session-metrics` | Agent session metrics JSON (`ripple-session-metrics/v1`) | 30 days |
+| `release-checksums` | Package SHA-256 checksums (`ripple-release-checksums/v1`, release only) | 90 days |
 
 ### Reusable Composite Actions
 
