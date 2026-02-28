@@ -100,6 +100,57 @@ npx sst dev
 
 This deploys infrastructure to AWS but proxies Lambda invocations to your local machine.
 
+## IaC Policy Scanning
+
+Infrastructure changes to `sst.config.ts` are validated against a defined policy
+set before deployment. The scanner runs automatically in CI when `sst.config.ts`
+or policy definitions change, and is also included in `pnpm verify`.
+
+```bash
+pnpm check:iac                  # human-readable output
+pnpm check:iac -- --json        # JSON report to stdout
+pnpm check:iac -- --ci          # write iac-policy-report.json for CI
+```
+
+### Baseline Policy Set
+
+| Policy | Severity | What It Checks |
+|--------|----------|----------------|
+| IAC-001 | error | Production stage must have `removal: 'retain'` and `protect: true` |
+| IAC-002 | warning | S3 buckets should not use wildcard CORS origins (`'*'`) |
+| IAC-003 | error | Public-facing services must use HTTPS (port 443) only |
+| IAC-004 | warning | ECS/database scaling must have bounded maximums |
+| IAC-005 | warning | Lambda timeouts must not exceed 15 minutes |
+| IAC-006 | error | No hardcoded AWS ARNs or account IDs |
+| IAC-007 | error | Database and cache resources must be in a VPC |
+
+Error-severity violations block the CI pipeline. Warnings are reported but
+non-blocking. Full policy definitions are in `docs/iac-policies.json`.
+
+### Exception Workflow
+
+When a policy violation is intentional and safe, add an exception comment on the
+line immediately before the flagged code:
+
+```typescript
+// iac-policy-exception: IAC-002 — presigned upload URLs require open CORS during beta
+const uploads = new sst.aws.Bucket('Uploads', {
+  cors: { allowOrigins: ['*'], ... }
+})
+```
+
+Exception requirements:
+1. Comment must use the exact format: `// iac-policy-exception: <POLICY-ID> — <justification>`
+2. Justification must explain why the exception is safe
+3. Exceptions are tracked in the IaC policy scan report (visible in CI artifacts)
+4. Exceptions should be reviewed during quarterly security reviews
+
+### CI Artifacts
+
+| Artifact | Contents | Retention |
+|----------|----------|-----------|
+| `iac-policy-report` | IaC policy scan JSON (`ripple-iac-report/v1`) | 30 days |
+
 ## Rollback and Recovery
 
 ### Rollback Trigger Criteria

@@ -31,6 +31,7 @@
     "release": "turbo build && changeset publish",
     "doctor": "bash scripts/doctor.sh",
     "bootstrap": "pnpm install --frozen-lockfile && pnpm doctor && echo '\\nBootstrap complete. Run pnpm dev to start.'",
+    "check:iac": "node scripts/iac-policy-scan.mjs",
     "check:readiness": "node scripts/check-readiness.mjs",
     "check:quarantine": "node scripts/check-quarantine.mjs",
     "validate:env": "node scripts/validate-env.mjs",

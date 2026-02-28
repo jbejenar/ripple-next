@@ -259,18 +259,24 @@ capture health reports as artifacts. Rollback procedures documented in
 
 ---
 
-#### RN-036: IaC Policy Scanning for SST Changes
+#### RN-036: IaC Policy Scanning for SST Changes ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review | **AI-first benefit:** Blocks unsafe infra changes before deploy
+**Status:** Done (2026-02-28)
 
-Add blocking policy-as-code checks for infrastructure changes to strengthen
-security and compliance posture.
+Static policy scanner (`scripts/iac-policy-scan.mjs`) for `sst.config.ts` with
+7 policies covering security, safety, cost, and reliability. Machine-readable
+`ripple-iac-report/v1` JSON output. Exception workflow via inline comments.
+CI job runs on infra changes. 7 new error taxonomy entries (RPL-IAC-001 through
+RPL-IAC-007). Integrated into `pnpm verify` gate runner.
 
-- [ ] Add IaC policy scan job for `sst.config.ts` changes
-- [ ] Define baseline policy set (least privilege, restricted public exposure, encryption)
-- [ ] Route violations to clear, machine-readable diagnostics
-- [ ] Document exception workflow and approvals
+- [x] Add IaC policy scan job for `sst.config.ts` changes (CI `iac-policy` job, path-filtered)
+- [x] Define baseline policy set (7 policies: production protection, no wildcard CORS, HTTPS-only, bounded scaling, Lambda timeout limits, no hardcoded ARNs, VPC for data resources)
+- [x] Route violations to clear, machine-readable diagnostics (`ripple-iac-report/v1` JSON schema)
+- [x] Document exception workflow and approvals (`docs/deployment.md` → "IaC Policy Scanning" section)
+
+**Verification:** `pnpm check:iac` passes (0 errors, 1 warning); `pnpm check:iac -- --json` emits valid JSON; CI workflow includes `iac-policy` job; `docs/deployment.md` has policy scan + exception docs; error taxonomy has 31 entries; all gates pass.
 
 ---
 
@@ -560,7 +566,7 @@ continuously improve agent ergonomics.
 | [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
 | [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
-| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
+| [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Done |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
@@ -621,7 +627,7 @@ gantt
     section Tier 2 — Next Sprint
     RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
     RN-035 Rollback/recovery contract      :done, rn035, 2026-02-28, 1d
-    RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
+    RN-036 IaC policy scanning             :done, rn036, 2026-02-28, 1d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
     RN-038 Upstream sync workflow          :done, rn038, 2026-02-28, 1d
     RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d

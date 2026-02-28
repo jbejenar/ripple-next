@@ -137,6 +137,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm validate:env` — Validate environment variables against Zod schema (ADR-012)
 - `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
 - `pnpm check:quarantine` — Verify flaky test quarantine policy (ADR-013, runs in CI)
+- `pnpm check:iac` — IaC policy scan for sst.config.ts (RN-036, runs in CI on infra changes)
 - `pnpm verify` — Run all quality gates with structured summary (RN-034)
 - `pnpm verify -- --json` — Machine-readable JSON gate summary (`ripple-gate-summary/v1`)
 - `pnpm verify -- --ci` — Write `gate-summary.json` for CI artifact upload
@@ -219,6 +220,7 @@ Test results are uploaded as structured artifacts on every CI run:
 | `test-results-e2e` | Playwright HTML report | 30 days |
 | `playwright-traces` | Playwright traces (failure only) | 7 days |
 | `gate-summary` | JSON quality gate summary (`ripple-gate-summary/v1`) | 30 days |
+| `iac-policy-report` | IaC policy scan JSON (`ripple-iac-report/v1`) | 30 days |
 | `health-report-staging` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `health-report-production` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
@@ -355,7 +357,7 @@ When making changes, match the change type to the right validation:
 | DB schema change | `pnpm db:generate`, migration test, `pnpm typecheck` |
 | New Vue component | Component test, `pnpm lint`, Storybook story |
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |
-| Infrastructure change | `npx sst deploy --stage pr-{n}`, review SST diff |
+| Infrastructure change | `pnpm check:iac`, `npx sst deploy --stage pr-{n}`, review SST diff |
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
 | Roadmap/docs change | `pnpm check:readiness`, update `readiness.json`, cross-reference ADRs |
 | New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md + README.md |

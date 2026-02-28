@@ -12,6 +12,7 @@ pnpm typecheck       # type check all packages
 pnpm validate:env    # validate env vars against Zod schema
 pnpm check:readiness # verify readiness.json is not stale
 pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
+pnpm check:iac       # IaC policy scan for sst.config.ts (RN-036)
 pnpm verify          # run ALL quality gates with summary (RN-034)
 pnpm verify -- --json # machine-readable JSON gate summary
 ```
@@ -49,7 +50,8 @@ them individually:
 3. `pnpm typecheck` — zero type errors
 4. `pnpm check:readiness` — manifest must not drift
 5. `pnpm check:quarantine` — quarantine policy must be satisfied
-6. If you changed a published package's API: `pnpm changeset` to add version intent
+6. `pnpm check:iac` — IaC policies must pass (if you changed `sst.config.ts`)
+7. If you changed a published package's API: `pnpm changeset` to add version intent
 
 Use `pnpm verify -- --json` for machine-readable JSON output (schema: `ripple-gate-summary/v1`).
 

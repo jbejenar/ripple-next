@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Next IaC Policies",
+  "description": "Machine-readable infrastructure-as-code policy definitions for sst.config.ts. See RN-036.",
+  "version": "1.0.0",
+  "configFile": "sst.config.ts",
+  "policies": [
+    {
+      "id": "IAC-001",
+      "name": "production-protection",
+      "severity": "error",
+      "category": "safety",
+      "description": "Production stage must set removal to 'retain' and protect to true",
+      "rationale": "Prevents accidental deletion of production resources (databases, S3 buckets)",
+      "check": "app-config-production-flags",
+      "taxonomyCode": "RPL-IAC-001"
+    },
+    {
+      "id": "IAC-002",
+      "name": "no-wildcard-cors",
+      "severity": "warning",
+      "category": "security",
+      "description": "S3 buckets should not use wildcard ('*') CORS origins",
+      "rationale": "Wildcard CORS origins allow any domain to make cross-origin requests to the bucket",
+      "check": "s3-cors-origins",
+      "taxonomyCode": "RPL-IAC-002"
+    },
+    {
+      "id": "IAC-003",
+      "name": "public-services-https-only",
+      "severity": "error",
+      "category": "security",
+      "description": "Public-facing services must listen on HTTPS (443) only",
+      "rationale": "Government platforms must enforce encrypted transport for all public endpoints",
+      "check": "public-service-ports",
+      "taxonomyCode": "RPL-IAC-003"
+    },
+    {
+      "id": "IAC-004",
+      "name": "bounded-scaling",
+      "severity": "warning",
+      "category": "cost",
+      "description": "ECS services and database scaling must have bounded maximums",
+      "rationale": "Unbounded scaling can lead to unexpected costs and resource exhaustion",
+      "check": "scaling-bounds",
+      "limits": {
+        "ecsMaxInstances": 50,
+        "dbMaxACU": 32
+      },
+      "taxonomyCode": "RPL-IAC-004"
+    },
+    {
+      "id": "IAC-005",
+      "name": "lambda-timeout-limit",
+      "severity": "warning",
+      "category": "reliability",
+      "description": "Lambda/function timeouts should not exceed 15 minutes",
+      "rationale": "Lambda has a hard 15-minute limit; use ECS Fargate for longer workloads",
+      "check": "lambda-timeouts",
+      "taxonomyCode": "RPL-IAC-005"
+    },
+    {
+      "id": "IAC-006",
+      "name": "no-hardcoded-arns",
+      "severity": "error",
+      "category": "security",
+      "description": "Resources must not contain hardcoded ARNs or account IDs",
+      "rationale": "Hardcoded ARNs break across stages/accounts and leak infrastructure details",
+      "check": "no-hardcoded-arns",
+      "taxonomyCode": "RPL-IAC-006"
+    },
+    {
+      "id": "IAC-007",
+      "name": "vpc-required-for-data",
+      "severity": "error",
+      "category": "security",
+      "description": "Database and cache resources must be deployed within a VPC",
+      "rationale": "Data stores must not be publicly accessible; VPC isolation is required",
+      "check": "vpc-data-resources",
+      "taxonomyCode": "RPL-IAC-007"
+    }
+  ],
+  "exceptionWorkflow": {
+    "description": "Policy exceptions require explicit approval via inline comments in sst.config.ts",
+    "commentFormat": "// iac-policy-exception: <POLICY-ID> — <justification>",
+    "requirements": [
+      "Exception comment must be on the line immediately before the flagged code",
+      "Justification must explain why the exception is safe",
+      "Exceptions are tracked in the IaC policy scan report"
+    ]
+  }
+}
