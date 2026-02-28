@@ -8,7 +8,7 @@ import { join } from 'node:path'
 import { writeFileExternal } from '../lib.mjs'
 
 export function scaffoldAi(targetDir, config, options = {}) {
-  const { name, org, description } = config
+  const { name, description } = config
   const opts = { dryRun: options.dryRun, force: options.force }
 
   console.log('\n  AI / Agent DX')

@@ -10,7 +10,7 @@ interface EmailHandlerDeps {
  * Lambda handler for processing email queue messages.
  * Triggered by SQS events.
  */
-export function createEmailHandler(deps: EmailHandlerDeps): SQSHandler {
+export function createEmailHandler(deps: EmailHandlerDeps): (event: SQSEvent) => Promise<void> {
   return async (event: SQSEvent) => {
     for (const record of event.Records) {
       const message: SendEmailEvent = JSON.parse(record.body)
@@ -31,5 +31,5 @@ export const handler: SQSHandler = async (event) => {
   const emailProvider = new SesEmailProvider('noreply@ripple.dev')
 
   const emailHandler = createEmailHandler({ emailProvider })
-  return emailHandler(event, {} as never, () => {})
+  await emailHandler(event)
 }

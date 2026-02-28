@@ -35,7 +35,7 @@ jobs:
 
       # ─── SBOM Generation (mandatory — fail-fast on supply-chain issues) ───
       - name: Generate SBOM (CycloneDX)
-        run: npx --yes @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json --output-format json --package-lock-only
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json --output-format json
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4

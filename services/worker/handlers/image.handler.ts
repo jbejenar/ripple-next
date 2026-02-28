@@ -10,7 +10,7 @@ interface ImageHandlerDeps {
  * Lambda handler for processing image queue messages.
  * Triggered by SQS events.
  */
-export function createImageHandler(deps: ImageHandlerDeps): SQSHandler {
+export function createImageHandler(deps: ImageHandlerDeps): (event: SQSEvent) => Promise<void> {
   return async (event: SQSEvent) => {
     for (const record of event.Records) {
       const message: ProcessImageEvent = JSON.parse(record.body)
@@ -42,5 +42,5 @@ export const handler: SQSHandler = async (event) => {
   const storageProvider = new S3StorageProvider('uploads')
 
   const imageHandler = createImageHandler({ storageProvider })
-  return imageHandler(event, {} as never, () => {})
+  await imageHandler(event)
 }

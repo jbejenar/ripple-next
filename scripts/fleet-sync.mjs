@@ -17,7 +17,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync, writeFileSync, copyFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, existsSync, copyFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
