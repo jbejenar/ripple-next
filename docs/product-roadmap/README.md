@@ -92,10 +92,10 @@ graph LR
     end
     subgraph Partial
         API[API Layer]
+        AGENT_DX[Agent Tooling]
     end
     subgraph Planned
         FLEET[Fleet Templates]
-        AGENT_DX[Agent Tooling]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -114,7 +114,7 @@ graph LR
     style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
     style FLEET fill:#6366f1,color:#fff
-    style AGENT_DX fill:#6366f1,color:#fff
+    style AGENT_DX fill:#f59e0b,color:#fff
 ```
 
 ---
@@ -219,18 +219,22 @@ the **last remaining top blocker** for ship-ready status.
 > Items that directly improve agent automation, observability, and operational
 > safety, plus critical component gaps that block government site delivery.
 
-#### RN-034: Machine-Readable Quality Gate Summaries
+#### RN-034: Machine-Readable Quality Gate Summaries ✅
 
 **Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** AI Principal Engineer review | **AI-first benefit:** Agents parse structured JSON instead of scraping logs
+**Status:** Done (2026-02-28)
 
-Standardise JSON summaries for lint/typecheck/test outcomes (similar to
-doctor/env checks) so AI agents can programmatically act on quality gate results.
+Unified quality gate runner (`pnpm verify`) that runs all gates (validate:env,
+lint, typecheck, test, check:readiness, check:quarantine) and emits a structured
+JSON summary conforming to the `ripple-gate-summary/v1` schema.
 
-- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
-- [ ] Include machine-readable status in CI artifacts
-- [ ] Ensure non-zero exits remain authoritative for gating
-- [ ] Document schema for downstream automation consumers
+- [x] Add script wrappers emitting stable JSON for lint/typecheck/test (`scripts/verify.mjs`)
+- [x] Include machine-readable status in CI artifacts (`gate-summary` artifact, 30-day retention)
+- [x] Ensure non-zero exits remain authoritative for gating (exit 1 if any gate fails)
+- [x] Document schema for downstream automation consumers (AGENTS.md, CLAUDE.md, script header)
+
+**Verification:** `pnpm verify -- --json` emits valid JSON; `pnpm lint && pnpm typecheck && pnpm test` all pass; CI workflow uploads `gate-summary.json` artifact.
 
 ---
 
@@ -533,7 +537,7 @@ continuously improve agent ergonomics.
 | [RN-032](#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | 1 | Critical | High | Low | Done |
 | [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 1 | Critical | High | Low | Done |
 | [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
-| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Pending |
+| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Pending |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
@@ -594,7 +598,7 @@ gantt
     RN-024 Fleet update + drift            :rn024, 2026-03-08, 30d
 
     section Tier 2 — Next Sprint
-    RN-034 Quality gate summaries          :rn034, 2026-04-07, 14d
+    RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
     RN-035 Rollback/recovery contract      :rn035, 2026-04-07, 14d
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d

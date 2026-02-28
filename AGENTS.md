@@ -134,6 +134,9 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm validate:env` — Validate environment variables against Zod schema (ADR-012)
 - `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
 - `pnpm check:quarantine` — Verify flaky test quarantine policy (ADR-013, runs in CI)
+- `pnpm verify` — Run all quality gates with structured summary (RN-034)
+- `pnpm verify -- --json` — Machine-readable JSON gate summary (`ripple-gate-summary/v1`)
+- `pnpm verify -- --ci` — Write `gate-summary.json` for CI artifact upload
 - `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations
@@ -204,6 +207,7 @@ Test results are uploaded as structured artifacts on every CI run:
 | `test-results-unit` | JUnit XML from Vitest | 30 days |
 | `test-results-e2e` | Playwright HTML report | 30 days |
 | `playwright-traces` | Playwright traces (failure only) | 7 days |
+| `gate-summary` | JSON quality gate summary (`ripple-gate-summary/v1`) | 30 days |
 | `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
 
 ### Reusable Composite Actions

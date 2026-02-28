@@ -34,6 +34,7 @@
     "check:readiness": "node scripts/check-readiness.mjs",
     "check:quarantine": "node scripts/check-quarantine.mjs",
     "validate:env": "node scripts/validate-env.mjs",
+    "verify": "node scripts/verify.mjs",
     "prepare": "husky"
   },
   "pnpm": {
