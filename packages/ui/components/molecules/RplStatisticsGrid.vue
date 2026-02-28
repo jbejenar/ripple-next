@@ -104,7 +104,7 @@ withDefaults(defineProps<RplStatisticsGridProps>(), {
   padding: var(--rpl-sp-6, 1.5rem);
   border: 1px solid var(--rpl-clr-border-light, #e0e0e0);
   border-radius: var(--rpl-border-radius, 4px);
-  background: #fff;
+  background: var(--rpl-clr-background, #fff);
 }
 
 .rpl-statistics-grid__icon {

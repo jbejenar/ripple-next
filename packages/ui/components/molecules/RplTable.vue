@@ -72,6 +72,7 @@ function cellValue(row: Record<string, unknown>, key: string): string {
               `rpl-table__header--${col.align || 'left'}`,
               { 'rpl-table__header--sortable': col.sortable }
             ]"
+            :tabindex="col.sortable ? 0 : undefined"
             :aria-sort="
               sortBy === col.key
                 ? sortDirection === 'asc'

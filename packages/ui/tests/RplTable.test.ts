@@ -166,4 +166,17 @@ describe('RplTable', () => {
     })
     expect(wrapper.find('.rpl-table-wrapper').exists()).toBe(true)
   })
+
+  it('sets tabindex="0" on sortable headers for keyboard access', () => {
+    const sortableColumns = [
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'role', label: 'Role' }
+    ]
+    const wrapper = mount(RplTable, {
+      props: { columns: sortableColumns, rows }
+    })
+    const headers = wrapper.findAll('.rpl-table__header')
+    expect(headers[0].attributes('tabindex')).toBe('0')
+    expect(headers[1].attributes('tabindex')).toBeUndefined()
+  })
 })
