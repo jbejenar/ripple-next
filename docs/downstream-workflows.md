@@ -23,7 +23,7 @@ Lower-level building blocks for custom workflow composition:
 
 | Action | Purpose | Key Features |
 |--------|---------|--------------|
-| `setup` | Node.js + pnpm installation | Frozen lockfile, caching, optional registry URL |
+| `setup` | Node.js + pnpm installation | Frozen lockfile, pnpm + Turbo caching, optional registry URL |
 | `quality` | Lint, typecheck, policy gates | Readiness drift guard, quarantine check |
 | `test` | Test execution + artifact upload | JUnit XML, coverage reports, 30-day retention |
 
@@ -137,7 +137,7 @@ Installs Node.js, pnpm, and project dependencies with frozen lockfile.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: your-org/ripple-next/.github/actions/setup@main
+  - uses: your-org/ripple-next/.github/actions/setup@v1
     with:
       node-version: '22'
 ```
@@ -155,8 +155,8 @@ Runs lint, typecheck, readiness drift guard, and quarantine policy check.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: your-org/ripple-next/.github/actions/setup@main
-  - uses: your-org/ripple-next/.github/actions/quality@main
+  - uses: your-org/ripple-next/.github/actions/setup@v1
+  - uses: your-org/ripple-next/.github/actions/quality@v1
 ```
 
 ### `test` — Test Execution + Artifacts
@@ -175,8 +175,8 @@ Runs Vitest tests with JUnit reporter and uploads structured artifacts.
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: your-org/ripple-next/.github/actions/setup@main
-  - uses: your-org/ripple-next/.github/actions/test@main
+  - uses: your-org/ripple-next/.github/actions/setup@v1
+  - uses: your-org/ripple-next/.github/actions/test@v1
     with:
       coverage: 'true'
     env:
@@ -233,9 +233,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/ripple-next/.github/actions/setup@main
-      - uses: your-org/ripple-next/.github/actions/quality@main
-      - uses: your-org/ripple-next/.github/actions/test@main
+      - uses: your-org/ripple-next/.github/actions/setup@v1
+      - uses: your-org/ripple-next/.github/actions/quality@v1
+      - uses: your-org/ripple-next/.github/actions/test@v1
 ```
 
 ### Tiered CI Workflow
@@ -257,8 +257,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/ripple-next/.github/actions/setup@main
-      - uses: your-org/ripple-next/.github/actions/quality@main
+      - uses: your-org/ripple-next/.github/actions/setup@v1
+      - uses: your-org/ripple-next/.github/actions/quality@v1
 
   # Tier 1: Unit tests on every PR
   test:
@@ -266,8 +266,8 @@ jobs:
     needs: quality
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/ripple-next/.github/actions/setup@main
-      - uses: your-org/ripple-next/.github/actions/test@main
+      - uses: your-org/ripple-next/.github/actions/setup@v1
+      - uses: your-org/ripple-next/.github/actions/test@v1
 
   # Tier 2: E2E tests on merge to main only
   e2e:
@@ -276,7 +276,7 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/ripple-next/.github/actions/setup@main
+      - uses: your-org/ripple-next/.github/actions/setup@v1
       - run: pnpm test:e2e
 ```
 
@@ -299,11 +299,11 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - uses: your-org/ripple-next/.github/actions/setup@main
+      - uses: your-org/ripple-next/.github/actions/setup@v1
         with:
           registry-url: 'https://npm.pkg.github.com'
-      - uses: your-org/ripple-next/.github/actions/quality@main
-      - uses: your-org/ripple-next/.github/actions/test@main
+      - uses: your-org/ripple-next/.github/actions/quality@v1
+      - uses: your-org/ripple-next/.github/actions/test@v1
       - run: pnpm publish --access restricted
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -357,6 +357,56 @@ to prevent CI breakage from upstream changes.
 1. **Dependabot / Renovate**: Configure to track the composite action references
 2. **Manual updates**: Periodically check for new releases and update your SHA pins
 3. **Fleet sync** (RN-024): Automated fleet governance detects drift and opens sync PRs. See [ADR-019](./adr/019-fleet-governance.md) and the [fleet-drift workflow](../.github/workflows/fleet-drift.yml). Run `pnpm check:fleet-drift -- --target=/path/to/repo` to check a downstream repo manually
+
+## Turbo Cache
+
+Turbo caches task outputs locally in `.turbo/` to avoid re-executing unchanged
+work (builds, lints, typechecks). This is persisted between CI runs using
+`actions/cache@v4`.
+
+### How it works
+
+The cache key is derived from **lockfile + turbo config + Node version**:
+
+```
+turbo-{os}-{hash(.nvmrc)}-{hash(pnpm-lock.yaml, turbo.json)}
+```
+
+Restore keys fall back progressively: same OS + Node version first, then same OS
+only. Turbo's own content-addressable hashing handles granular invalidation —
+if source files, dependencies, or env vars (e.g. `NITRO_PRESET`) change, Turbo
+produces a new hash and skips the stale entry automatically.
+
+### Local development
+
+Turbo caches locally by default — no configuration needed. The `.turbo/`
+directory is gitignored. Run `pnpm clean` to clear both Turbo cache and
+`node_modules`.
+
+### Optional: Turbo Remote Cache
+
+For teams that want cross-machine cache sharing (e.g. between CI and local dev),
+Turbo supports [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+via Vercel or self-hosted backends. This is **not required** — the local
+`actions/cache` approach covers CI-to-CI sharing. To enable remote caching:
+
+1. Run `npx turbo login` and `npx turbo link`
+2. Or set `TURBO_TOKEN` and `TURBO_TEAM` environment variables in CI
+3. Add `remoteCache` configuration to `turbo.json` if using a self-hosted backend
+
+### Cache correctness
+
+Turbo invalidates cached outputs when any of these change:
+
+- Source files in the task's input glob
+- Outputs of dependency tasks (`dependsOn`)
+- Environment variables listed in the task's `env` array (e.g. `NITRO_PRESET` for `build`)
+- The `turbo.json` configuration itself
+
+The CI cache key additionally invalidates on lockfile or Node version changes,
+ensuring no stale outputs survive runtime or dependency upgrades.
+
+---
 
 ## Artifacts Produced
 

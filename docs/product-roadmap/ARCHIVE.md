@@ -735,6 +735,51 @@ pass/fail rates, common failure patterns, time-to-green.
 
 ---
 
+## Now (v6.1.0) — Completed
+
+---
+
+### RN-047: Persist Turbo Cache in CI
+
+**Impact:** High | **Effort:** Low | **Risk:** Low
+**Source:** GPT-5.2-Codex CI workflow review | **Date:** 2026-02-28
+**AI-first benefit:** Reduces agent feedback-loop latency without relaxing quality gates.
+
+Added `actions/cache@v4` for `.turbo/` directory in all CI entrypoints: composite
+setup action, reusable quality/test workflows, and standalone E2E workflow. Cache
+key is `turbo-{os}-{hash(.nvmrc)}-{hash(pnpm-lock.yaml, turbo.json)}` with
+progressive restore-key fallbacks. Turbo's internal content-addressable hashing
+handles env-var-level invalidation (e.g. `NITRO_PRESET`). Documented local cache
+behavior and optional remote cache pattern in `docs/downstream-workflows.md`.
+
+**Reference:** `.github/actions/setup/action.yml`, `.github/workflows/reusable-quality.yml`, `.github/workflows/reusable-test.yml`, `.github/workflows/e2e.yml`, `docs/downstream-workflows.md`
+
+- [x] Cache `.turbo/` keyed by lockfile + turbo config + Node version
+- [x] Validate cache correctness (Turbo content-addressable hashing + env var deps)
+- [x] Document default local cache behaviour and optional remote cache pattern
+
+---
+
+### RN-048: Downstream Workflow Pinning Policy
+
+**Impact:** Medium | **Effort:** Low | **Risk:** Medium
+**Source:** GPT-5.2-Codex downstream workflow review | **Date:** 2026-02-28
+**AI-first benefit:** Makes downstream automation deterministic by preventing unplanned behaviour drift.
+
+Replaced all `@main` action/workflow refs in `docs/downstream-workflows.md` usage
+examples with `@v1` (16 refs changed). Canary channel documentation preserved for
+repos that opt in. Added new `FLEET-SURF-009` governed surface for action version
+pinning with content-pattern scanning in the drift engine. Extended
+`check-fleet-drift.mjs` to support `contentPatterns` — scans workflow files for
+regex matches and reports advisory findings.
+
+**Reference:** `docs/downstream-workflows.md`, `docs/fleet-policy.json`, `scripts/check-fleet-drift.mjs`
+
+- [x] Replace `@main` examples with versioned refs (`@v1`)
+- [x] Add advisory fleet-drift check for action version refs (FLEET-SURF-009)
+
+---
+
 ## Summary
 
 | ID | Item | Phase | Status |
@@ -780,6 +825,8 @@ pass/fail rates, common failure patterns, time-to-green.
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | Tier 4 | **Done** |
 | [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | Tier 4 | **Done** |
 | [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 | **Done** |
+| [RN-047](#rn-047-persist-turbo-cache-in-ci) | Persist Turbo Cache in CI | Now | **Done** |
+| [RN-048](#rn-048-downstream-workflow-pinning-policy) | Downstream Workflow Pinning Policy | Now | **Done** |
 
 ---
 
@@ -824,6 +871,10 @@ gantt
     RN-026 Org-wide workflows              :done, rn026, 2026-02-28, 1d
     RN-027 Signed release bundles          :done, rn027, 2026-02-28, 1d
     RN-043 Agent session observability     :done, rn043, 2026-02-28, 1d
+
+    section Now (v6.1.0)
+    RN-047 Persist Turbo cache in CI       :done, rn047, 2026-02-28, 1d
+    RN-048 Downstream workflow pinning     :done, rn048, 2026-02-28, 1d
 ```
 
 ---
@@ -862,3 +913,5 @@ All standards achieved during the initial platform build-out (v1.0–v5.0):
 - [x] Accessibility audit pipeline (RN-042)
 - [x] Agent session observability (RN-043)
 - [x] Context file minimalism with line-count gate (RN-044)
+- [x] Turbo cache persistence in CI (RN-047)
+- [x] Downstream workflow pinning policy with fleet-drift advisory check (RN-048)

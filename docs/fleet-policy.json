@@ -88,6 +88,22 @@
       "checksumValidation": true,
       "rationale": "AI agents across the fleet must speak the same error language for cross-repo triage",
       "taxonomyCode": "RPL-FLEET-002"
+    },
+    {
+      "id": "FLEET-SURF-009",
+      "name": "action-version-pinning",
+      "description": "Workflow files must reference ripple-next actions/workflows with pinned version refs (@v1, @v1.x.x, or SHA), not floating @main",
+      "strategy": "advisory",
+      "severity": "recommended",
+      "paths": [".github/workflows/"],
+      "contentPatterns": [
+        {
+          "pattern": "ripple-next/\\.github/(?:actions|workflows)/[^@]+@main",
+          "message": "Unpinned @main ref found — use @v1 or a SHA for deterministic CI"
+        }
+      ],
+      "rationale": "Unpinned @main refs cause non-deterministic fleet behaviour and surprise breakage (RN-048)",
+      "taxonomyCode": "RPL-FLEET-003"
     }
   ],
   "localOverrides": [

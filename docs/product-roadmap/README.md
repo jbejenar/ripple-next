@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v6.0.0 | 2026-02-28
+> v6.1.0 | 2026-02-28
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 43 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 45 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -20,9 +20,7 @@ gantt
     axisFormat %b %Y
 
     section Now (0–6 weeks)
-    RN-047 Persist Turbo cache in CI       :rn047, 2026-03-01, 14d
-    RN-048 Downstream workflow pinning      :rn048, 2026-03-01, 7d
-    RN-046 tRPC router integration harness  :rn046, 2026-03-08, 28d
+    RN-046 tRPC router integration harness  :rn046, 2026-03-01, 28d
 
     section Next (6–12 weeks)
     RN-045 OIDC auth integration tests      :rn045, 2026-04-13, 21d
@@ -71,43 +69,7 @@ across the fleet.
 
 ## Now (0–6 weeks)
 
-> Quick wins and items that close the remaining platform gap. Ordered by effort
-> (lowest first). Agents should start here.
-
-### RN-047: Persist Turbo Cache in CI
-
-**Impact:** High | **Effort:** Low | **Risk:** Low
-**Source:** GPT-5.2-Codex CI workflow review | **Date:** 2026-02-28
-**AI-first benefit:** Reduces agent feedback-loop latency without relaxing quality gates.
-
-CI caches pnpm dependencies but not Turbo build cache between runs, despite
-defined task outputs in `turbo.json`. Avoidable repeated work in quality/test jobs.
-
-- [ ] Cache `.turbo/` keyed by lockfile + turbo config + Node version + `NITRO_PRESET`
-- [ ] Validate cache correctness (no stale outputs on config/runtime changes)
-- [ ] Document default local cache behaviour and optional remote cache pattern
-
-**Verification:** CI build times measurably reduced; `pnpm verify` passes.
-
----
-
-### RN-048: Downstream Workflow Pinning Policy
-
-**Impact:** Medium | **Effort:** Low | **Risk:** Medium
-**Source:** GPT-5.2-Codex downstream workflow review | **Date:** 2026-02-28
-**AI-first benefit:** Makes downstream automation deterministic by preventing unplanned behaviour drift.
-
-Downstream workflow docs include `@main` refs for composite actions, creating
-non-deterministic fleet behaviour and surprise breakage risk.
-
-**Affected items:** [RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation), [RN-026](./ARCHIVE.md#rn-026-org-wide-reusable-workflow-distribution)
-
-- [ ] Replace `@main` examples in `docs/downstream-workflows.md` with versioned refs (`@v1`/SHA)
-- [ ] Add advisory fleet-drift check for action version refs in governed repos
-
-**Verification:** No `@main` action refs in downstream workflow examples; `pnpm verify` passes.
-
----
+> Items that close the remaining platform gap. Agents should start here.
 
 ### RN-046: tRPC Router Integration Harness (Testcontainers)
 
@@ -235,7 +197,7 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | RN-017 blocked on content team indefinitely | Docker Tide fixture as fallback by Q2 2026 |
 | API layer "partial" status | RN-046 in Now addresses this |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
-| `@main` refs in downstream workflow examples | RN-048 in Now addresses this |
+| ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
 | Licensing drift (RN-049) | Keep SPDX-standard; reject custom non-commercial wording |
 
 ---
@@ -298,7 +260,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-43 items completed (RN-001 through RN-044, excluding RN-017/025/028).
+45 items completed (RN-001 through RN-048, excluding RN-017/025/028).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
