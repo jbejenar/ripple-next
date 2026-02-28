@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 37 classified error codes across 9 categories. See ADR-018 and ADR-019.",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 39 classified error codes across 9 categories. See ADR-018 and ADR-019.",
   "version": "1.2.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {

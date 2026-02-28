@@ -139,7 +139,7 @@ Future low-priority items:
 
 ### Neutral
 
-- New error taxonomy category (FLEET) adds 6 codes, bringing the total to 37.
+- New error taxonomy category (FLEET) adds 6 codes, bringing the total to 39.
 - RN-024 is marked done when all four deliverables are verified.
 
 ## Related

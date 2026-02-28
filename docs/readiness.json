@@ -113,7 +113,7 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 37 classified failure modes across 9 categories including fleet governance codes (RN-040), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 39 classified failure modes across 9 categories including fleet governance codes (RN-040), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
       "packages": [],
       "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json"],
       "blockers": [],
