@@ -10,6 +10,7 @@
  *   pnpm verify -- --json         # JSON summary to stdout
  *   pnpm verify -- --ci           # write gate-summary.json for artifact upload
  *   pnpm verify -- --output=path  # write JSON to a specific file
+ *   pnpm verify -- --fleet        # include fleet drift gate (RN-024)
  *
  * Exit codes:
  *   0 — all gates passed
@@ -38,7 +39,7 @@
  * Zero external dependencies — uses only Node.js built-ins.
  */
 import { execSync } from 'node:child_process'
-import { writeFileSync, mkdirSync } from 'node:fs'
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
@@ -47,6 +48,7 @@ const ROOT = resolve(import.meta.dirname, '..')
 const args = process.argv.slice(2)
 const jsonMode = args.includes('--json')
 const ciMode = args.includes('--ci')
+const fleetMode = args.includes('--fleet')
 const outputArg = args.find((a) => a.startsWith('--output='))
 const outputFile = outputArg ? outputArg.split('=')[1] : null
 
@@ -60,6 +62,11 @@ const GATES = [
   { name: 'check:quarantine', command: 'pnpm check:quarantine', category: 'policy' },
   { name: 'check:iac', command: 'pnpm check:iac', category: 'policy' },
 ]
+
+// Add fleet drift gate if --fleet flag is passed and fleet-policy.json exists
+if (fleetMode && existsSync(resolve(ROOT, 'docs/fleet-policy.json'))) {
+  GATES.push({ name: 'check:fleet-drift', command: 'pnpm check:fleet-drift', category: 'fleet' })
+}
 
 // ── Gate runner ──────────────────────────────────────────────────────
 function runGate(gate) {

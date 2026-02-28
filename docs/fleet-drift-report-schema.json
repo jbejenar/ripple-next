@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fleet Drift Report Schema",
+  "description": "JSON schema for the ripple-fleet-drift/v1 output produced by scripts/check-fleet-drift.mjs. See ADR-019 and RN-024.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["schema", "timestamp", "sourceVersion", "targetPath", "complianceScore", "findings", "summary"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "ripple-fleet-drift/v1",
+      "description": "Schema identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the scan"
+    },
+    "sourceVersion": {
+      "type": "string",
+      "description": "Git commit SHA of the golden-path source"
+    },
+    "targetPath": {
+      "type": "string",
+      "description": "Path to the target repository that was scanned"
+    },
+    "complianceScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage of governed surfaces that are compliant"
+    },
+    "findings": {
+      "type": "array",
+      "description": "Per-surface drift findings",
+      "items": {
+        "type": "object",
+        "required": ["surfaceId", "name", "status", "severity", "taxonomyCode"],
+        "properties": {
+          "surfaceId": {
+            "type": "string",
+            "pattern": "^FLEET-SURF-\\d{3}$",
+            "description": "Governed surface identifier from fleet-policy.json"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable surface name"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["compliant", "drifted", "missing", "exception"],
+            "description": "Drift status for this surface"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["security-critical", "standards-required", "recommended"],
+            "description": "Severity classification from fleet policy"
+          },
+          "taxonomyCode": {
+            "type": "string",
+            "pattern": "^RPL-FLEET-\\d{3}$",
+            "description": "Error taxonomy code for auto-triage"
+          },
+          "strategy": {
+            "type": "string",
+            "enum": ["sync", "merge", "advisory"],
+            "description": "Sync strategy from fleet policy"
+          },
+          "details": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Detailed messages about the finding"
+          },
+          "remediation": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Steps to resolve the drift"
+          }
+        }
+      }
+    },
+    "exceptions": {
+      "type": "array",
+      "description": "Fleet policy exceptions found in target repo",
+      "items": {
+        "type": "object",
+        "properties": {
+          "surfaceId": { "type": "string" },
+          "justification": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "integer" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "compliant", "drifted", "missing", "exceptions"],
+      "properties": {
+        "total": { "type": "integer", "description": "Total governed surfaces checked" },
+        "compliant": { "type": "integer", "description": "Surfaces that match golden path" },
+        "drifted": { "type": "integer", "description": "Surfaces with content drift" },
+        "missing": { "type": "integer", "description": "Surfaces missing in target" },
+        "exceptions": { "type": "integer", "description": "Surfaces with approved exceptions" }
+      }
+    }
+  }
+}

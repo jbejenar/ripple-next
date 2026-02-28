@@ -1,0 +1,79 @@
+{
+  "name": "fleet-sync",
+  "description": "Run fleet drift detection against a downstream repo and generate a sync PR to bring it back into compliance with the golden-path source.",
+  "args": {
+    "target": "Path to the target downstream repository (e.g. '/path/to/downstream-repo')"
+  },
+  "preconditions": [
+    {
+      "description": "Fleet policy manifest exists",
+      "command": "test -f docs/fleet-policy.json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Fleet drift detection script exists",
+      "command": "test -f scripts/check-fleet-drift.mjs",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Target repository is accessible",
+      "command": "test -d ${TARGET}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm check:fleet-drift -- --target=${TARGET} --json",
+      "description": "Run fleet drift detection against the target repo and review the drift report"
+    },
+    {
+      "order": 2,
+      "command": "pnpm fleet:sync -- --target=${TARGET} --dry-run",
+      "description": "Preview what sync actions would be taken (dry run)"
+    },
+    {
+      "order": 3,
+      "command": "pnpm fleet:sync -- --target=${TARGET}",
+      "description": "Apply sync actions to the target repo (copy governed files from golden path)"
+    },
+    {
+      "order": 4,
+      "command": "echo 'Review the changes in the target repo and create a PR'",
+      "description": "Navigate to the target repo, review changes, create a branch, and open a PR"
+    },
+    {
+      "order": 5,
+      "command": "pnpm check:fleet-drift -- --target=${TARGET} --json",
+      "description": "Re-run drift detection to verify compliance has improved"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Drift report shows improved compliance",
+      "command": "pnpm check:fleet-drift -- --target=${TARGET} --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).complianceScore))\"",
+      "expect": "score >= 80"
+    },
+    {
+      "description": "No security-critical drift remaining",
+      "command": "pnpm check:fleet-drift -- --target=${TARGET} --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.findings.filter(f=>(f.status==='drifted'||f.status==='missing')&&f.severity==='security-critical').length)})\"",
+      "expect": "0"
+    }
+  ],
+  "coverageRequirements": {},
+  "related": [
+    "docs/fleet-policy.json",
+    "docs/adr/019-fleet-governance.md",
+    "scripts/check-fleet-drift.mjs",
+    "scripts/fleet-sync.mjs",
+    "scripts/fleet-compliance.mjs",
+    ".github/workflows/fleet-drift.yml",
+    ".github/workflows/fleet-sync.yml",
+    "docs/downstream-workflows.md"
+  ]
+}

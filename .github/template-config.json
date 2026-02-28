@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Next Template Configuration",
+  "description": "Configuration for GitHub template repository distribution. Defines which files from the golden-path source are included in the template and post-clone setup instructions. See RN-024.",
+  "version": "1.0.0",
+  "templateIncludes": {
+    "description": "Files included when a new repo is created from this template",
+    "governed": [
+      ".github/actions/setup/action.yml",
+      ".github/actions/quality/action.yml",
+      ".github/actions/test/action.yml",
+      ".github/actions/fleet-drift/action.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/security.yml",
+      ".github/CODEOWNERS",
+      ".nvmrc",
+      "eslint.config.js",
+      "scripts/check-readiness.mjs",
+      "scripts/check-quarantine.mjs",
+      "scripts/check-fleet-drift.mjs",
+      "scripts/verify.mjs",
+      "scripts/iac-policy-scan.mjs",
+      "docs/fleet-policy.json",
+      "docs/iac-policies.json",
+      "docs/error-taxonomy.json"
+    ],
+    "scaffold": [
+      "package.json",
+      "tsconfig.json",
+      ".env.example",
+      "vitest.workspace.ts",
+      ".gitignore",
+      ".prettierrc",
+      "turbo.json"
+    ]
+  },
+  "templateExcludes": {
+    "description": "Files excluded from the template (domain-specific)",
+    "paths": [
+      "apps/web/",
+      "services/",
+      "packages/*/providers/*.ts",
+      "packages/db/repositories/",
+      "packages/db/schema/",
+      "packages/cms/providers/drupal.ts",
+      "packages/cms/providers/tide-paragraph-mapper.ts",
+      "sst.config.ts",
+      "docs/product-roadmap/",
+      "docs/readiness.json",
+      ".changeset/"
+    ]
+  },
+  "postCloneInstructions": [
+    "Run: pnpm bootstrap",
+    "Copy .env.example to .env and fill in required values",
+    "Update package.json name and description",
+    "Update .github/CODEOWNERS with your team",
+    "Run: pnpm doctor to validate environment",
+    "Run: pnpm verify to confirm all quality gates pass"
+  ]
+}

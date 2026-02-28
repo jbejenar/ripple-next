@@ -212,7 +212,7 @@ to prevent CI breakage from upstream changes.
 
 1. **Dependabot / Renovate**: Configure to track the composite action references
 2. **Manual updates**: Periodically check for new releases and update your SHA pins
-3. **Fleet sync**: When [RN-024](./product-roadmap/README.md#rn-024-fleet-update-mechanism--template-drift-automation) ships, automated sync PRs will handle this
+3. **Fleet sync** (RN-024): Automated fleet governance detects drift and opens sync PRs. See [ADR-019](./adr/019-fleet-governance.md) and the [fleet-drift workflow](../.github/workflows/fleet-drift.yml). Run `pnpm check:fleet-drift -- --target=/path/to/repo` to check a downstream repo manually
 
 ## Artifacts Produced
 

@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Fleet Governance Policy",
+  "description": "Machine-readable fleet governance contract defining governed surfaces, sync strategies, and exception workflow. See ADR-019 and RN-024.",
+  "version": "1.0.0",
+  "schema": "ripple-fleet-policy/v1",
+  "governedSurfaces": [
+    {
+      "id": "FLEET-SURF-001",
+      "name": "ci-workflows",
+      "description": "CI pipeline structure and quality gates",
+      "strategy": "sync",
+      "severity": "standards-required",
+      "paths": [".github/workflows/ci.yml", ".github/workflows/security.yml"],
+      "checksumValidation": true,
+      "taxonomyCode": "RPL-FLEET-002"
+    },
+    {
+      "id": "FLEET-SURF-002",
+      "name": "composite-actions",
+      "description": "Reusable CI composite actions (setup, quality, test)",
+      "strategy": "sync",
+      "severity": "security-critical",
+      "paths": [".github/actions/setup/action.yml", ".github/actions/quality/action.yml", ".github/actions/test/action.yml"],
+      "checksumValidation": true,
+      "taxonomyCode": "RPL-FLEET-001"
+    },
+    {
+      "id": "FLEET-SURF-003",
+      "name": "toolchain-pinning",
+      "description": "Node.js and pnpm version pinning files",
+      "strategy": "sync",
+      "severity": "security-critical",
+      "paths": [".nvmrc"],
+      "fields": [
+        { "file": "package.json", "key": "packageManager" },
+        { "file": "package.json", "key": "engines" }
+      ],
+      "taxonomyCode": "RPL-FLEET-001"
+    },
+    {
+      "id": "FLEET-SURF-004",
+      "name": "quality-scripts",
+      "description": "Quality gate check scripts for readiness, quarantine, and unified verify",
+      "strategy": "sync",
+      "severity": "standards-required",
+      "paths": ["scripts/check-readiness.mjs", "scripts/check-quarantine.mjs", "scripts/verify.mjs"],
+      "checksumValidation": true,
+      "taxonomyCode": "RPL-FLEET-002"
+    },
+    {
+      "id": "FLEET-SURF-005",
+      "name": "eslint-config",
+      "description": "Shared ESLint configuration (no-console error, no-explicit-any error)",
+      "strategy": "merge",
+      "severity": "standards-required",
+      "paths": ["eslint.config.js"],
+      "taxonomyCode": "RPL-FLEET-002"
+    },
+    {
+      "id": "FLEET-SURF-006",
+      "name": "security-config",
+      "description": "Security workflow and code ownership configuration",
+      "strategy": "sync",
+      "severity": "security-critical",
+      "paths": [".github/workflows/security.yml", ".github/CODEOWNERS"],
+      "checksumValidation": true,
+      "taxonomyCode": "RPL-FLEET-001"
+    },
+    {
+      "id": "FLEET-SURF-007",
+      "name": "iac-policies",
+      "description": "Infrastructure-as-code policy definitions and scanner for government security posture",
+      "strategy": "sync",
+      "severity": "security-critical",
+      "paths": ["docs/iac-policies.json", "scripts/iac-policy-scan.mjs"],
+      "checksumValidation": true,
+      "rationale": "Government platform security posture must be consistent across fleet",
+      "taxonomyCode": "RPL-FLEET-001"
+    },
+    {
+      "id": "FLEET-SURF-008",
+      "name": "error-taxonomy",
+      "description": "Machine-parseable error codes for AI agent auto-triage across fleet",
+      "strategy": "sync",
+      "severity": "standards-required",
+      "paths": ["docs/error-taxonomy.json"],
+      "checksumValidation": true,
+      "rationale": "AI agents across the fleet must speak the same error language for cross-repo triage",
+      "taxonomyCode": "RPL-FLEET-002"
+    }
+  ],
+  "localOverrides": [
+    "sst.config.ts",
+    "apps/",
+    "services/",
+    "packages/*/providers/*.ts",
+    ".env",
+    ".env.example",
+    "docs/readiness.json",
+    "docs/product-roadmap/",
+    "pnpm-lock.yaml"
+  ],
+  "syncPolicy": {
+    "security-critical": {
+      "action": "pr-immediate",
+      "autoMerge": false,
+      "label": "fleet:security",
+      "sla": "Fix within 7 days"
+    },
+    "standards-required": {
+      "action": "pr-weekly",
+      "autoMerge": false,
+      "label": "fleet:standards",
+      "sla": "Fix within 30 days"
+    },
+    "recommended": {
+      "action": "report-only",
+      "label": "fleet:advisory",
+      "sla": "No SLA"
+    }
+  },
+  "exceptionWorkflow": {
+    "description": "Fleet policy exceptions require explicit inline comments in the drifted file",
+    "commentFormat": "// fleet-policy-exception: <SURFACE-ID> — <justification>",
+    "requirements": [
+      "Exception comment must be in a file within the governed surface scope",
+      "Justification must explain why the exception is safe",
+      "Exceptions are tracked in fleet drift reports",
+      "Exceptions expire after 90 days and must be renewed"
+    ],
+    "expiryDays": 90
+  },
+  "complianceTargets": {
+    "minimumScore": 80,
+    "securityCriticalDrifts": 0,
+    "standardsDriftsMax": 2
+  }
+}
