@@ -11,7 +11,7 @@
 > RN-043), created [ADR-018](../adr/018-ai-first-workflow-strategy.md), refreshed
 > scorecard and Gantt, optimised documentation cross-references.
 
-Completed items (RN-001 through RN-031) live in [ARCHIVE.md](./ARCHIVE.md).
+Completed items (RN-001 through RN-043, excluding RN-017/025/028) live in [ARCHIVE.md](./ARCHIVE.md).
 
 ---
 
@@ -123,13 +123,13 @@ graph LR
 
 ---
 
-## Completed Work (RN-001 – RN-031)
+## Completed Work (40 Items)
 
-22 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
+40 items have been completed across all tiers. See **[ARCHIVE.md](./ARCHIVE.md)**
 for full details on each.
 
-| ID | Item | Phase |
-|----|------|-------|
+| ID | Item | Phase/Tier |
+|----|------|------------|
 | [RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml) | Security Pipeline | 1 |
 | [RN-002](./ARCHIVE.md#rn-002-doctor-machine-mode---json---offline) | Doctor Machine Mode | 1 |
 | [RN-003](./ARCHIVE.md#rn-003-environment-contract-envexample--pnpm-bootstrap) | Environment Contract | 1 |
@@ -149,9 +149,27 @@ for full details on each.
 | [RN-018](./ARCHIVE.md#rn-018-search-integration-provider) | Search Integration Provider | 2 |
 | [RN-019](./ARCHIVE.md#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 |
 | [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components) | Storybook Stories for Tide Components | 2 |
+| [RN-021](./ARCHIVE.md#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | Tier 3 |
 | [RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation) | Downstream Workflow Documentation | 2 |
+| [RN-023](./ARCHIVE.md#rn-023-landing-page--content-templates) | Landing Page Templates | Tier 3 |
+| [RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | Tier 1 |
+| [RN-026](./ARCHIVE.md#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | Tier 4 |
+| [RN-027](./ARCHIVE.md#rn-027-signed-release-bundles--verification) | Signed Release Bundles | Tier 4 |
+| [RN-029](./ARCHIVE.md#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | Tier 4 |
 | [RN-030](./ARCHIVE.md#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 |
 | [RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 |
+| [RN-032](./ARCHIVE.md#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | Tier 1 |
+| [RN-033](./ARCHIVE.md#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | Tier 1 |
+| [RN-034](./ARCHIVE.md#rn-034-machine-readable-quality-gate-summaries) | Quality Gate Summaries | Tier 2 |
+| [RN-035](./ARCHIVE.md#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | Tier 2 |
+| [RN-036](./ARCHIVE.md#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning | Tier 2 |
+| [RN-037](./ARCHIVE.md#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components | Tier 2 |
+| [RN-038](./ARCHIVE.md#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Sync Workflow | Tier 2 |
+| [RN-039](./ARCHIVE.md#rn-039-agent-runbook-automation) | Agent Runbook Automation | Tier 2 |
+| [RN-040](./ARCHIVE.md#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | Tier 2 |
+| [RN-041](./ARCHIVE.md#rn-041-code-generation-templates) | Code Generation Templates | Tier 2 |
+| [RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | Tier 3 |
+| [RN-043](./ARCHIVE.md#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 |
 
 ---
 
@@ -376,10 +394,10 @@ covering deployment, rollback, fleet sync, and all scaffolding operations.
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
 **Status:** Done (2026-02-28)
 
-Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 39 classified
-failure modes across 9 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY,
-IAC, FLEET). Each error includes code, severity, remediation steps, and
-automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
+Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 44 classified
+failure modes across 11 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY,
+IAC, FLEET, A11Y, SESSION). Each error includes code, severity, remediation steps,
+and automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 
 - [x] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
 - [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 16 error codes
@@ -387,10 +405,12 @@ automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 - [x] Categorise deployment failures (health check, resource limit, permission) — 3 error codes
 - [x] Categorise IaC policy violations (RPL-IAC-001 through RPL-IAC-007) — 7 error codes
 - [x] Categorise fleet governance failures (RPL-FLEET-001 through RPL-FLEET-006) — 6 error codes
+- [x] Categorise accessibility violations (RPL-A11Y-001 through RPL-A11Y-002) — 2 error codes (added in RN-042)
+- [x] Categorise session failures (RPL-SESSION-001 through RPL-SESSION-003) — 3 error codes (added in RN-043)
 - [x] Wire `pnpm doctor --json` output to use taxonomy codes (`taxonomyCode` field)
 - [x] Remediation steps documented per error (actionable commands in each entry)
 
-**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 39 entries across 9 categories; `pnpm verify` passes all gates.
+**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 44 entries across 11 categories; `pnpm verify` passes all gates.
 
 ---
 

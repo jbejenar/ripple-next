@@ -16,9 +16,10 @@
  * Zero-dependency (Node 22+, uses Playwright's chromium).
  */
 
-import { execSync } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { execFileSync } from 'node:child_process'
+import { writeFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { resolve, join } from 'node:path'
+import { tmpdir } from 'node:os'
 
 const args = process.argv.slice(2)
 const flagValue = (name) => {
@@ -41,18 +42,22 @@ async function runAudit() {
   const results = []
   let hasBlockingViolations = false
 
+  const tempDir = mkdtempSync(join(tmpdir(), 'a11y-audit-'))
+
   for (const route of routes) {
     const url = `${baseUrl}${route}`
+    // Write script to temp file to avoid shell injection via execSync string
     const playwrightScript = `
       const { chromium } = require('@playwright/test');
       const AxeBuilder = require('@axe-core/playwright').default;
+      const targetUrl = process.env.A11Y_TARGET_URL;
       (async () => {
         const browser = await chromium.launch({ headless: true });
         const page = await browser.newPage();
         try {
-          await page.goto('${url}', { waitUntil: 'networkidle', timeout: 15000 });
+          await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 15000 });
         } catch {
-          await page.goto('${url}', { waitUntil: 'load', timeout: 15000 });
+          await page.goto(targetUrl, { waitUntil: 'load', timeout: 15000 });
         }
         const axeResults = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -61,13 +66,16 @@ async function runAudit() {
         process.stdout.write(JSON.stringify(axeResults));
       })();
     `
+    const scriptPath = join(tempDir, `audit-${route.replace(/\//g, '_')}.cjs`)
+    writeFileSync(scriptPath, playwrightScript)
 
     let axeResults
     try {
-      const output = execSync(`node -e "${playwrightScript.replace(/"/g, '\\"').replace(/\n/g, ' ')}"`, {
+      const output = execFileSync('node', [scriptPath], {
         encoding: 'utf-8',
         timeout: 30000,
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
+        env: { ...process.env, A11Y_TARGET_URL: url },
       })
       axeResults = JSON.parse(output)
     } catch {
@@ -116,6 +124,9 @@ async function runAudit() {
       inapplicable: axeResults.inapplicable.length
     })
   }
+
+  // Clean up temp directory
+  try { rmSync(tempDir, { recursive: true, force: true }) } catch { /* ignore cleanup errors */ }
 
   const report = {
     schema: 'ripple-a11y-report/v1',

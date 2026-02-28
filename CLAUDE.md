@@ -36,7 +36,7 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
 - `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
-- `docs/error-taxonomy.json` — 39 classified error codes across 9 categories (RPL-*-NNN format)
+- `docs/error-taxonomy.json` — 44 classified error codes across 11 categories (RPL-*-NNN format)
 - `docs/fleet-policy.json` — fleet governance contract: governed surfaces, sync strategies (RN-024)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements

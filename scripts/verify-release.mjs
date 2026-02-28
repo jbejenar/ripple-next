@@ -25,7 +25,7 @@
  * Zero external dependencies — uses only Node.js built-ins.
  */
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 import { resolve, dirname, join, relative } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
