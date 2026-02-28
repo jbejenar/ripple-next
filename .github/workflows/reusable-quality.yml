@@ -1,0 +1,70 @@
+name: Reusable Quality Gates
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version override. Leave empty to read from .nvmrc.'
+        type: string
+        required: false
+        default: ''
+      run-iac-scan:
+        description: 'Run IaC policy scan (set true if sst.config.ts exists)'
+        type: boolean
+        required: false
+        default: false
+    outputs:
+      status:
+        description: 'Overall quality gate status (pass/fail)'
+        value: ${{ jobs.quality.outputs.status }}
+
+jobs:
+  quality:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.result.outputs.status }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js (from .nvmrc)
+        if: inputs.node-version == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Setup Node.js (explicit version)
+        if: inputs.node-version != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Readiness drift guard
+        run: pnpm check:readiness
+        continue-on-error: true
+
+      - name: Quarantine policy check
+        run: pnpm check:quarantine
+        continue-on-error: true
+
+      - name: IaC policy scan
+        if: inputs.run-iac-scan
+        run: pnpm check:iac
+
+      - name: Set output
+        id: result
+        if: always()
+        run: echo "status=${{ job.status == 'success' && 'pass' || 'fail' }}" >> "$GITHUB_OUTPUT"

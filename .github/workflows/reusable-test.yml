@@ -1,0 +1,120 @@
+name: Reusable Test Suite
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version override. Leave empty to read from .nvmrc.'
+        type: string
+        required: false
+        default: ''
+      postgres-version:
+        description: 'PostgreSQL version'
+        type: string
+        required: false
+        default: '17-alpine'
+      redis-version:
+        description: 'Redis version'
+        type: string
+        required: false
+        default: '7-alpine'
+      coverage:
+        description: 'Generate coverage reports'
+        type: boolean
+        required: false
+        default: true
+      run-migrations:
+        description: 'Run database migrations before tests'
+        type: boolean
+        required: false
+        default: true
+    outputs:
+      status:
+        description: 'Overall test status (pass/fail)'
+        value: ${{ jobs.test.outputs.status }}
+
+jobs:
+  test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.result.outputs.status }}
+    services:
+      postgres:
+        image: postgres:${{ inputs.postgres-version }}
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - '5432:5432'
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:${{ inputs.redis-version }}
+        ports:
+          - '6379:6379'
+    env:
+      DATABASE_URL: postgres://test:test@localhost:5432/test
+      NUXT_DATABASE_URL: postgres://test:test@localhost:5432/test
+      REDIS_URL: redis://localhost:6379
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js (from .nvmrc)
+        if: inputs.node-version == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Setup Node.js (explicit version)
+        if: inputs.node-version != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate env schema
+        run: pnpm validate:env
+
+      - name: Run migrations
+        if: inputs.run-migrations
+        run: pnpm db:migrate
+
+      - name: Run tests
+        run: |
+          if [ "${{ inputs.coverage }}" = "true" ]; then
+            pnpm test:ci --coverage --coverage.reporter=json-summary --coverage.reporter=text --coverage.reportsDirectory=test-results/coverage
+          else
+            pnpm test:ci
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-unit
+          path: |
+            test-results/
+            **/test-results/
+          retention-days: 30
+
+      - name: Upload coverage report
+        if: inputs.coverage && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            test-results/coverage/
+            **/coverage/
+          retention-days: 30
+
+      - name: Set output
+        id: result
+        if: always()
+        run: echo "status=${{ job.status == 'success' && 'pass' || 'fail' }}" >> "$GITHUB_OUTPUT"

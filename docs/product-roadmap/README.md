@@ -26,8 +26,10 @@ publishing with SBOM and provenance, and reusable composite actions for fleet
 consistency.
 
 **All critical blockers resolved.** Fleet governance ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) ✅),
-agent workflow tooling ([RN-039](#rn-039-agent-runbook-automation)–[RN-041](#rn-041-code-generation-templates) ✅),
-and quality gate summaries ([RN-034](#rn-034-machine-readable-quality-gate-summaries) ✅) are all complete.
+agent workflow tooling ([RN-039](#rn-039-agent-runbook-automation)–[RN-043](#rn-043-agent-session-observability) ✅),
+quality gate summaries ([RN-034](#rn-034-machine-readable-quality-gate-summaries) ✅),
+and supply chain verification ([RN-027](#rn-027-signed-release-bundles--verification) ✅) are all complete.
+Only 2 of 21 active items remain (RN-025, RN-028); 1 item is externally blocked (RN-017).
 
 ### AI-First Strategy
 
@@ -37,7 +39,7 @@ and workflow decision is evaluated through the lens of agent effectiveness:
 1. **Machine-parseable outputs** — All quality gates, diagnostics, and status
    reports emit structured JSON that agents parse without scraping.
 2. **Deterministic environments** — Pinned toolchains, frozen lockfiles,
-   devcontainer, and `pnpm bootstrap` give agents identical setups every run.
+   devcontainer (CI-validated, RN-029), and `pnpm bootstrap` give agents identical setups every run.
 3. **Fast feedback loops** — Memory/mock providers keep test suites under 100ms;
    conformance suites validate provider contracts without cloud dependencies.
 4. **Codified runbooks** — Common operations (deploy, rollback, add component,
@@ -45,6 +47,8 @@ and workflow decision is evaluated through the lens of agent effectiveness:
    human interpretation.
 5. **Scaffolding generators** — Code generation templates for components,
    providers, and API routes eliminate boilerplate and enforce conventions.
+6. **Session observability** — Agent sessions tracked with structured metrics,
+   friction analysis, and automated improvement recommendations (RN-043).
 
 See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 
@@ -53,10 +57,11 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Exact toolchain pinning** — Node.js pinned in `.nvmrc`, pnpm pinned in `packageManager`; CI reads both; `pnpm doctor` enforces exact match (RN-032).
 - CI is tiered with change detection and high-risk routing.
 - **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
-- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow.
-- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos, with [downstream consumption guide](../downstream-workflows.md).
+- **SBOM + provenance + checksums (mandatory)** — CycloneDX SBOM, per-package SHA-256 checksums (RN-027), and sigstore-backed build provenance attestations in release workflow.
+- **Reusable workflows + composite actions** — `reusable-quality.yml`, `reusable-test.yml`, `reusable-security.yml` (RN-026) plus `setup`, `quality`, `test` composite actions for downstream repos, with [downstream consumption guide](../downstream-workflows.md).
 - **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI. See ADR-012.
-- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured.
+- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured. Validated in CI (RN-029).
+- **Accessibility audit** — WCAG 2.1 AA compliance via axe-core in Playwright E2E and standalone audit (RN-042).
 - Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
@@ -500,17 +505,26 @@ blocks on critical/serious violations. Error taxonomy entries RPL-A11Y-001/002.
 > Strategic items for org-wide governance and supply chain hardening.
 > Schedule when Tier 1–3 are substantially complete.
 
-#### RN-026: Org-Wide Reusable Workflow Distribution
+#### RN-026: Org-Wide Reusable Workflow Distribution ✅
 
 **Priority:** Low | **Impact:** Very High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Status:** Done — implemented 2026-02-28.
 
 Centralise policy gates using `workflow_call` with versioned rollout channels
 for the entire organisation.
 
-- [ ] Publish reusable workflows to a central `.github` org repo
-- [ ] Implement versioned rollout channels (stable, canary)
-- [ ] Migrate downstream repos to org-wide workflows
+- [x] Publish reusable workflows to a central `.github` org repo — `reusable-quality.yml`, `reusable-test.yml`, `reusable-security.yml` with `workflow_call` triggers
+- [x] Implement versioned rollout channels (stable, canary) — stable (`@v1`, `@v1.x.x`), canary (`@main`), documented in downstream-workflows.md
+- [x] Migrate downstream repos to org-wide workflows — migration guide and examples in `docs/downstream-workflows.md`
+
+**Verification:**
+- 3 reusable workflows with configurable inputs and structured outputs
+- `reusable-quality.yml`: lint, typecheck, readiness, quarantine, optional IaC scan
+- `reusable-test.yml`: PostgreSQL + Redis service containers, coverage, JUnit artifacts
+- `reusable-security.yml`: CodeQL, dependency review, gitleaks secret scanning
+- Version pinning strategy: stable (tags), canary (main), SHA (deterministic)
+- `docs/downstream-workflows.md` updated with full reference and examples
 
 ---
 
@@ -626,7 +640,7 @@ continuously improve agent ergonomics.
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Done |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
 | [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Done |
-| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
+| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Done |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Done |
@@ -691,12 +705,12 @@ gantt
     RN-042 Accessibility audit pipeline    :done, rn042, 2026-02-28, 1d
 
     section Tier 4 — Backlog
-    RN-026 Org-wide workflows              :rn026, 2026-07-01, 30d
+    RN-026 Org-wide workflows              :done, rn026, 2026-02-28, 1d
     RN-025 Contract testing                :rn025, 2026-08-01, 30d
     RN-028 Conformance CLI                 :rn028, 2026-08-15, 30d
-    RN-027 Signed release bundles          :rn027, 2026-09-01, 14d
-    RN-029 Devcontainer CI validation      :rn029, 2026-09-15, 7d
-    RN-043 Agent session observability     :rn043, 2026-09-22, 21d
+    RN-027 Signed release bundles          :done, rn027, 2026-02-28, 1d
+    RN-029 Devcontainer CI validation      :done, rn029, 2026-02-28, 1d
+    RN-043 Agent session observability     :done, rn043, 2026-02-28, 1d
 ```
 
 ---

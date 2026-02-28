@@ -23,6 +23,7 @@ pnpm agent:metrics   # aggregate session metrics for friction analysis
 pnpm verify          # run ALL quality gates with summary (RN-034)
 pnpm verify -- --json # machine-readable JSON gate summary
 pnpm verify -- --fleet # include fleet drift in quality gates
+pnpm verify:release  # verify package checksums + provenance (RN-027)
 ```
 
 ## Project Overview

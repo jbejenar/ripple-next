@@ -11,7 +11,7 @@
       "description": "CI pipeline structure and quality gates",
       "strategy": "sync",
       "severity": "standards-required",
-      "paths": [".github/workflows/ci.yml", ".github/workflows/security.yml"],
+      "paths": [".github/workflows/ci.yml", ".github/workflows/security.yml", ".github/workflows/reusable-quality.yml", ".github/workflows/reusable-test.yml", ".github/workflows/reusable-security.yml"],
       "checksumValidation": true,
       "taxonomyCode": "RPL-FLEET-002"
     },
