@@ -31,7 +31,12 @@ CHECKS=()
 
 pass() {
   PASS=$((PASS + 1))
-  CHECKS+=("{\"name\":\"$1\",\"status\":\"pass\",\"category\":\"$2\"}")
+  local taxonomy="${3:-}"
+  if [ -n "$taxonomy" ]; then
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"pass\",\"category\":\"$2\",\"taxonomyCode\":\"$taxonomy\"}")
+  else
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"pass\",\"category\":\"$2\"}")
+  fi
   if [ "$JSON_MODE" = false ]; then
     echo "  ✓ $1"
   fi
@@ -39,7 +44,12 @@ pass() {
 
 fail() {
   FAIL=$((FAIL + 1))
-  CHECKS+=("{\"name\":\"$1\",\"status\":\"fail\",\"category\":\"$2\"}")
+  local taxonomy="${3:-}"
+  if [ -n "$taxonomy" ]; then
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"fail\",\"category\":\"$2\",\"taxonomyCode\":\"$taxonomy\"}")
+  else
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"fail\",\"category\":\"$2\"}")
+  fi
   if [ "$JSON_MODE" = false ]; then
     echo "  ✗ $1" >&2
   fi
@@ -47,7 +57,12 @@ fail() {
 
 warn() {
   WARNINGS+=("$1")
-  CHECKS+=("{\"name\":\"$1\",\"status\":\"warn\",\"category\":\"$2\"}")
+  local taxonomy="${3:-}"
+  if [ -n "$taxonomy" ]; then
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"warn\",\"category\":\"$2\",\"taxonomyCode\":\"$taxonomy\"}")
+  else
+    CHECKS+=("{\"name\":\"$1\",\"status\":\"warn\",\"category\":\"$2\"}")
+  fi
   if [ "$JSON_MODE" = false ]; then
     echo "  ! $1"
   fi
@@ -82,14 +97,14 @@ if command -v node &>/dev/null; then
   NODE_VER=$(node -v | sed 's/v//')
   NODE_MAJOR=$(echo "$NODE_VER" | cut -d. -f1)
   if [ "$NODE_MAJOR" -lt 22 ]; then
-    fail "Node.js $NODE_VER found — >=22 required" "runtime"
+    fail "Node.js $NODE_VER found — >=22 required" "runtime" "RPL-ENV-001"
   elif [ -n "$PINNED_NODE" ] && [ "$NODE_VER" != "$PINNED_NODE" ]; then
-    warn "Node.js $NODE_VER — differs from pinned $PINNED_NODE (.nvmrc). Run 'nvm use' or 'fnm use'" "runtime"
+    warn "Node.js $NODE_VER — differs from pinned $PINNED_NODE (.nvmrc). Run 'nvm use' or 'fnm use'" "runtime" "RPL-ENV-008"
   else
-    pass "Node.js $NODE_VER (pinned: $PINNED_NODE)" "runtime"
+    pass "Node.js $NODE_VER (pinned: $PINNED_NODE)" "runtime" "RPL-ENV-001"
   fi
 else
-  fail "Node.js not found" "runtime"
+  fail "Node.js not found" "runtime" "RPL-ENV-001"
 fi
 
 # ── 2. pnpm ─────────────────────────────────────────────────────────
@@ -97,14 +112,14 @@ if command -v pnpm &>/dev/null; then
   PNPM_VER=$(pnpm -v)
   PNPM_MAJOR=$(echo "$PNPM_VER" | cut -d. -f1)
   if [ "$PNPM_MAJOR" -lt 9 ]; then
-    fail "pnpm $PNPM_VER found — >=9 required" "runtime"
+    fail "pnpm $PNPM_VER found — >=9 required" "runtime" "RPL-ENV-002"
   elif [ -n "$PINNED_PNPM" ] && [ "$PNPM_VER" != "$PINNED_PNPM" ]; then
-    fail "pnpm $PNPM_VER — does not match pinned $PINNED_PNPM (packageManager field). Run 'corepack enable pnpm'" "runtime"
+    fail "pnpm $PNPM_VER — does not match pinned $PINNED_PNPM (packageManager field). Run 'corepack enable pnpm'" "runtime" "RPL-ENV-002"
   else
-    pass "pnpm $PNPM_VER (pinned: $PINNED_PNPM)" "runtime"
+    pass "pnpm $PNPM_VER (pinned: $PINNED_PNPM)" "runtime" "RPL-ENV-002"
   fi
 else
-  fail "pnpm not found" "runtime"
+  fail "pnpm not found" "runtime" "RPL-ENV-002"
 fi
 
 # ── 3. npm registry access ──────────────────────────────────────────
@@ -123,27 +138,27 @@ fi
 section "Optional services"
 if command -v docker &>/dev/null; then
   if docker info &>/dev/null 2>&1; then
-    pass "Docker running" "services"
+    pass "Docker running" "services" "RPL-ENV-007"
   else
-    warn "Docker installed but not running — needed for local dev & testcontainers" "services"
+    warn "Docker installed but not running — needed for local dev & testcontainers" "services" "RPL-ENV-007"
   fi
 else
-  warn "Docker not installed — needed for local dev & testcontainers" "services"
+  warn "Docker not installed — needed for local dev & testcontainers" "services" "RPL-ENV-007"
 fi
 
 # ── 5. Lockfile presence ────────────────────────────────────────────
 section "Repository"
 if [ -f "pnpm-lock.yaml" ]; then
-  pass "pnpm-lock.yaml present" "repository"
+  pass "pnpm-lock.yaml present" "repository" "RPL-ENV-005"
 else
-  fail "pnpm-lock.yaml missing — run 'pnpm install' first" "repository"
+  fail "pnpm-lock.yaml missing — run 'pnpm install' first" "repository" "RPL-ENV-005"
 fi
 
 # ── 6. node_modules present ─────────────────────────────────────────
 if [ -d "node_modules" ]; then
-  pass "node_modules installed" "repository"
+  pass "node_modules installed" "repository" "RPL-ENV-006"
 else
-  warn "node_modules missing — run 'pnpm install'" "repository"
+  warn "node_modules missing — run 'pnpm install'" "repository" "RPL-ENV-006"
 fi
 
 # ── 7. Environment contract ──────────────────────────────────────────
@@ -166,12 +181,12 @@ if command -v node &>/dev/null && [ -f "scripts/validate-env.mjs" ]; then
     ENV_FAILED=$(echo "$ENV_RESULT" | node -e "process.stdin.on('data',d=>{const r=JSON.parse(d);process.stdout.write(String(r.failed))})" 2>/dev/null || echo "0")
     ENV_WARNINGS=$(echo "$ENV_RESULT" | node -e "process.stdin.on('data',d=>{const r=JSON.parse(d);process.stdout.write(String(r.warnings))})" 2>/dev/null || echo "0")
     if [ "$ENV_VALID" = "true" ]; then
-      pass "Env schema validation passed (Zod)" "environment"
+      pass "Env schema validation passed (Zod)" "environment" "RPL-ENV-003"
     else
-      warn "Env schema: $ENV_FAILED required var(s) missing/invalid — run 'pnpm validate:env' for details" "environment"
+      warn "Env schema: $ENV_FAILED required var(s) missing/invalid — run 'pnpm validate:env' for details" "environment" "RPL-ENV-003"
     fi
     if [ "$ENV_WARNINGS" != "0" ]; then
-      warn "Env schema: $ENV_WARNINGS optional var(s) have issues" "environment"
+      warn "Env schema: $ENV_WARNINGS optional var(s) have issues" "environment" "RPL-ENV-004"
     fi
   else
     # Fallback to basic checks if validate-env.mjs fails

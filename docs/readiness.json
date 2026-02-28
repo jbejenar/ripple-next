@@ -113,12 +113,11 @@
     },
     "agent-tooling": {
       "status": "partial",
-      "description": "AI-first agent workflow tooling. Machine-readable quality gate summaries via pnpm verify --json (RN-034). Code generators via pnpm generate:* (RN-041): component, provider, endpoint, package scaffolding with --dry-run support. Remaining: runbook automation (RN-039), structured error taxonomy (RN-040), agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 24 classified failure modes and doctor taxonomy codes (RN-040). Remaining: runbook automation (RN-039), agent session observability (RN-043). Strategy documented in ADR-018.",
       "packages": [],
-      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs"],
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "docs/error-taxonomy.json"],
       "blockers": [
-        "Runbooks not yet created (RN-039)",
-        "Error taxonomy not yet defined (RN-040)"
+        "Runbooks not yet created (RN-039)"
       ],
       "testCoverage": "gate-tested"
     }

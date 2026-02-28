@@ -31,6 +31,9 @@ pnpm doctor -- --offline # skip network checks (ephemeral/offline runners)
 
 If `pnpm doctor` fails, fix the failures before running quality gates.
 The doctor script is the single source of truth for environment readiness.
+Doctor `--json` output includes `taxonomyCode` fields (e.g. `RPL-ENV-001`) —
+look up codes in `docs/error-taxonomy.json` for severity, remediation steps,
+and automatable flags.
 
 Copy `.env.example` to `.env` for local development defaults.
 

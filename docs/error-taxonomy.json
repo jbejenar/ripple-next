@@ -1,0 +1,361 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Next Error Taxonomy",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. See ADR-018.",
+  "version": "1.0.0",
+  "codeFormat": "RPL-<CATEGORY>-<NNN>",
+  "severityLevels": {
+    "error": "Blocks progress. Must be fixed before proceeding.",
+    "warning": "Non-blocking but should be addressed. May affect some workflows.",
+    "info": "Informational. No action required."
+  },
+  "categories": {
+    "ENV": "Environment and setup failures",
+    "LINT": "Linting and code style failures",
+    "TYPE": "TypeScript type checking failures",
+    "TEST": "Test execution failures",
+    "BUILD": "Build and compilation failures",
+    "DEPLOY": "Deployment and infrastructure failures",
+    "POLICY": "Policy gate and governance failures"
+  },
+  "errors": [
+    {
+      "code": "RPL-ENV-001",
+      "category": "ENV",
+      "severity": "error",
+      "message": "Node.js version below minimum requirement (>=22)",
+      "gate": "doctor",
+      "remediation": [
+        "Install Node.js 22+ via nvm: nvm install $(cat .nvmrc)",
+        "Or use fnm: fnm use",
+        "Verify: node -v"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ENV-002",
+      "category": "ENV",
+      "severity": "error",
+      "message": "pnpm version does not match pinned version in packageManager field",
+      "gate": "doctor",
+      "remediation": [
+        "Enable corepack: corepack enable pnpm",
+        "This auto-activates the version from package.json packageManager field",
+        "Verify: pnpm -v"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ENV-003",
+      "category": "ENV",
+      "severity": "error",
+      "message": "Required environment variable missing or invalid",
+      "gate": "validate:env",
+      "remediation": [
+        "Copy .env.example to .env: cp .env.example .env",
+        "Fill in required values: DATABASE_URL, NUXT_DATABASE_URL, REDIS_URL",
+        "Run: pnpm validate:env"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-ENV-004",
+      "category": "ENV",
+      "severity": "warning",
+      "message": "Optional environment variable has invalid format",
+      "gate": "validate:env",
+      "remediation": [
+        "Check .env.example for expected format",
+        "Run: pnpm validate:env for specific field details"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ENV-005",
+      "category": "ENV",
+      "severity": "error",
+      "message": "pnpm-lock.yaml missing",
+      "gate": "doctor",
+      "remediation": [
+        "Run: pnpm install",
+        "Commit pnpm-lock.yaml to version control"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-ENV-006",
+      "category": "ENV",
+      "severity": "warning",
+      "message": "node_modules not installed",
+      "gate": "doctor",
+      "remediation": [
+        "Run: pnpm install --frozen-lockfile",
+        "Or run: pnpm bootstrap (for first-time setup)"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-ENV-007",
+      "category": "ENV",
+      "severity": "warning",
+      "message": "Docker not available (needed for local dev and testcontainers)",
+      "gate": "doctor",
+      "remediation": [
+        "Install Docker Desktop or Docker Engine",
+        "Start Docker: systemctl start docker (Linux) or open Docker Desktop",
+        "This is optional but needed for integration tests and local dev services"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ENV-008",
+      "category": "ENV",
+      "severity": "warning",
+      "message": "Node.js version differs from pinned version in .nvmrc",
+      "gate": "doctor",
+      "remediation": [
+        "Run: nvm use (reads .nvmrc)",
+        "Or: fnm use",
+        "This ensures exact version match across all environments"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-LINT-001",
+      "category": "LINT",
+      "severity": "error",
+      "message": "ESLint errors found",
+      "gate": "lint",
+      "remediation": [
+        "Run: pnpm lint to see errors",
+        "Auto-fix: pnpm lint:fix",
+        "Common causes: console.log (use console.warn/error), explicit any (use unknown)"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-LINT-002",
+      "category": "LINT",
+      "severity": "error",
+      "message": "console.log/console.info used in production code",
+      "gate": "lint",
+      "remediation": [
+        "Replace console.log with console.warn or console.error",
+        "Or remove the console statement entirely",
+        "Exempt files: *.test.ts, migrate.ts, seed.ts, *.handler.ts"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-LINT-003",
+      "category": "LINT",
+      "severity": "error",
+      "message": "Explicit 'any' type used",
+      "gate": "lint",
+      "remediation": [
+        "Replace 'any' with 'unknown' and add type guards",
+        "Or use a more specific type",
+        "Example: function parse(data: unknown): MyType { ... }"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-TYPE-001",
+      "category": "TYPE",
+      "severity": "error",
+      "message": "TypeScript type errors found",
+      "gate": "typecheck",
+      "remediation": [
+        "Run: pnpm typecheck to see errors",
+        "Fix type mismatches, missing imports, or incorrect signatures",
+        "If Nuxt auto-import types are missing: npx nuxi prepare apps/web"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-TYPE-002",
+      "category": "TYPE",
+      "severity": "error",
+      "message": "Missing Nuxt auto-import types (.nuxt directory stale)",
+      "gate": "typecheck",
+      "remediation": [
+        "Run: npx nuxi prepare apps/web",
+        "This regenerates the .nuxt/ types directory",
+        "Then re-run: pnpm typecheck"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-TEST-001",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Test suite failures",
+      "gate": "test",
+      "remediation": [
+        "Run: pnpm test to see failures",
+        "Check test output for assertion errors",
+        "Run specific package: pnpm test --filter @ripple/<package>"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-TEST-002",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Coverage threshold not met",
+      "gate": "test",
+      "remediation": [
+        "Check vitest.workspace.ts for tier-specific thresholds",
+        "Tier 1 (auth, db, queue): 60% lines/functions, 50% branches",
+        "Tier 2 (email, storage, events, cms): 40% lines/functions, 30% branches",
+        "Tier 3 (UI, services): 20% lines/functions, 10% branches",
+        "Add tests to increase coverage. Never lower thresholds."
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-TEST-003",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Conformance test failures for provider implementation",
+      "gate": "test",
+      "remediation": [
+        "Run the conformance suite for your provider",
+        "Implement all interface methods from packages/<concern>/types.ts",
+        "See packages/testing/conformance/ for the test suite"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-BUILD-001",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "TypeScript compilation failed",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm typecheck to see errors",
+        "Fix compilation errors before building",
+        "Check tsconfig.json for correct configuration"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-BUILD-002",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "Missing dependency",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm install --frozen-lockfile",
+        "If new dependency needed: pnpm add <package> --filter @ripple/<package>",
+        "For workspace deps: pnpm add @ripple/<dep> --filter @ripple/<package> --workspace"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-BUILD-003",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "Nuxt build failure",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm build to see full error",
+        "Check for import errors, missing modules, or config issues",
+        "Try: npx nuxi prepare apps/web before building"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-001",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "Health check failure after deployment",
+      "gate": "deploy",
+      "remediation": [
+        "Check /api/health endpoint for specific check failures",
+        "Verify DATABASE_URL and REDIS_URL are set in the deployed environment",
+        "Check CloudWatch logs for error details",
+        "Consider rollback: npx sst deploy --stage <previous-stage>"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-002",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "Missing AWS credentials or permissions",
+      "gate": "deploy",
+      "remediation": [
+        "Ensure AWS credentials are configured",
+        "CI uses OIDC role assumption — check the workflow's role-to-assume setting",
+        "Local: aws configure or set AWS_PROFILE"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-003",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "SST deployment failure",
+      "gate": "deploy",
+      "remediation": [
+        "Check sst.config.ts for configuration errors",
+        "Review the SST deployment output for specific resource failures",
+        "Try: npx sst deploy --stage pr-<number> for isolated testing"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-001",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Readiness manifest drift detected",
+      "gate": "check:readiness",
+      "remediation": [
+        "Run: pnpm check:readiness to see drift details",
+        "Update docs/readiness.json to match codebase reality",
+        "Common causes: new package not added, stale blocker, missing test files"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-POLICY-002",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Quarantine policy violation",
+      "gate": "check:quarantine",
+      "remediation": [
+        "Run: pnpm check:quarantine to see violations",
+        "Common violations: expired quarantine (>14 days), missing issue link, budget exceeded (>5%)",
+        "Fix the flaky test or extend quarantine with justification"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-003",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Quarantined test in Tier 1 package (not allowed)",
+      "gate": "check:quarantine",
+      "remediation": [
+        "Tier 1 packages (auth, db, queue) do not allow quarantined tests",
+        "Fix the flaky test immediately or rewrite it",
+        "See ADR-013 for quarantine policy details"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-004",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Published package API changed without changeset",
+      "gate": "changeset",
+      "remediation": [
+        "Run: pnpm changeset",
+        "Select the affected package(s) and semver bump type",
+        "Commit the generated .changeset/*.md file with your PR"
+      ],
+      "automatable": true
+    }
+  ]
+}

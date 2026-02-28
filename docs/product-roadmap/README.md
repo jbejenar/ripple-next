@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 5.0.0
+> Last updated: 2026-02-28 | Version: 5.0.0
 >
 > **AI-first platform.** This roadmap is structured for both human and AI agent
 > consumption. Every item is machine-parseable, uniquely identified (`RN-XXX`),
@@ -338,21 +338,25 @@ and humans can follow deterministically. Runbooks are machine-parseable
 
 ---
 
-#### RN-040: Structured Error Taxonomy
+#### RN-040: Structured Error Taxonomy ✅
 
 **Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
+**Status:** Done (2026-02-28)
 
-Define a machine-parseable error taxonomy covering all failure modes across
-quality gates, tests, builds, and deployments. Every error maps to a category,
-severity, and suggested remediation — enabling agents to auto-triage failures.
+Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 24 classified
+failure modes across 7 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY).
+Each error includes code, severity, remediation steps, and automatable flag.
+Doctor `--json` output now includes `taxonomyCode` fields.
 
-- [ ] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
-- [ ] Categorise quality gate failures (lint, typecheck, test, env validation)
-- [ ] Categorise build failures (compilation, bundling, missing deps)
-- [ ] Categorise deployment failures (health check, resource limit, permission)
-- [ ] Wire `pnpm doctor --json` output to use taxonomy codes
-- [ ] Document agent remediation flowchart for each error category
+- [x] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
+- [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 12 error codes
+- [x] Categorise build failures (compilation, bundling, missing deps) — 3 error codes
+- [x] Categorise deployment failures (health check, resource limit, permission) — 3 error codes
+- [x] Wire `pnpm doctor --json` output to use taxonomy codes (`taxonomyCode` field)
+- [x] Remediation steps documented per error (actionable commands in each entry)
+
+**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 24 entries; `pnpm verify` passes all gates.
 
 ---
 
@@ -546,7 +550,7 @@ continuously improve agent ergonomics.
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Pending |
-| [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Pending |
+| [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
@@ -607,7 +611,7 @@ gantt
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
     RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
     RN-039 Agent runbook automation        :rn039, 2026-04-07, 21d
-    RN-040 Structured error taxonomy       :rn040, 2026-04-28, 14d
+    RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
     RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
 
     section Tier 3 — Scheduled
@@ -905,7 +909,7 @@ graph TD
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
 - [ ] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
-- [ ] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
+- [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
 - [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
 - [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 

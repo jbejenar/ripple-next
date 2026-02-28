@@ -26,6 +26,7 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
 - `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
+- `docs/error-taxonomy.json` — 24 classified error codes with remediation steps (RPL-*-NNN format)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
