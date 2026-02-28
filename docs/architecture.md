@@ -139,7 +139,7 @@ workflow tooling ([ADR-018](./adr/018-ai-first-workflow-strategy.md)):
 |--------|--------|-------------|-------------|
 | Runbook automation | Done | [RN-039](./product-roadmap/README.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
 | Error taxonomy | Done | [RN-040](./product-roadmap/README.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
-| Code generators | Done | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints |
+| Code generators | Done | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints, packages, and downstream repos |
 
 These complement the existing agent ergonomics: `pnpm doctor --json`,
 `pnpm bootstrap`, `pnpm validate:env`, provider conformance suites, and

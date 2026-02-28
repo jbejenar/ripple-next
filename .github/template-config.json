@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Template Configuration",
-  "description": "Configuration for GitHub template repository distribution. Defines which files from the golden-path source are included in the template and post-clone setup instructions. See RN-024.",
-  "version": "1.0.0",
+  "description": "Configuration for GitHub template repository distribution and scaffold generator. Defines which files from the golden-path source are included in templates, AI agent configs, and post-clone setup instructions. See RN-024 and RN-041.",
+  "version": "1.1.0",
   "templateIncludes": {
     "description": "Files included when a new repo is created from this template",
     "governed": [
@@ -32,6 +32,23 @@
       ".gitignore",
       ".prettierrc",
       "turbo.json"
+    ],
+    "ai": [
+      "CLAUDE.md",
+      "AGENTS.md",
+      ".github/copilot-instructions.md",
+      ".github/agents/api-designer.agent.md",
+      ".github/agents/docs-writer.agent.md",
+      ".github/agents/security-reviewer.agent.md",
+      ".github/agents/test-engineer.agent.md",
+      ".github/instructions/api.instructions.md",
+      ".github/instructions/database.instructions.md",
+      ".github/instructions/frontend.instructions.md",
+      ".github/instructions/infrastructure.instructions.md",
+      ".github/instructions/testing.instructions.md",
+      ".github/prompts/add-feature.prompt.md",
+      ".github/prompts/add-tests.prompt.md",
+      ".github/prompts/fix-bug.prompt.md"
     ]
   },
   "templateExcludes": {
@@ -51,10 +68,12 @@
     ]
   },
   "postCloneInstructions": [
+    "Run: pnpm generate:scaffold <target-dir> --name=<name> --org=<org> (or use GitHub template)",
     "Run: pnpm bootstrap",
     "Copy .env.example to .env and fill in required values",
     "Update package.json name and description",
     "Update .github/CODEOWNERS with your team",
+    "Review and customize CLAUDE.md and AGENTS.md for your project",
     "Run: pnpm doctor to validate environment",
     "Run: pnpm verify to confirm all quality gates pass"
   ]

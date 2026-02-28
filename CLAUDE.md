@@ -121,6 +121,7 @@ pnpm generate:component <name> [--tier=atoms|molecules|organisms] [--dry-run]
 pnpm generate:provider <package> <name> [--dry-run]
 pnpm generate:endpoint <router> <procedure> [--dry-run]
 pnpm generate:package <name> [--dry-run]
+pnpm generate:scaffold <target-dir> [--name=<name>] [--org=<org>] [--dry-run] [--force]
 ```
 
 Available runbooks (`pnpm runbook --list`):
@@ -132,6 +133,7 @@ pnpm runbook add-new-component      # Scaffold + implement UI component
 pnpm runbook add-api-endpoint       # Scaffold + implement tRPC endpoint
 pnpm runbook onboard-new-package    # Scaffold full @ripple/* package
 pnpm runbook fleet-sync             # Fleet drift detection + sync PR
+pnpm runbook scaffold-downstream    # Bootstrap downstream repo with DX infrastructure
 pnpm runbook <name> -- --json       # Machine-readable JSON output
 ```
 

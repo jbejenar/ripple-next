@@ -91,9 +91,15 @@ Provide `pnpm generate:*` commands that scaffold convention-compliant code:
 - `pnpm generate:provider <package> <name>` — Provider class + conformance test
 - `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + test
 - `pnpm generate:package <name>` — Full package scaffold
+- `pnpm generate:scaffold <target-dir>` — Downstream repo DX bootstrap (AI docs, quality gates, CI/CD, config)
 
 Generators enforce naming conventions, file structure, and required test stubs
 automatically. A `--dry-run` flag previews generated files without writing.
+
+The scaffold generator extends this pillar to downstream repositories, ensuring
+that any project adopting ripple-next conventions gets the full AI-first DX
+infrastructure from day one — CLAUDE.md, AGENTS.md, agent configs, quality gate
+scripts, CI workflows, documentation structure, and project configuration.
 
 ### Scorecard Update
 

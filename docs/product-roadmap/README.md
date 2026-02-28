@@ -420,19 +420,20 @@ and automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents scaffold convention-compliant code without memorising boilerplate
 **Status:** Done (2026-02-28)
 
-Zero-dependency code generators using Node.js string templates. Four generators
-covering components, providers, endpoints, and packages — all with `--dry-run`
-support and convention-compliant output.
+Zero-dependency code generators using Node.js string templates. Five generators
+covering components, providers, endpoints, packages, and downstream project
+scaffolding — all with `--dry-run` support and convention-compliant output.
 
 - [x] Create `scripts/generate/` with string template engine (`lib.mjs` + per-generator modules)
 - [x] `pnpm generate:component <name>` — SFC + test + story + index export
 - [x] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
 - [x] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
 - [x] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
+- [x] `pnpm generate:scaffold <target-dir>` — downstream repo DX bootstrap (CLAUDE.md, AGENTS.md, quality gates, CI/CD, docs, config)
 - [x] Add `--dry-run` flag to preview generated files without writing
 - [x] Document generators in `AGENTS.md` and `CLAUDE.md`
 
-**Verification:** All four generators tested with `--dry-run`; `pnpm lint && pnpm typecheck && pnpm test` all pass.
+**Verification:** All five generators tested with `--dry-run`; `pnpm lint && pnpm typecheck && pnpm test` all pass.
 
 ---
 
