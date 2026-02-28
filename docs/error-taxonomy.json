@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 39 classified error codes across 9 categories. See ADR-018 and ADR-019.",
-  "version": "1.2.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 41 classified error codes across 10 categories. See ADR-018, ADR-019, and docs/accessibility.md.",
+  "version": "1.3.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -18,7 +18,8 @@
     "DEPLOY": "Deployment and infrastructure failures",
     "POLICY": "Policy gate and governance failures",
     "IAC": "Infrastructure-as-code policy violations (sst.config.ts)",
-    "FLEET": "Fleet governance and template drift violations (RN-024)"
+    "FLEET": "Fleet governance and template drift violations (RN-024)",
+    "A11Y": "Accessibility and WCAG compliance violations (RN-042)"
   },
   "errors": [
     {
@@ -527,6 +528,33 @@
         "Run: pnpm fleet:compliance --json to see per-repo compliance scores",
         "Target: minimum 80% compliance score",
         "Address security-critical drifts first, then standards-required"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-A11Y-001",
+      "category": "A11Y",
+      "severity": "error",
+      "message": "Critical or serious WCAG 2.1 AA accessibility violation detected",
+      "gate": "test:a11y",
+      "remediation": [
+        "Run: pnpm test:a11y -- --json to see full violation details",
+        "Each violation includes a helpUrl with fix guidance from Deque University",
+        "Common fixes: add alt text, fix color contrast, add form labels, ensure keyboard access",
+        "See docs/accessibility.md for component checklist"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-A11Y-002",
+      "category": "A11Y",
+      "severity": "warning",
+      "message": "Moderate or minor WCAG 2.1 AA accessibility violation detected",
+      "gate": "test:a11y",
+      "remediation": [
+        "Run: pnpm test:a11y -- --json to see violation details",
+        "Moderate/minor violations are non-blocking but should be addressed",
+        "Review the helpUrl for each violation for specific remediation guidance"
       ],
       "automatable": false
     }

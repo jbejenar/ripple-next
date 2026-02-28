@@ -44,6 +44,7 @@
     "generate:endpoint": "node scripts/generate/index.mjs endpoint",
     "generate:package": "node scripts/generate/index.mjs package",
     "runbook": "node scripts/runbook.mjs",
+    "test:a11y": "node scripts/a11y-audit.mjs",
     "deploy:health-check": "node scripts/deploy-health-check.mjs",
     "prepare": "husky"
   },
@@ -58,11 +59,13 @@
     }
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/js": "^9.18.0",
+    "@storybook/addon-a11y": "^10.2.13",
     "@storybook/vue3": "^10.2.13",
     "@storybook/vue3-vite": "^10.2.13",
     "@types/node": "^22.12.0",

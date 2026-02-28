@@ -14,6 +14,7 @@ pnpm check:readiness # verify readiness.json is not stale
 pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
 pnpm check:iac       # IaC policy scan for sst.config.ts (RN-036)
 pnpm check:fleet-drift # fleet drift detection (RN-024)
+pnpm test:a11y       # WCAG 2.1 AA accessibility audit (RN-042)
 pnpm fleet:sync      # generate sync PRs for downstream repos
 pnpm fleet:compliance # fleet-wide compliance report
 pnpm verify          # run ALL quality gates with summary (RN-034)
