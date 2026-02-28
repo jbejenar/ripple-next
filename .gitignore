@@ -77,3 +77,5 @@ storybook-static/
 
 # Misc
 *.log
+
+!apps/web/tests/types/axe-core-playwright-shim.d.ts

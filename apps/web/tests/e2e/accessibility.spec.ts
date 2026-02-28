@@ -17,7 +17,7 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
   for (const route of routes) {
     test(`${route} has no critical or serious WCAG 2.1 AA violations`, async ({
-      page
+      page,
     }) => {
       await page.goto(route, { waitUntil: 'networkidle' })
 
@@ -26,14 +26,14 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
         .analyze()
 
       const blocking = results.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious'
+        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
       )
 
       if (blocking.length > 0) {
         const summary = blocking
           .map(
-            (v) =>
-              `[${v.impact}] ${v.id}: ${v.description} (${v.nodes.length} instance${v.nodes.length === 1 ? '' : 's'})\n  Help: ${v.helpUrl}`
+            (violation) =>
+              `[${violation.impact}] ${violation.id}: ${violation.description} (${violation.nodes.length} instance${violation.nodes.length === 1 ? '' : 's'})\n  Help: ${violation.helpUrl}`,
           )
           .join('\n')
 
