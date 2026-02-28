@@ -91,12 +91,10 @@ graph LR
         SEARCH[Search]
         NAV[Navigation]
         AGENT_DX[Agent Tooling]
+        FLEET[Fleet Governance]
     end
     subgraph Partial
         API[API Layer]
-    end
-    subgraph Implemented2[" "]
-        FLEET[Fleet Governance]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -281,7 +279,7 @@ RPL-IAC-007). Integrated into `pnpm verify` gate runner.
 - [x] Route violations to clear, machine-readable diagnostics (`ripple-iac-report/v1` JSON schema)
 - [x] Document exception workflow and approvals (`docs/deployment.md` → "IaC Policy Scanning" section)
 
-**Verification:** `pnpm check:iac` passes (0 errors, 1 warning); `pnpm check:iac -- --json` emits valid JSON; CI workflow includes `iac-policy` job; `docs/deployment.md` has policy scan + exception docs; error taxonomy has 31 entries; all gates pass.
+**Verification:** `pnpm check:iac` passes (0 errors, 1 warning); `pnpm check:iac -- --json` emits valid JSON; CI workflow includes `iac-policy` job; `docs/deployment.md` has policy scan + exception docs; error taxonomy has 39 entries; all gates pass.
 
 ---
 
