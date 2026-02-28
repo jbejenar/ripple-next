@@ -29,7 +29,7 @@
  */
 import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const POLICY_PATH = resolve(ROOT, 'docs/fleet-policy.json')
@@ -53,7 +53,7 @@ try {
 // ── Get golden-path version ──────────────────────────────────────────
 function getGitSha() {
   try {
-    return execSync('git rev-parse HEAD', { cwd: ROOT, encoding: 'utf-8' }).trim()
+    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf-8' }).trim()
   } catch {
     return 'unknown'
   }
@@ -90,10 +90,10 @@ if (reportsArg) {
 } else {
   // Default: run drift detection against self (golden path)
   try {
-    const output = execSync(
-      `node ${resolve(ROOT, 'scripts/check-fleet-drift.mjs')} --json`,
-      { encoding: 'utf-8', cwd: ROOT }
-    )
+    const output = execFileSync('node', [
+      resolve(ROOT, 'scripts/check-fleet-drift.mjs'),
+      '--json',
+    ], { encoding: 'utf-8', cwd: ROOT })
     driftReports.push(JSON.parse(output))
   } catch (err) {
     try {

@@ -30,7 +30,7 @@
  */
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 
 const ROOT = resolve(import.meta.dirname, '..')
@@ -57,7 +57,7 @@ try {
 // ── Get golden-path version ──────────────────────────────────────────
 function getGitSha(dir) {
   try {
-    return execSync('git rev-parse HEAD', { cwd: dir, encoding: 'utf-8' }).trim()
+    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: dir, encoding: 'utf-8' }).trim()
   } catch {
     return 'unknown'
   }

@@ -33,7 +33,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -55,16 +55,16 @@ if (!action || !['start', 'end', 'snapshot'].includes(action)) {
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────
-function exec(cmd) {
+function git(...args) {
   try {
-    return execSync(cmd, { encoding: 'utf-8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
+    return execFileSync('git', args, { encoding: 'utf-8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'] }).trim()
   } catch {
     return ''
   }
 }
 
 function getBranch() {
-  return exec('git branch --show-current') || 'detached'
+  return git('branch', '--show-current') || 'detached'
 }
 
 function getGitDiffStats(since) {
@@ -73,7 +73,7 @@ function getGitDiffStats(since) {
   const deleted = []
 
   // Uncommitted changes
-  const status = exec('git status --porcelain')
+  const status = git('status', '--porcelain')
   for (const line of status.split('\n').filter(Boolean)) {
     const code = line.substring(0, 2).trim()
     const file = line.substring(3)
@@ -84,7 +84,7 @@ function getGitDiffStats(since) {
 
   // Committed changes since session start (if we have a since commit)
   if (since) {
-    const diffNameStatus = exec(`git diff --name-status ${since}..HEAD`)
+    const diffNameStatus = git('diff', '--name-status', `${since}..HEAD`)
     for (const line of diffNameStatus.split('\n').filter(Boolean)) {
       const [status, file] = line.split('\t')
       if (!file) continue
@@ -104,7 +104,7 @@ function getGitDiffStats(since) {
 
 function getCommitsSince(since) {
   if (!since) return []
-  const log = exec(`git log --oneline ${since}..HEAD`)
+  const log = git('log', '--oneline', `${since}..HEAD`)
   return log
     .split('\n')
     .filter(Boolean)
@@ -119,7 +119,7 @@ function getCommitsSince(since) {
 
 function runQualityGates() {
   try {
-    const output = execSync('node scripts/verify.mjs --json', {
+    const output = execFileSync('node', ['scripts/verify.mjs', '--json'], {
       encoding: 'utf-8',
       cwd: ROOT,
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -187,7 +187,7 @@ mkdirSync(SESSIONS_DIR, { recursive: true })
 
 if (action === 'start') {
   const sessionId = randomUUID()
-  const headCommit = exec('git rev-parse --short HEAD') || null
+  const headCommit = git('rev-parse', '--short', 'HEAD') || null
   const session = {
     schema: 'ripple-session-log/v1',
     sessionId,
