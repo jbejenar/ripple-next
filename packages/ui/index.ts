@@ -19,12 +19,17 @@ export { default as RplAlert } from './components/atoms/RplAlert.vue'
 export { default as RplCallout } from './components/atoms/RplCallout.vue'
 export { default as RplAcknowledgement } from './components/atoms/RplAcknowledgement.vue'
 export { default as RplBlockQuote } from './components/atoms/RplBlockQuote.vue'
+export { default as RplTag } from './components/atoms/RplTag.vue'
+export { default as RplChip } from './components/atoms/RplChip.vue'
 
 // Molecules
 export { default as RplCard } from './components/molecules/RplCard.vue'
 export { default as RplHeroHeader } from './components/molecules/RplHeroHeader.vue'
 export { default as RplPagination } from './components/molecules/RplPagination.vue'
 export { default as RplInPageNavigation } from './components/molecules/RplInPageNavigation.vue'
+export { default as RplTabs } from './components/molecules/RplTabs.vue'
+export { default as RplSearchBar } from './components/molecules/RplSearchBar.vue'
+export { default as RplRelatedLinks } from './components/molecules/RplRelatedLinks.vue'
 
 // Organisms
 export { default as RplHeader } from './components/organisms/RplHeader.vue'
