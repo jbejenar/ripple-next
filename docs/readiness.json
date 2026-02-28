@@ -113,13 +113,12 @@
     },
     "agent-tooling": {
       "status": "partial",
-      "description": "AI-first agent workflow tooling. Machine-readable quality gate summaries via pnpm verify --json (RN-034, schema: ripple-gate-summary/v1). Remaining: runbook automation (RN-039), structured error taxonomy (RN-040), code generation templates (RN-041), agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Machine-readable quality gate summaries via pnpm verify --json (RN-034). Code generators via pnpm generate:* (RN-041): component, provider, endpoint, package scaffolding with --dry-run support. Remaining: runbook automation (RN-039), structured error taxonomy (RN-040), agent session observability (RN-043). Strategy documented in ADR-018.",
       "packages": [],
-      "paths": ["scripts/verify.mjs"],
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs"],
       "blockers": [
         "Runbooks not yet created (RN-039)",
-        "Error taxonomy not yet defined (RN-040)",
-        "Code generators not yet built (RN-041)"
+        "Error taxonomy not yet defined (RN-040)"
       ],
       "testCoverage": "gate-tested"
     }

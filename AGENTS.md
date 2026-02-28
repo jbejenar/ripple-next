@@ -137,6 +137,10 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm verify` — Run all quality gates with structured summary (RN-034)
 - `pnpm verify -- --json` — Machine-readable JSON gate summary (`ripple-gate-summary/v1`)
 - `pnpm verify -- --ci` — Write `gate-summary.json` for CI artifact upload
+- `pnpm generate:component <name>` — Scaffold Vue SFC + test + story + index export (RN-041)
+- `pnpm generate:provider <package> <name>` — Scaffold provider class + conformance test
+- `pnpm generate:endpoint <router> <procedure>` — Scaffold tRPC router + validation + test
+- `pnpm generate:package <name>` — Scaffold full @ripple/* package (types, index, tests, configs)
 - `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations

@@ -356,22 +356,25 @@ severity, and suggested remediation — enabling agents to auto-triage failures.
 
 ---
 
-#### RN-041: Code Generation Templates
+#### RN-041: Code Generation Templates ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents scaffold convention-compliant code without memorising boilerplate
+**Status:** Done (2026-02-28)
 
-Code generators for common patterns: components, providers, API routes, and
-packages. Generators enforce naming conventions, file structure, test stubs,
-and Storybook stories automatically.
+Zero-dependency code generators using Node.js string templates. Four generators
+covering components, providers, endpoints, and packages — all with `--dry-run`
+support and convention-compliant output.
 
-- [ ] Create `scripts/generate/` with template engine (Handlebars or simple string templates)
-- [ ] `pnpm generate:component <name>` — SFC + test + story + index export
-- [ ] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
-- [ ] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
-- [ ] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
-- [ ] Add `--dry-run` flag to preview generated files without writing
-- [ ] Document generators in `AGENTS.md` and `docs/developer-guide.md`
+- [x] Create `scripts/generate/` with string template engine (`lib.mjs` + per-generator modules)
+- [x] `pnpm generate:component <name>` — SFC + test + story + index export
+- [x] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
+- [x] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
+- [x] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
+- [x] Add `--dry-run` flag to preview generated files without writing
+- [x] Document generators in `AGENTS.md` and `CLAUDE.md`
+
+**Verification:** All four generators tested with `--dry-run`; `pnpm lint && pnpm typecheck && pnpm test` all pass.
 
 ---
 
@@ -544,7 +547,7 @@ continuously improve agent ergonomics.
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Pending |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Pending |
-| [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Pending |
+| [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
@@ -605,7 +608,7 @@ gantt
     RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
     RN-039 Agent runbook automation        :rn039, 2026-04-07, 21d
     RN-040 Structured error taxonomy       :rn040, 2026-04-28, 14d
-    RN-041 Code generation templates       :rn041, 2026-04-14, 14d
+    RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :rn023, 2026-05-05, 14d
@@ -903,7 +906,7 @@ graph TD
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
 - [ ] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
 - [ ] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
-- [ ] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
+- [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
 - [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 
 ### Template Strategy

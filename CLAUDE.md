@@ -100,7 +100,15 @@ This platform treats AI agents as first-class developers. Three pillars:
 
 1. **Runbooks** — Codified, executable procedures for common operations (RN-039)
 2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040)
-3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041)
+3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041, done)
+
+Available generators:
+```bash
+pnpm generate:component <name> [--tier=atoms|molecules|organisms] [--dry-run]
+pnpm generate:provider <package> <name> [--dry-run]
+pnpm generate:endpoint <router> <procedure> [--dry-run]
+pnpm generate:package <name> [--dry-run]
+```
 
 See `docs/adr/018-ai-first-workflow-strategy.md` for the full strategy.
 
