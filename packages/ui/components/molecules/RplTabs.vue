@@ -35,7 +35,7 @@ function selectTab(id: string): void {
 
 function handleKeydown(event: KeyboardEvent, index: number): void {
   const tabCount = props.tabs.length
-  let newIndex = index
+  let newIndex: number
 
   if (event.key === 'ArrowRight') {
     newIndex = (index + 1) % tabCount
