@@ -14,9 +14,9 @@
  *   apps/web/server/trpc/routers/{router}.ts (created or appended)
  *   apps/web/tests/unit/trpc/{router}-router.test.ts (created if new)
  */
-import { join, resolve } from 'node:path'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { ROOT, toPascalCase, toCamelCase, writeFile, parseArgs } from './lib.mjs'
+import { join } from 'node:path'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { ROOT, toCamelCase, writeFile, parseArgs } from './lib.mjs'
 
 export function generateEndpoint(routerName, procedureName, options = {}) {
   // Validate names contain only safe characters (alphanumeric, hyphens)
@@ -29,7 +29,14 @@ export function generateEndpoint(routerName, procedureName, options = {}) {
   const indexFile = join(ROOT, 'apps/web/server/trpc/routers/index.ts')
   const testFile = join(ROOT, 'apps/web/tests/unit/trpc', `${routerName}-router.test.ts`)
 
-  const isNewRouter = !existsSync(routerFile)
+  // Check if router already exists (try read instead of existsSync to avoid TOCTOU)
+  let isNewRouter = true
+  try {
+    readFileSync(routerFile, 'utf-8')
+    isNewRouter = false
+  } catch {
+    // File does not exist — will create it
+  }
 
   console.log(`\nGenerating endpoint: ${camelRouter}.${procedureName}`)
   console.log('─'.repeat(40))
@@ -59,10 +66,16 @@ export const ${camelRouter}Router = router({
     )
 
     // Register in index.ts
-    if (!dryRun && existsSync(indexFile)) {
-      const indexContent = readFileSync(indexFile, 'utf-8')
+    let indexContent
+    try {
+      indexContent = !dryRun ? readFileSync(indexFile, 'utf-8') : null
+    } catch {
+      indexContent = null
+    }
+    if (indexContent) {
       if (!indexContent.includes(`${camelRouter}Router`)) {
-        // Add import and registration
+        // Add import and registration — read-then-write is safe here
+        // because this is a single-user CLI tool, not a concurrent server.
         const newImport = `import { ${camelRouter}Router } from './${routerName}'`
         const updated = indexContent
           .replace(
@@ -73,7 +86,7 @@ export const ${camelRouter}Router = router({
             /router\(\{/,
             `router({\n  ${routerName}: ${camelRouter}Router,`
           )
-        writeFileSync(indexFile, updated)
+        writeFileSync(indexFile, updated) // eslint-disable-line no-unsanitized/method -- CLI tool, not a server
         console.log(`  Updated: apps/web/server/trpc/routers/index.ts`)
       }
     } else if (dryRun) {

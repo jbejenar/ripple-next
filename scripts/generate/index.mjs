@@ -38,7 +38,7 @@ if (!command || command === '--help' || !GENERATORS[command]) {
   console.log('Ripple Next — Code Generators (RN-041)')
   console.log('───────────────────────────────────────')
   console.log()
-  for (const [name, gen] of Object.entries(GENERATORS)) {
+  for (const gen of Object.values(GENERATORS)) {
     console.log(`  ${gen.usage}`)
     console.log(`    ${gen.description}`)
     console.log()

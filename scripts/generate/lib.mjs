@@ -3,7 +3,7 @@
  * Shared utilities for code generators.
  * Zero external dependencies — Node.js built-ins only.
  */
-import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'node:fs'
+import { writeFileSync, readFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 
 export const ROOT = resolve(import.meta.dirname, '../..')
@@ -65,7 +65,13 @@ export function appendToFile(absPath, line, dryRun = false) {
     throw new Error(`Path traversal blocked: ${resolved} is outside repo root`)
   }
   const relPath = resolved.replace(ROOT + '/', '')
-  if (!existsSync(resolved)) {
+
+  // Read existing content atomically (avoids TOCTOU race vs existsSync)
+  let existing
+  try {
+    existing = readFileSync(resolved, 'utf-8')
+  } catch {
+    // File does not exist — create it
     if (dryRun) {
       console.log(`  [dry-run] Would create: ${relPath}`)
       return
@@ -74,7 +80,6 @@ export function appendToFile(absPath, line, dryRun = false) {
     return
   }
 
-  const existing = readFileSync(resolved, 'utf-8')
   if (existing.includes(line.trim())) {
     console.log(`  Skipped (already exists): ${relPath}`)
     return

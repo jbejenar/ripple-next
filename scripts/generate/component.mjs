@@ -134,7 +134,6 @@ describe('${componentName}', () => {
   )
 
   // 4. Append export to index.ts
-  const tierComment = tier === 'atoms' ? 'Atoms' : tier === 'molecules' ? 'Molecules' : 'Organisms'
   const exportLine = `export { default as ${componentName} } from './components/${tier}/${componentName}.vue'`
   appendToFile(indexFile, exportLine, dryRun)
 

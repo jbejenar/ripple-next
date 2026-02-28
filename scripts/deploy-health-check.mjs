@@ -59,13 +59,37 @@ if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
 
 const healthUrl = `${parsedUrl.origin}/api/health`
 
+/**
+ * Sanitize health response to only include expected fields.
+ * Prevents untrusted network data from being written to disk verbatim.
+ */
+function sanitizeHealthBody(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const result = { status: String(raw.status ?? 'unknown') }
+  if (raw.timestamp) result.timestamp = String(raw.timestamp)
+  if (raw.checks && typeof raw.checks === 'object') {
+    result.checks = {}
+    for (const [key, val] of Object.entries(raw.checks)) {
+      if (typeof val === 'object' && val !== null) {
+        result.checks[String(key)] = {
+          status: String(val.status ?? 'unknown'),
+          ...(typeof val.latencyMs === 'number' ? { latencyMs: val.latencyMs } : {}),
+          ...(typeof val.error === 'string' ? { error: val.error } : {}),
+        }
+      }
+    }
+  }
+  return result
+}
+
 async function checkHealth() {
   const start = Date.now()
   try {
     const response = await fetch(healthUrl, {
       signal: AbortSignal.timeout(10000),
     })
-    const body = await response.json()
+    const raw = await response.json()
+    const body = sanitizeHealthBody(raw)
     const latencyMs = Date.now() - start
     return {
       reachable: true,
