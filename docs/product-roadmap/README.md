@@ -238,18 +238,24 @@ JSON summary conforming to the `ripple-gate-summary/v1` schema.
 
 ---
 
-#### RN-035: Rollback and Recovery Command Contract
+#### RN-035: Rollback and Recovery Command Contract ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review | **AI-first benefit:** Agents can execute safe recovery without human interpretation
+**Status:** Done (2026-02-28)
 
-Define and automate rollback procedures for staging/production so agents can
-execute safe recovery paths without ad hoc human interpretation.
+Post-deploy health validation script (`scripts/deploy-health-check.mjs`) with
+retry logic, structured `ripple-health-report/v1` JSON output, and rollback
+trigger criteria linked to error taxonomy (RPL-DEPLOY-001). CI workflows
+capture health reports as artifacts. Rollback procedures documented in
+`docs/deployment.md` and runbook (`docs/runbooks/rollback-production.json`).
 
-- [ ] Add explicit rollback runbook with command examples
-- [ ] Provide scripted rollback entrypoint(s) for common failure modes
-- [ ] Add post-deploy health validation + rollback trigger criteria
-- [ ] Capture rollback evidence as CI/CD artifacts
+- [x] Add explicit rollback runbook with command examples (via RN-039)
+- [x] Provide scripted rollback entrypoint(s) for common failure modes (`scripts/deploy-health-check.mjs`)
+- [x] Add post-deploy health validation + rollback trigger criteria (`docs/deployment.md`)
+- [x] Capture rollback evidence as CI/CD artifacts (`health-report-{stage}`, 30-day retention)
+
+**Verification:** `node scripts/deploy-health-check.mjs --help` shows usage; deploy workflows include health check steps; `docs/deployment.md` has rollback section; all gates pass.
 
 ---
 
@@ -553,7 +559,7 @@ continuously improve agent ergonomics.
 | [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 1 | Critical | High | Low | Done |
 | [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
 | [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
-| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Pending |
+| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
@@ -614,7 +620,7 @@ gantt
 
     section Tier 2 — Next Sprint
     RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
-    RN-035 Rollback/recovery contract      :rn035, 2026-04-07, 14d
+    RN-035 Rollback/recovery contract      :done, rn035, 2026-02-28, 1d
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
     RN-038 Upstream sync workflow          :done, rn038, 2026-02-28, 1d

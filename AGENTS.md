@@ -156,6 +156,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `npx sst dev` — Start SST live dev (deploys to AWS, proxies locally)
 - `npx sst deploy --stage staging` — Deploy to staging
 - `npx sst deploy --stage production` — Deploy to production
+- `pnpm deploy:health-check <url>` — Post-deploy health validation with retries (RN-035)
 
 ## Code Conventions
 
@@ -218,6 +219,8 @@ Test results are uploaded as structured artifacts on every CI run:
 | `test-results-e2e` | Playwright HTML report | 30 days |
 | `playwright-traces` | Playwright traces (failure only) | 7 days |
 | `gate-summary` | JSON quality gate summary (`ripple-gate-summary/v1`) | 30 days |
+| `health-report-staging` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
+| `health-report-production` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
 
 ### Reusable Composite Actions

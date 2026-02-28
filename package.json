@@ -40,6 +40,7 @@
     "generate:endpoint": "node scripts/generate/index.mjs endpoint",
     "generate:package": "node scripts/generate/index.mjs package",
     "runbook": "node scripts/runbook.mjs",
+    "deploy:health-check": "node scripts/deploy-health-check.mjs",
     "prepare": "husky"
   },
   "pnpm": {
