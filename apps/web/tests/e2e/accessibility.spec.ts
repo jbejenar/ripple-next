@@ -1,16 +1,6 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
-type AxeImpact = 'minor' | 'moderate' | 'serious' | 'critical' | null
-
-interface AxeViolation {
-  impact: AxeImpact
-  id: string
-  description: string
-  helpUrl: string
-  nodes: Array<unknown>
-}
-
 /**
  * Accessibility audit tests using axe-core.
  *
@@ -35,7 +25,7 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze()
 
-      const blocking = (results.violations as AxeViolation[]).filter(
+      const blocking = results.violations.filter(
         (violation) => violation.impact === 'critical' || violation.impact === 'serious',
       )
 
