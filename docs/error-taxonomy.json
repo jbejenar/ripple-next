@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 47 classified error codes across 12 categories. See ADR-018, ADR-019, docs/accessibility.md, and docs/session-observability.md.",
-  "version": "1.4.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 49 classified error codes across 13 categories. See ADR-018, ADR-019, ADR-020, docs/accessibility.md, and docs/session-observability.md.",
+  "version": "1.5.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -21,7 +21,8 @@
     "FLEET": "Fleet governance and template drift violations (RN-024)",
     "A11Y": "Accessibility and WCAG compliance violations (RN-042)",
     "SESSION": "Agent session observability and metrics failures (RN-043)",
-    "SCAFFOLD": "Project scaffold generator failures (RN-041)"
+    "SCAFFOLD": "Project scaffold generator failures (RN-041)",
+    "DOCS": "Documentation and context file governance (RN-044, ADR-020)"
   },
   "errors": [
     {
@@ -635,6 +636,35 @@
         "Ensure the target directory path is absolute and valid",
         "Do not use paths with .. that escape the target root",
         "Example: pnpm generate:scaffold /absolute/path/to/repo"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DOCS-001",
+      "category": "DOCS",
+      "severity": "warning",
+      "message": "Context file approaching size limit — CLAUDE.md > 60 lines or AGENTS.md > 220 lines",
+      "gate": "check:context-size",
+      "remediation": [
+        "Review ADR-020 for context file minimalism principles",
+        "Move domain-specific content to .github/instructions/ files",
+        "Only keep content that prevents CI failures if unknown",
+        "Run: pnpm check:context-size --json for detailed report"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DOCS-002",
+      "category": "DOCS",
+      "severity": "error",
+      "message": "Context file exceeds hard size limit — CLAUDE.md > 80 lines or AGENTS.md > 280 lines",
+      "gate": "check:context-size",
+      "remediation": [
+        "Review ADR-020 for context file minimalism principles",
+        "Move domain-specific content to .github/instructions/ files",
+        "Remove command catalogs, directory listings, and CI details",
+        "Only keep content that prevents CI failures if unknown",
+        "Run: pnpm check:context-size --json for detailed report"
       ],
       "automatable": false
     }

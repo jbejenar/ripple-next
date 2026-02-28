@@ -15,3 +15,5 @@ applyTo: '**/*.test.ts,**/*.spec.ts'
 - Never use real AWS services in tests — always use memory providers
 - Test structure: describe → it, with clear test names
 - Assert behavior, not implementation details
+- Coverage thresholds (never lower): Tier 1 (auth, db, queue) 60%/50% branches, Tier 2 (cms, email, storage, events, validation) 40%/30%, Tier 3 (ui, worker) 20%/10%
+- New providers MUST pass conformance suite from `packages/testing/conformance/`

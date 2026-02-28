@@ -27,6 +27,7 @@
 | [017](./017-upstream-ripple-component-strategy.md) | Upstream Ripple Component Strategy — Port, Own, Selectively Sync | Accepted | Frontend |
 | [018](./018-ai-first-workflow-strategy.md) | AI-First Workflow Strategy — Runbooks, Generators, Error Taxonomy | Accepted | Process |
 | [019](./019-fleet-governance.md) | Fleet Governance — Template Drift Detection and Sync Automation | Accepted | Process |
+| [020](./020-context-file-minimalism.md) | Context File Minimalism — Evidence-Based Agent Doc Trimming | Accepted | Process |
 
 ## Categories
 
@@ -64,10 +65,11 @@
 - **ADR-016** — Roadmap reorganisation with AI-first priority tiers and suggestion governance
 - **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
 - **ADR-019** — Fleet governance: template drift detection, sync PRs, compliance reporting
+- **ADR-020** — Context file minimalism: trim CLAUDE.md/AGENTS.md based on empirical evidence (arXiv:2602.11988)
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `019`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `020`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that

@@ -115,9 +115,9 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 47 classified failure modes across 12 categories including fleet governance, accessibility, session observability, and scaffold codes (RN-040, RN-042, RN-043), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 49 classified failure modes across 13 categories including fleet governance, accessibility, session observability, scaffold, and documentation codes (RN-040, RN-042, RN-043, RN-044), runbook library with 8 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020). Strategy documented in ADR-018 and ADR-020.",
       "packages": [],
-      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "scripts/generate/scaffold.mjs", "scripts/generate/scaffold/", "scripts/a11y-audit.mjs", "scripts/session-logger.mjs", "scripts/agent-metrics.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json", "docs/accessibility.md", "docs/session-observability.md"],
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "scripts/generate/scaffold.mjs", "scripts/generate/scaffold/", "scripts/check-context-size.mjs", "scripts/a11y-audit.mjs", "scripts/session-logger.mjs", "scripts/agent-metrics.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json", "docs/accessibility.md", "docs/session-observability.md"],
       "blockers": [],
       "testCoverage": "gate-tested"
     },
