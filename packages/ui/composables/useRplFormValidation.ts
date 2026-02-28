@@ -136,7 +136,7 @@ export const rplValidationRules = {
   email(message = 'Please enter a valid email address'): RplValidationRule {
     return {
       validate: (value: unknown) =>
-        typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        typeof value === 'string' && /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(value),
       message
     }
   },
