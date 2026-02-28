@@ -812,7 +812,97 @@ Checklist (if `[New Item]`):
 
 ### Open AI Suggestions
 
-_No open suggestions. All previous suggestions (RN-032 through RN-036) were triaged into the active roadmap on 2026-02-27. See [ADR-016](../adr/016-roadmap-reorganisation.md)._
+#### RN-045: Production OIDC Auth Flow Integration Tests (PKCE + Sessions)
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex — readiness manifest + auth test posture review
+**Date:** 2026-02-28
+**Impact:** High
+**Effort:** Medium
+**Risk:** Medium
+**AI-first benefit:** Prevents agents from shipping auth regressions by validating prod-faithful OIDC flow deterministically.
+
+Readiness currently reports a blocker for auth: no integration tests for the production OIDC flow. Conformance tests validate interface behavior, but not end-to-end authorization-code + PKCE session lifecycle behavior against an IdP-like runtime.
+
+**Affected items:** RN-017, RN-025
+**Proposed action:** Add Tier 2 auth integration coverage with containerised IdP fixture and deterministic session/token lifecycle assertions.
+
+Checklist (if `[New Item]`):
+- [ ] Add deterministic IdP fixture (container + checked-in/generator-managed realm/client config)
+- [ ] Cover auth code + PKCE exchange, session creation/persistence, refresh/expiry, logout, and common misconfig paths
+- [ ] Gate on auth/config changes with optional nightly full-suite execution to keep PR path fast
+- [ ] Add error taxonomy codes for expected IdP failure modes (issuer mismatch, redirect mismatch, clock skew, unreachable IdP)
+
+#### RN-046: tRPC Router Integration Harness with Real Postgres (Testcontainers)
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex — readiness manifest + API test topology review
+**Date:** 2026-02-28
+**Impact:** High
+**Effort:** Medium
+**Risk:** Low
+**AI-first benefit:** Gives agents production-semantics confidence when refactoring router logic by testing against a real database.
+
+Readiness reports API as partial and explicitly flags missing tRPC router integration tests with real DB semantics. Repository-level DB integration tests exist, but router-level transaction and auth-path behavior is still mostly contract-tested.
+
+**Affected items:** RN-025
+**Proposed action:** Add a shared Testcontainers-backed router integration harness and prioritize auth-adjacent routes first.
+
+Checklist (if `[New Item]`):
+- [ ] Add shared `createIntegrationCtx()` that provisions Postgres, runs migrations, and isolates DB state per suite
+- [ ] Add integration tests for critical router paths (auth/session/audit-log touching procedures first)
+- [ ] Wire CI job env (`DATABASE_URL`) and path filters so integration tests are deterministic and scoped
+- [ ] Update readiness manifest once blocker is resolved
+
+#### RN-047: Persist Turbo Cache in CI + Document Optional Remote Cache
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex — CI workflow + Turborepo config review
+**Date:** 2026-02-28
+**Impact:** High
+**Effort:** Low
+**Risk:** Low
+**AI-first benefit:** Reduces agent feedback-loop latency without relaxing quality gates.
+
+CI setup currently caches pnpm dependencies but does not persist Turbo build cache between runs, despite defined task outputs in `turbo.json`. This leaves avoidable repeated work in quality/test jobs.
+
+**Affected items:** RN-026
+**Proposed action:** Add explicit Turbo cache persistence with poison-resistant keys and document safe local-only vs remote-cache modes.
+
+Checklist (if `[New Item]`):
+- [ ] Cache `.turbo/` (and other task cache dirs if needed) keyed by lockfile + turbo config + Node/pnpm + relevant env (e.g., `NITRO_PRESET`)
+- [ ] Validate cache correctness (no stale outputs on config/runtime changes)
+- [ ] Document default local cache behavior and optional remote cache rollout pattern
+
+#### RN-048: Downstream Workflow Pinning Policy (Deprecate `@main` Examples)
+
+**Category:** `[Risk Flag]`
+**Source:** GPT-5.2-Codex — downstream workflow guidance review
+**Date:** 2026-02-28
+**Impact:** Medium
+**Effort:** Low
+**Risk:** Medium
+**AI-first benefit:** Makes downstream automation deterministic by preventing unplanned behavior drift from moving branch references.
+
+Downstream workflow documentation currently includes examples referencing composite actions via `@main`, which introduces non-deterministic fleet behavior and surprise breakage risk for consumer repos.
+
+**Affected items:** RN-024, RN-026
+**Proposed action:** Replace `@main` examples with versioned refs (`@v1`/tag or SHA pin), add a governance rule of thumb, and consider a fleet drift check for governed-action refs.
+
+#### RN-049: Licensing Clarity Guardrail (Reject Non-Commercial Custom License Drift)
+
+**Category:** `[Risk Flag]`
+**Source:** GPT-5.2-Codex — legal/operability review prompted by licensing change request
+**Date:** 2026-02-28
+**Impact:** Medium
+**Effort:** Low
+**Risk:** High
+**AI-first benefit:** Removes ambiguity for agents and consumers by keeping usage rights machine-discoverable and legally unambiguous.
+
+Proposal to switch to a “free unless for-profit” license introduces a custom, non-standard legal surface that is hard to automate for compliance tooling and may conflict with ecosystem/package-consumer expectations.
+
+**Affected items:** RN-025
+**Proposed action:** Keep or adopt an SPDX-standard license model and document licensing intent in a dedicated policy note; avoid ad-hoc non-commercial wording in roadmap or package metadata.
 
 ---
 
