@@ -64,7 +64,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **UI component tests** — Vue Test Utils tests for all 37 components (381 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
+- **UI component tests** — Vue Test Utils tests for all 42 components (449 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
 - **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).
@@ -283,15 +283,16 @@ RPL-IAC-007). Integrated into `pnpm verify` gate runner.
 
 ---
 
-#### RN-037: Port Priority Components from Upstream Ripple 2
+#### RN-037: Port Priority Components from Upstream Ripple 2 ✅
 
 **Priority:** High | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents can build complete government pages without external component gaps
+**Status:** Done (2026-02-28)
 
 Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple)
 into `@ripple/ui`, rewritten to follow our conventions (Composition API,
-`--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~9-component
-gap** between our 37-component library and upstream's ~46 components.
+`--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~4-component
+gap** between our 42-component library and upstream's ~46 components.
 
 Each ported component must: follow our SFC conventions, include Vue Test Utils
 tests, include a Storybook story with autodocs, strip all SDP/Tide-specific
@@ -312,8 +313,10 @@ logic, and use our design token system.
 **P4 — Interactive patterns: ✅ Done (2026-02-28)**
 - [x] Port Tabs, SearchBar, Tag, Chip, RelatedLinks components
 
-**P5 — Data display:**
-- [ ] Port Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList components
+**P5 — Data display: ✅ Done (2026-02-28)**
+- [x] Port Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList components
+
+**Verification:** 42 components total, 449 tests passing; `pnpm test && pnpm lint && pnpm typecheck` all pass; all 5 P5 components have Vue Test Utils tests, Storybook stories with autodocs, and are exported from `@ripple/ui`.
 
 ---
 
@@ -573,7 +576,7 @@ continuously improve agent ergonomics.
 | [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Done |
-| [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | In Progress (P1+P2+P3+P4 done) |
+| [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Done |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
@@ -634,7 +637,7 @@ gantt
     RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
     RN-035 Rollback/recovery contract      :done, rn035, 2026-02-28, 1d
     RN-036 IaC policy scanning             :done, rn036, 2026-02-28, 1d
-    RN-037 Port priority components        :rn037, 2026-04-07, 60d
+    RN-037 Port priority components        :done, rn037, 2026-02-28, 1d
     RN-038 Upstream sync workflow          :done, rn038, 2026-02-28, 1d
     RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
     RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d

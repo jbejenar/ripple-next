@@ -30,6 +30,11 @@ export { default as RplInPageNavigation } from './components/molecules/RplInPage
 export { default as RplTabs } from './components/molecules/RplTabs.vue'
 export { default as RplSearchBar } from './components/molecules/RplSearchBar.vue'
 export { default as RplRelatedLinks } from './components/molecules/RplRelatedLinks.vue'
+export { default as RplTable } from './components/molecules/RplTable.vue'
+export { default as RplStatisticsGrid } from './components/molecules/RplStatisticsGrid.vue'
+export { default as RplCategoryGrid } from './components/molecules/RplCategoryGrid.vue'
+export { default as RplResultsListing } from './components/molecules/RplResultsListing.vue'
+export { default as RplDetailList } from './components/molecules/RplDetailList.vue'
 
 // Organisms
 export { default as RplHeader } from './components/organisms/RplHeader.vue'
