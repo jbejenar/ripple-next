@@ -1,0 +1,76 @@
+{
+  "name": "rollback-production",
+  "description": "Roll back a production (or staging) deployment to the previous known-good version.",
+  "preconditions": [
+    {
+      "description": "Health check indicates degraded or unhealthy status",
+      "command": "curl -sf https://${PRODUCTION_URL}/api/health",
+      "expect": "status is 'degraded' or 'unhealthy', or request fails"
+    },
+    {
+      "description": "Previous known-good commit identified",
+      "command": "git log --oneline -10",
+      "expect": "identify the last successful deploy commit"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "git log --oneline -10",
+      "description": "Identify the last known-good commit hash"
+    },
+    {
+      "order": 2,
+      "command": "git checkout ${KNOWN_GOOD_COMMIT}",
+      "description": "Check out the known-good commit (do NOT use --force)"
+    },
+    {
+      "order": 3,
+      "command": "pnpm install --frozen-lockfile",
+      "description": "Install dependencies at the known-good version"
+    },
+    {
+      "order": 4,
+      "command": "pnpm build",
+      "description": "Build all packages at the known-good version"
+    },
+    {
+      "order": 5,
+      "command": "npx sst deploy --stage production",
+      "description": "Deploy the known-good version to production (SST handles rollback atomically)"
+    },
+    {
+      "order": 6,
+      "command": "curl -sf https://${PRODUCTION_URL}/api/health | node -e \"const d=[];process.stdin.on('data',c=>d.push(c));process.stdin.on('end',()=>{const r=JSON.parse(Buffer.concat(d));console.log(JSON.stringify(r,null,2));if(r.status!=='ok'){console.error('Health check failed after rollback');process.exit(1)}})\"",
+      "description": "Verify health endpoint returns ok after rollback"
+    },
+    {
+      "order": 7,
+      "command": "git checkout main",
+      "description": "Return to main branch for further investigation"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Health endpoint returns status 'ok'",
+      "command": "curl -sf https://${PRODUCTION_URL}/api/health",
+      "expect": "status is 'ok'"
+    },
+    {
+      "description": "All critical services responding",
+      "command": "curl -sf https://${PRODUCTION_URL}/api/health",
+      "expect": "checks array shows db and redis as 'ok'"
+    }
+  ],
+  "postActions": [
+    "Create a post-mortem issue documenting the failure",
+    "Identify the breaking commit with git bisect",
+    "Write a regression test before re-deploying the fix"
+  ],
+  "related": [
+    "docs/deployment.md",
+    "sst.config.ts",
+    "apps/web/server/api/health.get.ts",
+    "docs/runbooks/deploy-to-staging.json"
+  ]
+}

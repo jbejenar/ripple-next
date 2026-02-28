@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy.",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -112,17 +112,22 @@
       "testCoverage": "component-tested"
     },
     "agent-tooling": {
-      "status": "planned",
-      "description": "AI-first agent workflow tooling: runbook automation (RN-039), structured error taxonomy (RN-040), code generation templates (RN-041), and agent session observability (RN-043). Strategy documented in ADR-018.",
+      "status": "implemented",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 24 classified failure modes and doctor taxonomy codes (RN-040), runbook library with 6 structured runbooks and CLI runner (RN-039). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
       "packages": [],
-      "paths": ["docs/runbooks/", "scripts/generate/", "docs/error-taxonomy.json"],
-      "blockers": [
-        "Runbooks not yet created (RN-039)",
-        "Error taxonomy not yet defined (RN-040)",
-        "Code generators not yet built (RN-041)"
-      ],
-      "testCoverage": "none"
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs"],
+      "blockers": [],
+      "testCoverage": "gate-tested"
     }
+  },
+  "upstreamRipple": {
+    "repository": "https://github.com/dpc-sdp/ripple",
+    "lastReviewedVersion": "v2.49.1",
+    "lastReviewDate": "2026-02-28",
+    "syncPolicy": "Quarterly review. See CONTRIBUTING.md and ADR-017.",
+    "ported": 16,
+    "upstream": 46,
+    "gap": 30
   },
   "statusLegend": {
     "implemented": "Core functionality working and tested at some level",

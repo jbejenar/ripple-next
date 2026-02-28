@@ -1,0 +1,92 @@
+{
+  "name": "add-api-endpoint",
+  "description": "Scaffold and implement a new tRPC endpoint with Zod validation, authentication, and tests.",
+  "args": {
+    "router": "Router name in kebab-case (e.g. 'project', 'user', 'content')",
+    "procedure": "Procedure name in camelCase (e.g. 'getById', 'create', 'listAll')"
+  },
+  "preconditions": [
+    {
+      "description": "tRPC router directory exists",
+      "command": "test -d apps/web/server/trpc/routers",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:endpoint ${ROUTER} ${PROCEDURE}",
+      "description": "Scaffold tRPC router (if new), procedure stub, and test file"
+    },
+    {
+      "order": 2,
+      "command": "echo 'Define Zod input/output schemas in the router file'",
+      "description": "Replace placeholder z.object({}) with actual validation schemas. Share schemas from packages/validation/ if applicable."
+    },
+    {
+      "order": 3,
+      "command": "echo 'Implement procedure logic using repository pattern'",
+      "description": "Use ctx.db to create repository instances. Never access the database directly from route handlers."
+    },
+    {
+      "order": 4,
+      "command": "echo 'Write tests with mock context (db, session, user)'",
+      "description": "Test happy path, validation errors, auth failures, and edge cases. Use factories from packages/testing/factories/."
+    },
+    {
+      "order": 5,
+      "command": "pnpm test -- --filter @ripple/web",
+      "description": "Run web app tests to verify the new endpoint"
+    },
+    {
+      "order": 6,
+      "command": "pnpm typecheck",
+      "description": "Verify end-to-end type safety (tRPC infers types from Zod schemas)"
+    },
+    {
+      "order": 7,
+      "command": "pnpm lint",
+      "description": "Verify lint passes"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Router file exists",
+      "command": "test -f apps/web/server/trpc/routers/${ROUTER}.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Router registered in index.ts",
+      "command": "grep -q '${ROUTER}' apps/web/server/trpc/routers/index.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Test file exists",
+      "command": "test -f apps/web/tests/unit/trpc/${ROUTER}-router.test.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Tests pass",
+      "command": "pnpm test -- --filter @ripple/web",
+      "expect": "exit 0"
+    }
+  ],
+  "conventions": {
+    "authentication": "Use protectedProcedure for authenticated endpoints, publicProcedure for public",
+    "validation": "Always validate input with Zod schemas — no raw input access",
+    "database": "Access via repository pattern: const repo = new XxxRepository(ctx.db)",
+    "errors": "Use TRPCError with appropriate code (NOT_FOUND, UNAUTHORIZED, BAD_REQUEST)"
+  },
+  "related": [
+    "apps/web/server/trpc/routers/",
+    "apps/web/server/trpc/trpc.ts",
+    "packages/validation/",
+    "packages/db/repositories/",
+    "scripts/generate/endpoint.mjs"
+  ]
+}

@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> Last updated: 2026-02-27 | Version: 5.0.0
+> Last updated: 2026-02-28 | Version: 5.0.0
 >
 > **AI-first platform.** This roadmap is structured for both human and AI agent
 > consumption. Every item is machine-parseable, uniquely identified (`RN-XXX`),
@@ -89,13 +89,13 @@ graph LR
         UI["UI (Tested)"]
         SEARCH[Search]
         NAV[Navigation]
+        AGENT_DX[Agent Tooling]
     end
     subgraph Partial
         API[API Layer]
     end
     subgraph Planned
         FLEET[Fleet Templates]
-        AGENT_DX[Agent Tooling]
     end
 
     style AUTH fill:#22c55e,color:#fff
@@ -114,7 +114,7 @@ graph LR
     style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
     style FLEET fill:#6366f1,color:#fff
-    style AGENT_DX fill:#6366f1,color:#fff
+    style AGENT_DX fill:#22c55e,color:#fff
 ```
 
 ---
@@ -219,33 +219,43 @@ the **last remaining top blocker** for ship-ready status.
 > Items that directly improve agent automation, observability, and operational
 > safety, plus critical component gaps that block government site delivery.
 
-#### RN-034: Machine-Readable Quality Gate Summaries
+#### RN-034: Machine-Readable Quality Gate Summaries ✅
 
 **Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** AI Principal Engineer review | **AI-first benefit:** Agents parse structured JSON instead of scraping logs
+**Status:** Done (2026-02-28)
 
-Standardise JSON summaries for lint/typecheck/test outcomes (similar to
-doctor/env checks) so AI agents can programmatically act on quality gate results.
+Unified quality gate runner (`pnpm verify`) that runs all gates (validate:env,
+lint, typecheck, test, check:readiness, check:quarantine) and emits a structured
+JSON summary conforming to the `ripple-gate-summary/v1` schema.
 
-- [ ] Add script wrappers emitting stable JSON for lint/typecheck/test
-- [ ] Include machine-readable status in CI artifacts
-- [ ] Ensure non-zero exits remain authoritative for gating
-- [ ] Document schema for downstream automation consumers
+- [x] Add script wrappers emitting stable JSON for lint/typecheck/test (`scripts/verify.mjs`)
+- [x] Include machine-readable status in CI artifacts (`gate-summary` artifact, 30-day retention)
+- [x] Ensure non-zero exits remain authoritative for gating (exit 1 if any gate fails)
+- [x] Document schema for downstream automation consumers (AGENTS.md, CLAUDE.md, script header)
+
+**Verification:** `pnpm verify -- --json` emits valid JSON; `pnpm lint && pnpm typecheck && pnpm test` all pass; CI workflow uploads `gate-summary.json` artifact.
 
 ---
 
-#### RN-035: Rollback and Recovery Command Contract
+#### RN-035: Rollback and Recovery Command Contract ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review | **AI-first benefit:** Agents can execute safe recovery without human interpretation
+**Status:** Done (2026-02-28)
 
-Define and automate rollback procedures for staging/production so agents can
-execute safe recovery paths without ad hoc human interpretation.
+Post-deploy health validation script (`scripts/deploy-health-check.mjs`) with
+retry logic, structured `ripple-health-report/v1` JSON output, and rollback
+trigger criteria linked to error taxonomy (RPL-DEPLOY-001). CI workflows
+capture health reports as artifacts. Rollback procedures documented in
+`docs/deployment.md` and runbook (`docs/runbooks/rollback-production.json`).
 
-- [ ] Add explicit rollback runbook with command examples
-- [ ] Provide scripted rollback entrypoint(s) for common failure modes
-- [ ] Add post-deploy health validation + rollback trigger criteria
-- [ ] Capture rollback evidence as CI/CD artifacts
+- [x] Add explicit rollback runbook with command examples (via RN-039)
+- [x] Provide scripted rollback entrypoint(s) for common failure modes (`scripts/deploy-health-check.mjs`)
+- [x] Add post-deploy health validation + rollback trigger criteria (`docs/deployment.md`)
+- [x] Capture rollback evidence as CI/CD artifacts (`health-report-{stage}`, 30-day retention)
+
+**Verification:** `node scripts/deploy-health-check.mjs --help` shows usage; deploy workflows include health check steps; `docs/deployment.md` has rollback section; all gates pass.
 
 ---
 
@@ -269,7 +279,7 @@ security and compliance posture.
 **Priority:** High | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents can build complete government pages without external component gaps
 
-Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple-framework)
+Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple)
 into `@ripple/ui`, rewritten to follow our conventions (Composition API,
 `--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~30-component
 gap** between our 16-component library and upstream's ~46 components.
@@ -298,76 +308,91 @@ logic, and use our design token system.
 
 ---
 
-#### RN-038: Upstream Ripple Selective Sync Workflow
+#### RN-038: Upstream Ripple Selective Sync Workflow ✅
 
 **Priority:** Medium | **Impact:** Medium | **Effort:** Low | **Risk:** Low
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents follow a documented procedure for upstream change adoption
+**Status:** Done (2026-02-28)
 
-Establish a repeatable process for monitoring and selectively adopting
-improvements from the upstream [Ripple 2](https://github.com/dpc-sdp/ripple-framework)
-design system without taking a runtime dependency.
+Quarterly upstream review procedure documented in `CONTRIBUTING.md` with sync
+checklist (always/conditional/never categories), porting conventions, and
+component gap tracking in `readiness.json`. Builds on ADR-017's strategic
+framework with operational procedures.
 
-- [ ] Document quarterly upstream review procedure in `CONTRIBUTING.md`
-- [ ] Create sync checklist (accessibility fixes, design token updates, new patterns)
-- [ ] Define criteria for what to sync vs what to skip (no SDP/Tide coupling)
-- [ ] Add upstream version tracking to `docs/readiness.json`
+- [x] Document quarterly upstream review procedure in `CONTRIBUTING.md`
+- [x] Create sync checklist (accessibility fixes, design token updates, new patterns)
+- [x] Define criteria for what to sync vs what to skip (no SDP/Tide coupling)
+- [x] Add upstream version tracking to `docs/readiness.json`
+
+**Verification:** `CONTRIBUTING.md` has upstream sync section; `readiness.json` has `upstreamRipple` tracking block; all gates pass.
 
 ---
 
-#### RN-039: Agent Runbook Automation
+#### RN-039: Agent Runbook Automation ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents execute multi-step operations from codified procedures without human interpretation
+**Status:** Done (2026-02-28)
 
-Codify all common operations into structured, executable runbooks that AI agents
-and humans can follow deterministically. Runbooks are machine-parseable
-(step-by-step with preconditions, commands, and validation checks).
+Structured, machine-parseable runbooks (`docs/runbooks/*.json`) with preconditions,
+ordered steps, validation criteria, and related file references. CLI runner
+(`pnpm runbook`) prints steps in human-readable or JSON format. Six runbooks
+covering deployment, rollback, and all scaffolding operations.
 
-- [ ] Create `docs/runbooks/` directory with standardised template
-- [ ] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
-- [ ] Write runbook: **rollback-production** (identify version, rollback, verify, notify)
-- [ ] Write runbook: **add-new-provider** (scaffold, implement interface, conformance test, register)
-- [ ] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
-- [ ] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
-- [ ] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
-- [ ] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
+- [x] Create `docs/runbooks/` directory with standardised template
+- [x] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
+- [x] Write runbook: **rollback-production** (identify version, rollback, verify, notify)
+- [x] Write runbook: **add-new-provider** (scaffold, implement interface, conformance test, register)
+- [x] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
+- [x] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
+- [x] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
+- [x] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
+
+**Verification:** `pnpm runbook --list` shows 6 runbooks; `pnpm runbook <name> -- --json` emits valid JSON; all gates pass.
 
 ---
 
-#### RN-040: Structured Error Taxonomy
+#### RN-040: Structured Error Taxonomy ✅
 
 **Priority:** High | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
+**Status:** Done (2026-02-28)
 
-Define a machine-parseable error taxonomy covering all failure modes across
-quality gates, tests, builds, and deployments. Every error maps to a category,
-severity, and suggested remediation — enabling agents to auto-triage failures.
+Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 24 classified
+failure modes across 7 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY).
+Each error includes code, severity, remediation steps, and automatable flag.
+Doctor `--json` output now includes `taxonomyCode` fields.
 
-- [ ] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
-- [ ] Categorise quality gate failures (lint, typecheck, test, env validation)
-- [ ] Categorise build failures (compilation, bundling, missing deps)
-- [ ] Categorise deployment failures (health check, resource limit, permission)
-- [ ] Wire `pnpm doctor --json` output to use taxonomy codes
-- [ ] Document agent remediation flowchart for each error category
+- [x] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
+- [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 12 error codes
+- [x] Categorise build failures (compilation, bundling, missing deps) — 3 error codes
+- [x] Categorise deployment failures (health check, resource limit, permission) — 3 error codes
+- [x] Wire `pnpm doctor --json` output to use taxonomy codes (`taxonomyCode` field)
+- [x] Remediation steps documented per error (actionable commands in each entry)
+
+**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 24 entries; `pnpm verify` passes all gates.
 
 ---
 
-#### RN-041: Code Generation Templates
+#### RN-041: Code Generation Templates ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents scaffold convention-compliant code without memorising boilerplate
+**Status:** Done (2026-02-28)
 
-Code generators for common patterns: components, providers, API routes, and
-packages. Generators enforce naming conventions, file structure, test stubs,
-and Storybook stories automatically.
+Zero-dependency code generators using Node.js string templates. Four generators
+covering components, providers, endpoints, and packages — all with `--dry-run`
+support and convention-compliant output.
 
-- [ ] Create `scripts/generate/` with template engine (Handlebars or simple string templates)
-- [ ] `pnpm generate:component <name>` — SFC + test + story + index export
-- [ ] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
-- [ ] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
-- [ ] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
-- [ ] Add `--dry-run` flag to preview generated files without writing
-- [ ] Document generators in `AGENTS.md` and `docs/developer-guide.md`
+- [x] Create `scripts/generate/` with string template engine (`lib.mjs` + per-generator modules)
+- [x] `pnpm generate:component <name>` — SFC + test + story + index export
+- [x] `pnpm generate:provider <package> <name>` — provider class + conformance test registration
+- [x] `pnpm generate:endpoint <router> <procedure>` — tRPC procedure + validation schema + test stub
+- [x] `pnpm generate:package <name>` — full package scaffold (types, index, tests, package.json, tsconfig)
+- [x] Add `--dry-run` flag to preview generated files without writing
+- [x] Document generators in `AGENTS.md` and `CLAUDE.md`
+
+**Verification:** All four generators tested with `--dry-run`; `pnpm lint && pnpm typecheck && pnpm test` all pass.
 
 ---
 
@@ -533,14 +558,14 @@ continuously improve agent ergonomics.
 | [RN-032](#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | 1 | Critical | High | Low | Done |
 | [RN-033](#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | 1 | Critical | High | Low | Done |
 | [RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | 1 | Critical | Very High | High | Pending |
-| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Pending |
-| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Pending |
+| [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
+| [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
-| [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
-| [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Pending |
-| [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Pending |
-| [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Pending |
+| [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
+| [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
+| [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
+| [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
@@ -594,14 +619,14 @@ gantt
     RN-024 Fleet update + drift            :rn024, 2026-03-08, 30d
 
     section Tier 2 — Next Sprint
-    RN-034 Quality gate summaries          :rn034, 2026-04-07, 14d
-    RN-035 Rollback/recovery contract      :rn035, 2026-04-07, 14d
+    RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
+    RN-035 Rollback/recovery contract      :done, rn035, 2026-02-28, 1d
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
-    RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
-    RN-039 Agent runbook automation        :rn039, 2026-04-07, 21d
-    RN-040 Structured error taxonomy       :rn040, 2026-04-28, 14d
-    RN-041 Code generation templates       :rn041, 2026-04-14, 14d
+    RN-038 Upstream sync workflow          :done, rn038, 2026-02-28, 1d
+    RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
+    RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
+    RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :rn023, 2026-05-05, 14d
@@ -897,9 +922,9 @@ graph TD
 - [x] ADR index with all 18 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
-- [ ] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
-- [ ] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
-- [ ] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
+- [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
+- [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
+- [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
 - [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 
 ### Template Strategy

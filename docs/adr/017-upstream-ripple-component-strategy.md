@@ -6,7 +6,7 @@
 
 ## Context
 
-The upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple-framework)
+The upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple)
 (`@dpc-sdp/ripple-ui-core`, `@dpc-sdp/ripple-ui-forms`) is the official
 Victorian Government frontend component library. It provides approximately **46
 components** across layout, navigation, content, forms, and interactive patterns
@@ -25,7 +25,7 @@ or adopt a hybrid model?
 
 | Aspect | Detail |
 |--------|--------|
-| Repository | [dpc-sdp/ripple-framework](https://github.com/dpc-sdp/ripple-framework) |
+| Repository | [dpc-sdp/ripple](https://github.com/dpc-sdp/ripple) |
 | Stack | Vue 3 + Nuxt 3 + TypeScript + PostCSS |
 | Components | ~46 (ripple-ui-core + ripple-ui-forms) |
 | Distribution | GitHub Packages (`@dpc-sdp` namespace) — **not npm** |
@@ -132,7 +132,7 @@ directly.
 - **Customisation friction** — overriding upstream behaviour requires CSS hacks,
   slot workarounds, or component wrapping — all fragile patterns.
 
-### Alternative B: Fork `dpc-sdp/ripple-framework`
+### Alternative B: Fork `dpc-sdp/ripple`
 
 Fork the entire upstream repository and maintain it as a parallel codebase.
 
@@ -221,7 +221,7 @@ Porting should follow this priority order, based on government website needs:
   components must not contain CMS-specific logic
 - [RN-021](../product-roadmap/README.md#rn-021-media-gallery--document-download-components) —
   media components overlap with P6 port priority
-- [Upstream Ripple 2](https://github.com/dpc-sdp/ripple-framework) — source of
+- [Upstream Ripple 2](https://github.com/dpc-sdp/ripple) — source of
   designs and patterns for porting
 - [Ripple Design System](https://www.ripple.sdp.vic.gov.au/) — canonical design
   reference for Brand Victoria

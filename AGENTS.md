@@ -31,6 +31,9 @@ pnpm doctor -- --offline # skip network checks (ephemeral/offline runners)
 
 If `pnpm doctor` fails, fix the failures before running quality gates.
 The doctor script is the single source of truth for environment readiness.
+Doctor `--json` output includes `taxonomyCode` fields (e.g. `RPL-ENV-001`) —
+look up codes in `docs/error-taxonomy.json` for severity, remediation steps,
+and automatable flags.
 
 Copy `.env.example` to `.env` for local development defaults.
 
@@ -134,6 +137,16 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm validate:env` — Validate environment variables against Zod schema (ADR-012)
 - `pnpm check:readiness` — Verify readiness.json is not stale (runs in CI)
 - `pnpm check:quarantine` — Verify flaky test quarantine policy (ADR-013, runs in CI)
+- `pnpm verify` — Run all quality gates with structured summary (RN-034)
+- `pnpm verify -- --json` — Machine-readable JSON gate summary (`ripple-gate-summary/v1`)
+- `pnpm verify -- --ci` — Write `gate-summary.json` for CI artifact upload
+- `pnpm generate:component <name>` — Scaffold Vue SFC + test + story + index export (RN-041)
+- `pnpm generate:provider <package> <name>` — Scaffold provider class + conformance test
+- `pnpm generate:endpoint <router> <procedure>` — Scaffold tRPC router + validation + test
+- `pnpm generate:package <name>` — Scaffold full @ripple/* package (types, index, tests, configs)
+- `pnpm runbook <name>` — Print structured runbook steps (RN-039)
+- `pnpm runbook --list` — List all available runbooks
+- `pnpm runbook <name> -- --json` — Machine-readable JSON runbook output
 - `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations
@@ -143,6 +156,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `npx sst dev` — Start SST live dev (deploys to AWS, proxies locally)
 - `npx sst deploy --stage staging` — Deploy to staging
 - `npx sst deploy --stage production` — Deploy to production
+- `pnpm deploy:health-check <url>` — Post-deploy health validation with retries (RN-035)
 
 ## Code Conventions
 
@@ -204,6 +218,9 @@ Test results are uploaded as structured artifacts on every CI run:
 | `test-results-unit` | JUnit XML from Vitest | 30 days |
 | `test-results-e2e` | Playwright HTML report | 30 days |
 | `playwright-traces` | Playwright traces (failure only) | 7 days |
+| `gate-summary` | JSON quality gate summary (`ripple-gate-summary/v1`) | 30 days |
+| `health-report-staging` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
+| `health-report-production` | Post-deploy health check JSON (`ripple-health-report/v1`) | 30 days |
 | `sbom-cyclonedx` | CycloneDX SBOM (release only) | 90 days |
 
 ### Reusable Composite Actions

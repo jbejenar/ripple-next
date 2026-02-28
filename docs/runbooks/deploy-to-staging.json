@@ -1,0 +1,71 @@
+{
+  "name": "deploy-to-staging",
+  "description": "Build, validate, and deploy the application to the staging environment via SST.",
+  "preconditions": [
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "All quality gates pass",
+      "command": "pnpm verify -- --json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Working tree is clean (all changes committed)",
+      "command": "git diff --quiet && git diff --cached --quiet",
+      "expect": "exit 0"
+    },
+    {
+      "description": "On main branch or approved PR branch",
+      "command": "git branch --show-current",
+      "expect": "stdout contains 'main' or PR branch name"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm build",
+      "description": "Build all packages and the Nuxt application"
+    },
+    {
+      "order": 2,
+      "command": "pnpm verify -- --json",
+      "description": "Run all quality gates and confirm pass status"
+    },
+    {
+      "order": 3,
+      "command": "npx sst deploy --stage staging",
+      "description": "Deploy to staging via SST (Pulumi-based, provisions Lambda + Aurora + Redis + SQS)"
+    },
+    {
+      "order": 4,
+      "command": "curl -sf https://${STAGING_URL}/api/health | node -e \"const d=[];process.stdin.on('data',c=>d.push(c));process.stdin.on('end',()=>{const r=JSON.parse(Buffer.concat(d));if(r.status!=='ok'){process.exit(1)}})\"",
+      "description": "Verify health endpoint returns ok status (checks DB + Redis connectivity)"
+    },
+    {
+      "order": 5,
+      "command": "curl -sf https://${STAGING_URL}/api/health | node -e \"process.stdin.on('data',d=>console.log(JSON.parse(d)))\"",
+      "description": "Print full health check response for audit trail"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Health endpoint returns status 'ok'",
+      "command": "curl -sf https://${STAGING_URL}/api/health?quick",
+      "expect": "exit 0"
+    },
+    {
+      "description": "SST stage exists and is active",
+      "command": "npx sst diff --stage staging",
+      "expect": "exit 0"
+    }
+  ],
+  "rollback": "See docs/runbooks/rollback-production.json (same procedure, substitute --stage staging)",
+  "related": [
+    "docs/deployment.md",
+    "sst.config.ts",
+    "docs/runbooks/rollback-production.json"
+  ]
+}

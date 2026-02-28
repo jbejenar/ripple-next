@@ -34,6 +34,13 @@
     "check:readiness": "node scripts/check-readiness.mjs",
     "check:quarantine": "node scripts/check-quarantine.mjs",
     "validate:env": "node scripts/validate-env.mjs",
+    "verify": "node scripts/verify.mjs",
+    "generate:component": "node scripts/generate/index.mjs component",
+    "generate:provider": "node scripts/generate/index.mjs provider",
+    "generate:endpoint": "node scripts/generate/index.mjs endpoint",
+    "generate:package": "node scripts/generate/index.mjs package",
+    "runbook": "node scripts/runbook.mjs",
+    "deploy:health-check": "node scripts/deploy-health-check.mjs",
     "prepare": "husky"
   },
   "pnpm": {

@@ -45,6 +45,8 @@ apps/**/node-compile-cache/
 coverage/
 test-results/
 playwright-report/
+gate-summary.json
+health-report.json
 
 # Environment
 .env

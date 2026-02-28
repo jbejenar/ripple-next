@@ -12,6 +12,8 @@ pnpm typecheck       # type check all packages
 pnpm validate:env    # validate env vars against Zod schema
 pnpm check:readiness # verify readiness.json is not stale
 pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
+pnpm verify          # run ALL quality gates with summary (RN-034)
+pnpm verify -- --json # machine-readable JSON gate summary
 ```
 
 ## Project Overview
@@ -24,6 +26,7 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
 - `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
+- `docs/error-taxonomy.json` — 24 classified error codes with remediation steps (RPL-*-NNN format)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements
 - `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
@@ -38,12 +41,17 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 
 ## After Making Changes
 
+Run `pnpm verify` to execute all quality gates with a structured summary, or run
+them individually:
+
 1. `pnpm test` — all tests must pass
 2. `pnpm lint` — zero errors (no-console is an error, not a warning)
 3. `pnpm typecheck` — zero type errors
 4. `pnpm check:readiness` — manifest must not drift
 5. `pnpm check:quarantine` — quarantine policy must be satisfied
 6. If you changed a published package's API: `pnpm changeset` to add version intent
+
+Use `pnpm verify -- --json` for machine-readable JSON output (schema: `ripple-gate-summary/v1`).
 
 ## Provider Pattern (Critical)
 
@@ -91,9 +99,28 @@ DO manually import: anything from `@ripple/*` packages, `node_modules`, tRPC uti
 
 This platform treats AI agents as first-class developers. Three pillars:
 
-1. **Runbooks** — Codified, executable procedures for common operations (RN-039)
-2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040)
-3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041)
+1. **Runbooks** — Codified, executable procedures for common operations (RN-039, done)
+2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040, done)
+3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041, done)
+
+Available generators:
+```bash
+pnpm generate:component <name> [--tier=atoms|molecules|organisms] [--dry-run]
+pnpm generate:provider <package> <name> [--dry-run]
+pnpm generate:endpoint <router> <procedure> [--dry-run]
+pnpm generate:package <name> [--dry-run]
+```
+
+Available runbooks (`pnpm runbook --list`):
+```bash
+pnpm runbook deploy-to-staging      # Build, validate, deploy to staging
+pnpm runbook rollback-production    # Roll back to known-good version
+pnpm runbook add-new-provider       # Scaffold + implement provider
+pnpm runbook add-new-component      # Scaffold + implement UI component
+pnpm runbook add-api-endpoint       # Scaffold + implement tRPC endpoint
+pnpm runbook onboard-new-package    # Scaffold full @ripple/* package
+pnpm runbook <name> -- --json       # Machine-readable JSON output
+```
 
 See `docs/adr/018-ai-first-workflow-strategy.md` for the full strategy.
 
