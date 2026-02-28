@@ -556,15 +556,21 @@ consumers.
 
 ---
 
-#### RN-029: Validate Devcontainer in CI Runners
+#### RN-029: Validate Devcontainer in CI Runners ✅
 
 **Priority:** Low | **Impact:** Low | **Effort:** Low | **Risk:** Low
 **Continues:** [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer)
+**Status:** Done — implemented 2026-02-28.
 
 Optional validation that the devcontainer works in containerised CI runners.
 
-- [ ] Add CI job that builds and validates devcontainer image
-- [ ] Run smoke test inside devcontainer in CI
+- [x] Add CI job that builds and validates devcontainer image — `devcontainer` job in ci.yml, triggered by `.devcontainer/**`, `.nvmrc`, or `package.json` changes
+- [x] Run smoke test inside devcontainer in CI — validates Node.js version matches `.nvmrc`, pnpm via corepack, required tools (git, pg_isready), and docker-compose config
+
+**Verification:**
+- CI `devcontainer` job builds Dockerfile and runs 4 smoke tests
+- Path filtering: only runs when devcontainer-related files change
+- Validates toolchain pin consistency between repo and container
 
 ---
 
@@ -616,7 +622,7 @@ continuously improve agent ergonomics.
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
-| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Pending |
+| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Done |
 | [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Done |
 
 ---

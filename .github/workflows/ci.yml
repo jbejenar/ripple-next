@@ -20,6 +20,7 @@ jobs:
       apps-web: ${{ steps.changes.outputs.apps-web }}
       high-risk: ${{ steps.changes.outputs.high-risk }}
       infra: ${{ steps.changes.outputs.infra }}
+      devcontainer: ${{ steps.changes.outputs.devcontainer }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -40,6 +41,10 @@ jobs:
             infra:
               - 'sst.config.ts'
               - 'docs/iac-policies.json'
+            devcontainer:
+              - '.devcontainer/**'
+              - '.nvmrc'
+              - 'package.json'
 
   quality:
     runs-on: ubuntu-latest
@@ -130,6 +135,48 @@ jobs:
           name: iac-policy-report
           path: iac-policy-report.json
           retention-days: 30
+
+  # ─── Devcontainer Validation (RN-029) ────────────────────────
+  # Runs when .devcontainer/, .nvmrc, or packageManager change.
+  # Builds the devcontainer image and validates toolchain pins
+  # match the repo's sources of truth.
+
+  devcontainer:
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.devcontainer == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build devcontainer image
+        run: docker build -t ripple-next-devcontainer .devcontainer/
+
+      - name: Smoke test — Node.js version matches .nvmrc
+        run: |
+          EXPECTED=$(cat .nvmrc | tr -d '[:space:]')
+          ACTUAL=$(docker run --rm ripple-next-devcontainer node -v | tr -d '[:space:]')
+          echo "Expected: v${EXPECTED}, Actual: ${ACTUAL}"
+          if [[ "${ACTUAL}" != "v${EXPECTED}" ]]; then
+            echo "::error::Node.js version mismatch: container has ${ACTUAL}, .nvmrc requires v${EXPECTED}"
+            exit 1
+          fi
+
+      - name: Smoke test — pnpm available via corepack
+        run: |
+          docker run --rm ripple-next-devcontainer pnpm --version
+
+      - name: Smoke test — required tools present
+        run: |
+          docker run --rm ripple-next-devcontainer bash -c "
+            set -e
+            echo 'Checking git...' && git --version
+            echo 'Checking pg_isready...' && which pg_isready
+            echo 'All tools present.'
+          "
+
+      - name: Smoke test — docker-compose config valid
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml config --quiet
 
   # ─── Tier 2: Full E2E + Accessibility ────────────────────────
   # Always runs on push to main.
