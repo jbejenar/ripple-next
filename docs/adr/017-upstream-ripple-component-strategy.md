@@ -219,7 +219,7 @@ Porting should follow this priority order, based on government website needs:
   content types drive content renderer components
 - [ADR-011: CMS Decoupling](./011-cms-decoupling-pull-out-drupal.md) — UI
   components must not contain CMS-specific logic
-- [RN-021](../product-roadmap/README.md#rn-021-media-gallery--document-download-components) —
+- [RN-021](../product-roadmap/ARCHIVE.md#rn-021-media-gallery--document-download-components) —
   media components overlap with P6 port priority
 - [Upstream Ripple 2](https://github.com/dpc-sdp/ripple) — source of
   designs and patterns for porting

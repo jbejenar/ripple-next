@@ -79,4 +79,4 @@ local-first implementations that are faster, simpler, and less flaky for agent l
 - [ADR-003: Provider Pattern](./003-provider-pattern.md) — core pattern that makes
   LocalStack unnecessary for most workflows
 - [ADR-004: SST v3](./004-sst-over-cdk.md) — preview deploys as the real-AWS validation path
-- [RN-024](../product-roadmap/README.md#rn-024-fleet-update-mechanism--template-drift-automation) — fleet template strategy (where LocalStack policy might apply org-wide)
+- [RN-024](../product-roadmap/ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation) — fleet template strategy (where LocalStack policy might apply org-wide)

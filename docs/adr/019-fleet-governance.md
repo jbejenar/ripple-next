@@ -144,7 +144,7 @@ Future low-priority items:
 
 ## Related
 
-- [Product Roadmap v5.0.0 — RN-024](../product-roadmap/README.md#rn-024-fleet-update-mechanism--template-drift-automation)
+- [Product Roadmap — RN-024](../product-roadmap/ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation)
 - [ADR-010: CI Observability](./010-ci-observability-supply-chain.md) — structured CI artifacts
 - [ADR-018: AI-First Workflow Strategy](./018-ai-first-workflow-strategy.md) — error taxonomy, runbooks
 - [Downstream Workflows Guide](../downstream-workflows.md) — composite action consumption

@@ -67,7 +67,7 @@ pnpm dev
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
 | [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
-| [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, scorecard, and improvement phases   |
+| [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
 | [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
 
 ### Architecture Decision Records
