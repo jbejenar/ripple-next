@@ -156,7 +156,7 @@ structured CI artifacts.
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (19 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (20 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 
 ### Key ADRs

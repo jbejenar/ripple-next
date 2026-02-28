@@ -1041,7 +1041,7 @@ graph TD
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories
-- [x] ADR index with all 19 decisions cross-referenced
+- [x] ADR index with all 20 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy; ADR-020: context file minimalism)
 - [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
