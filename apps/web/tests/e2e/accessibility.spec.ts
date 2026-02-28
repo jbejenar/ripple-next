@@ -1,6 +1,16 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
+type AxeImpact = 'minor' | 'moderate' | 'serious' | 'critical' | null
+
+interface AxeViolation {
+  impact: AxeImpact
+  id: string
+  description: string
+  helpUrl: string
+  nodes: Array<unknown>
+}
+
 /**
  * Accessibility audit tests using axe-core.
  *
@@ -17,7 +27,7 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
 
   for (const route of routes) {
     test(`${route} has no critical or serious WCAG 2.1 AA violations`, async ({
-      page
+      page,
     }) => {
       await page.goto(route, { waitUntil: 'networkidle' })
 
@@ -25,15 +35,15 @@ test.describe('Accessibility — WCAG 2.1 AA', () => {
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze()
 
-      const blocking = results.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious'
+      const blocking = (results.violations as AxeViolation[]).filter(
+        (violation) => violation.impact === 'critical' || violation.impact === 'serious',
       )
 
       if (blocking.length > 0) {
         const summary = blocking
           .map(
-            (v) =>
-              `[${v.impact}] ${v.id}: ${v.description} (${v.nodes.length} instance${v.nodes.length === 1 ? '' : 's'})\n  Help: ${v.helpUrl}`
+            (violation) =>
+              `[${violation.impact}] ${violation.id}: ${violation.description} (${violation.nodes.length} instance${violation.nodes.length === 1 ? '' : 's'})\n  Help: ${violation.helpUrl}`,
           )
           .join('\n')
 

@@ -25,11 +25,12 @@ import { resolve, join } from 'node:path'
 const ROOT = resolve(import.meta.dirname, '..')
 const JSON_MODE = process.argv.includes('--json')
 
-// Load .env file if it exists (does not override existing env vars).
-// Minimal parser — no external dependency needed.
-const envFile = join(ROOT, '.env')
-if (existsSync(envFile)) {
-  const lines = readFileSync(envFile, 'utf-8').split('\n')
+function loadEnvFile(filePath) {
+  if (!existsSync(filePath)) {
+    return false
+  }
+
+  const lines = readFileSync(filePath, 'utf-8').split('\n')
   for (const line of lines) {
     const trimmed = line.trim()
     if (!trimmed || trimmed.startsWith('#')) continue
@@ -44,6 +45,18 @@ if (existsSync(envFile)) {
       process.env[key] = value
     }
   }
+
+  return true
+}
+
+// Load .env first, then fall back to .env.example defaults.
+// This keeps validation deterministic for clean checkouts without requiring
+// a manual copy step before running bootstrap/verify.
+const envFile = join(ROOT, '.env')
+const envExampleFile = join(ROOT, '.env.example')
+const loadedEnv = loadEnvFile(envFile)
+if (!loadedEnv) {
+  loadEnvFile(envExampleFile)
 }
 
 // ── Validation rules (self-contained, mirrors @ripple/validation env schema) ──
