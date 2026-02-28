@@ -62,6 +62,7 @@ const GATES = [
   { name: 'check:quarantine', args: ['pnpm', 'check:quarantine'], category: 'policy' },
   { name: 'check:iac', args: ['pnpm', 'check:iac'], category: 'policy' },
   { name: 'check:context-size', args: ['pnpm', 'check:context-size'], category: 'policy' },
+  { name: 'check:api-contract', args: ['pnpm', 'check:api-contract'], category: 'policy' },
 ]
 
 // Add fleet drift gate if --fleet flag is passed and fleet-policy.json exists

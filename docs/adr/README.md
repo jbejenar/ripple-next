@@ -28,6 +28,7 @@
 | [018](./018-ai-first-workflow-strategy.md) | AI-First Workflow Strategy — Runbooks, Generators, Error Taxonomy | Accepted | Process |
 | [019](./019-fleet-governance.md) | Fleet Governance — Template Drift Detection and Sync Automation | Accepted | Process |
 | [020](./020-context-file-minimalism.md) | Context File Minimalism — Evidence-Based Agent Doc Trimming | Accepted | Process |
+| [021](./021-api-contract-strategy.md) | API Contract Strategy — oRPC, OpenAPI-First, Public/Internal Classification | Accepted | API |
 
 ## Categories
 
@@ -61,6 +62,9 @@
 - **ADR-013** — Flaky test quarantine policy with time box and budget cap
 - **ADR-014** — Preview deploy environment protection and label-gated deployment
 
+### API
+- **ADR-021** — oRPC as canonical API boundary; OpenAPI-first contracts; public/internal classification
+
 ### Process
 - **ADR-016** — Roadmap reorganisation with AI-first priority tiers and suggestion governance
 - **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
@@ -69,7 +73,7 @@
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `020`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `021`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that

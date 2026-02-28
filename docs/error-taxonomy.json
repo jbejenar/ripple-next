@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 49 classified error codes across 13 categories. See ADR-018, ADR-019, ADR-020, docs/accessibility.md, and docs/session-observability.md.",
-  "version": "1.5.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 51 classified error codes across 14 categories. See ADR-018, ADR-019, ADR-020, ADR-021, docs/accessibility.md, and docs/session-observability.md.",
+  "version": "1.6.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -22,7 +22,8 @@
     "A11Y": "Accessibility and WCAG compliance violations (RN-042)",
     "SESSION": "Agent session observability and metrics failures (RN-043)",
     "SCAFFOLD": "Project scaffold generator failures (RN-041)",
-    "DOCS": "Documentation and context file governance (RN-044, ADR-020)"
+    "DOCS": "Documentation and context file governance (RN-044, ADR-020)",
+    "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)"
   },
   "errors": [
     {
@@ -665,6 +666,33 @@
         "Remove command catalogs, directory listings, and CI details",
         "Only keep content that prevents CI failures if unknown",
         "Run: pnpm check:context-size --json for detailed report"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-API-001",
+      "category": "API",
+      "severity": "error",
+      "message": "OpenAPI spec drift detected — committed spec does not match generated output from oRPC router",
+      "gate": "check:api-contract",
+      "remediation": [
+        "Run: pnpm generate:openapi to regenerate docs/api/openapi.json",
+        "Commit the updated spec with your changes",
+        "This drift occurs when router definitions change without regenerating the spec"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-API-002",
+      "category": "API",
+      "severity": "error",
+      "message": "Breaking change detected in public API (visibility: 'public') without version bump",
+      "gate": "check:api-contract",
+      "remediation": [
+        "Public API changes that remove or rename endpoints, parameters, or response fields are breaking",
+        "Bump the API version (/v1/ → /v2/) and add migration notes",
+        "Or mark the old endpoint as deprecated and add the new one alongside it",
+        "See ADR-021 for versioning and deprecation policy"
       ],
       "automatable": false
     }
