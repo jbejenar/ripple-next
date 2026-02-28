@@ -65,15 +65,28 @@ if [ "$JSON_MODE" = false ]; then
   echo "────────────────────────────────"
 fi
 
+# ── Read pinned versions from source-of-truth files ─────────────────
+PINNED_NODE=""
+if [ -f ".nvmrc" ]; then
+  PINNED_NODE=$(cat .nvmrc | tr -d '[:space:]')
+fi
+
+PINNED_PNPM=""
+if [ -f "package.json" ]; then
+  PINNED_PNPM=$(node -e "try{const p=require('./package.json');const m=p.packageManager||'';const v=m.replace(/^pnpm@/,'');process.stdout.write(v)}catch{}" 2>/dev/null || echo "")
+fi
+
 # ── 1. Node.js ──────────────────────────────────────────────────────
 section "Runtime"
 if command -v node &>/dev/null; then
   NODE_VER=$(node -v | sed 's/v//')
   NODE_MAJOR=$(echo "$NODE_VER" | cut -d. -f1)
-  if [ "$NODE_MAJOR" -ge 22 ]; then
-    pass "Node.js $NODE_VER (>=22 required)" "runtime"
+  if [ "$NODE_MAJOR" -lt 22 ]; then
+    fail "Node.js $NODE_VER found — >=22 required" "runtime"
+  elif [ -n "$PINNED_NODE" ] && [ "$NODE_VER" != "$PINNED_NODE" ]; then
+    warn "Node.js $NODE_VER — differs from pinned $PINNED_NODE (.nvmrc). Run 'nvm use' or 'fnm use'" "runtime"
   else
-    fail "Node.js $NODE_VER found — >=22.0.0 required" "runtime"
+    pass "Node.js $NODE_VER (pinned: $PINNED_NODE)" "runtime"
   fi
 else
   fail "Node.js not found" "runtime"
@@ -83,10 +96,12 @@ fi
 if command -v pnpm &>/dev/null; then
   PNPM_VER=$(pnpm -v)
   PNPM_MAJOR=$(echo "$PNPM_VER" | cut -d. -f1)
-  if [ "$PNPM_MAJOR" -ge 9 ]; then
-    pass "pnpm $PNPM_VER (>=9 required)" "runtime"
+  if [ "$PNPM_MAJOR" -lt 9 ]; then
+    fail "pnpm $PNPM_VER found — >=9 required" "runtime"
+  elif [ -n "$PINNED_PNPM" ] && [ "$PNPM_VER" != "$PINNED_PNPM" ]; then
+    fail "pnpm $PNPM_VER — does not match pinned $PINNED_PNPM (packageManager field). Run 'corepack enable pnpm'" "runtime"
   else
-    fail "pnpm $PNPM_VER found — >=9.0.0 required" "runtime"
+    pass "pnpm $PNPM_VER (pinned: $PINNED_PNPM)" "runtime"
   fi
 else
   fail "pnpm not found" "runtime"

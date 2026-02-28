@@ -1,11 +1,11 @@
 name: Setup Node & pnpm
-description: Shared setup for Node.js 22 and pnpm with frozen lockfile install
+description: Shared setup for Node.js and pnpm with frozen lockfile install. Reads pinned Node version from .nvmrc and pnpm version from packageManager field.
 
 inputs:
   node-version:
-    description: Node.js version
+    description: 'Node.js version override. Leave empty to read from .nvmrc (recommended).'
     required: false
-    default: '22'
+    default: ''
   registry-url:
     description: npm registry URL (for publish steps)
     required: false
@@ -16,7 +16,17 @@ runs:
   steps:
     - uses: pnpm/action-setup@v4
 
-    - uses: actions/setup-node@v4
+    - name: Setup Node.js (from .nvmrc)
+      if: ${{ inputs.node-version == '' }}
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: pnpm
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Setup Node.js (explicit version)
+      if: ${{ inputs.node-version != '' }}
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         cache: pnpm

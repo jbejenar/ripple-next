@@ -4,7 +4,29 @@ on:
     types: [closed]
 
 jobs:
+  # Gate: check whether AWS credentials are configured.
+  # Mirrors the check-secrets job in deploy-preview.yml so cleanup
+  # produces a safe, explainable skip rather than a noisy failure
+  # when credentials are absent (e.g. forks, new repos).
+  check-secrets:
+    runs-on: ubuntu-latest
+    outputs:
+      has-aws: ${{ steps.check.outputs.has-aws }}
+    steps:
+      - id: check
+        env:
+          AWS_ROLE: ${{ secrets.AWS_ROLE_ARN }}
+        run: |
+          if [ -n "$AWS_ROLE" ]; then
+            echo "has-aws=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-aws=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping preview cleanup — AWS_ROLE_ARN secret is not configured"
+          fi
+
   cleanup:
+    needs: [check-secrets]
+    if: needs.check-secrets.outputs.has-aws == 'true'
     runs-on: ubuntu-latest
     permissions:
       id-token: write

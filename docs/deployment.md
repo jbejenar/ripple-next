@@ -55,6 +55,20 @@ Cleanup when PR is closed:
 npx sst remove --stage pr-123
 ```
 
+### Credential Guardrails
+
+Both `deploy-preview` and `cleanup-preview` workflows include a `check-secrets`
+gate. When `AWS_ROLE_ARN` is not configured (forks, new repos, local-only
+workflows), the workflow:
+
+1. Emits a `::notice::` annotation explaining the skip reason
+2. Skips the deploy/cleanup job entirely (no failure, no noise)
+3. Marks the overall workflow as successful
+
+This means PRs in repos without AWS credentials still get a green CI status.
+See [ADR-014](./adr/014-preview-deploy-guardrails.md) for the full guardrails
+design.
+
 ## Staging
 
 Automatically deployed on merge to `main` via GitHub Actions.
