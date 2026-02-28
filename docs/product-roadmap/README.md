@@ -11,7 +11,7 @@
 > RN-043), created [ADR-018](../adr/018-ai-first-workflow-strategy.md), refreshed
 > scorecard and Gantt, optimised documentation cross-references.
 
-Completed items (RN-001 through RN-031) live in [ARCHIVE.md](./ARCHIVE.md).
+Completed items (RN-001 through RN-043, excluding RN-017/025/028) live in [ARCHIVE.md](./ARCHIVE.md).
 
 ---
 
@@ -26,8 +26,10 @@ publishing with SBOM and provenance, and reusable composite actions for fleet
 consistency.
 
 **All critical blockers resolved.** Fleet governance ([RN-024](#rn-024-fleet-update-mechanism--template-drift-automation) ✅),
-agent workflow tooling ([RN-039](#rn-039-agent-runbook-automation)–[RN-041](#rn-041-code-generation-templates) ✅),
-and quality gate summaries ([RN-034](#rn-034-machine-readable-quality-gate-summaries) ✅) are all complete.
+agent workflow tooling ([RN-039](#rn-039-agent-runbook-automation)–[RN-043](#rn-043-agent-session-observability) ✅),
+quality gate summaries ([RN-034](#rn-034-machine-readable-quality-gate-summaries) ✅),
+and supply chain verification ([RN-027](#rn-027-signed-release-bundles--verification) ✅) are all complete.
+Only 2 of 21 active items remain (RN-025, RN-028); 1 item is externally blocked (RN-017).
 
 ### AI-First Strategy
 
@@ -37,7 +39,7 @@ and workflow decision is evaluated through the lens of agent effectiveness:
 1. **Machine-parseable outputs** — All quality gates, diagnostics, and status
    reports emit structured JSON that agents parse without scraping.
 2. **Deterministic environments** — Pinned toolchains, frozen lockfiles,
-   devcontainer, and `pnpm bootstrap` give agents identical setups every run.
+   devcontainer (CI-validated, RN-029), and `pnpm bootstrap` give agents identical setups every run.
 3. **Fast feedback loops** — Memory/mock providers keep test suites under 100ms;
    conformance suites validate provider contracts without cloud dependencies.
 4. **Codified runbooks** — Common operations (deploy, rollback, add component,
@@ -45,6 +47,8 @@ and workflow decision is evaluated through the lens of agent effectiveness:
    human interpretation.
 5. **Scaffolding generators** — Code generation templates for components,
    providers, and API routes eliminate boilerplate and enforce conventions.
+6. **Session observability** — Agent sessions tracked with structured metrics,
+   friction analysis, and automated improvement recommendations (RN-043).
 
 See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 
@@ -53,10 +57,11 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Exact toolchain pinning** — Node.js pinned in `.nvmrc`, pnpm pinned in `packageManager`; CI reads both; `pnpm doctor` enforces exact match (RN-032).
 - CI is tiered with change detection and high-risk routing.
 - **Structured test artifact uploads** — JUnit XML + coverage reports uploaded on every CI run with 30-day retention.
-- **SBOM + provenance (mandatory)** — CycloneDX SBOM generation is fail-fast in release workflow.
-- **Reusable composite actions** — `setup`, `quality`, `test` actions available for downstream repos, with [downstream consumption guide](../downstream-workflows.md).
+- **SBOM + provenance + checksums (mandatory)** — CycloneDX SBOM, per-package SHA-256 checksums (RN-027), and sigstore-backed build provenance attestations in release workflow.
+- **Reusable workflows + composite actions** — `reusable-quality.yml`, `reusable-test.yml`, `reusable-security.yml` (RN-026) plus `setup`, `quality`, `test` composite actions for downstream repos, with [downstream consumption guide](../downstream-workflows.md).
 - **Env schema validation** — Zod-based env schemas in `@ripple/validation` + zero-dependency `pnpm validate:env` gate in CI. See ADR-012.
-- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured.
+- **Devcontainer** — `.devcontainer/` with Node 22, Docker-in-Docker, GitHub CLI, AWS CLI, and all services pre-configured. Validated in CI (RN-029).
+- **Accessibility audit** — WCAG 2.1 AA compliance via axe-core in Playwright E2E and standalone audit (RN-042).
 - Preview environments isolated per PR stage (`pr-{number}`) and cleaned on PR close.
 - Changesets and private registry publish workflow in place.
 - Provider pattern enables mock/memory providers for agent-fast test loops.
@@ -118,13 +123,13 @@ graph LR
 
 ---
 
-## Completed Work (RN-001 – RN-031)
+## Completed Work (40 Items)
 
-22 items have been completed across Phases 1–3. See **[ARCHIVE.md](./ARCHIVE.md)**
+40 items have been completed across all tiers. See **[ARCHIVE.md](./ARCHIVE.md)**
 for full details on each.
 
-| ID | Item | Phase |
-|----|------|-------|
+| ID | Item | Phase/Tier |
+|----|------|------------|
 | [RN-001](./ARCHIVE.md#rn-001-security-pipeline-securityyml) | Security Pipeline | 1 |
 | [RN-002](./ARCHIVE.md#rn-002-doctor-machine-mode---json---offline) | Doctor Machine Mode | 1 |
 | [RN-003](./ARCHIVE.md#rn-003-environment-contract-envexample--pnpm-bootstrap) | Environment Contract | 1 |
@@ -144,9 +149,27 @@ for full details on each.
 | [RN-018](./ARCHIVE.md#rn-018-search-integration-provider) | Search Integration Provider | 2 |
 | [RN-019](./ARCHIVE.md#rn-019-navigationmenu-component) | Navigation/Menu Component | 2 |
 | [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components) | Storybook Stories for Tide Components | 2 |
+| [RN-021](./ARCHIVE.md#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | Tier 3 |
 | [RN-022](./ARCHIVE.md#rn-022-downstream-workflow-documentation) | Downstream Workflow Documentation | 2 |
+| [RN-023](./ARCHIVE.md#rn-023-landing-page--content-templates) | Landing Page Templates | Tier 3 |
+| [RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation) | Fleet Update + Drift Automation | Tier 1 |
+| [RN-026](./ARCHIVE.md#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | Tier 4 |
+| [RN-027](./ARCHIVE.md#rn-027-signed-release-bundles--verification) | Signed Release Bundles | Tier 4 |
+| [RN-029](./ARCHIVE.md#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | Tier 4 |
 | [RN-030](./ARCHIVE.md#rn-030-ui-component-test-suite) | UI Component Test Suite | 2 |
 | [RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api) | Testcontainers Integration Tests | 2 |
+| [RN-032](./ARCHIVE.md#rn-032-toolchain-pinning-hardening) | Toolchain Pinning Hardening | Tier 1 |
+| [RN-033](./ARCHIVE.md#rn-033-preview-cleanup-guardrails-parity) | Preview Cleanup Guardrails Parity | Tier 1 |
+| [RN-034](./ARCHIVE.md#rn-034-machine-readable-quality-gate-summaries) | Quality Gate Summaries | Tier 2 |
+| [RN-035](./ARCHIVE.md#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | Tier 2 |
+| [RN-036](./ARCHIVE.md#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning | Tier 2 |
+| [RN-037](./ARCHIVE.md#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components | Tier 2 |
+| [RN-038](./ARCHIVE.md#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Sync Workflow | Tier 2 |
+| [RN-039](./ARCHIVE.md#rn-039-agent-runbook-automation) | Agent Runbook Automation | Tier 2 |
+| [RN-040](./ARCHIVE.md#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | Tier 2 |
+| [RN-041](./ARCHIVE.md#rn-041-code-generation-templates) | Code Generation Templates | Tier 2 |
+| [RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | Tier 3 |
+| [RN-043](./ARCHIVE.md#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 |
 
 ---
 
@@ -371,10 +394,10 @@ covering deployment, rollback, fleet sync, and all scaffolding operations.
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents classify failures by code and take automated remediation paths
 **Status:** Done (2026-02-28)
 
-Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 39 classified
-failure modes across 9 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY,
-IAC, FLEET). Each error includes code, severity, remediation steps, and
-automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
+Machine-parseable error taxonomy (`docs/error-taxonomy.json`) with 44 classified
+failure modes across 11 categories (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY,
+IAC, FLEET, A11Y, SESSION). Each error includes code, severity, remediation steps,
+and automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 
 - [x] Define error taxonomy schema (`docs/error-taxonomy.json`) with category, code, severity, remediation
 - [x] Categorise quality gate failures (lint, typecheck, test, env validation) — 16 error codes
@@ -382,10 +405,12 @@ automatable flag. Doctor `--json` output now includes `taxonomyCode` fields.
 - [x] Categorise deployment failures (health check, resource limit, permission) — 3 error codes
 - [x] Categorise IaC policy violations (RPL-IAC-001 through RPL-IAC-007) — 7 error codes
 - [x] Categorise fleet governance failures (RPL-FLEET-001 through RPL-FLEET-006) — 6 error codes
+- [x] Categorise accessibility violations (RPL-A11Y-001 through RPL-A11Y-002) — 2 error codes (added in RN-042)
+- [x] Categorise session failures (RPL-SESSION-001 through RPL-SESSION-003) — 3 error codes (added in RN-043)
 - [x] Wire `pnpm doctor --json` output to use taxonomy codes (`taxonomyCode` field)
 - [x] Remediation steps documented per error (actionable commands in each entry)
 
-**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 39 entries across 9 categories; `pnpm verify` passes all gates.
+**Verification:** `pnpm doctor -- --json` includes `taxonomyCode` fields; `docs/error-taxonomy.json` valid JSON with 44 entries across 11 categories; `pnpm verify` passes all gates.
 
 ---
 
@@ -437,16 +462,24 @@ on `page.contentType`.
 
 ---
 
-#### RN-021: Media Gallery + Document Download Components
+#### RN-021: Media Gallery + Document Download Components ✅
 
 **Priority:** Medium | **Impact:** Low | **Effort:** Medium | **Risk:** Low
 **Continues:** [RN-012](./ARCHIVE.md#rn-012-cms-page-rendering--tide-components--decoupling)
+**Status:** Done (2026-02-28)
 
-Media gallery and document download components for Tide content types.
+Two new molecule components for Tide content types: `RplMediaGallery` (grid
+layout with keyboard-accessible lightbox, navigation, responsive columns) and
+`RplDocumentDownload` (download list with file type icons, size formatting,
+accessible labels). CMS integration via new `media-gallery` and
+`document-download` PageSection types. Wired into all three page templates.
+44 total components, 478 UI tests.
 
-- [ ] Build media gallery component with lightbox
-- [ ] Build document download component with file type icons
-- [ ] Integrate with CMS media content types
+- [x] Build media gallery component with lightbox (`RplMediaGallery` — grid, lightbox overlay, keyboard nav, responsive)
+- [x] Build document download component with file type icons (`RplDocumentDownload` — 6 file type icon classes, size formatting)
+- [x] Integrate with CMS media content types (`MediaGalleryItem`, `DocumentItem` types, PageSection union, all 3 templates)
+
+**Verification:** 28 new tests passing (12 gallery + 16 download); 478 UI tests total; `pnpm lint && pnpm typecheck && pnpm test` all pass; Storybook stories with autodocs for both components.
 
 ---
 
@@ -465,20 +498,25 @@ against a live JSON:API endpoint.
 
 ---
 
-#### RN-042: Accessibility Audit Pipeline
+#### RN-042: Accessibility Audit Pipeline ✅
 
 **Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents receive structured WCAG violations with remediation guidance in CI
+**Status:** Done (2026-02-28)
 
-Integrate automated WCAG 2.1 AA accessibility checks into the CI pipeline and
-Storybook, providing machine-readable violation reports that agents can act on.
+Automated WCAG 2.1 AA accessibility audit pipeline with three layers: Storybook
+addon (`@storybook/addon-a11y`), Playwright E2E tests (`axe-core`), and standalone
+audit script (`pnpm test:a11y`) emitting `ripple-a11y-report/v1` JSON. CI gate
+blocks on critical/serious violations. Error taxonomy entries RPL-A11Y-001/002.
 
-- [ ] Add `axe-core` integration to Playwright E2E tests
-- [ ] Add `@storybook/addon-a11y` to Storybook configuration
-- [ ] Create `pnpm test:a11y` command for standalone accessibility audit
-- [ ] Emit structured JSON report (violation, impact, selector, remediation)
-- [ ] Add accessibility gate to Tier 2 CI (block on critical/serious violations)
-- [ ] Document WCAG compliance requirements in `docs/accessibility.md`
+- [x] Add `axe-core` integration to Playwright E2E tests (`apps/web/tests/e2e/accessibility.spec.ts`)
+- [x] Add `@storybook/addon-a11y` to Storybook configuration (`.storybook/main.ts`)
+- [x] Create `pnpm test:a11y` command for standalone accessibility audit (`scripts/a11y-audit.mjs`)
+- [x] Emit structured JSON report (`ripple-a11y-report/v1` — violation, impact, selector, remediation)
+- [x] Add accessibility gate to Tier 2 CI (block on critical/serious violations, `a11y-report` artifact)
+- [x] Document WCAG compliance requirements in `docs/accessibility.md`
+
+**Verification:** `pnpm test:a11y -- --json` emits valid `ripple-a11y-report/v1` JSON; E2E accessibility spec validates WCAG 2.1 AA; Storybook has a11y addon; error taxonomy has 41 entries across 10 categories; all quality gates pass.
 
 ---
 
@@ -487,17 +525,26 @@ Storybook, providing machine-readable violation reports that agents can act on.
 > Strategic items for org-wide governance and supply chain hardening.
 > Schedule when Tier 1–3 are substantially complete.
 
-#### RN-026: Org-Wide Reusable Workflow Distribution
+#### RN-026: Org-Wide Reusable Workflow Distribution ✅
 
 **Priority:** Low | **Impact:** Very High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Status:** Done — implemented 2026-02-28.
 
 Centralise policy gates using `workflow_call` with versioned rollout channels
 for the entire organisation.
 
-- [ ] Publish reusable workflows to a central `.github` org repo
-- [ ] Implement versioned rollout channels (stable, canary)
-- [ ] Migrate downstream repos to org-wide workflows
+- [x] Publish reusable workflows to a central `.github` org repo — `reusable-quality.yml`, `reusable-test.yml`, `reusable-security.yml` with `workflow_call` triggers
+- [x] Implement versioned rollout channels (stable, canary) — stable (`@v1`, `@v1.x.x`), canary (`@main`), documented in downstream-workflows.md
+- [x] Migrate downstream repos to org-wide workflows — migration guide and examples in `docs/downstream-workflows.md`
+
+**Verification:**
+- 3 reusable workflows with configurable inputs and structured outputs
+- `reusable-quality.yml`: lint, typecheck, readiness, quarantine, optional IaC scan
+- `reusable-test.yml`: PostgreSQL + Redis service containers, coverage, JUnit artifacts
+- `reusable-security.yml`: CodeQL, dependency review, gitleaks secret scanning
+- Version pinning strategy: stable (tags), canary (main), SHA (deterministic)
+- `docs/downstream-workflows.md` updated with full reference and examples
 
 ---
 
@@ -529,46 +576,68 @@ remediation PRs.
 
 ---
 
-#### RN-027: Signed Release Bundles + Verification
+#### RN-027: Signed Release Bundles + Verification ✅
 
 **Priority:** Low | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI Principal Engineer review
+**Status:** Done — implemented 2026-02-28.
 
 Extend provenance with package-level signature verification commands for
 consumers.
 
-- [ ] Implement package signing in release workflow
-- [ ] Build verification CLI command (`pnpm verify:release`)
-- [ ] Document consumer-side verification workflow
+- [x] Implement package signing in release workflow — SHA-256 checksums per package, attested via sigstore
+- [x] Build verification CLI command (`pnpm verify:release`) — `scripts/verify-release.mjs` with generate and verify modes
+- [x] Document consumer-side verification workflow — `docs/release-verification.md`
+
+**Verification:**
+- Release workflow generates `release-checksums.json` with per-file SHA-256 digests
+- Checksums attested via `actions/attest-build-provenance@v2` (sigstore-backed)
+- `pnpm verify:release -- --generate` creates checksums after build
+- `pnpm verify:release -- --checksums=path` verifies installed packages
+- `ripple-release-checksums/v1` and `ripple-release-verification/v1` JSON schemas
 
 ---
 
-#### RN-029: Validate Devcontainer in CI Runners
+#### RN-029: Validate Devcontainer in CI Runners ✅
 
 **Priority:** Low | **Impact:** Low | **Effort:** Low | **Risk:** Low
 **Continues:** [RN-016](./ARCHIVE.md#rn-016-hermetic-devruntime-devcontainer)
+**Status:** Done — implemented 2026-02-28.
 
 Optional validation that the devcontainer works in containerised CI runners.
 
-- [ ] Add CI job that builds and validates devcontainer image
-- [ ] Run smoke test inside devcontainer in CI
+- [x] Add CI job that builds and validates devcontainer image — `devcontainer` job in ci.yml, triggered by `.devcontainer/**`, `.nvmrc`, or `package.json` changes
+- [x] Run smoke test inside devcontainer in CI — validates Node.js version matches `.nvmrc`, pnpm via corepack, required tools (git, pg_isready), and docker-compose config
+
+**Verification:**
+- CI `devcontainer` job builds Dockerfile and runs 4 smoke tests
+- Path filtering: only runs when devcontainer-related files change
+- Validates toolchain pin consistency between repo and container
 
 ---
 
-#### RN-043: Agent Session Observability
+#### RN-043: Agent Session Observability ✅
 
 **Priority:** Low | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Platform teams understand agent effectiveness and identify bottlenecks
+**Status:** Done — implemented 2026-02-28.
 
 Track and aggregate metrics from AI agent sessions — files changed, tests run,
 quality gate pass/fail rates, common failure patterns, time-to-green — to
 continuously improve agent ergonomics.
 
-- [ ] Define session metrics schema (files changed, commands run, outcomes)
-- [ ] Create lightweight session logger (opt-in, privacy-respecting)
-- [ ] Build aggregation script (`pnpm agent:metrics`) for session summaries
-- [ ] Identify top friction points from aggregated data
-- [ ] Feed insights back into roadmap prioritisation
+- [x] Define session metrics schema (files changed, commands run, outcomes) — `ripple-session-log/v1` and `ripple-session-metrics/v1`
+- [x] Create lightweight session logger (opt-in, privacy-respecting) — `scripts/session-logger.mjs` with start/end/snapshot actions
+- [x] Build aggregation script (`pnpm agent:metrics`) for session summaries — `scripts/agent-metrics.mjs` with friction analysis
+- [x] Identify top friction points from aggregated data — automated recommendations in metrics report
+- [x] Feed insights back into roadmap prioritisation — recommendations include error taxonomy codes and gate-level failure rates
+
+**Verification:**
+- `pnpm session:start` creates session file in `.sessions/`
+- `pnpm session:end -- --run-gates` captures full session with gate results
+- `pnpm agent:metrics -- --json` emits `ripple-session-metrics/v1` with friction insights
+- RPL-SESSION-001/002/003 error codes in taxonomy (v1.4.0, 44 codes, 11 categories)
+- `docs/session-observability.md` documents schemas, flags, and integration patterns
 
 ---
 
@@ -588,15 +657,15 @@ continuously improve agent ergonomics.
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Done |
-| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Pending |
+| [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | 3 | Medium | Low | Medium | Done |
 | [RN-017](#rn-017-live-drupal-integration-testing) | Live Drupal Integration Testing | 3 | Medium | Medium | Medium | Blocked |
-| [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Pending |
-| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Pending |
+| [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | 3 | Medium | High | Medium | Done |
+| [RN-026](#rn-026-org-wide-reusable-workflow-distribution) | Org-Wide Workflows | 4 | Low | Very High | Medium | Done |
 | [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing | 4 | Low | High | High | Pending |
 | [RN-028](#rn-028-golden-path-conformance-cli) | Conformance CLI | 4 | Low | Very High | High | Pending |
-| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Pending |
-| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Pending |
-| [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Pending |
+| [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | 4 | Low | High | Medium | Done |
+| [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | 4 | Low | Low | Low | Done |
+| [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | 4 | Low | Medium | Medium | Done |
 
 ---
 
@@ -651,17 +720,17 @@ gantt
 
     section Tier 3 — Scheduled
     RN-023 Landing page templates          :done, rn023, 2026-02-28, 1d
-    RN-021 Media gallery + downloads       :rn021, 2026-05-19, 14d
+    RN-021 Media gallery + downloads       :done, rn021, 2026-02-28, 1d
     RN-017 Live Drupal integration         :rn017, 2026-06-01, 21d
-    RN-042 Accessibility audit pipeline    :rn042, 2026-05-12, 14d
+    RN-042 Accessibility audit pipeline    :done, rn042, 2026-02-28, 1d
 
     section Tier 4 — Backlog
-    RN-026 Org-wide workflows              :rn026, 2026-07-01, 30d
+    RN-026 Org-wide workflows              :done, rn026, 2026-02-28, 1d
     RN-025 Contract testing                :rn025, 2026-08-01, 30d
     RN-028 Conformance CLI                 :rn028, 2026-08-15, 30d
-    RN-027 Signed release bundles          :rn027, 2026-09-01, 14d
-    RN-029 Devcontainer CI validation      :rn029, 2026-09-15, 7d
-    RN-043 Agent session observability     :rn043, 2026-09-22, 21d
+    RN-027 Signed release bundles          :done, rn027, 2026-02-28, 1d
+    RN-029 Devcontainer CI validation      :done, rn029, 2026-02-28, 1d
+    RN-043 Agent session observability     :done, rn043, 2026-02-28, 1d
 ```
 
 ---
@@ -946,7 +1015,7 @@ graph TD
 - [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
 - [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
 - [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
-- [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
+- [x] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))
 
 ### Template Strategy
 

@@ -1,11 +1,25 @@
 # Downstream Workflow Consumption Guide
 
-> How to use Ripple Next's reusable composite actions in your own repositories.
+> How to use Ripple Next's reusable workflows and composite actions in downstream repositories.
 
 ## Overview
 
-Ripple Next provides three reusable composite actions in `.github/actions/` that
-downstream repositories can reference for consistent CI setup:
+Ripple Next provides **two levels** of CI reuse for downstream repos:
+
+### Reusable Workflows (`workflow_call`) — Recommended
+
+Full workflow pipelines that downstream repos call with `uses:`. These handle
+the entire job including runner setup, service containers, and artifact uploads.
+
+| Workflow | Purpose | Key Features |
+|----------|---------|--------------|
+| `reusable-quality.yml` | Lint, typecheck, policy gates | Readiness drift, quarantine check, optional IaC scan |
+| `reusable-test.yml` | Test execution + services | PostgreSQL + Redis, coverage, JUnit artifacts |
+| `reusable-security.yml` | CodeQL + dependency review + secret audit | Configurable severity thresholds |
+
+### Composite Actions (`.github/actions/`)
+
+Lower-level building blocks for custom workflow composition:
 
 | Action | Purpose | Key Features |
 |--------|---------|--------------|
@@ -17,9 +31,95 @@ downstream repositories can reference for consistent CI setup:
 
 - Your repository must use **pnpm** as its package manager
 - Node.js 22 (default, configurable)
-- The actions expect standard pnpm scripts: `pnpm lint`, `pnpm typecheck`, `pnpm test:ci`
+- The actions/workflows expect standard pnpm scripts: `pnpm lint`, `pnpm typecheck`, `pnpm test:ci`
 
-## Action Reference
+## Reusable Workflow Reference
+
+Reusable workflows are the simplest way to adopt Ripple Next's CI standards.
+They encapsulate entire jobs and require minimal configuration.
+
+### `reusable-quality.yml` — Quality Gates
+
+Runs lint, typecheck, readiness drift guard, quarantine check, and optional IaC scan.
+
+**Inputs:**
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `node-version` | No | from `.nvmrc` | Node.js version override |
+| `run-iac-scan` | No | `false` | Run IaC policy scan (for repos with `sst.config.ts`) |
+
+**Outputs:** `status` — `pass` or `fail`
+
+**Usage:**
+
+```yaml
+jobs:
+  quality:
+    uses: your-org/ripple-next/.github/workflows/reusable-quality.yml@v1
+    with:
+      run-iac-scan: false
+```
+
+### `reusable-test.yml` — Test Suite
+
+Runs unit and integration tests with PostgreSQL and Redis service containers.
+
+**Inputs:**
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `node-version` | No | from `.nvmrc` | Node.js version override |
+| `postgres-version` | No | `17-alpine` | PostgreSQL image tag |
+| `redis-version` | No | `7-alpine` | Redis image tag |
+| `coverage` | No | `true` | Generate coverage reports |
+| `run-migrations` | No | `true` | Run `pnpm db:migrate` before tests |
+
+**Outputs:** `status` — `pass` or `fail`
+
+**Usage:**
+
+```yaml
+jobs:
+  test:
+    uses: your-org/ripple-next/.github/workflows/reusable-test.yml@v1
+    with:
+      coverage: true
+      run-migrations: true
+```
+
+### `reusable-security.yml` — Security Pipeline
+
+Runs CodeQL SAST, dependency review, and secret scanning.
+
+**Inputs:**
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `codeql-languages` | No | `javascript-typescript` | Languages for CodeQL |
+| `enable-dependency-review` | No | `true` | Dependency review on PRs |
+| `enable-secret-audit` | No | `true` | Secret scanning via gitleaks |
+| `fail-on-severity` | No | `high` | Min severity to fail (`low`, `moderate`, `high`, `critical`) |
+
+**Outputs:** `status` — `pass` or `fail`
+
+**Usage:**
+
+```yaml
+jobs:
+  security:
+    uses: your-org/ripple-next/.github/workflows/reusable-security.yml@v1
+    with:
+      fail-on-severity: high
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+```
+
+---
+
+## Composite Action Reference
 
 ### `setup` — Node.js + pnpm Setup
 
@@ -86,9 +186,38 @@ steps:
 
 ## Example Workflows
 
-### Minimal CI Workflow
+### Using Reusable Workflows (Simplest)
 
-A basic CI workflow that runs quality gates and tests on every PR:
+The easiest way to adopt Ripple Next's CI standards. Each `uses:` call handles
+the full job — runners, services, artifacts — with zero boilerplate:
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  quality:
+    uses: your-org/ripple-next/.github/workflows/reusable-quality.yml@v1
+
+  test:
+    needs: quality
+    uses: your-org/ripple-next/.github/workflows/reusable-test.yml@v1
+
+  security:
+    uses: your-org/ripple-next/.github/workflows/reusable-security.yml@v1
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+```
+
+### Minimal CI Workflow (Composite Actions)
+
+A basic CI workflow using composite actions directly:
 
 ```yaml
 # .github/workflows/ci.yml
@@ -182,25 +311,40 @@ jobs:
 
 ## Version Pinning Strategy
 
-### Recommended: Pin to a specific tag or SHA
+### Rollout Channels
 
-For production stability, pin to a specific commit SHA or release tag:
+Ripple Next uses **two rollout channels** for workflow/action references:
+
+| Channel | Git Ref | Use Case | Update Cadence |
+|---------|---------|----------|----------------|
+| **Stable** | `@v1`, `@v1.2.0` | Production repos | Manual, controlled |
+| **Canary** | `@main` | Early adopters, testing | Automatic on merge |
+
+### Recommended: Pin to a versioned tag
+
+For production stability, pin to a major version tag:
 
 ```yaml
-# Pin to a specific commit SHA (most stable)
-- uses: your-org/ripple-next/.github/actions/setup@a1b2c3d
+# Reusable workflows — pin to major version (recommended)
+uses: your-org/ripple-next/.github/workflows/reusable-quality.yml@v1
 
-# Pin to a release tag (recommended)
-- uses: your-org/ripple-next/.github/actions/setup@v1.0.0
+# Composite actions — pin to major version
+uses: your-org/ripple-next/.github/actions/setup@v1
+
+# Pin to exact version for maximum determinism
+uses: your-org/ripple-next/.github/workflows/reusable-test.yml@v1.2.0
+
+# Pin to a specific commit SHA (most stable)
+uses: your-org/ripple-next/.github/actions/setup@a1b2c3d
 ```
 
-### Acceptable: Pin to `main`
+### Acceptable: Pin to `main` (canary channel)
 
 For repos that want to track the latest upstream changes:
 
 ```yaml
 # Tracks latest — receives updates automatically
-- uses: your-org/ripple-next/.github/actions/setup@main
+uses: your-org/ripple-next/.github/actions/setup@main
 ```
 
 ### Not recommended: Using `latest` or floating tags
@@ -216,11 +360,11 @@ to prevent CI breakage from upstream changes.
 
 ## Artifacts Produced
 
-When using the `test` action with default settings, these artifacts are uploaded:
+When using the reusable workflows or test action, these artifacts are uploaded:
 
 | Artifact | Contents | Retention |
 |----------|----------|-----------|
-| `test-results` | JUnit XML test reports | 30 days |
+| `test-results-unit` | JUnit XML test reports | 30 days |
 | `coverage-report` | JSON summary + text coverage | 30 days |
 
 ## Troubleshooting
@@ -228,7 +372,8 @@ When using the `test` action with default settings, these artifacts are uploaded
 ### `pnpm: command not found`
 
 Ensure the `setup` action runs before `quality` or `test`. The setup action
-installs pnpm via `pnpm/action-setup@v4`.
+installs pnpm via `pnpm/action-setup@v4`. When using reusable workflows, this
+is handled automatically.
 
 ### Lockfile conflicts
 
@@ -237,18 +382,22 @@ The setup action uses `--frozen-lockfile`. If you get lockfile errors, run
 
 ### Missing quality scripts
 
-The `quality` action expects these pnpm scripts:
+The `quality` action/workflow expects these pnpm scripts:
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm check:readiness`
 - `pnpm check:quarantine`
 
 If your repo doesn't have all of these, add no-op scripts or use the actions
-individually instead of the composite `quality` action.
+individually instead of the composite `quality` action. The reusable quality
+workflow runs `check:readiness` and `check:quarantine` with `continue-on-error`,
+so missing scripts won't block the pipeline.
 
 ## Related Documentation
 
 - [Reusable Composite Actions (RN-015)](./product-roadmap/ARCHIVE.md#rn-015-reusable-composite-actions)
+- [Org-Wide Workflow Distribution (RN-026)](./product-roadmap/README.md#rn-026-org-wide-reusable-workflow-distribution)
 - [CI Observability + Supply Chain (ADR-010)](./adr/010-ci-observability-supply-chain.md)
 - [Flaky Test Containment (ADR-013)](./adr/013-flaky-test-containment.md)
-- [Org-Wide Workflow Distribution (RN-026)](./product-roadmap/README.md#rn-026-org-wide-reusable-workflow-distribution)
+- [Fleet Governance (ADR-019)](./adr/019-fleet-governance.md)
+- [Release Verification (RN-027)](./release-verification.md)

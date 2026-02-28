@@ -48,11 +48,11 @@
     },
     "ui": {
       "status": "implemented",
-      "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 42 components total. Page templates (RN-023): 3 content-type-aware templates (Landing, Content, Campaign) in apps/web/components/templates/ — compose UI components into distinct layouts, switched by CMS page contentType field. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs for all components. Vue Test Utils component tests for all components (450 tests) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state.",
+      "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList, MediaGallery, DocumentDownload), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 44 components total. Page templates (RN-023): 3 content-type-aware templates (Landing, Content, Campaign) in apps/web/components/templates/ — compose UI components into distinct layouts, switched by CMS page contentType field. Media components (RN-021): MediaGallery with keyboard-accessible lightbox and responsive grid; DocumentDownload with file type icons and size formatting. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs and @storybook/addon-a11y for all components. Vue Test Utils component tests for all components (478 tests) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state. Accessibility audit pipeline (RN-042): axe-core in Playwright E2E tests, standalone pnpm test:a11y with structured JSON reports.",
       "packages": ["@ripple/ui"],
       "paths": ["apps/web/components/templates/"],
       "blockers": [],
-      "testCoverage": "component-tested + storybook-stories + template-tested"
+      "testCoverage": "component-tested + storybook-stories + template-tested + a11y-audited"
     },
     "api": {
       "status": "partial",
@@ -74,9 +74,9 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes, exact version guards for Node.js (.nvmrc) and pnpm (packageManager). Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). IaC policy scanning with 7 policies for SST config (RN-036). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test — all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes + devcontainer validation RN-029), Tier 2 (E2E + a11y on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Reusable workflows via workflow_call for org-wide distribution (RN-026): reusable-quality.yml, reusable-test.yml, reusable-security.yml with stable/canary rollout channels. Composite actions for setup, quality, and test — all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX), package checksums (RN-027), and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
       "packages": [],
-      "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md", "docs/fleet-policy.json"],
+      "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md", "docs/fleet-policy.json", "docs/release-verification.md"],
       "blockers": [],
       "testCoverage": "pipeline-tested"
     },
@@ -89,8 +89,9 @@
     },
     "publishing": {
       "status": "implemented",
-      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, and attests build provenance. See ADR-007 and ADR-010.",
+      "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, attests build provenance, and generates per-package SHA-256 checksums (RN-027). Verification CLI (pnpm verify:release) validates installed packages against checksums manifest. See ADR-007, ADR-010, and docs/release-verification.md.",
       "packages": ["all @ripple/* packages"],
+      "paths": ["scripts/verify-release.mjs", "docs/release-verification.md"],
       "blockers": [],
       "testCoverage": "release-workflow-validated"
     },
@@ -114,9 +115,9 @@
     },
     "agent-tooling": {
       "status": "implemented",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 39 classified failure modes across 9 categories including fleet governance codes (RN-040), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036). Remaining nice-to-have: agent session observability (RN-043). Strategy documented in ADR-018.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators (RN-041), error taxonomy with 44 classified failure modes across 11 categories including fleet governance, accessibility, and session observability codes (RN-040, RN-042, RN-043), runbook library with 7 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), agent session observability with session logger and metrics aggregation (RN-043). Strategy documented in ADR-018.",
       "packages": [],
-      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json"],
+      "paths": ["scripts/verify.mjs", "scripts/generate/index.mjs", "scripts/a11y-audit.mjs", "scripts/session-logger.mjs", "scripts/agent-metrics.mjs", "docs/error-taxonomy.json", "docs/runbooks/", "scripts/runbook.mjs", "scripts/iac-policy-scan.mjs", "docs/iac-policies.json", "docs/accessibility.md", "docs/session-observability.md"],
       "blockers": [],
       "testCoverage": "gate-tested"
     },

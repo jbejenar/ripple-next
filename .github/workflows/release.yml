@@ -44,11 +44,27 @@ jobs:
           path: sbom.cdx.json
           retention-days: 90
 
+      # ─── Package Checksums (RN-027) ──────────────────────────────
+      - name: Generate package checksums
+        run: node scripts/verify-release.mjs --generate --output=release-checksums.json
+
+      - name: Upload release checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-checksums
+          path: release-checksums.json
+          retention-days: 90
+
       # ─── Build Provenance Attestation ─────────────────────────────
-      - name: Generate build provenance
+      - name: Attest SBOM provenance
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: sbom.cdx.json
+
+      - name: Attest release checksums
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: release-checksums.json
 
       - name: Create Release PR or Publish
         id: changesets

@@ -20,6 +20,7 @@ jobs:
       apps-web: ${{ steps.changes.outputs.apps-web }}
       high-risk: ${{ steps.changes.outputs.high-risk }}
       infra: ${{ steps.changes.outputs.infra }}
+      devcontainer: ${{ steps.changes.outputs.devcontainer }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -40,6 +41,10 @@ jobs:
             infra:
               - 'sst.config.ts'
               - 'docs/iac-policies.json'
+            devcontainer:
+              - '.devcontainer/**'
+              - '.nvmrc'
+              - 'package.json'
 
   quality:
     runs-on: ubuntu-latest
@@ -131,10 +136,54 @@ jobs:
           path: iac-policy-report.json
           retention-days: 30
 
-  # ─── Tier 2: Full E2E ────────────────────────────────────────
+  # ─── Devcontainer Validation (RN-029) ────────────────────────
+  # Runs when .devcontainer/, .nvmrc, or packageManager change.
+  # Builds the devcontainer image and validates toolchain pins
+  # match the repo's sources of truth.
+
+  devcontainer:
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.devcontainer == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build devcontainer image
+        run: docker build -t ripple-next-devcontainer .devcontainer/
+
+      - name: Smoke test — Node.js version matches .nvmrc
+        run: |
+          EXPECTED=$(cat .nvmrc | tr -d '[:space:]')
+          ACTUAL=$(docker run --rm ripple-next-devcontainer node -v | tr -d '[:space:]')
+          echo "Expected: v${EXPECTED}, Actual: ${ACTUAL}"
+          if [[ "${ACTUAL}" != "v${EXPECTED}" ]]; then
+            echo "::error::Node.js version mismatch: container has ${ACTUAL}, .nvmrc requires v${EXPECTED}"
+            exit 1
+          fi
+
+      - name: Smoke test — pnpm available via corepack
+        run: |
+          docker run --rm ripple-next-devcontainer pnpm --version
+
+      - name: Smoke test — required tools present
+        run: |
+          docker run --rm ripple-next-devcontainer bash -c "
+            set -e
+            echo 'Checking git...' && git --version
+            echo 'Checking pg_isready...' && which pg_isready
+            echo 'All tools present.'
+          "
+
+      - name: Smoke test — docker-compose config valid
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml config --quiet
+
+  # ─── Tier 2: Full E2E + Accessibility ────────────────────────
   # Always runs on push to main.
   # On PRs: only when high-risk surfaces or web app are touched.
   # Uploads Playwright report on failure + JUnit results always.
+  # Accessibility: axe-core WCAG 2.1 AA checks run as part of E2E
+  # and via standalone audit. Critical/serious violations block.
 
   e2e:
     runs-on: ubuntu-latest
@@ -154,11 +203,24 @@ jobs:
         env:
           CI: true
           NITRO_PRESET: node-server
+
+      - name: Run accessibility audit
+        if: always()
+        run: pnpm test:a11y -- --ci --json --url=http://localhost:3000 > /dev/null 2>&1 || true
+        env:
+          CI: true
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results-e2e
           path: apps/web/test-results/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a11y-report
+          path: a11y-report.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         if: failure()

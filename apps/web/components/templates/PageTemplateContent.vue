@@ -14,7 +14,9 @@ function getSectionComponent(section: PageSection): string {
     'call-to-action': 'RplCallToAction',
     'key-dates': 'RplKeyDates',
     image: 'RplContentImage',
-    'embedded-video': 'RplEmbeddedVideo'
+    'embedded-video': 'RplEmbeddedVideo',
+    'media-gallery': 'RplMediaGallery',
+    'document-download': 'RplDocumentDownload'
   }
   return componentMap[section.type] ?? 'RplContentWysiwyg'
 }

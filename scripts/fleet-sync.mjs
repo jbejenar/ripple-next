@@ -19,7 +19,7 @@
  */
 import { readFileSync, existsSync, writeFileSync, copyFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const POLICY_PATH = resolve(ROOT, 'docs/fleet-policy.json')
@@ -53,10 +53,11 @@ if (reportArg) {
 } else if (targetArg) {
   const targetPath = resolve(targetArg.split('=')[1])
   try {
-    const output = execSync(
-      `node ${resolve(ROOT, 'scripts/check-fleet-drift.mjs')} --target=${targetPath} --json`,
-      { encoding: 'utf-8', cwd: ROOT }
-    )
+    const output = execFileSync('node', [
+      resolve(ROOT, 'scripts/check-fleet-drift.mjs'),
+      `--target=${targetPath}`,
+      '--json',
+    ], { encoding: 'utf-8', cwd: ROOT })
     report = JSON.parse(output)
   } catch (err) {
     // Drift detection exits 1 on drift found, but still produces valid JSON

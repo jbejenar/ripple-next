@@ -22,7 +22,9 @@ export type {
   CardItem,
   TimelineItem,
   CallToAction,
-  KeyDate
+  KeyDate,
+  MediaGalleryItem,
+  DocumentItem
 } from './types'
 export { MockCmsProvider } from './providers/mock'
 export { DrupalCmsProvider } from './providers/drupal'

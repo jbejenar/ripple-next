@@ -14,11 +14,16 @@ pnpm check:readiness # verify readiness.json is not stale
 pnpm check:quarantine # verify flaky test quarantine policy (ADR-013)
 pnpm check:iac       # IaC policy scan for sst.config.ts (RN-036)
 pnpm check:fleet-drift # fleet drift detection (RN-024)
+pnpm test:a11y       # WCAG 2.1 AA accessibility audit (RN-042)
 pnpm fleet:sync      # generate sync PRs for downstream repos
 pnpm fleet:compliance # fleet-wide compliance report
+pnpm session:start   # start agent session tracking (RN-043)
+pnpm session:end     # end session + capture metrics (--run-gates for gate results)
+pnpm agent:metrics   # aggregate session metrics for friction analysis
 pnpm verify          # run ALL quality gates with summary (RN-034)
 pnpm verify -- --json # machine-readable JSON gate summary
 pnpm verify -- --fleet # include fleet drift in quality gates
+pnpm verify:release  # verify package checksums + provenance (RN-027)
 ```
 
 ## Project Overview
@@ -31,7 +36,7 @@ are published to a private npm registry. See `AGENTS.md` for full architecture.
 - `docs/readiness.json` — machine-readable subsystem status (check before starting work)
 - `docs/product-roadmap/` — product roadmap (v5.0.0), agent-friction scorecard, improvement tiers
 - `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
-- `docs/error-taxonomy.json` — 39 classified error codes across 9 categories (RPL-*-NNN format)
+- `docs/error-taxonomy.json` — 44 classified error codes across 11 categories (RPL-*-NNN format)
 - `docs/fleet-policy.json` — fleet governance contract: governed surfaces, sync strategies (RN-024)
 - `docs/downstream-workflows.md` — guide for consuming reusable CI composite actions
 - `AGENTS.md` — architecture, conventions, validation requirements

@@ -47,6 +47,12 @@ test-results/
 playwright-report/
 gate-summary.json
 health-report.json
+session-metrics.json
+release-checksums.json
+release-verification.json
+
+# Agent session logs (RN-043)
+.sessions/
 
 # Environment
 .env

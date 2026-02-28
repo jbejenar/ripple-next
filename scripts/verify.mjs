@@ -38,7 +38,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 
@@ -54,18 +54,18 @@ const outputFile = outputArg ? outputArg.split('=')[1] : null
 
 // ── Gate definitions (execution order matters) ───────────────────────
 const GATES = [
-  { name: 'validate:env', command: 'pnpm validate:env', category: 'environment' },
-  { name: 'lint', command: 'pnpm lint', category: 'quality' },
-  { name: 'typecheck', command: 'pnpm typecheck', category: 'quality' },
-  { name: 'test', command: 'pnpm test', category: 'tests' },
-  { name: 'check:readiness', command: 'pnpm check:readiness', category: 'policy' },
-  { name: 'check:quarantine', command: 'pnpm check:quarantine', category: 'policy' },
-  { name: 'check:iac', command: 'pnpm check:iac', category: 'policy' },
+  { name: 'validate:env', args: ['pnpm', 'validate:env'], category: 'environment' },
+  { name: 'lint', args: ['pnpm', 'lint'], category: 'quality' },
+  { name: 'typecheck', args: ['pnpm', 'typecheck'], category: 'quality' },
+  { name: 'test', args: ['pnpm', 'test'], category: 'tests' },
+  { name: 'check:readiness', args: ['pnpm', 'check:readiness'], category: 'policy' },
+  { name: 'check:quarantine', args: ['pnpm', 'check:quarantine'], category: 'policy' },
+  { name: 'check:iac', args: ['pnpm', 'check:iac'], category: 'policy' },
 ]
 
 // Add fleet drift gate if --fleet flag is passed and fleet-policy.json exists
 if (fleetMode && existsSync(resolve(ROOT, 'docs/fleet-policy.json'))) {
-  GATES.push({ name: 'check:fleet-drift', command: 'pnpm check:fleet-drift', category: 'fleet' })
+  GATES.push({ name: 'check:fleet-drift', args: ['pnpm', 'check:fleet-drift'], category: 'fleet' })
 }
 
 // ── Gate runner ──────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ function runGate(gate) {
   let exitCode = 0
 
   try {
-    execSync(gate.command, {
+    execFileSync(gate.args[0], gate.args.slice(1), {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 300_000,

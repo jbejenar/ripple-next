@@ -64,6 +64,19 @@ export interface KeyDate {
   description?: string
 }
 
+export interface MediaGalleryItem {
+  id: string
+  image: CmsImage
+  caption?: string
+  thumbnail?: CmsImage
+}
+
+export interface DocumentItem {
+  file: CmsFile
+  description?: string
+  updated?: string
+}
+
 export type PageSection =
   | { type: 'wysiwyg'; html: string }
   | { type: 'accordion'; title?: string; items: AccordionItem[] }
@@ -73,6 +86,8 @@ export type PageSection =
   | { type: 'key-dates'; title?: string; dates: KeyDate[] }
   | { type: 'image'; image: CmsImage; caption?: string }
   | { type: 'embedded-video'; url: string; title?: string; transcript?: string }
+  | { type: 'media-gallery'; title?: string; items: MediaGalleryItem[] }
+  | { type: 'document-download'; title?: string; documents: DocumentItem[] }
 
 // ── Content Entities ───────────────────────────────────────────────────
 

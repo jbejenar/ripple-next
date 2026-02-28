@@ -1,0 +1,74 @@
+name: Reusable Security Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      codeql-languages:
+        description: 'Languages for CodeQL analysis (comma-separated)'
+        type: string
+        required: false
+        default: 'javascript-typescript'
+      enable-dependency-review:
+        description: 'Enable dependency review (PRs only)'
+        type: boolean
+        required: false
+        default: true
+      enable-secret-audit:
+        description: 'Enable secret scanning via gitleaks'
+        type: boolean
+        required: false
+        default: true
+      fail-on-severity:
+        description: 'Minimum vulnerability severity to fail (low, moderate, high, critical)'
+        type: string
+        required: false
+        default: 'high'
+    outputs:
+      status:
+        description: 'Overall security status (pass/fail)'
+        value: ${{ jobs.security.outputs.status }}
+
+jobs:
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.result.outputs.status }}
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ inputs.codeql-languages }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{ inputs.codeql-languages }}'
+
+      - name: Dependency Review
+        if: inputs.enable-dependency-review && github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: ${{ inputs.fail-on-severity }}
+
+      - name: Secret Audit (gitleaks)
+        if: inputs.enable-secret-audit
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Set output
+        id: result
+        if: always()
+        run: echo "status=${{ job.status == 'success' && 'pass' || 'fail' }}" >> "$GITHUB_OUTPUT"
