@@ -11,6 +11,46 @@
 
 ---
 
+## Roadmap Timeline
+
+```mermaid
+gantt
+    title Ripple Next — Active Roadmap
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Now (0–6 weeks)
+    RN-047 Persist Turbo cache in CI       :rn047, 2026-03-01, 14d
+    RN-048 Downstream workflow pinning      :rn048, 2026-03-01, 7d
+    RN-046 tRPC router integration harness  :rn046, 2026-03-08, 28d
+
+    section Next (6–12 weeks)
+    RN-045 OIDC auth integration tests      :rn045, 2026-04-13, 21d
+    RN-050 Web performance budgets          :rn050, 2026-04-13, 21d
+    RN-025 Contract testing                 :rn025, 2026-05-04, 30d
+    RN-028 Golden-path conformance CLI      :rn028, 2026-05-04, 30d
+
+    section Later (Quarter+)
+    RN-017 Live Drupal integration          :rn017, 2026-06-01, 21d
+```
+
+## Agent-Friction Scorecard
+
+| Dimension | Score | Notes |
+|-----------|-------|-------|
+| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer |
+| One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
+| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers |
+| Test reliability | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, mock providers |
+| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc) + pnpm (packageManager) with doctor guards |
+| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics |
+| Automated remediation | 5/5 | `pnpm doctor --json`, conformance suites, documented procedures |
+| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) |
+
+**Overall: 40/40**
+
+---
+
 ## North Star
 
 Ripple Next is the **AI-augmented golden-path for government digital platforms**.
@@ -253,23 +293,6 @@ Description, rationale, and evidence.
 ### Open Suggestions
 
 _No open suggestions._
-
----
-
-## Agent-Friction Scorecard
-
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer |
-| One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
-| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers |
-| Test reliability | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, mock providers |
-| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc) + pnpm (packageManager) with doctor guards |
-| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics |
-| Automated remediation | 5/5 | `pnpm doctor --json`, conformance suites, documented procedures |
-| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) |
-
-**Overall: 40/40**
 
 ---
 
