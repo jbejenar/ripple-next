@@ -1,0 +1,95 @@
+{
+  "name": "add-new-provider",
+  "description": "Scaffold and implement a new provider for an existing @ripple/* package using the provider pattern.",
+  "args": {
+    "package": "Package name under packages/ (e.g. 'email', 'storage', 'queue')",
+    "name": "Provider name in kebab-case (e.g. 'resend', 's3', 'sqs')"
+  },
+  "preconditions": [
+    {
+      "description": "Target package exists",
+      "command": "test -d packages/${PACKAGE}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Package has a types.ts with provider interface",
+      "command": "test -f packages/${PACKAGE}/types.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:provider ${PACKAGE} ${NAME}",
+      "description": "Scaffold provider class and conformance test using the code generator"
+    },
+    {
+      "order": 2,
+      "command": "echo 'Implement the provider interface methods in packages/${PACKAGE}/providers/${NAME}.ts'",
+      "description": "Fill in the TODO stubs with actual provider logic (implement all interface methods)"
+    },
+    {
+      "order": 3,
+      "command": "pnpm test -- --filter @ripple/${PACKAGE}",
+      "description": "Run package tests including the conformance suite to validate the provider"
+    },
+    {
+      "order": 4,
+      "command": "pnpm typecheck",
+      "description": "Verify TypeScript types are correct across the monorepo"
+    },
+    {
+      "order": 5,
+      "command": "pnpm lint",
+      "description": "Verify lint passes (no console.log, no explicit any)"
+    },
+    {
+      "order": 6,
+      "command": "echo 'Export the provider from packages/${PACKAGE}/index.ts'",
+      "description": "Add the provider to the package's public API exports"
+    },
+    {
+      "order": 7,
+      "command": "pnpm changeset",
+      "description": "Add a changeset describing the new provider (minor version bump)"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Provider file exists",
+      "command": "test -f packages/${PACKAGE}/providers/${NAME}.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Test file exists",
+      "command": "test -f packages/${PACKAGE}/tests/${NAME}.provider.test.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Conformance tests pass",
+      "command": "pnpm test -- --filter @ripple/${PACKAGE}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Provider is exported from package index",
+      "command": "grep -q '${NAME}' packages/${PACKAGE}/index.ts",
+      "expect": "exit 0"
+    }
+  ],
+  "coverageRequirements": {
+    "tier1": { "packages": ["auth", "db", "queue"], "lines": 60, "branches": 50 },
+    "tier2": { "packages": ["email", "storage", "events", "cms"], "lines": 40, "branches": 30 },
+    "tier3": { "packages": ["ui", "worker"], "lines": 20, "branches": 10 }
+  },
+  "related": [
+    "packages/testing/conformance/",
+    "docs/provider-pattern.md",
+    "AGENTS.md → Provider Pattern",
+    "scripts/generate/provider.mjs"
+  ]
+}

@@ -99,8 +99,8 @@ DO manually import: anything from `@ripple/*` packages, `node_modules`, tRPC uti
 
 This platform treats AI agents as first-class developers. Three pillars:
 
-1. **Runbooks** — Codified, executable procedures for common operations (RN-039)
-2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040)
+1. **Runbooks** — Codified, executable procedures for common operations (RN-039, done)
+2. **Error Taxonomy** — Machine-parseable error codes with remediation paths (RN-040, done)
 3. **Code Generators** — `pnpm generate:*` commands for scaffolding (RN-041, done)
 
 Available generators:
@@ -109,6 +109,17 @@ pnpm generate:component <name> [--tier=atoms|molecules|organisms] [--dry-run]
 pnpm generate:provider <package> <name> [--dry-run]
 pnpm generate:endpoint <router> <procedure> [--dry-run]
 pnpm generate:package <name> [--dry-run]
+```
+
+Available runbooks (`pnpm runbook --list`):
+```bash
+pnpm runbook deploy-to-staging      # Build, validate, deploy to staging
+pnpm runbook rollback-production    # Roll back to known-good version
+pnpm runbook add-new-provider       # Scaffold + implement provider
+pnpm runbook add-new-component      # Scaffold + implement UI component
+pnpm runbook add-api-endpoint       # Scaffold + implement tRPC endpoint
+pnpm runbook onboard-new-package    # Scaffold full @ripple/* package
+pnpm runbook <name> -- --json       # Machine-readable JSON output
 ```
 
 See `docs/adr/018-ai-first-workflow-strategy.md` for the full strategy.

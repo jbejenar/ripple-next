@@ -144,6 +144,9 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 - `pnpm generate:provider <package> <name>` — Scaffold provider class + conformance test
 - `pnpm generate:endpoint <router> <procedure>` — Scaffold tRPC router + validation + test
 - `pnpm generate:package <name>` — Scaffold full @ripple/* package (types, index, tests, configs)
+- `pnpm runbook <name>` — Print structured runbook steps (RN-039)
+- `pnpm runbook --list` — List all available runbooks
+- `pnpm runbook <name> -- --json` — Machine-readable JSON runbook output
 - `pnpm changeset` — Add version intent for published package changes
 - `pnpm db:generate` — Generate Drizzle migration from schema changes
 - `pnpm db:migrate` — Run pending migrations

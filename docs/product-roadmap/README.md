@@ -89,10 +89,10 @@ graph LR
         UI["UI (Tested)"]
         SEARCH[Search]
         NAV[Navigation]
+        AGENT_DX[Agent Tooling]
     end
     subgraph Partial
         API[API Layer]
-        AGENT_DX[Agent Tooling]
     end
     subgraph Planned
         FLEET[Fleet Templates]
@@ -114,7 +114,7 @@ graph LR
     style NAV fill:#22c55e,color:#fff
     style API fill:#f59e0b,color:#fff
     style FLEET fill:#6366f1,color:#fff
-    style AGENT_DX fill:#f59e0b,color:#fff
+    style AGENT_DX fill:#22c55e,color:#fff
 ```
 
 ---
@@ -318,23 +318,27 @@ design system without taking a runtime dependency.
 
 ---
 
-#### RN-039: Agent Runbook Automation
+#### RN-039: Agent Runbook Automation ✅
 
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** [ADR-018](../adr/018-ai-first-workflow-strategy.md) | **AI-first benefit:** Agents execute multi-step operations from codified procedures without human interpretation
+**Status:** Done (2026-02-28)
 
-Codify all common operations into structured, executable runbooks that AI agents
-and humans can follow deterministically. Runbooks are machine-parseable
-(step-by-step with preconditions, commands, and validation checks).
+Structured, machine-parseable runbooks (`docs/runbooks/*.json`) with preconditions,
+ordered steps, validation criteria, and related file references. CLI runner
+(`pnpm runbook`) prints steps in human-readable or JSON format. Six runbooks
+covering deployment, rollback, and all scaffolding operations.
 
-- [ ] Create `docs/runbooks/` directory with standardised template
-- [ ] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
-- [ ] Write runbook: **rollback-production** (identify version, rollback, verify, notify)
-- [ ] Write runbook: **add-new-provider** (scaffold, implement interface, conformance test, register)
-- [ ] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
-- [ ] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
-- [ ] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
-- [ ] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
+- [x] Create `docs/runbooks/` directory with standardised template
+- [x] Write runbook: **deploy-to-staging** (build, validate, deploy, verify health)
+- [x] Write runbook: **rollback-production** (identify version, rollback, verify, notify)
+- [x] Write runbook: **add-new-provider** (scaffold, implement interface, conformance test, register)
+- [x] Write runbook: **add-new-component** (scaffold SFC, test, story, register, document)
+- [x] Write runbook: **add-api-endpoint** (tRPC router, validation schema, test, document)
+- [x] Write runbook: **onboard-new-package** (scaffold package, configure exports, add to workspace, publish config)
+- [x] Add `pnpm runbook <name>` command that prints the runbook steps to stdout (machine-readable JSON with `--json` flag)
+
+**Verification:** `pnpm runbook --list` shows 6 runbooks; `pnpm runbook <name> -- --json` emits valid JSON; all gates pass.
 
 ---
 
@@ -549,7 +553,7 @@ continuously improve agent ergonomics.
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Pending |
 | [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Pending |
-| [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Pending |
+| [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | 2 | High | High | Medium | Done |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | 3 | Medium | Medium | Medium | Pending |
@@ -610,7 +614,7 @@ gantt
     RN-036 IaC policy scanning             :rn036, 2026-04-21, 14d
     RN-037 Port priority components        :rn037, 2026-04-07, 60d
     RN-038 Upstream sync workflow          :rn038, 2026-04-21, 7d
-    RN-039 Agent runbook automation        :rn039, 2026-04-07, 21d
+    RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
     RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
     RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
 
@@ -908,7 +912,7 @@ graph TD
 - [x] ADR index with all 18 decisions cross-referenced
 - [x] Upstream Ripple 2 component strategy documented (ADR-017: port, own, selectively sync)
 - [x] AI-first workflow strategy documented (ADR-018: runbooks, generators, error taxonomy)
-- [ ] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
+- [x] Agent runbook library for common operations ([RN-039](#rn-039-agent-runbook-automation))
 - [x] Structured error taxonomy for automated triage ([RN-040](#rn-040-structured-error-taxonomy))
 - [x] Code generation templates for components, providers, endpoints ([RN-041](#rn-041-code-generation-templates))
 - [ ] Accessibility audit pipeline with WCAG compliance ([RN-042](#rn-042-accessibility-audit-pipeline))

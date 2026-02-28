@@ -1,0 +1,102 @@
+{
+  "name": "add-new-component",
+  "description": "Scaffold and implement a new Vue component in @ripple/ui with test, Storybook story, and index export.",
+  "args": {
+    "name": "Component name in PascalCase (e.g. 'Checkbox', 'DateInput'). Auto-prefixed with 'Rpl' if not present.",
+    "tier": "Atomic design tier: atoms (default), molecules, or organisms"
+  },
+  "preconditions": [
+    {
+      "description": "UI package exists",
+      "command": "test -d packages/ui",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:component ${NAME} --tier=${TIER:-atoms}",
+      "description": "Scaffold Vue SFC, Storybook story, test file, and append index export"
+    },
+    {
+      "order": 2,
+      "command": "echo 'Implement component template, styles, and props in packages/ui/components/${TIER}/Rpl${NAME}.vue'",
+      "description": "Fill in the TODO stubs — use <script setup lang=\"ts\">, BEM with rpl- prefix, --rpl-* design tokens"
+    },
+    {
+      "order": 3,
+      "command": "echo 'Update the Storybook story with realistic args and variants'",
+      "description": "Add meaningful default args and at least one variant story"
+    },
+    {
+      "order": 4,
+      "command": "echo 'Write component tests (mount, props, events, accessibility)'",
+      "description": "Test rendering, prop variations, event emissions, and ARIA attributes"
+    },
+    {
+      "order": 5,
+      "command": "pnpm test -- --filter @ripple/ui",
+      "description": "Run all UI component tests to verify nothing is broken"
+    },
+    {
+      "order": 6,
+      "command": "pnpm lint",
+      "description": "Verify lint passes"
+    },
+    {
+      "order": 7,
+      "command": "pnpm typecheck",
+      "description": "Verify TypeScript types are correct"
+    },
+    {
+      "order": 8,
+      "command": "pnpm changeset",
+      "description": "Add a changeset for the new component (minor version bump for @ripple/ui)"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Component SFC exists",
+      "command": "test -f packages/ui/components/${TIER}/Rpl${NAME}.vue",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Test file exists",
+      "command": "test -f packages/ui/tests/Rpl${NAME}.test.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Story file exists",
+      "command": "test -f packages/ui/components/${TIER}/Rpl${NAME}.stories.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Component exported from index.ts",
+      "command": "grep -q 'Rpl${NAME}' packages/ui/index.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Tests pass",
+      "command": "pnpm test -- --filter @ripple/ui",
+      "expect": "exit 0"
+    }
+  ],
+  "conventions": {
+    "naming": "PascalCase with Rpl prefix (e.g. RplCheckbox, RplDateInput)",
+    "css": "BEM with rpl- prefix (e.g. .rpl-checkbox, .rpl-checkbox__label)",
+    "tokens": "--rpl-* CSS custom properties (e.g. --rpl-clr-primary, --rpl-space-4)",
+    "api": "<script setup lang=\"ts\"> with Composition API only",
+    "accessibility": "WCAG 2.1 AA — proper ARIA attributes, keyboard navigation, focus management"
+  },
+  "related": [
+    "packages/ui/components/",
+    "packages/ui/tests/",
+    "scripts/generate/component.mjs",
+    "AGENTS.md → Code Conventions"
+  ]
+}

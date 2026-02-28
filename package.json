@@ -39,6 +39,7 @@
     "generate:provider": "node scripts/generate/index.mjs provider",
     "generate:endpoint": "node scripts/generate/index.mjs endpoint",
     "generate:package": "node scripts/generate/index.mjs package",
+    "runbook": "node scripts/runbook.mjs",
     "prepare": "husky"
   },
   "pnpm": {

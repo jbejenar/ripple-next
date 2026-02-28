@@ -1,0 +1,109 @@
+{
+  "name": "onboard-new-package",
+  "description": "Scaffold a complete @ripple/* workspace package with types, exports, tests, and publishing configuration.",
+  "args": {
+    "name": "Package name in kebab-case (e.g. 'notifications', 'analytics', 'cache')"
+  },
+  "preconditions": [
+    {
+      "description": "Package does not already exist",
+      "command": "test ! -d packages/${NAME}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:package ${NAME}",
+      "description": "Scaffold package directory with package.json, tsconfig, types, index, and test file"
+    },
+    {
+      "order": 2,
+      "command": "echo 'Define the provider interface in packages/${NAME}/types.ts'",
+      "description": "Design the provider interface that all implementations will conform to"
+    },
+    {
+      "order": 3,
+      "command": "echo 'Implement a memory/mock provider for testing'",
+      "description": "Create packages/${NAME}/providers/memory.ts as the default test provider"
+    },
+    {
+      "order": 4,
+      "command": "echo 'Write conformance tests in packages/testing/conformance/${NAME}.conformance.ts'",
+      "description": "Define the conformance test suite that all providers must pass"
+    },
+    {
+      "order": 5,
+      "command": "pnpm install",
+      "description": "Re-link workspace dependencies after adding the new package"
+    },
+    {
+      "order": 6,
+      "command": "pnpm test -- --filter @ripple/${NAME}",
+      "description": "Run the new package's tests"
+    },
+    {
+      "order": 7,
+      "command": "pnpm typecheck",
+      "description": "Verify types across the monorepo with the new package"
+    },
+    {
+      "order": 8,
+      "command": "pnpm lint",
+      "description": "Verify lint passes"
+    },
+    {
+      "order": 9,
+      "command": "echo 'Update docs/readiness.json with the new subsystem entry'",
+      "description": "Add the package to the readiness manifest with appropriate status and paths"
+    },
+    {
+      "order": 10,
+      "command": "pnpm check:readiness",
+      "description": "Verify readiness manifest is consistent after adding the new subsystem"
+    },
+    {
+      "order": 11,
+      "command": "pnpm changeset",
+      "description": "Add a changeset for the new package (initial 0.1.0 release)"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Package directory exists with all required files",
+      "command": "test -f packages/${NAME}/package.json && test -f packages/${NAME}/types.ts && test -f packages/${NAME}/index.ts",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Package is recognized by pnpm workspace",
+      "command": "pnpm list --filter @ripple/${NAME} --depth 0",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Tests pass",
+      "command": "pnpm test -- --filter @ripple/${NAME}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Readiness manifest updated and consistent",
+      "command": "pnpm check:readiness",
+      "expect": "exit 0"
+    }
+  ],
+  "publishConfig": {
+    "registry": "Private npm registry (configured in .npmrc)",
+    "access": "restricted",
+    "exports": "Dual ESM exports (. and ./types) with TypeScript declarations"
+  },
+  "related": [
+    "scripts/generate/package.mjs",
+    "pnpm-workspace.yaml",
+    "docs/readiness.json",
+    "AGENTS.md → Repository Structure"
+  ]
+}
