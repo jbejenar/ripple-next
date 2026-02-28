@@ -64,7 +64,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **UI component tests** — Vue Test Utils tests for all 42 components (449 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
+- **UI component tests** — Vue Test Utils tests for all 42 components (450 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
 - **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).
@@ -433,7 +433,7 @@ on `page.contentType`.
 - [x] Build campaign page template — featured sections (CTA, key-dates) separated from body, hero background image, taxonomy tags
 - [x] Wire templates to CMS page type field — `[...slug].vue` switches on `contentType`: `landing_page` → Landing, `campaign` → Campaign, default → Content
 
-**Verification:** 18 template tests passing; `pnpm verify` passes all 7 quality gates; 450 total tests across the repo.
+**Verification:** 18 template tests passing; `pnpm verify` passes all 7 quality gates; 622 total tests across the repo.
 
 ---
 
@@ -936,7 +936,7 @@ graph TD
 - [x] Preview deploy environment guardrails
 - [x] Storybook stories for all UI components (atoms, molecules, organisms, Tide content)
 - [x] Downstream workflow consumption guide
-- [x] Vue Test Utils component tests for all 37 UI components
+- [x] Vue Test Utils component tests for all 42 UI components (450 tests)
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories

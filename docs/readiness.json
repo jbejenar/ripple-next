@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy and ADR-019 for fleet governance.",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "subsystems": {
     "auth": {
       "status": "implemented",

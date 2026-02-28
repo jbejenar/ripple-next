@@ -60,6 +60,7 @@ graph TB
 | -------------- | ------------------------------------------------------- | --- |
 | Frontend       | Nuxt 3 + Vue 3 (Composition API) + TypeScript           | [ADR-001](./adr/001-nuxt-over-next.md) |
 | UI Components  | Ripple UI Core + Storybook 10                           | — |
+| Page Templates | Landing, Content, Campaign (contentType-driven)         | [RN-023](./product-roadmap/README.md#rn-023-landing-page--content-templates) |
 | API            | Nitro server routes + tRPC-nuxt                         | — |
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis | [ADR-002](./adr/002-drizzle-over-prisma.md) |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             | [ADR-003](./adr/003-provider-pattern.md) |

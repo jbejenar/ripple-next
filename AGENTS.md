@@ -169,7 +169,7 @@ Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
 ## Code Conventions
 
 - All components use `<script setup lang="ts">` (Composition API only)
-- UI components follow atomic design: atoms → molecules → organisms
+- UI components follow atomic design: atoms → molecules → organisms → page templates
 - CSS uses BEM with `rpl-` prefix for Ripple components, `app-` for app components
 - API routes go in `apps/web/server/api/` or `apps/web/server/trpc/routers/`
 - All functions and methods must have explicit TypeScript return types
@@ -322,6 +322,7 @@ To bump Node.js or pnpm, update **all** sources of truth in a single PR:
 
 ```
 apps/web/          — Nuxt 3 application (deploys to Lambda)
+  components/      — Page templates (Landing, Content, Campaign) — RN-023
 packages/ui/       — Ripple-based UI component library
 packages/db/       — Database layer (Drizzle + Postgres)
 packages/queue/    — Queue abstraction (provider pattern)
@@ -366,6 +367,7 @@ When making changes, match the change type to the right validation:
 | Remove Drupal | Follow ADR-011 removal procedure (delete 2 files + update factory/exports) |
 | DB schema change | `pnpm db:generate`, migration test, `pnpm typecheck` |
 | New Vue component | Component test, `pnpm lint`, Storybook story |
+| Page template change | Component test, verify CMS contentType mapping in `[...slug].vue` |
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |
 | Infrastructure change | `pnpm check:iac`, `npx sst deploy --stage pr-{n}`, review SST diff |
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
