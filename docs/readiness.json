@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-27. See ADR-018 for AI-first workflow strategy.",
-  "version": "0.10.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy.",
+  "version": "0.11.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -73,7 +73,7 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes. Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test with downstream consumption guide. SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check), Tier 2 (E2E on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Bootstrap doctor script with --json and --offline modes, exact version guards for Node.js (.nvmrc) and pnpm (packageManager). Zod-based env schema validation gate (ADR-012). Flaky test containment policy with quarantine check (ADR-013). no-console promoted to error. Risk-tiered coverage thresholds configured. JUnit XML test artifact uploads with 30-day retention. Reusable composite actions for setup, quality, and test — all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX) and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
       "packages": [],
       "paths": [".github/workflows/", ".github/actions/", "docs/downstream-workflows.md"],
       "blockers": [],

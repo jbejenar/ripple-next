@@ -239,6 +239,45 @@ API or behavior:
 3. On merge to main, the release workflow consumes changesets, bumps versions,
    updates changelogs, and publishes to the private registry.
 
+## Toolchain Pinning
+
+Exact runtime versions are enforced to eliminate version drift across agent runs,
+CI, and developer machines.
+
+### Sources of Truth
+
+| Tool | Source of Truth | Read By |
+|------|----------------|---------|
+| Node.js | `.nvmrc` (exact version, e.g. `22.22.0`) | nvm, fnm, volta, CI (`node-version-file`), doctor script |
+| pnpm | `package.json` → `packageManager` field (e.g. `pnpm@9.15.4`) | corepack, `pnpm/action-setup@v4`, doctor script |
+
+### How Enforcement Works
+
+- **Local:** `pnpm doctor` reads `.nvmrc` and `packageManager`, warns on Node mismatch, fails on pnpm mismatch.
+- **CI:** `.github/actions/setup/action.yml` reads `.nvmrc` via `node-version-file` and `packageManager` via `pnpm/action-setup@v4`.
+- **Devcontainer:** Uses Node 22 base image; corepack enables pinned pnpm from `packageManager`.
+- **`package.json` engines:** Lower-bound safety net (`>=22.14.0` for Node, `>=9.15.4` for pnpm).
+
+### Upgrade Procedure
+
+To bump Node.js or pnpm, update **all** sources of truth in a single PR:
+
+**Node.js bump:**
+1. Update `.nvmrc` with the new exact version (e.g. `22.16.0`)
+2. Update `package.json` → `engines.node` lower bound if needed
+3. Update `.devcontainer/Dockerfile` base image tag if major version changes
+4. Update `.devcontainer/devcontainer.json` node feature version if major version changes
+5. Run `pnpm doctor` to verify — should show the new pinned version
+6. Run `pnpm test` to verify nothing breaks
+
+**pnpm bump:**
+1. Update `package.json` → `packageManager` field (e.g. `pnpm@9.16.0`)
+2. Update `package.json` → `engines.pnpm` lower bound if needed
+3. Run `corepack enable pnpm` to activate the new version
+4. Run `pnpm install` to regenerate lockfile if needed
+5. Run `pnpm doctor` to verify — should show the new pinned version
+6. Run `pnpm test` to verify nothing breaks
+
 ## File Naming
 
 - Components: PascalCase (`UserProfile.vue`)
