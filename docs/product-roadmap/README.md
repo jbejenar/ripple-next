@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> v6.1.0 | 2026-02-28
+> v6.2.0 | 2026-02-28
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
@@ -20,7 +20,8 @@ gantt
     axisFormat %b %Y
 
     section Now (0–6 weeks)
-    RN-046 tRPC router integration harness  :rn046, 2026-03-01, 28d
+    RN-051 ADR: API boundary strategy       :crit, rn051, 2026-03-01, 14d
+    RN-046 tRPC router integration harness  :rn046, after rn051, 28d
 
     section Next (6–12 weeks)
     RN-045 OIDC auth integration tests      :rn045, 2026-04-13, 21d
@@ -61,7 +62,7 @@ across the fleet.
 
 ## Themes
 
-1. **Production confidence** — close the API and auth integration test gaps
+1. **Production confidence** — decide the API boundary (oRPC vs tRPC), close integration test gaps
 2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
 3. **Quality depth** — performance budgets, live CMS validation
 
@@ -71,11 +72,53 @@ across the fleet.
 
 > Items that close the remaining platform gap. Agents should start here.
 
+### RN-051: ADR — API Boundary Strategy (oRPC vs tRPC, Public vs Internal + Portal Publishing)
+
+**Impact:** Very High | **Effort:** Medium | **Risk:** High | **Priority:** P0
+**Source:** Tech-lead directive — external integrator requirement | **Date:** 2026-02-28
+**AI-first benefit:** Contracts must be deterministic, tool-neutral, and low-friction for autonomous agents (Codex + Claude parity). A single canonical boundary prevents agent confusion from dual-stack patterns.
+
+#### Problem
+
+We will have external integrators who need discoverable, publishable interfaces
+in an API portal/registry. The repo is AI-first: contracts must be
+deterministic, tool-neutral, and low-friction for autonomous agents. We must
+avoid dual-stack bloat (two competing API patterns) unless there is a clear
+thin-adapter rationale.
+
+**This ADR is a prerequisite for any further work that exposes external APIs.**
+
+#### Decision Scope — ADR Must Answer
+
+1. **Canonical contract boundary** — OpenAPI-first or TS-first for public interfaces?
+2. **Framework choice** — oRPC, tRPC, or hybrid? If hybrid, what is the strict boundary rule?
+3. **Artifact generation & publishing** — OpenAPI spec location, `generate:openapi` command, CI publication to portal/registry, versioning strategy.
+4. **Contract drift prevention** — CI gates for breaking-change detection, semver/changesets integration, deprecation policy.
+5. **Endpoint classification** — public vs internal taxonomy, ensuring only public surfaces are published.
+6. **Migration path** — if we start with one approach and later switch, what is the incremental migration plan?
+
+#### Definition of Done
+
+- [ ] ADR-021 created in `docs/adr/021-api-boundary-strategy.md`, following repo template
+- [ ] ADR includes: context, decision drivers, options considered (tRPC, oRPC, gateway, hybrid), decision, consequences, rollout plan
+- [ ] Add a `generate:openapi` command (if applicable) with deterministic output
+- [ ] Add a CI gate for breaking-change detection / contract drift
+- [ ] Add follow-up roadmap items for any required refactors/migrations
+- [ ] Roadmap updated with ADR status and links; `readiness.json` updated
+- [ ] Commands and gates described in ADR are feasible within current toolchain constraints (no new bloat)
+
+**Prerequisite for:** [RN-046](#rn-046-trpc-router-integration-harness-testcontainers), [RN-025](#rn-025-contract-testing-across-consumers)
+
+**Verification:** ADR reviewed for completeness; `pnpm verify` passes; readiness.json updated.
+
+---
+
 ### RN-046: tRPC Router Integration Harness (Testcontainers)
 
 **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** GPT-5.2-Codex API topology review | **Date:** 2026-02-28
 **AI-first benefit:** Gives agents production-semantics confidence when refactoring router logic.
+**Depends on:** [RN-051](#rn-051-adr--api-boundary-strategy-orpc-vs-trpc-public-vs-internal--portal-publishing) (API boundary ADR determines the router framework)
 
 API layer is the only "partial" subsystem. Repository-level DB integration tests
 exist ([RN-031](./ARCHIVE.md#rn-031-testcontainers-integration-tests-for-db--api)),
@@ -195,7 +238,8 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | Risk | Mitigation |
 |------|------------|
 | RN-017 blocked on content team indefinitely | Docker Tide fixture as fallback by Q2 2026 |
-| API layer "partial" status | RN-046 in Now addresses this |
+| API boundary undecided (oRPC vs tRPC) | **RN-051 (P0)** — ADR must land before external APIs are exposed |
+| API layer "partial" status | RN-046 in Now addresses this (blocked on RN-051) |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
 | ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
 | Licensing drift (RN-049) | Keep SPDX-standard; reject custom non-commercial wording |
