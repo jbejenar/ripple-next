@@ -1113,7 +1113,7 @@ If a port is in use, either stop the conflicting service or change the port mapp
 - [Deployment Guide](./deployment.md) — environment-specific deployment
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
-- [Product Roadmap](./product-roadmap/) — platform roadmap and scorecard
+- [Product Roadmap](./product-roadmap/) — platform roadmap and priorities
 - [AGENTS.md](../AGENTS.md) — AI agent conventions
 - [ADR Index](./adr/) — all Architecture Decision Records
 - [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment variable validation gate

@@ -215,9 +215,9 @@ Tide content types. Implemented full decoupling architecture per ADR-011.
 - [x] ADR-011: CMS decoupling strategy with removal/addition procedures
 
 > **Note:** Some sub-items from this effort remain active — see
-> [RN-019](./README.md#rn-019-navigationmenu-component),
-> [RN-021](./README.md#rn-021-media-gallery--document-download-components),
-> [RN-023](./README.md#rn-023-landing-page--content-templates).
+> [RN-019](#rn-019-navigationmenu-component),
+> [RN-021](#rn-021-media-gallery--document-download-components),
+> [RN-023](#rn-023-landing-page--content-templates).
 > Storybook stories completed in [RN-020](#rn-020-storybook-stories-for-tide-components).
 
 ---
@@ -590,6 +590,24 @@ with `--dry-run` support and convention-compliant output.
 - [x] `pnpm generate:package <name>` — full package scaffold
 - [x] Add `--dry-run` flag to preview generated files
 
+### RN-044: Context File Minimalism (ADR-020)
+
+**Priority:** High | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Source:** [arXiv:2602.11988](https://arxiv.org/abs/2602.11988) — Gloaguen et al., ETH Zurich (Feb 2026) | **AI-first benefit:** ~20% inference cost reduction, improved agent task success rates
+
+Trimmed CLAUDE.md (177→~45 lines) and AGENTS.md (431→~185 lines) based on
+empirical evidence that over-specified context files reduce agent success rates.
+Relocated domain guidance to `.github/instructions/`. Machine-enforced line-count
+gate prevents re-bloat.
+
+**Reference:** `CLAUDE.md`, `AGENTS.md`, `.github/instructions/`, [ADR-020](../adr/020-context-file-minimalism.md)
+
+- [x] Trim CLAUDE.md to minimal hard constraints (~45 lines)
+- [x] Trim AGENTS.md to architecture + task routing (~185 lines)
+- [x] Create ADR-020 with evidence summary
+- [x] Relocate domain guidance to `.github/instructions/`
+- [x] Add anti-bloat line-count gate and error taxonomy entries (RPL-DOCS-001/002)
+
 ---
 
 ## Tier 3 — Scheduled (Completed)
@@ -754,6 +772,7 @@ pass/fail rates, common failure patterns, time-to-green.
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | Tier 2 | **Done** |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | Tier 2 | **Done** |
 | [RN-041](#rn-041-code-generation-templates) | Code Generation Templates | Tier 2 | **Done** |
+| [RN-044](#rn-044-context-file-minimalism-adr-020) | Context File Minimalism | Tier 2 | **Done** |
 | [RN-023](#rn-023-landing-page--content-templates) | Landing Page Templates | Tier 3 | **Done** |
 | [RN-021](#rn-021-media-gallery--document-download-components) | Media Gallery + Downloads | Tier 3 | **Done** |
 | [RN-042](#rn-042-accessibility-audit-pipeline) | Accessibility Audit Pipeline | Tier 3 | **Done** |
@@ -761,3 +780,85 @@ pass/fail rates, common failure patterns, time-to-green.
 | [RN-027](#rn-027-signed-release-bundles--verification) | Signed Release Bundles | Tier 4 | **Done** |
 | [RN-029](#rn-029-validate-devcontainer-in-ci-runners) | Devcontainer CI Validation | Tier 4 | **Done** |
 | [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 | **Done** |
+
+---
+
+## Historical Timeline (Gantt)
+
+```mermaid
+gantt
+    title Ripple Next Improvement Roadmap (Historical)
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Phase 1
+    RN-001 Security Pipeline              :done, rn001, 2026-02-27, 7d
+    RN-002 Doctor --json + --offline       :done, rn002, 2026-02-27, 5d
+    RN-003 .env.example + bootstrap        :done, rn003, 2026-02-27, 5d
+    RN-004 @ripple/cms + Drupal            :done, rn004, 2026-02-28, 14d
+    RN-005 CI test artifact upload         :done, rn005, 2026-03-03, 7d
+
+    section Phase 2
+    RN-006 Mandatory SBOM                  :done, rn006, 2026-02-27, 1d
+    RN-007 Unified CI test entrypoint      :done, rn007, 2026-02-27, 1d
+    RN-008 Env schema validation           :done, rn008, 2026-02-27, 3d
+    RN-012 CMS page rendering + Tide       :done, rn012, 2026-03-14, 21d
+    RN-013 Standardized CI artifacts       :done, rn013, 2026-03-17, 7d
+    RN-014 SBOM + provenance               :done, rn014, 2026-03-17, 7d
+    RN-015 Reusable composite actions      :done, rn015, 2026-03-17, 7d
+
+    section Tier 1–2
+    RN-032 Toolchain pinning               :done, rn032, 2026-02-28, 1d
+    RN-033 Preview cleanup parity          :done, rn033, 2026-02-28, 1d
+    RN-024 Fleet update + drift            :done, rn024, 2026-02-28, 1d
+    RN-034 Quality gate summaries          :done, rn034, 2026-02-28, 1d
+    RN-037 Port priority components        :done, rn037, 2026-02-28, 1d
+    RN-039 Agent runbook automation        :done, rn039, 2026-02-28, 1d
+    RN-040 Structured error taxonomy       :done, rn040, 2026-02-28, 1d
+    RN-041 Code generation templates       :done, rn041, 2026-02-28, 1d
+    RN-044 Context file minimalism         :done, rn044, 2026-02-28, 1d
+
+    section Tier 3–4
+    RN-023 Landing page templates          :done, rn023, 2026-02-28, 1d
+    RN-042 Accessibility audit pipeline    :done, rn042, 2026-02-28, 1d
+    RN-026 Org-wide workflows              :done, rn026, 2026-02-28, 1d
+    RN-027 Signed release bundles          :done, rn027, 2026-02-28, 1d
+    RN-043 Agent session observability     :done, rn043, 2026-02-28, 1d
+```
+
+---
+
+## v1 Platform Completion Milestone
+
+All standards achieved during the initial platform build-out (v1.0–v5.0):
+
+- [x] Pinned runtime/package manager + lockfile enforced
+- [x] Non-interactive bootstrap + doctor(json)
+- [x] Env contract (`.env.example`) + Zod-based env schema validation
+- [x] Tiered CI with path filtering
+- [x] Security gates in CI (`security.yml`)
+- [x] PR preview isolation + automatic teardown
+- [x] Changeset/release automation
+- [x] SBOM/provenance in releases (mandatory, fail-fast)
+- [x] CODEOWNERS + policy checks on critical paths
+- [x] Structured test artifact uploads (JUnit XML + coverage)
+- [x] Reusable composite actions for fleet CI consistency
+- [x] Devcontainer for hermetic local development
+- [x] Unified CI test entrypoint (`pnpm test:ci`)
+- [x] Flaky test containment policy with quarantine check
+- [x] Preview deploy environment guardrails
+- [x] Storybook stories for all UI components
+- [x] Downstream workflow consumption guide
+- [x] Vue Test Utils component tests for all 44 UI components
+- [x] Navigation composable and components
+- [x] Search integration provider layer
+- [x] Testcontainers integration tests for database repositories
+- [x] ADR index with all 20 decisions cross-referenced
+- [x] Upstream Ripple 2 component strategy (ADR-017)
+- [x] AI-first workflow strategy (ADR-018, ADR-020)
+- [x] Agent runbook library (RN-039)
+- [x] Structured error taxonomy (RN-040)
+- [x] Code generation templates (RN-041)
+- [x] Accessibility audit pipeline (RN-042)
+- [x] Agent session observability (RN-043)
+- [x] Context file minimalism with line-count gate (RN-044)

@@ -434,9 +434,9 @@ See `pnpm runbook scaffold-downstream` for the full step-by-step procedure.
 ## Related Documentation
 
 - [Reusable Composite Actions (RN-015)](./product-roadmap/ARCHIVE.md#rn-015-reusable-composite-actions)
-- [Org-Wide Workflow Distribution (RN-026)](./product-roadmap/README.md#rn-026-org-wide-reusable-workflow-distribution)
+- [Org-Wide Workflow Distribution (RN-026)](./product-roadmap/ARCHIVE.md#rn-026-org-wide-reusable-workflow-distribution)
 - [CI Observability + Supply Chain (ADR-010)](./adr/010-ci-observability-supply-chain.md)
 - [Flaky Test Containment (ADR-013)](./adr/013-flaky-test-containment.md)
 - [Fleet Governance (ADR-019)](./adr/019-fleet-governance.md)
 - [Release Verification (RN-027)](./release-verification.md)
-- [Code Generation Templates (RN-041)](./product-roadmap/README.md#rn-041-code-generation-templates)
+- [Code Generation Templates (RN-041)](./product-roadmap/ARCHIVE.md#rn-041-code-generation-templates)

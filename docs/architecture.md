@@ -60,7 +60,7 @@ graph TB
 | -------------- | ------------------------------------------------------- | --- |
 | Frontend       | Nuxt 3 + Vue 3 (Composition API) + TypeScript           | [ADR-001](./adr/001-nuxt-over-next.md) |
 | UI Components  | Ripple UI Core + Storybook 10                           | — |
-| Page Templates | Landing, Content, Campaign (contentType-driven)         | [RN-023](./product-roadmap/README.md#rn-023-landing-page--content-templates) |
+| Page Templates | Landing, Content, Campaign (contentType-driven)         | [RN-023](./product-roadmap/ARCHIVE.md#rn-023-landing-page--content-templates) |
 | API            | Nitro server routes + tRPC-nuxt                         | — |
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis | [ADR-002](./adr/002-drizzle-over-prisma.md) |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             | [ADR-003](./adr/003-provider-pattern.md) |
@@ -137,10 +137,10 @@ workflow tooling ([ADR-018](./adr/018-ai-first-workflow-strategy.md)):
 
 | Pillar | Status | Roadmap Item | Description |
 |--------|--------|-------------|-------------|
-| Runbook automation | Done | [RN-039](./product-roadmap/README.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
-| Error taxonomy | Done | [RN-040](./product-roadmap/README.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
-| Code generators | Done | [RN-041](./product-roadmap/README.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints, packages, and downstream repos |
-| Context file minimalism | Done | [RN-044](./product-roadmap/README.md#rn-044-context-file-minimalism-adr-020) | Evidence-based trimming of CLAUDE.md/AGENTS.md with line-count gate ([ADR-020](./adr/020-context-file-minimalism.md)) |
+| Runbook automation | Done | [RN-039](./product-roadmap/ARCHIVE.md#rn-039-agent-runbook-automation) | Codified procedures for deploy, rollback, scaffold |
+| Error taxonomy | Done | [RN-040](./product-roadmap/ARCHIVE.md#rn-040-structured-error-taxonomy) | Machine-parseable error codes with remediation |
+| Code generators | Done | [RN-041](./product-roadmap/ARCHIVE.md#rn-041-code-generation-templates) | `pnpm generate:*` scaffolders for components, providers, endpoints, packages, and downstream repos |
+| Context file minimalism | Done | [RN-044](./product-roadmap/ARCHIVE.md#rn-044-context-file-minimalism-adr-020) | Evidence-based trimming of CLAUDE.md/AGENTS.md with line-count gate ([ADR-020](./adr/020-context-file-minimalism.md)) |
 
 These complement the existing agent ergonomics: `pnpm doctor --json`,
 `pnpm bootstrap`, `pnpm validate:env`, provider conformance suites, and
