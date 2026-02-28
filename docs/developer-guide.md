@@ -1084,8 +1084,7 @@ docker compose up -d
 
 1. Check Docker is running: `docker compose ps`
 2. Check PostgreSQL is healthy: `docker compose logs postgres`
-3. Verify `.env` has correct `DATABASE_URL` (default: `postgres://ripple:ripple@localhost:5432/ripple`)
-4. Note: `docker-compose.yml` uses `app`/`devpassword` — update `.env` if not using `.env.example` defaults
+3. Verify `.env` has correct `DATABASE_URL` (default: `postgres://app:devpassword@localhost:5432/app` — matches `docker-compose.yml`)
 
 ### Tests fail with provider errors
 

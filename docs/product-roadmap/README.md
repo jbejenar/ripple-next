@@ -69,7 +69,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **UI component tests** — Vue Test Utils tests for all 42 components (450 tests) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks), organisms, and Tide content renderers.
+- **UI component tests** — Vue Test Utils tests for all 44 components (650 tests across 63 test files) with full coverage of atoms (including 8 form components, 4 messaging components, Breadcrumb + SkipLink, Tag, Chip), molecules (including Pagination + InPageNavigation, Tabs, SearchBar, RelatedLinks, MediaGallery, DocumentDownload), organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
 - **ADR coverage** — 19 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018) and fleet governance (ADR-019).

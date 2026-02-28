@@ -13,6 +13,15 @@ Packages are published to a private npm registry so external projects consume ve
 releases (e.g. `"@ripple/auth": "^0.2.0"`). Consumer teams upgrade at their own pace —
 no coordinated redeployments needed. See [ADR-007](docs/adr/007-library-vs-monorepo.md).
 
+## Key Files for Agent Planning
+
+- `docs/readiness.json` — machine-readable subsystem status (check before starting work)
+- `docs/product-roadmap/` — product roadmap (v5.0.0), improvement tiers
+- `docs/adr/018-ai-first-workflow-strategy.md` — AI-first strategy (runbooks, generators, error taxonomy)
+- `docs/error-taxonomy.json` — 44 classified error codes across 11 categories (RPL-*-NNN format)
+- `docs/fleet-policy.json` — fleet governance contract: governed surfaces, sync strategies
+- `vitest.workspace.ts` — test suites with risk-tiered coverage thresholds
+
 ## Subsystem Status
 
 Check `docs/readiness.json` for machine-readable status of each subsystem.
@@ -36,6 +45,24 @@ look up codes in `docs/error-taxonomy.json` for severity, remediation steps,
 and automatable flags.
 
 Copy `.env.example` to `.env` for local development defaults.
+
+### Before Making Changes
+
+1. Read `docs/readiness.json` to understand subsystem status
+2. Run `pnpm doctor` to validate the environment
+3. Check the "Agent Task Routing" section below for required validation per change type
+
+### After Making Changes
+
+Run `pnpm verify` to execute all quality gates, or run them individually:
+
+1. `pnpm test` — all tests must pass
+2. `pnpm lint` — zero errors
+3. `pnpm typecheck` — zero type errors
+4. `pnpm check:readiness` — manifest must not drift
+5. `pnpm check:quarantine` — quarantine policy must be satisfied
+6. If you changed `sst.config.ts`: `pnpm check:iac`
+7. If you changed a published package's API: `pnpm changeset`
 
 ## Tech Stack
 
@@ -385,3 +412,18 @@ When making changes, match the change type to the right validation:
 | New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md + README.md |
 | Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift`, update downstream docs |
 | New governed surface | Add to `fleet-policy.json`, add error taxonomy code, update ADR-019 |
+
+## Documentation Maintenance (Default Directive)
+
+Every change that adds or modifies a subsystem MUST update documentation as
+part of the same change:
+
+1. **`docs/readiness.json`** — update subsystem status, description, blockers, coverage
+2. **`docs/product-roadmap/README.md`** — check off completed roadmap items, update status
+3. **Provider docs** (`docs/provider-pattern.md`) — add new providers to the table
+4. **API docs** (`docs/api-contracts.md`) — add new routes/endpoints
+5. **Architecture docs** (`docs/architecture.md`) — update diagrams if new subsystem added
+6. **ADRs** (`docs/adr/`) — create a new ADR for significant architectural decisions
+7. **README.md** and **AGENTS.md** — update repo structure and stack tables
+
+Run `pnpm check:readiness` after doc changes to ensure the manifest is not stale.
