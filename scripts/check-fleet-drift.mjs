@@ -28,7 +28,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, existsSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -159,6 +159,49 @@ function checkSurface(surface) {
     }
     // For 'merge' strategy, we check existence but allow differences
     // For 'advisory' strategy, we only report
+  }
+
+  // Check content patterns (e.g., unpinned @main refs in workflow files)
+  if (surface.contentPatterns) {
+    const filesToScan = []
+    for (const p of surface.paths) {
+      const targetFilePath = join(targetPath, p)
+      if (existsSync(targetFilePath)) {
+        try {
+          const stat = readdirSync(targetFilePath)
+          // It's a directory — scan .yml/.yaml files inside
+          for (const entry of stat) {
+            if (entry.endsWith('.yml') || entry.endsWith('.yaml')) {
+              filesToScan.push(join(p, entry))
+            }
+          }
+        } catch {
+          // Not a directory — treat as a file
+          filesToScan.push(p)
+        }
+      }
+    }
+
+    for (const file of filesToScan) {
+      const fullPath = join(targetPath, file)
+      if (!existsSync(fullPath)) continue
+      try {
+        const content = readFileSync(fullPath, 'utf-8')
+        const lines = content.split('\n')
+        for (const cp of surface.contentPatterns) {
+          const re = new RegExp(cp.pattern)
+          for (let i = 0; i < lines.length; i++) {
+            if (re.test(lines[i])) {
+              finding.status = 'drifted'
+              finding.details.push(`${file}:${i + 1} — ${cp.message}`)
+              finding.remediation.push(`Pin action ref in ${file}:${i + 1} to @v1 or a commit SHA`)
+            }
+          }
+        }
+      } catch {
+        finding.details.push(`Could not scan ${file} for content patterns`)
+      }
+    }
   }
 
   // Check field-level comparisons (e.g., package.json fields)

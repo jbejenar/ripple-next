@@ -15,6 +15,16 @@ jobs:
           node-version-file: '.nvmrc'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+
+      - name: Cache Turbo build artifacts
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-
+            turbo-${{ runner.os }}-
+
       - run: pnpm --filter @ripple/web exec playwright install --with-deps chromium
       - run: pnpm build
         env:

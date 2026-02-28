@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy and ADR-019 for fleet governance.",
-  "version": "0.17.1",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and RN-051 for pending API boundary ADR.",
+  "version": "0.19.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -81,6 +81,7 @@
         "apps/web/server/api/"
       ],
       "blockers": [
+        "No ADR deciding API boundary strategy — oRPC vs tRPC, public vs internal classification (RN-051, prerequisite for external APIs)",
         "No integration tests for tRPC routers with real DB (Testcontainers)"
       ],
       "testCoverage": "contract-tested + db-integration-tested"
@@ -99,7 +100,7 @@
     },
     "ci": {
       "status": "implemented",
-      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes + devcontainer validation RN-029), Tier 2 (E2E + a11y on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Reusable workflows via workflow_call for org-wide distribution (RN-026): reusable-quality.yml, reusable-test.yml, reusable-security.yml with stable/canary rollout channels. Composite actions for setup, quality, and test \u2014 all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX), package checksums (RN-027), and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint.",
+      "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes + devcontainer validation RN-029), Tier 2 (E2E + a11y on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Reusable workflows via workflow_call for org-wide distribution (RN-026): reusable-quality.yml, reusable-test.yml, reusable-security.yml with stable/canary rollout channels. Composite actions for setup, quality, and test \u2014 all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX), package checksums (RN-027), and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint. Turbo build cache persisted between CI runs via actions/cache (RN-047). Downstream workflow examples pin to versioned refs with advisory fleet-drift check for unpinned @main refs (RN-048).",
       "packages": [],
       "paths": [
         ".github/workflows/",
@@ -191,7 +192,7 @@
     },
     "fleet-governance": {
       "status": "implemented",
-      "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 8 governed surfaces across 3 severity levels. Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Error taxonomy integration (RPL-FLEET-* codes). Fleet sync runbook. See ADR-019.",
+      "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 9 governed surfaces across 3 severity levels. Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Error taxonomy integration (RPL-FLEET-* codes). Fleet sync runbook. See ADR-019.",
       "packages": [],
       "paths": [
         "docs/fleet-policy.json",
