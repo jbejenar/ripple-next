@@ -63,7 +63,7 @@ See [ADR-018](../adr/018-ai-first-workflow-strategy.md) for the full strategy.
 - **Security pipeline** — CodeQL SAST, dependency review, Gitleaks secret audit.
 - **Flaky test containment** — Quarantine policy (ADR-013) with `pnpm check:quarantine` CI gate.
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys (ADR-014).
-- **UI component tests** — Vue Test Utils tests for all 16 components with full coverage of atoms, molecules, organisms, and Tide content renderers.
+- **UI component tests** — Vue Test Utils tests for all 24 components (244 tests) with full coverage of atoms (including 8 form components), molecules, organisms, and Tide content renderers.
 - **Testcontainers integration tests** — Real PostgreSQL integration tests for UserRepository and ProjectRepository.
 - **Upstream Ripple strategy** — Hybrid port/own/sync model for upstream Ripple 2 components ([ADR-017](../adr/017-upstream-ripple-component-strategy.md)), no runtime dependency on `@dpc-sdp/*`.
 - **ADR coverage** — 18 ADRs with [indexed directory](../adr/README.md), including AI-first workflow strategy (ADR-018).
@@ -287,17 +287,17 @@ RPL-IAC-007). Integrated into `pnpm verify` gate runner.
 
 Port high-priority components from the upstream [Ripple 2 design system](https://github.com/dpc-sdp/ripple)
 into `@ripple/ui`, rewritten to follow our conventions (Composition API,
-`--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~30-component
-gap** between our 16-component library and upstream's ~46 components.
+`--rpl-*` design tokens, Vue Test Utils, CMS-agnostic). Closes the **~22-component
+gap** between our 24-component library and upstream's ~46 components.
 
 Each ported component must: follow our SFC conventions, include Vue Test Utils
 tests, include a Storybook story with autodocs, strip all SDP/Tide-specific
 logic, and use our design token system.
 
-**P1 — Forms (government sites are form-heavy):**
-- [ ] Port Checkbox, Radio, Dropdown, DateInput components
-- [ ] Port Textarea, FileUpload, FormAlert, OptionButton components
-- [ ] Add form validation integration and accessibility (WCAG 2.1 AA)
+**P1 — Forms (government sites are form-heavy): ✅ Done (2026-02-28)**
+- [x] Port Checkbox, Radio, Dropdown, DateInput components
+- [x] Port Textarea, FileUpload, FormAlert, OptionButton components
+- [x] Add form validation integration and accessibility (WCAG 2.1 AA)
 
 **P2 — Navigation (essential UX + accessibility):**
 - [ ] Port Breadcrumb, Pagination, InPageNavigation components
@@ -567,7 +567,7 @@ continuously improve agent ergonomics.
 | [RN-034](#rn-034-machine-readable-quality-gate-summaries) | Machine-Readable Quality Gate Summaries | 2 | High | Medium | Medium | Done |
 | [RN-035](#rn-035-rollback-and-recovery-command-contract) | Rollback and Recovery Contract | 2 | High | High | Medium | Done |
 | [RN-036](#rn-036-iac-policy-scanning-for-sst-changes) | IaC Policy Scanning for SST | 2 | High | High | Medium | Done |
-| [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | Pending |
+| [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2) | Port Priority Components (Upstream Ripple 2) | 2 | High | Very High | High | In Progress (P1 done) |
 | [RN-038](#rn-038-upstream-ripple-selective-sync-workflow) | Upstream Ripple Sync Workflow | 2 | Medium | Medium | Low | Done |
 | [RN-039](#rn-039-agent-runbook-automation) | Agent Runbook Automation | 2 | High | High | Medium | Done |
 | [RN-040](#rn-040-structured-error-taxonomy) | Structured Error Taxonomy | 2 | High | Medium | Medium | Done |
@@ -921,7 +921,7 @@ graph TD
 - [x] Preview deploy environment guardrails
 - [x] Storybook stories for all UI components (atoms, molecules, organisms, Tide content)
 - [x] Downstream workflow consumption guide
-- [x] Vue Test Utils component tests for all 16 UI components
+- [x] Vue Test Utils component tests for all 24 UI components
 - [x] Navigation composable and components (header + footer menus from CMS)
 - [x] Search integration provider layer (MeiliSearch + decorator pattern)
 - [x] Testcontainers integration tests for database repositories

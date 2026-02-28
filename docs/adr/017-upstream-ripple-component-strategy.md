@@ -12,7 +12,7 @@ Victorian Government frontend component library. It provides approximately **46
 components** across layout, navigation, content, forms, and interactive patterns
 — built on **Vue 3, Nuxt 3, and TypeScript** (the same stack as this repository).
 
-Our `@ripple/ui` package currently has **16 components** (3 atoms, 3 molecules,
+Our `@ripple/ui` package currently has **24 components** (11 atoms, 3 molecules,
 2 organisms, and 8 Tide content renderers) with full test coverage,
 Storybook stories, and design tokens ported from Brand Victoria standards. There
 is currently **zero dependency on upstream** — all components were built from
