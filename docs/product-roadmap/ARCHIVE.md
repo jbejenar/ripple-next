@@ -438,7 +438,7 @@ credentials produce a safe, explainable skip rather than noisy failures.
 
 Fleet governance mechanism with manifest-driven drift detection, sync PR
 automation, and JSON compliance reporting. Action-first approach (not GitHub App).
-8 governed surfaces across 3 severity levels. See ADR-019.
+9 governed surfaces across 3 severity levels. See ADR-019.
 
 **Reference:** `docs/fleet-policy.json`, `scripts/check-fleet-drift.mjs`, `scripts/fleet-sync.mjs`, `scripts/fleet-compliance.mjs`, `.github/workflows/fleet-drift.yml`, `.github/workflows/fleet-sync.yml`, `.github/actions/fleet-drift/action.yml`, [ADR-019](../adr/019-fleet-governance.md)
 
