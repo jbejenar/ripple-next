@@ -146,6 +146,22 @@ These complement the existing agent ergonomics: `pnpm doctor --json`,
 `pnpm bootstrap`, `pnpm validate:env`, provider conformance suites, and
 structured CI artifacts.
 
+## Downstream Architecture Standards
+
+Downstream repos consuming `@ripple-next/*` packages must document their architecture
+following the [Downstream Adoption Guide](./downstream-adoption-guide.md). At minimum,
+each downstream repo's `docs/architecture.md` should include:
+
+- **System overview diagram** — Mermaid graph showing the application topology
+- **Stack table** — layer, technology, ripple-next package, and ADR reference
+- **Provider pattern decisions** — which providers are used for test, local, and production
+- **Compute choices** — Lambda vs ECS with rationale per route/function
+- **Deviations from golden path** — any areas where the repo diverges from conventions, with ADR links
+
+The scaffold generator (`pnpm generate:scaffold`) creates a starter architecture document
+with editable templates for all sections above. See [Platform Capabilities](./platform-capabilities.md)
+for the full inventory of what ripple-next provides.
+
 ## Related Documentation
 
 - [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
@@ -156,8 +172,10 @@ structured CI artifacts.
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (20 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (23 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
+- [Downstream Adoption Guide](./downstream-adoption-guide.md) — documentation standards for downstream repos
+- [Platform Capabilities](./platform-capabilities.md) — what ripple-next provides to consumers
 
 ### Key ADRs
 

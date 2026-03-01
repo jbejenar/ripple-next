@@ -1,0 +1,142 @@
+{
+  "name": "migrate-legacy-api",
+  "description": "Migrate a legacy API service (e.g., Mule 3, .NET, Java, Express) into ripple-next conventions. Covers analysis, modeling, contract definition, implementation, parity verification, and documentation. See ADR-023 and docs/downstream-adoption-guide.md.",
+  "args": {
+    "TARGET_DIR": "Absolute path to the target repository",
+    "NAME": "Project name in kebab-case",
+    "ORG": "GitHub organization name",
+    "LEGACY_SPEC": "Path or URL to legacy API specification (OpenAPI, WSDL, RAML, or endpoint inventory)"
+  },
+  "preconditions": [
+    {
+      "description": "Target directory exists and is scaffolded",
+      "command": "test -f ${TARGET_DIR}/CLAUDE.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Legacy API spec or inventory is accessible",
+      "command": "test -f ${LEGACY_SPEC} || curl -sf ${LEGACY_SPEC} > /dev/null",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "description": "Phase 1 ANALYZE: Inventory all legacy endpoints — method, path, auth model, request/response schemas, integration points, downstream consumers."
+    },
+    {
+      "order": 2,
+      "description": "Phase 1 ANALYZE: Classify each endpoint — migrate (move to ripple-next), deprecate (remove, no consumers), or bridge (temporary proxy during transition)."
+    },
+    {
+      "order": 3,
+      "description": "Phase 1 ANALYZE: Document edge cases — undocumented behaviours, coercions, defaults, error formats, timeout handling that consumers may depend on."
+    },
+    {
+      "order": 4,
+      "description": "Phase 2 MODEL: Map legacy data models to Drizzle ORM schemas. Create migration files if the project has a database."
+    },
+    {
+      "order": 5,
+      "description": "Phase 2 MODEL: Create Zod validation schemas for each endpoint's request/response in packages/validation/ or the project's schema directory."
+    },
+    {
+      "order": 6,
+      "description": "Phase 2 MODEL: Map legacy auth to the OIDC provider pattern (ADR-008). Use MockAuthProvider in tests, OidcAuthProvider in production."
+    },
+    {
+      "order": 7,
+      "description": "Phase 3 CONTRACT: Create target OpenAPI spec matching legacy endpoints. For each endpoint document in docs/migration-notes.md: current contract (as-is), target contract (to-be), migration notes (breaking changes, field renames)."
+    },
+    {
+      "order": 8,
+      "description": "Phase 3 CONTRACT: Generate oRPC routers matching the target contract. Run pnpm generate:openapi to produce the OpenAPI spec."
+    },
+    {
+      "order": 9,
+      "description": "Phase 4 IMPLEMENT: Implement each migrated endpoint using oRPC + provider pattern + repository pattern. Use memory providers for all tests."
+    },
+    {
+      "order": 10,
+      "description": "Phase 4 IMPLEMENT: Implement error mapping — translate legacy error formats to standard responses. Document error code mappings."
+    },
+    {
+      "order": 11,
+      "description": "Phase 5 VERIFY PARITY: Write parity tests comparing legacy and new API responses. Cover: success paths, validation failures, error cases, edge cases."
+    },
+    {
+      "order": 12,
+      "command": "cd ${TARGET_DIR} && pnpm test",
+      "description": "Run all tests including parity tests"
+    },
+    {
+      "order": 13,
+      "command": "cd ${TARGET_DIR} && pnpm verify",
+      "description": "Run all quality gates (lint, typecheck, test, readiness)"
+    },
+    {
+      "order": 14,
+      "description": "Phase 6 DOCUMENT: Complete all 7 documentation categories from the adoption guide. Additionally create docs/migration-notes.md with legacy-to-new endpoint mapping."
+    },
+    {
+      "order": 15,
+      "description": "Phase 6 DOCUMENT: Write an ADR documenting the migration decision and approach. Update readiness.json with migrated subsystem statuses."
+    },
+    {
+      "order": 16,
+      "description": "Phase 6 DOCUMENT: Add legacy system sunset timeline to the product roadmap (Now/Next/Later section)."
+    },
+    {
+      "order": 17,
+      "command": "pnpm conform -- --target=${TARGET_DIR} --json",
+      "description": "Run conformance scoring to verify documentation quality (target: score >= 70)"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Migration notes document exists",
+      "command": "test -f ${TARGET_DIR}/docs/migration-notes.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "API contracts documented",
+      "command": "test -f ${TARGET_DIR}/docs/api-contracts.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Architecture documented",
+      "command": "test -f ${TARGET_DIR}/docs/architecture.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Product roadmap has real content",
+      "command": "grep -qE '## (Now|Next|Later)' ${TARGET_DIR}/docs/product-roadmap/README.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Tests pass",
+      "command": "cd ${TARGET_DIR} && pnpm test",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Readiness manifest has real subsystems",
+      "command": "node -e \"const r=JSON.parse(require('fs').readFileSync('${TARGET_DIR}/docs/readiness.json','utf-8')); const subs=Object.keys(r.subsystems); process.exit(subs.length>1||subs[0]!=='example'?0:1)\"",
+      "expect": "exit 0"
+    }
+  ],
+  "postActions": [
+    "Create ADR documenting the migration decision and approach",
+    "Update readiness.json with migrated subsystem statuses",
+    "Plan legacy system sunset timeline in product roadmap",
+    "Configure fleet governance for ongoing compliance",
+    "Commit all documentation and implementation to the downstream repo"
+  ],
+  "related": [
+    "docs/downstream-adoption-guide.md",
+    "docs/runbooks/adopt-ripple-next.json",
+    "docs/adr/021-api-contract-strategy.md",
+    "docs/adr/023-downstream-adoption-standards.md",
+    "docs/platform-capabilities.md",
+    "scripts/generate/endpoint.mjs"
+  ]
+}

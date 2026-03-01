@@ -159,6 +159,7 @@ When making changes, match the change type to the right validation:
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |
 | Infrastructure change | `pnpm check:iac`, `npx sst deploy --stage pr-{n}`, review SST diff |
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
+| Downstream repo setup | Run `pnpm generate:scaffold`, follow `docs/downstream-adoption-guide.md`, run `pnpm conform` |
 | Roadmap/docs change | `pnpm check:readiness`, update `readiness.json`, cross-reference ADRs |
 | New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md |
 | Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift` |

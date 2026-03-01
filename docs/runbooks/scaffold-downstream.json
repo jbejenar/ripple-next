@@ -88,6 +88,7 @@
     }
   ],
   "postActions": [
+    "Follow the downstream adoption guide for documentation requirements: docs/downstream-adoption-guide.md",
     "Run fleet-sync to verify ongoing governance: pnpm check:fleet-drift -- --target=${TARGET_DIR}",
     "Commit scaffolded files in the downstream repo",
     "Invite team members to review CLAUDE.md and AGENTS.md"
@@ -99,6 +100,8 @@
     "scripts/generate/scaffold/scripts.mjs",
     "scripts/generate/scaffold/ci.mjs",
     "scripts/generate/scaffold/config.mjs",
-    ".github/template-config.json"
+    ".github/template-config.json",
+    "docs/downstream-adoption-guide.md",
+    "docs/platform-capabilities.md"
   ]
 }

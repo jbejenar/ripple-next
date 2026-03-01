@@ -52,6 +52,8 @@ pnpm dev
 | `pnpm db:seed`         | Seed dev data                  |
 | `pnpm storybook`       | Start Storybook                |
 | `pnpm storybook:build` | Build Storybook                |
+| `pnpm generate:scaffold <dir>` | Scaffold a downstream repo with full DX infrastructure |
+| `pnpm conform`         | Score a repo against the golden-path conformance rubric |
 
 ## Documentation
 
@@ -67,6 +69,9 @@ pnpm dev
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
 | [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
+| [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Documentation standards for downstream repos |
+| [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
+| [Runbooks](docs/runbooks/)                         | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
 | [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
 | [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
 
@@ -95,6 +100,8 @@ pnpm dev
 | [ADR-019](docs/adr/019-fleet-governance.md) | Fleet governance — drift detection + sync automation |
 | [ADR-020](docs/adr/020-context-file-minimalism.md) | Context file minimalism — evidence-based line limits |
 | [ADR-021](docs/adr/021-api-contract-strategy.md) | API contract strategy — oRPC + OpenAPI-first |
+| [ADR-022](docs/adr/022-bidirectional-fleet-communication.md) | Bidirectional fleet communication |
+| [ADR-023](docs/adr/023-downstream-adoption-standards.md) | Downstream adoption standards — documentation governance |
 
 ## Repository Structure
 

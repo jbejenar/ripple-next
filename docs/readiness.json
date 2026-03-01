@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-03-01. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, ADR-021 for API contract strategy (oRPC, OpenAPI-first), RN-050 for performance budgets, and RN-028 for golden-path conformance CLI.",
-  "version": "0.26.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-03-01. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, ADR-021 for API contract strategy (oRPC, OpenAPI-first), ADR-023 for downstream adoption standards, RN-050 for performance budgets, and RN-028 for golden-path conformance CLI.",
+  "version": "0.27.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -182,7 +182,7 @@
     "agent-tooling": {
       "status": "implemented",
       "maturity": "interface-defined",
-      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 65 classified failure modes across 18 categories including fleet governance, accessibility, performance, session observability, scaffold, documentation, API contract, and conformance codes (RN-040, RN-042, RN-043, RN-044, RN-050, RN-051, RN-025, RN-028), runbook library with 9 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), performance budget audit pipeline with Core Web Vitals (RN-050), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020), golden-path conformance CLI with weighted scoring rubric (RN-028). Strategy documented in ADR-018 and ADR-020.",
+      "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold with enhanced templates for Now/Next/Later roadmap, architecture doc, and API contracts (RN-041, RN-061), error taxonomy with 68 classified failure modes across 19 categories including fleet governance, accessibility, performance, session observability, scaffold, documentation, API contract, conformance, and downstream adoption codes (RN-040, RN-042, RN-043, RN-044, RN-050, RN-051, RN-025, RN-028, RN-061), runbook library with 13 structured runbooks and CLI runner including adoption and migration runbooks (RN-039, RN-061), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), performance budget audit pipeline with Core Web Vitals (RN-050), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020), golden-path conformance CLI with weighted scoring rubric and downstream-docs category (RN-028, RN-061), downstream adoption guide and platform capabilities catalog (RN-061). Strategy documented in ADR-018, ADR-020, and ADR-023.",
       "packages": [],
       "paths": [
         "scripts/verify.mjs",
@@ -212,7 +212,7 @@
     "fleet-governance": {
       "status": "implemented",
       "maturity": "interface-defined",
-      "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 9 governed surfaces across 3 severity levels. Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Error taxonomy integration (RPL-FLEET-* codes). Fleet sync runbook. See ADR-019.",
+      "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 13 governed surfaces across 3 severity levels, including downstream documentation quality (FLEET-SURF-012) and API contract documentation (FLEET-SURF-013) as advisory surfaces (ADR-023). Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Downstream adoption standards (ADR-023): adoption guide, platform capabilities catalog, machine-readable runbooks for greenfield and legacy migration paths, conformance rubric with downstream-docs category. Error taxonomy integration (RPL-FLEET-* and RPL-ADOPT-* codes). Fleet sync runbook. See ADR-019 and ADR-023.",
       "packages": [],
       "paths": [
         "docs/fleet-policy.json",
@@ -222,7 +222,12 @@
         ".github/workflows/fleet-drift.yml",
         ".github/workflows/fleet-sync.yml",
         ".github/actions/fleet-drift/action.yml",
-        "docs/runbooks/fleet-sync.json"
+        "docs/runbooks/fleet-sync.json",
+        "docs/downstream-adoption-guide.md",
+        "docs/platform-capabilities.md",
+        "docs/runbooks/adopt-ripple-next.json",
+        "docs/runbooks/migrate-legacy-api.json",
+        "docs/adr/023-downstream-adoption-standards.md"
       ],
       "blockers": [],
       "testCoverage": "gate-tested"
