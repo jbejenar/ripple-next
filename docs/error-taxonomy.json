@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 61 classified error codes across 17 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, and docs/performance.md.",
-  "version": "1.9.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 62 classified error codes across 17 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, and docs/performance.md.",
+  "version": "1.10.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -690,12 +690,26 @@
       "category": "API",
       "severity": "error",
       "message": "Breaking change detected in public API (visibility: 'public') without version bump",
-      "gate": "check:api-contract",
+      "gate": "check:api-breaking",
       "remediation": [
         "Public API changes that remove or rename endpoints, parameters, or response fields are breaking",
         "Bump the API version (/v1/ → /v2/) and add migration notes",
         "Or mark the old endpoint as deprecated and add the new one alongside it",
         "See ADR-021 for versioning and deprecation policy"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-API-003",
+      "category": "API",
+      "severity": "info",
+      "message": "Non-breaking API change detected — new endpoints, methods, or optional fields added",
+      "gate": "check:api-breaking",
+      "remediation": [
+        "Non-breaking changes are informational and do not block CI",
+        "Review the change report: pnpm check:api-breaking -- --json",
+        "Ensure downstream consumers are aware of new capabilities",
+        "Update API documentation if needed"
       ],
       "automatable": false
     },

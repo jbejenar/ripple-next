@@ -37,6 +37,7 @@
     "check:context-size": "node scripts/check-context-size.mjs",
     "check:fleet-drift": "node scripts/check-fleet-drift.mjs",
     "check:api-contract": "node scripts/check-api-contract.mjs",
+    "check:api-breaking": "node scripts/check-api-breaking.mjs",
     "fleet:sync": "node scripts/fleet-sync.mjs",
     "fleet:compliance": "node scripts/fleet-compliance.mjs",
     "fleet:feedback": "node scripts/fleet-feedback.mjs",

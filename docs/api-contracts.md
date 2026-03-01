@@ -34,6 +34,47 @@ graph LR
 oRPC router definition (apps/web/server/orpc/router.ts)
   → pnpm generate:openapi           → docs/api/openapi.json
   → pnpm check:api-contract         → CI drift gate (wired into pnpm verify)
+  → pnpm check:api-breaking         → breaking-change detection (wired into pnpm verify + release)
+```
+
+### Contract Testing (RN-025)
+
+Consumer contract tests validate that the committed OpenAPI spec accurately
+describes the router's behaviour. Tests are in `apps/web/tests/unit/orpc/openapi-contract.test.ts`.
+
+**What's tested:**
+
+| Category | Tests |
+|----------|-------|
+| Spec validity | OpenAPI 3.1.x version, title, server base path |
+| Spec ↔ Router agreement | Every operationId maps to a callable procedure |
+| Request validation | Required fields, UUID format, email format enforced |
+| Response codes | Status codes match spec declarations (200, 201) |
+| Tag classification | User endpoints tagged `users`, health tagged `ops` |
+| Auth enforcement | All protected endpoints reject unauthenticated requests |
+| OperationId stability | Known operationIds are present and unique |
+
+**Breaking-change detection** (`pnpm check:api-breaking`):
+
+Compares the current OpenAPI spec against a baseline (default: `main` branch)
+and detects incompatible changes. Wired into `pnpm verify` and the release workflow.
+
+| Change type | Severity | Example |
+|------------|----------|---------|
+| Path removed | Breaking | `DELETE /v1/users/{id}` endpoint dropped |
+| Method removed | Breaking | `POST /v1/users` method removed |
+| Required field added | Breaking | New `age` field required in request body |
+| Required parameter added | Breaking | New required query parameter |
+| Response code removed | Breaking | `201` response removed from create endpoint |
+| OperationId changed | Breaking | `user.create` renamed to `users.new` |
+| Path added | Non-breaking | New `/v1/projects` endpoint |
+| Method added | Non-breaking | `PATCH /v1/users/{id}` added |
+
+```bash
+pnpm check:api-breaking                    # compare against main
+pnpm check:api-breaking -- --base=HEAD~1   # compare against previous commit
+pnpm check:api-breaking -- --json          # machine-readable output
+pnpm check:api-breaking -- --ci            # write api-breaking-report.json artifact
 ```
 
 ### REST Endpoints (H3 file-based)

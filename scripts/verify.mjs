@@ -63,6 +63,7 @@ const GATES = [
   { name: 'check:iac', args: ['pnpm', 'check:iac'], category: 'policy' },
   { name: 'check:context-size', args: ['pnpm', 'check:context-size'], category: 'policy' },
   { name: 'check:api-contract', args: ['pnpm', 'check:api-contract'], category: 'policy' },
+  { name: 'check:api-breaking', args: ['pnpm', 'check:api-breaking'], category: 'policy' },
 ]
 
 // Add fleet drift gate if --fleet flag is passed and fleet-policy.json exists
