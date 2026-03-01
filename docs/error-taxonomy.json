@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 51 classified error codes across 14 categories. See ADR-018, ADR-019, ADR-020, ADR-021, docs/accessibility.md, and docs/session-observability.md.",
-  "version": "1.6.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 55 classified error codes across 15 categories. See ADR-018, ADR-019, ADR-020, ADR-021, docs/accessibility.md, and docs/session-observability.md.",
+  "version": "1.7.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -23,7 +23,8 @@
     "SESSION": "Agent session observability and metrics failures (RN-043)",
     "SCAFFOLD": "Project scaffold generator failures (RN-041)",
     "DOCS": "Documentation and context file governance (RN-044, ADR-020)",
-    "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)"
+    "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)",
+    "AUTH": "OIDC/OAuth identity provider failures (RN-045)"
   },
   "errors": [
     {
@@ -693,6 +694,61 @@
         "Bump the API version (/v1/ → /v2/) and add migration notes",
         "Or mark the old endpoint as deprecated and add the new one alongside it",
         "See ADR-021 for versioning and deprecation policy"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-001",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC issuer discovery failed — cannot reach .well-known/openid-configuration",
+      "gate": "test:integration",
+      "remediation": [
+        "Verify the OIDC issuer URL is correct and reachable",
+        "Check network connectivity to the identity provider",
+        "Ensure the IdP is running and the realm exists (Keycloak: /realms/<name>)",
+        "If using a custom CA, ensure it is trusted by the Node.js process"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-002",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC redirect URI mismatch — callback URL not registered with the identity provider",
+      "gate": "test:integration",
+      "remediation": [
+        "Ensure the redirect_uri in OidcConfig matches the URI registered in the IdP client settings",
+        "Keycloak: Admin Console → Clients → <client-id> → Valid Redirect URIs",
+        "The URI must match exactly including protocol, host, port, and path"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-003",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC token validation failed — clock skew, invalid signature, or expired token",
+      "gate": "test:integration",
+      "remediation": [
+        "Check system clock synchronization between app server and IdP (use NTP)",
+        "Verify the IdP's signing keys are accessible via the JWKS endpoint",
+        "Check that the ID token audience (aud) matches the configured client_id",
+        "If clock skew is persistent, configure a tolerance window"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-004",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC authorization code exchange failed — invalid code, expired code, or PKCE mismatch",
+      "gate": "test:integration",
+      "remediation": [
+        "Authorization codes are single-use — ensure the code is not being replayed",
+        "Codes expire quickly (typically 60s) — check for latency in the callback handler",
+        "PKCE mismatch: ensure the same code_verifier is used for both authorization and token exchange",
+        "Verify client_secret is correct if using confidential client authentication"
       ],
       "automatable": false
     }

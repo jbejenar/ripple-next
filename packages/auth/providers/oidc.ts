@@ -30,10 +30,16 @@ export class OidcAuthProvider implements AuthProvider {
     this.clientAuth = oauth.ClientSecretBasic(config.clientSecret)
   }
 
+  private get httpOptions() {
+    return this.config.allowHttpRequests
+      ? { [oauth.allowInsecureRequests]: true }
+      : {}
+  }
+
   private async getAuthServer(): Promise<oauth.AuthorizationServer> {
     if (!this.authServer) {
       const issuer = new URL(this.config.issuerUrl)
-      const response = await oauth.discoveryRequest(issuer)
+      const response = await oauth.discoveryRequest(issuer, this.httpOptions)
       this.authServer = await oauth.processDiscoveryResponse(issuer, response)
     }
     return this.authServer
@@ -57,19 +63,19 @@ export class OidcAuthProvider implements AuthProvider {
     return url
   }
 
-  async handleCallback(code: string, codeVerifier: string): Promise<AuthUser> {
+  async handleCallback(callbackParams: URLSearchParams, expectedState: string, codeVerifier: string): Promise<AuthUser> {
     const as = await this.getAuthServer()
 
-    const callbackParams = new URLSearchParams()
-    callbackParams.set('code', code)
+    const validatedParams = oauth.validateAuthResponse(as, this.client, callbackParams, expectedState)
 
     const response = await oauth.authorizationCodeGrantRequest(
       as,
       this.client,
       this.clientAuth,
-      callbackParams,
+      validatedParams,
       this.config.redirectUri,
-      codeVerifier
+      codeVerifier,
+      this.httpOptions
     )
 
     // processAuthorizationCodeResponse throws ResponseBodyError on OAuth2 errors

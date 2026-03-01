@@ -3,7 +3,6 @@ import { getAuthProvider } from '../../utils/auth-provider'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const code = query.code as string
   const returnedState = query.state as string
   const error = query.error as string
 
@@ -24,8 +23,13 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, 'oidc_state')
   deleteCookie(event, 'oidc_verifier')
 
+  const callbackParams = new URLSearchParams()
+  for (const [key, value] of Object.entries(query)) {
+    if (typeof value === 'string') callbackParams.set(key, value)
+  }
+
   const auth = getAuthProvider()
-  const user = await auth.handleCallback(code, codeVerifier)
+  const user = await auth.handleCallback(callbackParams, savedState, codeVerifier)
   const session = await auth.createSession(user.id)
   const isSecure = process.env.NODE_ENV === 'production'
 

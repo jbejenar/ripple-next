@@ -50,7 +50,7 @@ describe('MockAuthProvider', () => {
   })
 
   it('returns default user from handleCallback', async () => {
-    const user = await auth.handleCallback('test-code', 'test-verifier')
+    const user = await auth.handleCallback(new URLSearchParams({ code: 'test-code' }), 'test-state', 'test-verifier')
     expect(user.email).toBe('test@example.com')
   })
 })

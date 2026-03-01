@@ -18,6 +18,8 @@ export interface OidcConfig {
   clientSecret: string
   redirectUri: string
   scopes?: string[]
+  /** Allow plain HTTP issuer URLs (for local/test identity providers). Never enable in production. */
+  allowHttpRequests?: boolean
 }
 
 export interface AuthProvider {
@@ -26,7 +28,7 @@ export interface AuthProvider {
   invalidateSession(sessionId: string): Promise<void>
   validateCredentials(email: string, password: string): Promise<AuthUser | null>
   getAuthorizationUrl(state: string, codeVerifier: string): Promise<URL>
-  handleCallback(code: string, codeVerifier: string): Promise<AuthUser>
+  handleCallback(callbackParams: URLSearchParams, expectedState: string, codeVerifier: string): Promise<AuthUser>
 }
 
 export type Permission = 'read' | 'write' | 'admin'

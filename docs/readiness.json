@@ -2,18 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-03-01. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and ADR-021 for API contract strategy (oRPC, OpenAPI-first).",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
-      "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions. Conformance test suite validates provider contract.",
+      "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions. Conformance test suite validates provider contract. Integration tests (RN-045) validate full OIDC flow against containerised Keycloak: discovery, PKCE exchange, session lifecycle, and error handling (invalid code, verifier mismatch). Error taxonomy expanded with RPL-AUTH-* codes for IdP failure modes.",
       "packages": [
         "@ripple/auth"
       ],
-      "blockers": [
-        "No integration tests for production OIDC flow yet"
-      ],
-      "testCoverage": "conformance-tested"
+      "blockers": [],
+      "testCoverage": "conformance-tested + integration-tested"
     },
     "database": {
       "status": "implemented",
@@ -187,9 +185,7 @@
         "docs/accessibility.md",
         "docs/session-observability.md"
       ],
-      "blockers": [
-        "Bootstrap has no fallback when npm registry policy blocks @axe-core/playwright fetch; add documented offline/skip-a11y bootstrap mode for restricted agents."
-      ],
+      "blockers": [],
       "testCoverage": "gate-tested"
     },
     "fleet-governance": {
