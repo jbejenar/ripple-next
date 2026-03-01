@@ -2,10 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
   "description": "Machine-readable subsystem status for agent planning. Updated 2026-03-01. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, ADR-021 for API contract strategy (oRPC, OpenAPI-first), RN-050 for performance budgets, and RN-028 for golden-path conformance CLI.",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
+      "maturity": "integration-tested",
       "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions. Conformance test suite validates provider contract. Integration tests (RN-045) validate full OIDC flow against containerised Keycloak: discovery, PKCE exchange, session lifecycle, and error handling (invalid code, verifier mismatch). Error taxonomy expanded with RPL-AUTH-* codes for IdP failure modes.",
       "packages": [
         "@ripple-next/auth"
@@ -15,6 +16,7 @@
     },
     "database": {
       "status": "implemented",
+      "maturity": "integration-tested",
       "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log, sessions. Repository pattern implemented. Migrations working. Testcontainers integration tests for UserRepository and ProjectRepository validate CRUD, unique constraints, and foreign key relationships against real PostgreSQL 17.",
       "packages": [
         "@ripple-next/db"
@@ -24,6 +26,7 @@
     },
     "queue": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Full provider pattern: MemoryQueueProvider (test), BullMQQueueProvider (local), SqsQueueProvider (prod). Consumer pattern with DLQ retry logic. Conformance test suite validates provider contract.",
       "packages": [
         "@ripple-next/queue"
@@ -33,6 +36,7 @@
     },
     "storage": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Full provider pattern: FilesystemStorageProvider (test), MinioStorageProvider (local), S3StorageProvider (prod). Presigned URL support. Conformance test suite validates provider contract.",
       "packages": [
         "@ripple-next/storage"
@@ -42,6 +46,7 @@
     },
     "email": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Full provider pattern: MemoryEmailProvider (test), SmtpEmailProvider (local/Mailpit), SesEmailProvider (prod). Conformance test suite validates provider contract.",
       "packages": [
         "@ripple-next/email"
@@ -51,6 +56,7 @@
     },
     "events": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Domain event bus: MemoryEventBus (test/local), EventBridgeBus (prod). Typed domain events for users, projects. Conformance test suite validates bus contract.",
       "packages": [
         "@ripple-next/events"
@@ -60,6 +66,7 @@
     },
     "ui": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList, MediaGallery, DocumentDownload), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 44 components total. Page templates (RN-023): 3 content-type-aware templates (Landing, Content, Campaign) in apps/web/components/templates/ \u2014 compose UI components into distinct layouts, switched by CMS page contentType field. Media components (RN-021): MediaGallery with keyboard-accessible lightbox and responsive grid; DocumentDownload with file type icons and size formatting. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs and @storybook/addon-a11y for all components. Vue Test Utils component tests for all components (650 tests across 63 test files) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state. Accessibility audit pipeline (RN-042): axe-core in Playwright E2E tests, standalone pnpm test:a11y with structured JSON reports.",
       "packages": [
         "@ripple-next/ui"
@@ -72,6 +79,7 @@
     },
     "api": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "oRPC is the canonical API boundary (ADR-021). OpenAPI 3.1.1 spec generated from router definition via pnpm generate:openapi. Public/internal endpoint classification via route metadata. User router (me/getById/create/list) migrated from tRPC to oRPC with OpenAPI routes at /v1/users/*. Health endpoint at /health (internal). Contract tests validate auth enforcement, input validation, and error codes via createRouterClient. Consumer contract validation tests (RN-025) verify spec ↔ router agreement: operationId mapping, request validation, response codes, tag classification, auth enforcement. Breaking-change detection (check:api-breaking) compares current spec against baseline to catch incompatible API changes before release. API contract drift gate (check:api-contract) active — prevents spec drift in CI. OpenAPI handler mounted at /api/orpc/*.",
       "packages": [],
       "paths": [
@@ -89,6 +97,7 @@
     },
     "infrastructure": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "SST v3 config with VPC, Aurora Postgres, Redis, DynamoDB, S3, SQS queues, EventBridge, Lambda consumers, ECS Fargate services, Cron jobs, Nuxt app. IaC policy scanning (RN-036): 7 policies covering security, safety, cost, and reliability. Machine-readable reports (ripple-iac-report/v1). Exception workflow via inline comments. LocalStack explicitly not required (ADR-015).",
       "packages": [],
       "paths": [
@@ -101,6 +110,7 @@
     },
     "ci": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "Tiered CI pipeline: Tier 1 (lint/typecheck/env-schema-validation/unit on every PR with path filtering + readiness drift guard + quarantine policy check + IaC policy scan for sst.config.ts changes + devcontainer validation RN-029), Tier 2 (E2E + a11y on merge or high-risk changes). Security pipeline (CodeQL SAST, dependency review, secret audit). Preview deploys per PR with GitHub environment protection and label-gated deployment (ADR-014). Reusable workflows via workflow_call for org-wide distribution (RN-026): reusable-quality.yml, reusable-test.yml, reusable-security.yml with stable/canary rollout channels. Composite actions for setup, quality, and test \u2014 all reading pinned versions from .nvmrc and packageManager field (RN-032). SBOM generation mandatory (fail-fast, CycloneDX), package checksums (RN-027), and build provenance attestations in release workflow. Unified pnpm test:ci entrypoint. Turbo build cache persisted between CI runs via actions/cache (RN-047). Downstream workflow examples pin to versioned refs with advisory fleet-drift check for unpinned @main refs (RN-048).",
       "packages": [],
       "paths": [
@@ -115,6 +125,7 @@
     },
     "testing-infra": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "Mock providers bundle (including CMS), test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, events, and CMS. Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, pnpm check:quarantine CI gate. Testcontainers integration tests for database repositories.",
       "packages": [
         "@ripple-next/testing"
@@ -124,6 +135,7 @@
     },
     "publishing": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, attests build provenance, and generates per-package SHA-256 checksums (RN-027). Verification CLI (pnpm verify:release) validates installed packages against checksums manifest. See ADR-007, ADR-010, and docs/release-verification.md.",
       "packages": [
         "all @ripple-next/* packages"
@@ -137,6 +149,7 @@
     },
     "cms": {
       "status": "implemented",
+      "maturity": "conformance-tested",
       "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide), SearchEnhancedCmsProvider (decorator for dedicated search engines). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) \u2014 removable without touching frontend, tests, or API layer. MeiliSearch integration for local dev search. See ADR-011.",
       "packages": [
         "@ripple-next/cms"
@@ -154,6 +167,7 @@
     },
     "navigation": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "Navigation composable (useNavigation) loads header and footer menus from CMS provider. RplNavigation component supports horizontal (header) and vertical (footer) variants with nested menu structures. Wired into default layout. Fully tested with Vue Test Utils.",
       "packages": [
         "@ripple-next/ui"
@@ -167,6 +181,7 @@
     },
     "agent-tooling": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "AI-first agent workflow tooling. Quality gate summaries (RN-034), code generators including downstream project scaffold (RN-041), error taxonomy with 65 classified failure modes across 18 categories including fleet governance, accessibility, performance, session observability, scaffold, documentation, API contract, and conformance codes (RN-040, RN-042, RN-043, RN-044, RN-050, RN-051, RN-025, RN-028), runbook library with 9 structured runbooks and CLI runner (RN-039), IaC policy scanner (RN-036), accessibility audit pipeline (RN-042), performance budget audit pipeline with Core Web Vitals (RN-050), agent session observability with session logger and metrics aggregation (RN-043), context file minimalism with machine-enforced line-count gate (RN-044, ADR-020), golden-path conformance CLI with weighted scoring rubric (RN-028). Strategy documented in ADR-018 and ADR-020.",
       "packages": [],
       "paths": [
@@ -196,6 +211,7 @@
     },
     "fleet-governance": {
       "status": "implemented",
+      "maturity": "interface-defined",
       "description": "Fleet governance mechanism for downstream repos (RN-024). Fleet policy contract (fleet-policy.json) defines 9 governed surfaces across 3 severity levels. Drift detection engine (check-fleet-drift.mjs) compares downstream repos against golden-path source. Sync PR automation for security/standards updates. Fleet compliance reporting (fleet-compliance.mjs) with aggregate scores. Error taxonomy integration (RPL-FLEET-* codes). Fleet sync runbook. See ADR-019.",
       "packages": [],
       "paths": [
@@ -226,5 +242,11 @@
     "partial": "Interface defined, some implementations working, gaps remain",
     "scaffold": "Structure exists but returns placeholder/mock data",
     "planned": "Architecture decided but no implementation yet"
+  },
+  "maturityLevels": {
+    "interface-defined": "Contract exists with memory/mock provider; no conformance suite or integration tests",
+    "conformance-tested": "Provider conformance test suite passes against contract",
+    "integration-tested": "Tests run against real infrastructure (containers, external services)",
+    "production-proven": "Deployed and exercised in production with monitoring"
   }
 }

@@ -65,6 +65,18 @@ const { subsystems } = readiness
 for (const [name, sub] of Object.entries(subsystems)) {
   console.log(`[${name}]`)
 
+  // Check maturity field exists and has a valid value
+  const validMaturity = ['interface-defined', 'conformance-tested', 'integration-tested', 'production-proven']
+  if (sub.maturity) {
+    if (validMaturity.includes(sub.maturity)) {
+      ok(`maturity "${sub.maturity}" is valid`)
+    } else {
+      bad(`${name}: maturity "${sub.maturity}" is not a valid level (${validMaturity.join(', ')})`)
+    }
+  } else if (sub.status !== 'planned') {
+    bad(`${name}: missing "maturity" field — add one of: ${validMaturity.join(', ')}`)
+  }
+
   // Check referenced packages exist (skip for "planned" subsystems — they don't exist yet)
   if (sub.packages?.length > 0 && sub.status !== 'planned') {
     for (const pkg of sub.packages) {

@@ -1,14 +1,14 @@
 # Ripple Next — Product Roadmap
 
-> v7.0.0 | 2026-03-01
+> v7.1.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 51 items completed → **[ARCHIVE.md](./ARCHIVE.md)**
-> 9 items active. 5 items parked.
+> 54 items completed → **[ARCHIVE.md](./ARCHIVE.md)**
+> 6 items active. 5 items parked.
 
 ---
 
@@ -20,10 +20,10 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %Y
 
-    section Now (0–6 weeks)
-    RN-053 CI gate truth                   :rn053, 2026-03-03, 5d
-    RN-055 Node version pin parity         :rn055, 2026-03-03, 2d
-    RN-056 Readiness manifest honesty      :rn056, 2026-03-05, 3d
+    section Done (v7.1.0)
+    RN-053 CI gate truth                   :done, rn053, 2026-03-01, 1d
+    RN-055 Node version pin parity         :done, rn055, 2026-03-01, 1d
+    RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
 
     section Next (6–12 weeks)
     RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
@@ -43,16 +43,16 @@ gantt
 
 | Dimension | Score | Notes | Known gaps |
 |-----------|-------|-------|------------|
-| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer | `engines.node` uses range not exact ([RN-055](#rn-055-node-version-pin-parity)) |
+| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer. `.nvmrc` and `engines.node` exact match enforced by `pnpm doctor` (RN-055 done) | — |
 | One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive | — |
-| Local dev parity with CI | 3/5 | Shared tooling, dockerized deps, devcontainer | 5 CI gates suppressed via `\|\| true` / `continue-on-error` ([RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)) |
+| Local dev parity with CI | 4/5 | Shared tooling, dockerized deps, devcontainer. CI gates classified as blocking or advisory in [`docs/ci-gates.md`](../ci-gates.md) (RN-053 done). Readiness + quarantine now blocking | 3 advisory gates remain (a11y, perf, gate summary artifact) — promote when environment-stable |
 | Test reliability | 3/5 | Quarantine policy, unified `test:ci`, mock providers | No multi-contributor validation; no production evidence |
-| Dependency + toolchain pinning | 4/5 | Exact Node (.nvmrc) + pnpm (packageManager) with doctor guards | `.nvmrc` vs `engines.node` mismatch ([RN-055](#rn-055-node-version-pin-parity)) |
+| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc = engines.node = 22.22.0) + pnpm (packageManager) with doctor guards (RN-055 done) | — |
 | Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics | — |
 | Automated remediation | 3/5 | `pnpm doctor --json`, conformance CLI, error taxonomy | `conform --fix` not implemented ([RN-060](#rn-060-conformance-cli-auto-remediation-prs)); fleet sync untested |
 | Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) | — |
 
-**Overall: 33/40** (interim; gaps tracked as active roadmap items)
+**Overall: 35/40** (interim; gaps tracked as active roadmap items)
 
 ---
 
@@ -63,121 +63,63 @@ Downstream teams ship faster, safer, and more accessibly because the golden path
 eliminates undifferentiated work and AI agents operate as first-class contributors
 across the fleet.
 
-**Platform status:** 16/16 subsystems at interface-defined or above. Maturity
-varies: 2 integration-tested (auth, database), 6 conformance-tested (queue,
-storage, email, events, CMS, testing-infra), 8 interface/pipeline-defined
-(UI, API, infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance).
-No production deployments yet. See [`readiness.json`](../readiness.json) for
+**Platform status:** 16/16 subsystems with `maturity` field in
+[`readiness.json`](../readiness.json) (RN-056 done). Distribution:
+2 integration-tested (auth, database), 8 conformance-tested (queue, storage,
+email, events, CMS, UI, API, testing-infra), 6 interface-defined
+(infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance).
+0 production-proven. See [`readiness.json`](../readiness.json) for
 per-subsystem detail.
 
 ## Themes
 
-1. **Honesty & trust** — Fix self-assessed scores, label subsystem maturity correctly, make CI gates deterministic (RN-053, RN-055, RN-056, RN-057)
+1. **Honesty & trust** — ~~Fix self-assessed scores, label subsystem maturity correctly, make CI gates deterministic~~ (RN-053 done, RN-055 done, RN-056 done). Remaining: automated evidence generation (RN-057)
 2. **Production credibility** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054)
 3. **Quality depth** — Live CMS validation, runtime monitoring (RN-017, RN-059)
 4. **Fleet automation** — Auto-remediation for downstream repos once fleet exists (RN-060)
 
 ---
 
-## Now (0–6 weeks)
+## Done (v7.1.0)
 
-> Honesty debt: fix the gaps between claims and evidence. Agents should start here.
+> Honesty debt items shipped 2026-03-01. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
 
 ### RN-053: CI Gate Truth — Enforce or Explicitly Label Advisory Gates
 
-**Tier:** 1 | **Priority:** Critical | **Impact:** High | **Effort:** Low | **Risk:** Low
-**Source:** AI Product Owner + Critique 3 (self-assessed perfect scores lack credibility)
-**AI-first benefit:** Agents need deterministic CI signals — a gate that never fails is invisible noise, not a signal.
-**Status:** Planned
-**Dependencies:** None
+**Status:** Done (2026-03-01)
 
-Five CI gates currently use `|| true` or `continue-on-error: true`, making them decorative:
+- [x] Each `|| true` gate either made blocking or explicitly labeled "advisory" with workflow comment and entry in `docs/ci-gates.md`
+- [x] Scorecard "Local dev parity with CI" updated (3/5 → 4/5)
+- [x] `pnpm verify` remains the authoritative local gate (no `|| true`)
 
-- `ci.yml:60` — `verify.mjs --ci --json || true`
-- `ci.yml:209` — `pnpm test:a11y || true`
-- `ci.yml:215` — `pnpm test:perf || true`
-- `reusable-quality.yml:66` — readiness drift guard `continue-on-error: true`
-- `reusable-quality.yml:70` — quarantine policy check `continue-on-error: true`
-
-This undermines the "deterministic blocking semantics" ethos and the scorecard's
-test reliability claim.
-
-#### Definition of Done
-
-- [ ] Each `|| true` gate either made blocking (remove `|| true`) or explicitly labeled "advisory" with workflow comment and entry in `docs/ci-gates.md`
-- [ ] Scorecard "Local dev parity with CI" updated to reflect blocking vs advisory distinction
-- [ ] `pnpm verify` remains the authoritative local gate (no `|| true`)
-
-#### Verification
-
-- `grep -rn '|| true' .github/workflows/` returns only expected soft-fail cases (deploy health checks, fleet sync)
-- `grep -rn 'continue-on-error' .github/workflows/` returns only documented advisory gates
-- `pnpm verify` exits non-zero on any gate failure
-
-**Links:** `.github/workflows/ci.yml`, `.github/workflows/reusable-quality.yml`, [Critique 3](../critique-evaluation.md)
+**Changes:** `check:readiness` and `check:quarantine` made blocking in `reusable-quality.yml`. Gate summary, a11y audit, perf audit labeled advisory with comments. Created `docs/ci-gates.md`.
+**Verified:** `grep -rn 'continue-on-error' .github/workflows/` returns 0 results. `grep -rn '|| true' .github/workflows/` returns only deploy health checks, fleet sync, and 3 documented advisory gates. `pnpm verify` passes (10/10).
 
 ---
 
 ### RN-055: Node Version Pin Parity
 
-**Tier:** 1 | **Priority:** High | **Impact:** Medium | **Effort:** Low | **Risk:** Low
-**Source:** AI agent analysis (confirmed) — three different Node version values across config files
-**AI-first benefit:** Eliminates agent confusion from contradictory version signals across config files.
-**Status:** Planned
-**Dependencies:** None
+**Status:** Done (2026-03-01)
 
-Three config sources specify different Node expectations:
+- [x] `engines.node` in `package.json` changed to `22.22.0` (exact, matching `.nvmrc`)
+- [x] `pnpm doctor` validates `.nvmrc` and `engines.node` show same value (new check added)
+- [x] Conformance rubric remediation text references `.nvmrc` as source of truth
+- [x] Upgrade procedure: update `.nvmrc` first, then `engines.node` follows
 
-- `.nvmrc`: `22.22.0` (exact)
-- `package.json` → `engines.node`: `>=22.14.0` (range)
-- `conformance-rubric.json` remediation example: `22.14.0`
-
-#### Definition of Done
-
-- [ ] `engines.node` in `package.json` changed to exact version matching `.nvmrc`
-- [ ] `pnpm doctor` validates `.nvmrc` and `engines.node` show same value
-- [ ] Conformance rubric remediation text references `.nvmrc` as source of truth
-- [ ] Upgrade procedure: update `.nvmrc` first, then `engines.node` follows
-
-#### Verification
-
-- `node -e "const n=require('fs').readFileSync('.nvmrc','utf8').trim();const e=require('./package.json').engines.node;console.log(n===e?'MATCH':'MISMATCH')"` → `MATCH`
-- `pnpm doctor --json | jq '.checks[] | select(.name | contains("node"))'` — passes with exact version check
-
-**Links:** `.nvmrc`, `package.json`, `docs/conformance-rubric.json`
+**Verified:** `.nvmrc` (22.22.0) = `engines.node` (22.22.0) = MATCH. `pnpm doctor` passes with pin parity check.
 
 ---
 
 ### RN-056: Readiness Manifest Honesty — Subsystem Maturity Levels
 
-**Tier:** 1 | **Priority:** High | **Impact:** High | **Effort:** Low | **Risk:** Medium
-**Source:** Critique 3 — "'16/16 Subsystems Implemented' conflates interface stubs with production systems"
-**AI-first benefit:** Agents need accurate maturity signals to assess what is production-safe vs interface-only.
-**Status:** Planned
-**Dependencies:** None
+**Status:** Done (2026-03-01)
 
-Add a `maturity` field to each subsystem in `readiness.json`:
+- [x] `maturity` field added to all 16 subsystems in `readiness.json`
+- [x] `pnpm check:readiness` validates `maturity` field exists and value is valid
+- [x] North Star section updated to reference maturity distribution
 
-| Level | Meaning | Example |
-|-------|---------|---------|
-| `interface-defined` | Contract + memory/mock provider | email (136 lines), events (133 lines) |
-| `conformance-tested` | Provider conformance suite passes | queue, storage, CMS |
-| `integration-tested` | Tests against real infrastructure | auth (Keycloak), database (Postgres) |
-| `production-proven` | Deployed and exercised in production | (none currently) |
-
-#### Definition of Done
-
-- [ ] `maturity` field added to all 16 subsystems in `readiness.json`
-- [ ] `pnpm check:readiness` validates `maturity` field exists and value is valid
-- [ ] North Star section updated to reference maturity distribution
-
-#### Verification
-
-- `jq '[.subsystems | to_entries[] | .value.maturity] | unique' docs/readiness.json` — returns valid levels
-- `jq '.subsystems | to_entries | group_by(.value.maturity) | map({(.[0].value.maturity): length}) | add' docs/readiness.json` — shows distribution
-- `pnpm check:readiness` passes
-
-**Links:** `docs/readiness.json`, [Critique 3](../critique-evaluation.md)
+**Distribution:** 2 integration-tested, 8 conformance-tested, 6 interface-defined, 0 production-proven.
+**Verified:** `pnpm check:readiness` passes (90/90 checks). `readiness.json` version bumped to 0.26.0 with `maturityLevels` legend.
 
 ---
 
@@ -191,7 +133,7 @@ Add a `maturity` field to each subsystem in `readiness.json`:
 **Source:** Critique 3 — "A perfect score across all 8 dimensions is not credible self-assessment"
 **AI-first benefit:** Replaces manual self-assessment with a deterministic, reproducible measurement command.
 **Status:** Planned
-**Dependencies:** [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) (gate classification needed for scoring)
+**Dependencies:** ~~RN-053~~ (done — gate classification available in `docs/ci-gates.md`)
 
 #### Definition of Done
 
@@ -246,7 +188,7 @@ added SPDX metadata but did not resolve the underlying licensing question.
 **Source:** Critique 3 — "the project is a promising skeleton with exceptional documentation — but a skeleton nonetheless"
 **AI-first benefit:** Validates that agents can scaffold, configure, test, and deploy a downstream repo end-to-end using platform tooling.
 **Status:** Planned
-**Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility), [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
+**Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility), ~~RN-053~~ (done)
 
 The single most important item on the roadmap. Creates one downstream repo using
 `pnpm generate:scaffold`, publishes @ripple-next/* packages, consumes them, and
@@ -374,7 +316,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | PolyForm Noncommercial may conflict with government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) in Next |
 | No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) in Later |
 | No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) in Next |
-| CI gates suppressed (`|| true`) | [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) in Now |
+| ~~CI gates suppressed (`\|\| true`)~~ | Resolved: RN-053 done — gates classified as blocking or advisory in `docs/ci-gates.md` |
 | Agent-Friction Scorecard self-assessed | [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) in Next |
 | Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first real publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
 
@@ -445,7 +387,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-51 items completed (RN-001 through RN-052, excluding RN-017).
+54 items completed (RN-001 through RN-056, excluding RN-017 and RN-054).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md)
