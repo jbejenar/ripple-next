@@ -1,6 +1,7 @@
 {
   "name": "@ripple/events",
   "version": "0.1.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
