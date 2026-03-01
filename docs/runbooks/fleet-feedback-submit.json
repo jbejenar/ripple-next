@@ -1,0 +1,59 @@
+{
+  "name": "fleet-feedback-submit",
+  "description": "Submit fleet feedback to the golden-path upstream repository. Supports 5 feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point. See ADR-022.",
+  "args": {
+    "type": "Feedback type (feature-request, bug-report, policy-exception, improvement-share, pain-point)",
+    "title": "Short descriptive title for the feedback",
+    "description": "Detailed description of the feedback"
+  },
+  "preconditions": [
+    {
+      "description": "Fleet feedback script exists",
+      "command": "test -f scripts/fleet-feedback.mjs",
+      "expect": "exit 0"
+    },
+    {
+      "description": ".fleet.json exists (golden-path version tracking)",
+      "command": "test -f .fleet.json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "FLEET_FEEDBACK_TOKEN is set (for --submit)",
+      "command": "test -n \"$FLEET_FEEDBACK_TOKEN\"",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --dry-run --json",
+      "description": "Preview the feedback payload without submitting (dry run)"
+    },
+    {
+      "order": 2,
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --submit",
+      "description": "Submit the feedback to the upstream golden-path repository"
+    },
+    {
+      "order": 3,
+      "command": "echo 'Verify the upstream issue was created at the URL shown above'",
+      "description": "Check the upstream repo for the created issue and track its triage status"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Feedback payload is valid",
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --dry-run --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const p=JSON.parse(d);console.log(p.schema==='ripple-fleet-feedback/v1'?'valid':'invalid')})\"",
+      "expect": "valid"
+    }
+  ],
+  "coverageRequirements": {},
+  "related": [
+    "docs/fleet-feedback-schema.json",
+    "docs/fleet-policy.json",
+    "docs/adr/022-bidirectional-fleet-communication.md",
+    "scripts/fleet-feedback.mjs",
+    ".github/workflows/fleet-feedback-submit.yml",
+    ".github/actions/fleet-feedback/action.yml"
+  ]
+}

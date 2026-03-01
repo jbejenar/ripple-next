@@ -1,6 +1,42 @@
 # Downstream Workflow Consumption Guide
 
-> How to use Ripple Next's reusable workflows and composite actions in downstream repositories.
+> How to use Ripple Next's reusable workflows, composite actions, and fleet governance in downstream repositories.
+
+## Fleet Management Quick Reference
+
+| Task | Command |
+|------|---------|
+| **Bootstrap a new downstream repo** | `pnpm generate:scaffold /path/to/repo --name=my-project --org=my-org` |
+| **Check drift against golden path** | `pnpm check:fleet-drift -- --target=/path/to/repo` |
+| **Preview sync changes (dry run)** | `pnpm fleet:sync -- --target=/path/to/repo --dry-run` |
+| **Apply sync to downstream repo** | `pnpm fleet:sync -- --target=/path/to/repo` |
+| **View fleet compliance (multi-repo)** | `pnpm fleet:compliance -- --reports=./reports` |
+| **Submit feedback upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
+| **Share a local improvement upstream** | `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit` |
+| **View fleet changelog** | `pnpm fleet:changelog` |
+| **Validate changelog structure** | `pnpm fleet:changelog -- --validate` |
+
+### Downstream repo commands (after scaffolding)
+
+| Task | Command |
+|------|---------|
+| **Self-check for drift** | `node scripts/check-fleet-drift.mjs` |
+| **Submit feedback to upstream** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --description="..." --submit` |
+| **Preview feedback payload** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --dry-run --json` |
+| **Run fleet feedback submit runbook** | `pnpm runbook fleet-feedback-submit` |
+
+### Key files in downstream repos
+
+| File | Purpose |
+|------|---------|
+| `.fleet.json` | Tracks golden-path version, last sync time, policy version |
+| `scripts/check-fleet-drift.mjs` | Drift detection against golden path (synced via SURF-011) |
+| `scripts/fleet-feedback.mjs` | Structured feedback submission to upstream |
+| `.github/workflows/fleet-feedback.yml` | Manual dispatch + monthly auto-scan for drift |
+| `.github/workflows/fleet-update.yml` | Receives update notifications from golden path |
+| `docs/runbooks/fleet-feedback-submit.json` | Step-by-step runbook for feedback submission |
+
+---
 
 ## Overview
 
@@ -459,13 +495,14 @@ pnpm generate:scaffold /path/to/downstream-repo \
   --description="My downstream project"
 ```
 
-This generates ~30 files across 5 categories:
+This generates ~35 files across 6 categories:
 
 | Category | What's Generated |
 |----------|-----------------|
-| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/`, `.github/instructions/`, `.github/prompts/`, Copilot instructions |
-| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates, product roadmap template |
+| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/` (5 agents incl. fleet-governance), `.github/instructions/`, `.github/prompts/`, Copilot instructions |
+| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates (deploy, fleet-feedback-submit, fleet-drift-check), product roadmap template |
 | Quality Gates | `scripts/verify.mjs`, `scripts/doctor.sh`, `scripts/check-readiness.mjs`, `scripts/validate-env.mjs` |
+| Fleet Governance | `.fleet.json`, `scripts/check-fleet-drift.mjs`, `scripts/fleet-feedback.mjs`, `.github/workflows/fleet-feedback.yml`, `.github/workflows/fleet-update.yml` |
 | CI / CD | `.github/workflows/ci.yml`, `.github/workflows/security.yml`, composite actions, PR template, CODEOWNERS |
 | Config | `.env.example`, `.nvmrc`, `eslint.config.js`, `.changeset/config.json`, `.gitignore` |
 
@@ -481,6 +518,149 @@ pnpm fleet:sync -- --target=/path/to/downstream-repo
 
 See `pnpm runbook scaffold-downstream` for the full step-by-step procedure.
 
+## Fleet Update Notifications
+
+Downstream repos can receive **proactive notifications** when the golden-path source publishes a new release. This enables AI agents to evaluate and adopt updates autonomously.
+
+### How It Works
+
+1. When ripple-next publishes a release, the `fleet-update-notify.yml` workflow fires
+2. It dispatches a `fleet-update-available` event to all registered downstream repos
+3. Downstream repos have a `fleet-update.yml` workflow (scaffolded) that processes the event
+4. An issue is created in the downstream repo with the changelog summary
+5. AI agents evaluate the changes and decide whether to adopt
+
+### Setup
+
+1. Add your downstream repo to the `FLEET_DOWNSTREAM_REPOS` repository variable in ripple-next (JSON array of `owner/repo` strings)
+2. Ensure `FLEET_SYNC_TOKEN` has `contents: write` scope on downstream repos
+3. The scaffolded `fleet-update.yml` workflow handles the `repository_dispatch` event automatically
+
+### Version Tracking (`.fleet.json`)
+
+Each downstream repo has a `.fleet.json` file that tracks its relationship to the golden path:
+
+```json
+{
+  "schema": "ripple-fleet-version/v1",
+  "goldenPathRepo": "org/ripple-next",
+  "goldenPathVersion": "abc1234...",
+  "scaffoldedAt": "2026-03-01T00:00:00Z",
+  "lastSyncedAt": "2026-03-01T00:00:00Z",
+  "fleetPolicyVersion": "1.2.0"
+}
+```
+
+AI agents can read `.fleet.json` to understand how far behind the golden path the repo is. The `fleet-sync` command updates this file automatically after each sync.
+
+---
+
+## Fleet Feedback — Communicating with the Golden Path
+
+Downstream repos can **communicate back** to the golden-path source using the fleet feedback system (ADR-022, RN-052). This enables five types of structured feedback:
+
+| Type | Use Case | Auto-Action |
+|------|----------|-------------|
+| `feature-request` | Request a new golden-path capability | Label + priority score |
+| `bug-report` | Report an issue with a governed surface | Label + attach drift data |
+| `policy-exception` | Request formal exception to a governance policy | Label + link to surface |
+| `improvement-share` | Share a local improvement upstream for fleet-wide adoption | Auto-create draft PR |
+| `pain-point` | Report friction with a governed surface | Label + aggregate frequency |
+
+### Submitting Feedback (CLI)
+
+```bash
+# Preview feedback without submitting
+pnpm fleet:feedback -- --type=feature-request --title="Add Vue a11y ESLint rules" \
+  --description="Our team added accessibility linting rules that could benefit the fleet" --dry-run
+
+# Submit feedback to upstream
+pnpm fleet:feedback -- --type=feature-request --title="Add Vue a11y ESLint rules" \
+  --description="Our team added accessibility linting rules that could benefit the fleet" --submit
+
+# Share a local improvement (generates diff automatically)
+pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 \
+  --file=eslint.config.js --submit
+```
+
+### Submitting Feedback (GitHub Action)
+
+Use the `fleet-feedback` composite action in your workflow:
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+  - uses: your-org/ripple-next/.github/actions/fleet-feedback@v1
+    with:
+      feedback-type: 'feature-request'
+      title: 'Add Vue a11y ESLint rules'
+      description: 'Our team added accessibility linting rules that could benefit the fleet'
+      feedback-token: ${{ secrets.FLEET_FEEDBACK_TOKEN }}
+```
+
+### Submitting Feedback (Reusable Workflow)
+
+Use the reusable workflow for CI-integrated feedback:
+
+```yaml
+jobs:
+  feedback:
+    uses: your-org/ripple-next/.github/workflows/fleet-feedback-submit.yml@v1
+    with:
+      feedback-type: 'bug-report'
+      title: 'Fleet drift detection false positive on SURF-005'
+      description: 'ESLint config merge strategy reports drift for additive rule additions'
+    secrets:
+      FLEET_FEEDBACK_TOKEN: ${{ secrets.FLEET_FEEDBACK_TOKEN }}
+```
+
+### Token Setup
+
+Fleet feedback requires a `FLEET_FEEDBACK_TOKEN` — a GitHub fine-grained personal access token with:
+- **Repository access:** The upstream golden-path repo (e.g., `org/ripple-next`)
+- **Permissions:** `Issues: Read and write`
+
+Add this as a repository secret in your downstream repo.
+
+### Reverse Sync (Improvement Sharing)
+
+The `improvement-share` feedback type enables **true bidirectional sync**:
+
+1. Your AI agent improves a governed/advisory file locally (e.g., adds a11y rules to `eslint.config.js`)
+2. Run: `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit`
+3. The script reads `.fleet.json`, generates a unified diff, and submits as a structured issue
+4. The upstream intake workflow validates the diff and auto-creates a draft PR if it applies cleanly
+5. The golden-path team reviews and merges
+6. The next fleet-sync run propagates the improvement to **all** downstream repos
+
+This is the only template governance system that supports AI-assisted reverse sync — no other platform (Backstage, Cruft, Copier, Nx) provides this capability.
+
+### Autonomous Improvement Detection
+
+The scaffolded `fleet-feedback.yml` workflow includes a **monthly schedule** that:
+
+1. Scans advisory-governed files (SURF-010: AI instructions) for local changes
+2. Diffs them against the golden-path source
+3. Auto-generates `improvement-share` feedback for local improvements
+4. AI agents can run this autonomously to propose upstream contributions
+
+### Related Error Codes
+
+| Code | Meaning |
+|------|---------|
+| `RPL-FEEDBACK-001` | Feedback envelope validation failed |
+| `RPL-FEEDBACK-002` | Duplicate feedback detected |
+| `RPL-FEEDBACK-003` | Feedback submitted successfully |
+| `RPL-FEEDBACK-004` | Feedback submission failed |
+
+See `docs/error-taxonomy.json` for full remediation paths.
+
+### Runbook
+
+Run `pnpm runbook fleet-feedback-submit` for the full step-by-step procedure.
+
+---
+
 ## Related Documentation
 
 - [Reusable Composite Actions (RN-015)](./product-roadmap/ARCHIVE.md#rn-015-reusable-composite-actions)
@@ -488,5 +668,6 @@ See `pnpm runbook scaffold-downstream` for the full step-by-step procedure.
 - [CI Observability + Supply Chain (ADR-010)](./adr/010-ci-observability-supply-chain.md)
 - [Flaky Test Containment (ADR-013)](./adr/013-flaky-test-containment.md)
 - [Fleet Governance (ADR-019)](./adr/019-fleet-governance.md)
+- [Bidirectional Fleet Communication (ADR-022)](./adr/022-bidirectional-fleet-communication.md)
 - [Release Verification (RN-027)](./release-verification.md)
 - [Code Generation Templates (RN-041)](./product-roadmap/ARCHIVE.md#rn-041-code-generation-templates)

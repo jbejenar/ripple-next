@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Template Configuration",
   "description": "Configuration for GitHub template repository distribution and scaffold generator. Defines which files from the golden-path source are included in templates, AI agent configs, and post-clone setup instructions. See RN-024 and RN-041.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "templateIncludes": {
     "description": "Files included when a new repo is created from this template",
     "governed": [
@@ -22,7 +22,13 @@
       "scripts/iac-policy-scan.mjs",
       "docs/fleet-policy.json",
       "docs/iac-policies.json",
-      "docs/error-taxonomy.json"
+      "docs/error-taxonomy.json",
+      ".github/actions/fleet-feedback/action.yml",
+      ".github/workflows/fleet-feedback-intake.yml",
+      "scripts/fleet-feedback.mjs",
+      "scripts/fleet-feedback-intake.mjs",
+      "docs/fleet-feedback-schema.json",
+      "docs/fleet-changelog.json"
     ],
     "scaffold": [
       "package.json",
@@ -31,7 +37,8 @@
       "vitest.workspace.ts",
       ".gitignore",
       ".prettierrc",
-      "turbo.json"
+      "turbo.json",
+      ".fleet.json"
     ],
     "ai": [
       "CLAUDE.md",

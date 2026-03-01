@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Fleet Governance Policy",
   "description": "Machine-readable fleet governance contract defining governed surfaces, sync strategies, and exception workflow. See ADR-019 and RN-024.",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "schema": "ripple-fleet-policy/v1",
   "governedSurfaces": [
     {
@@ -104,6 +104,27 @@
       ],
       "rationale": "Unpinned @main refs cause non-deterministic fleet behaviour and surprise breakage (RN-048)",
       "taxonomyCode": "RPL-FLEET-003"
+    },
+    {
+      "id": "FLEET-SURF-010",
+      "name": "ai-agent-instructions",
+      "description": "AI agent instruction files — CLAUDE.md, AGENTS.md, copilot-instructions, GitHub instructions, agents, and prompts",
+      "strategy": "advisory",
+      "severity": "recommended",
+      "paths": ["CLAUDE.md", "AGENTS.md", ".github/copilot-instructions.md", ".github/instructions/*.instructions.md", ".github/agents/*.agent.md", ".github/prompts/*.prompt.md"],
+      "rationale": "AI agent quality is proportional to instruction quality. Downstream repos customise these, so advisory strategy reports divergence without auto-overwriting. Agents evaluate and adopt selectively (ADR-022, RN-052).",
+      "taxonomyCode": "RPL-FLEET-003"
+    },
+    {
+      "id": "FLEET-SURF-011",
+      "name": "fleet-governance-tooling",
+      "description": "Fleet governance scripts and policy files that must be consistent for drift detection to work correctly",
+      "strategy": "sync",
+      "severity": "standards-required",
+      "paths": ["scripts/check-fleet-drift.mjs", "docs/fleet-policy.json", ".github/actions/fleet-drift/action.yml"],
+      "checksumValidation": true,
+      "rationale": "When new governed surfaces are added (e.g., SURF-010), downstream drift detection scripts must also update to check them (ADR-022, RN-052).",
+      "taxonomyCode": "RPL-FLEET-002"
     }
   ],
   "localOverrides": [
@@ -151,5 +172,40 @@
     "minimumScore": 80,
     "securityCriticalDrifts": 0,
     "standardsDriftsMax": 2
+  },
+  "feedbackPolicy": {
+    "description": "Downstream→upstream feedback system for bidirectional fleet communication (ADR-022, RN-052)",
+    "schema": "ripple-fleet-feedback/v1",
+    "feedbackTypes": ["feature-request", "bug-report", "policy-exception", "improvement-share", "pain-point"],
+    "issueLabels": {
+      "base": "fleet:feedback",
+      "perType": {
+        "feature-request": "fleet:feedback:feature-request",
+        "bug-report": "fleet:feedback:bug-report",
+        "policy-exception": "fleet:feedback:policy-exception",
+        "improvement-share": "fleet:feedback:improvement-share",
+        "pain-point": "fleet:feedback:pain-point"
+      }
+    },
+    "severityLabels": {
+      "critical": "priority:critical",
+      "high": "priority:high",
+      "medium": "priority:medium",
+      "low": "priority:low"
+    },
+    "deduplicationWindow": "30d",
+    "triageSla": {
+      "critical": "24h",
+      "high": "7d",
+      "medium": "30d",
+      "low": "90d"
+    },
+    "reverseSync": {
+      "enabled": true,
+      "feedbackType": "improvement-share",
+      "autoCreatePr": true,
+      "requireCleanPatch": true,
+      "branchPrefix": "fleet/feedback-"
+    }
   }
 }

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Fleet Feedback Payload",
+  "description": "Machine-readable feedback from downstream repos to the golden-path source. Schema: ripple-fleet-feedback/v1. See ADR-022 and RN-052.",
+  "version": "1.0.0",
+  "schema": "ripple-fleet-feedback/v1",
+  "feedbackTypes": [
+    "feature-request",
+    "bug-report",
+    "policy-exception",
+    "improvement-share",
+    "pain-point"
+  ],
+  "payloadShape": {
+    "schema": "ripple-fleet-feedback/v1",
+    "timestamp": "ISO-8601",
+    "sourceRepo": "org/repo-name (from git remote)",
+    "sourceRef": "commit SHA (from git rev-parse HEAD)",
+    "feedbackType": "feature-request | bug-report | policy-exception | improvement-share | pain-point",
+    "severity": "critical | high | medium | low",
+    "governedSurface": "FLEET-SURF-NNN or null",
+    "title": "Short description",
+    "description": "Detailed description with context",
+    "evidence": {
+      "driftReport": "Relevant drift findings (for bug-report)",
+      "errorCodes": ["RPL-*-NNN codes"],
+      "diff": "Unified diff (for improvement-share)",
+      "affectedFiles": ["path/to/file"]
+    },
+    "proposedChange": {
+      "type": "config | code | docs | policy",
+      "description": "What should change in the golden path",
+      "diffSummary": "Summary of proposed changes"
+    },
+    "metadata": {
+      "agentGenerated": true,
+      "agentType": "claude-code | copilot | codex | human",
+      "goldenPathVersion": "SHA from .fleet.json",
+      "complianceScore": 85,
+      "fleetPolicyVersion": "1.2.0"
+    }
+  },
+  "issueFormat": {
+    "titleTemplate": "[fleet-feedback:{feedbackType}] {title} ({sourceRepo})",
+    "bodyMarkers": {
+      "begin": "<!-- fleet-feedback-begin -->",
+      "end": "<!-- fleet-feedback-end -->"
+    }
+  }
+}

@@ -17,7 +17,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync, copyFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, copyFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
@@ -197,6 +197,28 @@ if (!dryRun && targetArg) {
       }
     }
   }
+
+
+  // ── Update .fleet.json in target repo ──────────────────────────────
+  const fleetJsonPath = join(targetPath, '.fleet.json')
+  let fleetJson = {}
+  try {
+    fleetJson = JSON.parse(readFileSync(fleetJsonPath, 'utf-8'))
+  } catch {
+    // File missing or invalid JSON — start fresh
+    fleetJson = {}
+  }
+
+  try {
+    const currentSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8', cwd: ROOT }).trim()
+    fleetJson.goldenPathVersion = currentSha
+  } catch {
+    fleetJson.goldenPathVersion = fleetJson.goldenPathVersion ?? 'unknown'
+  }
+  fleetJson.lastSyncedAt = new Date().toISOString()
+  fleetJson.fleetPolicyVersion = policy.version ?? policy.fleetPolicyVersion ?? '1.2.0'
+
+  writeFileSync(fleetJsonPath, JSON.stringify(fleetJson, null, 2) + '\n', 'utf-8')
 }
 
 // ── Output ───────────────────────────────────────────────────────────

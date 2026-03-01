@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Fleet Changelog",
+  "description": "Machine-readable changelog for AI agents to understand golden-path evolution. Schema: ripple-fleet-changelog/v1. See ADR-022.",
+  "version": "1.0.0",
+  "schema": "ripple-fleet-changelog/v1",
+  "entries": [
+    {
+      "version": "1.2.0",
+      "date": "2026-03-01",
+      "summary": "Bidirectional fleet communication — downstream feedback, AI instruction governance, version tracking",
+      "changes": [
+        {
+          "type": "surface-added",
+          "id": "FLEET-SURF-010",
+          "description": "AI agent instructions now tracked as advisory governed surface"
+        },
+        {
+          "type": "surface-added",
+          "id": "FLEET-SURF-011",
+          "description": "Fleet governance tooling now synced as standards-required surface"
+        },
+        {
+          "type": "capability-added",
+          "name": "fleet-feedback",
+          "description": "Downstream repos can submit structured feedback to golden path via pnpm fleet:feedback"
+        },
+        {
+          "type": "capability-added",
+          "name": "fleet-changelog",
+          "description": "Machine-readable changelog for AI agent consumption"
+        },
+        {
+          "type": "capability-added",
+          "name": "fleet-version-tracking",
+          "description": ".fleet.json tracks golden-path version in downstream repos"
+        },
+        {
+          "type": "capability-added",
+          "name": "fleet-update-notify",
+          "description": "Proactive notifications on golden-path releases"
+        },
+        {
+          "type": "taxonomy-added",
+          "category": "FEEDBACK",
+          "codes": 4,
+          "description": "Error codes for fleet feedback submission and validation"
+        }
+      ],
+      "upgradeActions": [
+        "Run pnpm fleet:sync to receive fleet-feedback workflow and .fleet.json",
+        "Add FLEET_FEEDBACK_TOKEN secret (fine-grained PAT with issues:write on upstream)",
+        "Review FLEET-SURF-010 advisory drift for AI instruction freshness"
+      ]
+    }
+  ]
+}

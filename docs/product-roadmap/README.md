@@ -23,6 +23,7 @@ gantt
     RN-051 ADR: API boundary strategy       :done, rn051, 2026-02-28, 1d
     RN-046 oRPC migration + integration     :done, rn046, 2026-03-01, 1d
     RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
+    RN-052 Bidirectional fleet comms        :active, rn052, 2026-03-01, 21d
 
     section Next (6–12 weeks)
     RN-050 Web performance budgets          :rn050, 2026-04-13, 21d
@@ -65,6 +66,7 @@ across the fleet.
 1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045)
 2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
 3. **Quality depth** — performance budgets, live CMS validation
+4. **Bidirectional fleet governance** — downstream→upstream feedback, AI instruction sync, version tracking, update notifications (ADR-022, RN-052)
 
 ---
 
@@ -172,6 +174,44 @@ and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
   - Error taxonomy updated to v1.7.0 (55 codes across 15 categories)
 
 **Verification:** `pnpm verify` passes (9/9 gates); integration tests skipped gracefully without Docker; lint + typecheck pass; `readiness.json` auth blocker removed.
+
+---
+
+### RN-052: Bidirectional Fleet Communication (Downstream↔Upstream)
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium | **Priority:** P0
+**Source:** Tech-lead directive — fleet governance gap analysis | **Date:** 2026-03-01
+**ADR:** [ADR-022](../adr/022-bidirectional-fleet-communication.md)
+**AI-first benefit:** Enables AI agents to autonomously submit feedback upstream, detect and share local improvements, and receive proactive update notifications — closing the only communication gap in the fleet governance system. No existing platform (Backstage, Cruft, Copier, Nx) provides AI-assisted bidirectional sync.
+
+#### Upstream → Downstream Enhancements
+
+- [x] FLEET-SURF-010: AI agent instructions governed (advisory strategy) — 15 files now tracked
+- [x] FLEET-SURF-011: Fleet governance tooling governed (sync strategy)
+- [x] Fleet changelog (`docs/fleet-changelog.json`) — machine-readable for AI consumption
+- [x] Fleet feedback schema (`docs/fleet-feedback-schema.json`) — `ripple-fleet-feedback/v1`
+- [x] Error taxonomy expanded: FEEDBACK category, 4 codes (RPL-FEEDBACK-001–004)
+- [x] Fleet policy updated: 11 governed surfaces, feedbackPolicy section
+- [x] `.fleet.json` version tracking scaffolded into downstream repos (Cruft-inspired)
+- [x] Fleet update notification workflow (`fleet-update-notify.yml`)
+- [x] Fleet changelog generator script (`fleet-changelog.mjs`)
+
+#### Downstream → Upstream Feedback System
+
+- [x] `fleet-feedback.mjs` — downstream feedback generator (5 types, `--json`, `--dry-run`, `--submit`)
+- [x] `fleet-feedback-intake.mjs` — upstream triage engine (validate, label, deduplicate, priority-score)
+- [x] Fleet feedback intake workflow (`fleet-feedback-intake.yml`)
+- [x] Reusable fleet feedback submit workflow (`fleet-feedback-submit.yml`)
+- [x] Fleet feedback composite action (`.github/actions/fleet-feedback/action.yml`)
+
+#### Scaffold & Documentation
+
+- [x] Downstream scaffold: `.fleet.json`, `fleet-feedback.yml`, `fleet-update.yml` workflows
+- [x] Runbooks: `fleet-feedback-submit.json`, `fleet-feedback-intake.json`
+- [x] `downstream-workflows.md` updated with bidirectional communication sections
+- [x] Template config updated with new governed paths
+
+**Verification:** `pnpm fleet:feedback -- --type=feature-request --title="test" --dry-run` produces valid JSON; `pnpm verify` passes; 11 governed surfaces in fleet policy.
 
 ---
 
@@ -329,7 +369,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-47 items completed (RN-001 through RN-051, excluding RN-017/025/028).
+47 items completed (RN-001 through RN-051, excluding RN-017/025/028/052).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)

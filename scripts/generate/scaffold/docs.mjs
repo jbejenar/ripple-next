@@ -213,6 +213,119 @@ replacement.
     opts
   )
 
+  // ── docs/runbooks/fleet-feedback-submit.json ─────────────────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'runbooks', 'fleet-feedback-submit.json'),
+    JSON.stringify(
+      {
+        name: 'fleet-feedback-submit',
+        description:
+          'Submit fleet feedback to the golden-path upstream repository. Supports 5 feedback types. See ADR-022.',
+        args: {
+          type: 'Feedback type (feature-request, bug-report, policy-exception, improvement-share, pain-point)',
+          title: 'Short descriptive title',
+          description: 'Detailed description',
+        },
+        preconditions: [
+          {
+            description: 'Fleet feedback script exists',
+            command: 'test -f scripts/fleet-feedback.mjs',
+            expect: 'exit 0',
+          },
+          {
+            description: '.fleet.json exists',
+            command: 'test -f .fleet.json',
+            expect: 'exit 0',
+          },
+        ],
+        steps: [
+          {
+            order: 1,
+            command:
+              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --dry-run --json',
+            description: 'Preview the feedback payload (dry run)',
+          },
+          {
+            order: 2,
+            command:
+              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --submit',
+            description:
+              'Submit feedback to the upstream golden-path repository',
+          },
+        ],
+        validation: [],
+        related: [
+          'docs/fleet-feedback-schema.json',
+          'docs/adr/022-bidirectional-fleet-communication.md',
+          'scripts/fleet-feedback.mjs',
+        ],
+      },
+      null,
+      2
+    ) + '\n',
+    targetDir,
+    opts
+  )
+
+  // ── docs/runbooks/fleet-drift-check.json ─────────────────────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'runbooks', 'fleet-drift-check.json'),
+    JSON.stringify(
+      {
+        name: 'fleet-drift-check',
+        description:
+          'Check this repository for drift against the golden-path source. Reports which governed surfaces have diverged.',
+        args: {},
+        preconditions: [
+          {
+            description: 'Fleet drift script exists',
+            command: 'test -f scripts/check-fleet-drift.mjs',
+            expect: 'exit 0',
+          },
+          {
+            description: '.fleet.json exists',
+            command: 'test -f .fleet.json',
+            expect: 'exit 0',
+          },
+        ],
+        steps: [
+          {
+            order: 1,
+            command: 'node scripts/check-fleet-drift.mjs --json',
+            description: 'Run fleet drift detection and output JSON report',
+          },
+          {
+            order: 2,
+            command:
+              'node -e "const r=JSON.parse(require(\'fs\').readFileSync(\'fleet-drift-report.json\',\'utf-8\'));console.log(\'Compliance:\',r.complianceScore+\'%\')"',
+            description: 'Display compliance score from report',
+          },
+        ],
+        validation: [
+          {
+            description: 'No security-critical drift',
+            command:
+              'node -e "const r=JSON.parse(require(\'fs\').readFileSync(\'fleet-drift-report.json\',\'utf-8\'));const c=r.findings.filter(f=>f.severity===\'security-critical\'&&f.status!==\'compliant\');process.exit(c.length)"',
+            expect: 'exit 0',
+          },
+        ],
+        postActions: [
+          'If drift detected, run fleet-sync to apply updates',
+          'For local improvements, submit improvement-share feedback',
+        ],
+        related: [
+          '.fleet.json',
+          'scripts/check-fleet-drift.mjs',
+          'docs/runbooks/fleet-feedback-submit.json',
+        ],
+      },
+      null,
+      2
+    ) + '\n',
+    targetDir,
+    opts
+  )
+
   // ── docs/product-roadmap/README.md ────────────────────────────────
   writeFileExternal(
     join(targetDir, 'docs', 'product-roadmap', 'README.md'),

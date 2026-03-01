@@ -1,0 +1,73 @@
+name: Fleet Feedback
+description: Submit fleet feedback to the golden-path upstream repository (ADR-022, RN-052)
+
+inputs:
+  feedback-type:
+    required: true
+    description: 'Feedback type: feature-request, bug-report, policy-exception, improvement-share, pain-point'
+  surface-id:
+    required: false
+    description: 'Governed surface ID (e.g. FLEET-SURF-001)'
+    default: ''
+  title:
+    required: true
+    description: 'Feedback title'
+  description:
+    required: true
+    description: 'Feedback description'
+  upstream-repo:
+    required: false
+    description: 'Upstream golden-path repository'
+    default: 'org/ripple-next'
+  feedback-token:
+    required: true
+    description: 'Fine-grained PAT with issues:write scope on upstream repo'
+
+outputs:
+  issue-url:
+    description: 'URL of the created upstream issue'
+    value: ${{ steps.submit.outputs.issue-url }}
+  feedback-id:
+    description: 'Unique feedback identifier'
+    value: ${{ steps.submit.outputs.feedback-id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Generate feedback payload
+      id: generate
+      shell: bash
+      env:
+        INPUT_TYPE: ${{ inputs.feedback-type }}
+        INPUT_SURFACE: ${{ inputs.surface-id }}
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_DESCRIPTION: ${{ inputs.description }}
+      run: |
+        ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --json)
+        if [ -n "$INPUT_SURFACE" ]; then
+          ARGS+=(--surface="$INPUT_SURFACE")
+        fi
+        node scripts/fleet-feedback.mjs "${ARGS[@]}" > /tmp/fleet-feedback-payload.json
+
+    - name: Submit feedback
+      id: submit
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.feedback-token }}
+        UPSTREAM_REPO: ${{ inputs.upstream-repo }}
+      run: |
+        PAYLOAD=$(cat /tmp/fleet-feedback-payload.json)
+        TITLE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).title))")
+        TYPE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).feedbackType))")
+
+        BODY=$(printf '<!-- fleet-feedback-begin -->\n%s\n<!-- fleet-feedback-end -->' "$PAYLOAD")
+
+        ISSUE_URL=$(gh issue create \
+          --repo "$UPSTREAM_REPO" \
+          --title "[fleet-feedback:${TYPE}] ${TITLE}" \
+          --body "$BODY" \
+          --label "fleet:feedback,fleet:feedback:${TYPE}")
+
+        echo "issue-url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
+        FEEDBACK_ID=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).metadata?.feedbackId||'unknown'))")
+        echo "feedback-id=$FEEDBACK_ID" >> "$GITHUB_OUTPUT"

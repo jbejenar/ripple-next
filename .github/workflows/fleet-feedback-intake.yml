@@ -1,0 +1,74 @@
+name: Fleet Feedback Intake
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  intake:
+    if: contains(github.event.issue.body, 'fleet-feedback-begin')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Extract feedback payload
+        id: extract
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          node -e "
+            const body = process.env.ISSUE_BODY;
+            const begin = '<!-- fleet-feedback-begin -->';
+            const end = '<!-- fleet-feedback-end -->';
+            const beginIdx = body.indexOf(begin);
+            const endIdx = body.indexOf(end);
+            if (beginIdx === -1 || endIdx === -1) { process.exit(1); }
+            const payload = body.slice(beginIdx + begin.length, endIdx).trim();
+            JSON.parse(payload); // validate JSON
+            process.stdout.write(payload);
+          " > /tmp/fleet-feedback-payload.json
+
+      - name: Run intake triage
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          node scripts/fleet-feedback-intake.mjs \
+            --issue-file=/tmp/fleet-feedback-payload.json \
+            --issue-number="$ISSUE_NUMBER" \
+            --json > triage-result.json
+          cat triage-result.json
+
+      - name: Apply labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          LABELS=$(node -e "const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));console.log(r.labels.join(','))")
+          gh issue edit "$ISSUE_NUMBER" --add-label "$LABELS"
+
+      - name: Post triage comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          COMMENT=$(node -e "
+            const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));
+            let c='## Fleet Feedback Triage\n\n';
+            c+='| Field | Value |\n|-------|-------|\n';
+            c+='| Type | \`'+r.feedbackType+'\` |\n';
+            c+='| Priority | '+r.priorityScore+'/10 |\n';
+            c+='| Surface | '+(r.governedSurface||'N/A')+' |\n';
+            c+='| Duplicate | '+(r.duplicate?'Yes (#'+r.duplicateOf+')':'No')+' |\n\n';
+            if(r.feedbackType==='improvement-share'&&r.patchApplicable){
+              c+='Patch applies cleanly — draft PR can be created.\n\n';
+            }
+            c+='---\n*Triaged automatically by fleet-feedback-intake (ADR-022)*';
+            console.log(c);
+          ")
+          gh issue comment "$ISSUE_NUMBER" --body "$COMMENT"

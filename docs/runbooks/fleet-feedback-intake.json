@@ -1,0 +1,56 @@
+{
+  "name": "fleet-feedback-intake",
+  "description": "Process incoming fleet feedback issues from downstream repos. Validates, labels, deduplicates, and priority-scores feedback. For improvement-share type, auto-creates draft PRs. See ADR-022.",
+  "args": {
+    "issue": "GitHub issue number or URL containing fleet feedback"
+  },
+  "preconditions": [
+    {
+      "description": "Fleet feedback intake script exists",
+      "command": "test -f scripts/fleet-feedback-intake.mjs",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Fleet feedback schema exists",
+      "command": "test -f docs/fleet-feedback-schema.json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Fleet policy manifest exists",
+      "command": "test -f docs/fleet-policy.json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "gh issue view ${ISSUE} --json body | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const b=JSON.parse(d).body;const m=b.match(/<!-- fleet-feedback-begin -->([\\s\\S]*?)<!-- fleet-feedback-end -->/);console.log(m?m[1].trim():'No feedback payload found')})\"",
+      "description": "Extract the fleet feedback JSON payload from the issue body"
+    },
+    {
+      "order": 2,
+      "command": "gh issue view ${ISSUE} --json body | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const b=JSON.parse(d).body;const m=b.match(/<!-- fleet-feedback-begin -->([\\s\\S]*?)<!-- fleet-feedback-end -->/);if(m)console.log(m[1].trim())})\" | node scripts/fleet-feedback-intake.mjs --json",
+      "description": "Run the intake triage engine on the extracted payload"
+    },
+    {
+      "order": 3,
+      "command": "echo 'Review the triage result and apply labels/comments to the issue'",
+      "description": "Review triage output: labels, priority score, duplicate detection, and draft PR (if improvement-share)"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Intake produces valid triage result",
+      "command": "echo '{\"schema\":\"ripple-fleet-feedback/v1\",\"feedbackType\":\"feature-request\",\"title\":\"test\",\"description\":\"test\"}' | node scripts/fleet-feedback-intake.mjs --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const r=JSON.parse(d);console.log(r.schema==='ripple-fleet-feedback-triage/v1'?'valid':'invalid')})\"",
+      "expect": "valid"
+    }
+  ],
+  "coverageRequirements": {},
+  "related": [
+    "docs/fleet-feedback-schema.json",
+    "docs/fleet-policy.json",
+    "docs/adr/022-bidirectional-fleet-communication.md",
+    "scripts/fleet-feedback-intake.mjs",
+    ".github/workflows/fleet-feedback-intake.yml"
+  ]
+}

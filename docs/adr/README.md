@@ -29,6 +29,7 @@
 | [019](./019-fleet-governance.md) | Fleet Governance — Template Drift Detection and Sync Automation | Accepted | Process |
 | [020](./020-context-file-minimalism.md) | Context File Minimalism — Evidence-Based Agent Doc Trimming | Accepted | Process |
 | [021](./021-api-contract-strategy.md) | API Contract Strategy — oRPC, OpenAPI-First, Public/Internal Classification | Accepted | API |
+| [022](./022-bidirectional-fleet-communication.md) | Bidirectional Fleet Communication — Feedback, Version Tracking, Notifications | Accepted | Process |
 
 ## Categories
 
@@ -70,10 +71,11 @@
 - **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
 - **ADR-019** — Fleet governance: template drift detection, sync PRs, compliance reporting
 - **ADR-020** — Context file minimalism: trim CLAUDE.md/AGENTS.md based on empirical evidence (arXiv:2602.11988)
+- **ADR-022** — Bidirectional fleet communication: downstream feedback, version tracking, update notifications
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `021`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `022`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that

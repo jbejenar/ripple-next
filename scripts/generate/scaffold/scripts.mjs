@@ -24,6 +24,10 @@ export function scaffoldScripts(targetDir, config, options = {}) {
   )
   copyFileFromSource('scripts/runbook.mjs', 'scripts/runbook.mjs', targetDir, opts)
 
+  // ── Fleet governance scripts ────────────────────────────────────────
+  copyFileFromSource('scripts/fleet-feedback.mjs', 'scripts/fleet-feedback.mjs', targetDir, opts)
+  copyFileFromSource('scripts/check-fleet-drift.mjs', 'scripts/check-fleet-drift.mjs', targetDir, opts)
+
   // ── scripts/verify.mjs (templated — simplified for downstream) ────
   writeFileExternal(
     join(targetDir, 'scripts', 'verify.mjs'),
@@ -156,18 +160,19 @@ fi
  * Usage:
  *   pnpm validate:env
  */
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const envPath = resolve(ROOT, '.env')
 
-if (!existsSync(envPath)) {
+let env
+try {
+  env = readFileSync(envPath, 'utf-8')
+} catch {
   console.error('Error: .env file not found. Copy .env.example to .env and fill in values.')
   process.exit(1)
 }
-
-const env = readFileSync(envPath, 'utf-8')
 const vars = {}
 for (const line of env.split('\\n')) {
   const trimmed = line.trim()
