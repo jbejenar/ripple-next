@@ -25,6 +25,9 @@ for downstream repos. For implementation details (scaffolding code, folder
 layouts, code examples, quality gates, deployment), see the
 **[Consumer App Guide](./consumer-app-guide.md)**.
 
+For ready-to-paste AI agent prompts (greenfield, migration, add-feature),
+see the **[AI Adoption Prompts](./ai-adoption-prompts.md)**.
+
 ---
 
 ## Quick Start
@@ -381,6 +384,7 @@ See [`fleet-policy.json`](./fleet-policy.json) and [Downstream Workflows](./down
 
 ## Related Documentation
 
+- [AI Adoption Prompts](./ai-adoption-prompts.md) — copy-paste prompts for AI agents (greenfield, migration, add-feature)
 - [Platform Capabilities](./platform-capabilities.md) — what ripple-next provides
 - [Downstream Workflows](./downstream-workflows.md) — CI consumption and fleet operations
 - [Consumer App Guide](./consumer-app-guide.md) — consumer app setup (frontend, backend, full-stack)

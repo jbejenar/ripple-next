@@ -5,6 +5,8 @@ Build apps using `@ripple-next/*` packages — frontend, backend, or full-stack.
 > **Contributing to the ripple-next monorepo?** See the [Platform Developer Guide](./platform-developer-guide.md).
 >
 > **Looking for mandatory documentation standards?** See the [Downstream Adoption Guide](./downstream-adoption-guide.md).
+>
+> **Want an AI agent to do this for you?** See the [AI Adoption Prompts](./ai-adoption-prompts.md).
 
 ---
 
@@ -695,6 +697,7 @@ greenfield and legacy migration paths, provider pattern adoption, and fleet gove
 
 - [Platform Developer Guide](./platform-developer-guide.md) — contributing to the ripple-next monorepo
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — mandatory documentation standards for downstream repos
+- [AI Adoption Prompts](./ai-adoption-prompts.md) — copy-paste prompts for AI agents
 - [Platform Capabilities](./platform-capabilities.md) — inventory of packages, workflows, and tools
 - [Provider Pattern](./provider-pattern.md) — core infrastructure abstraction
 - [API Contracts](./api-contracts.md) — oRPC and REST endpoints

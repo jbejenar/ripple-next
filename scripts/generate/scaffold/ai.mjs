@@ -112,6 +112,10 @@ This project treats AI agents as first-class developers. Three pillars:
 2. **Error Taxonomy** — Machine-parseable error codes with remediation paths
 3. **Code Generators** — Scaffolding commands for common patterns
 
+**AI adoption prompts:** See the upstream
+[AI Adoption Prompts](https://github.com/jbejenar/ripple-next/blob/main/docs/ai-adoption-prompts.md)
+for ready-to-paste prompt templates (greenfield adoption, legacy migration, add feature).
+
 Available generators:
 \`\`\`bash
 pnpm generate:component <name> [--dry-run]

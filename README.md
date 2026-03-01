@@ -111,6 +111,7 @@ graph LR
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
 | [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
 | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Mandatory documentation standards for downstream repos |
+| [AI Adoption Prompts](docs/ai-adoption-prompts.md) | Copy-paste prompts for AI agents (greenfield, migration, add-feature) |
 | [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
 | [Runbooks](docs/runbooks/)                         | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
 | [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
