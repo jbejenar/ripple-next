@@ -2,6 +2,10 @@
 
 > How to use Ripple Next's reusable workflows, composite actions, and fleet governance in downstream repositories.
 
+> **Looking for what to build?** See the [Downstream Adoption Guide](./downstream-adoption-guide.md)
+> for documentation standards, adoption paths, and migration methodology.
+> This document covers CI consumption and fleet governance operations only.
+
 ## Fleet Management Quick Reference
 
 | Task | Command |
@@ -671,3 +675,5 @@ Run `pnpm runbook fleet-feedback-submit` for the full step-by-step procedure.
 - [Bidirectional Fleet Communication (ADR-022)](./adr/022-bidirectional-fleet-communication.md)
 - [Release Verification (RN-027)](./release-verification.md)
 - [Code Generation Templates (RN-041)](./product-roadmap/ARCHIVE.md#rn-041-code-generation-templates)
+- [Downstream Adoption Guide](./downstream-adoption-guide.md)
+- [Platform Capabilities](./platform-capabilities.md)

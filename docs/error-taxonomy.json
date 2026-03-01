@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 65 classified error codes across 18 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, docs/performance.md, and docs/conformance-rubric.json.",
-  "version": "1.11.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 68 classified error codes across 19 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, ADR-023, docs/accessibility.md, docs/session-observability.md, docs/performance.md, and docs/conformance-rubric.json.",
+  "version": "1.12.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -27,7 +27,8 @@
     "AUTH": "OIDC/OAuth identity provider failures (RN-045)",
     "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)",
     "PERF": "Web performance budget violations — Core Web Vitals (RN-050)",
-    "CONFORM": "Golden-path conformance scoring failures (RN-028)"
+    "CONFORM": "Golden-path conformance scoring failures (RN-028)",
+    "ADOPT": "Downstream adoption and documentation governance failures (ADR-023)"
   },
   "errors": [
     {
@@ -890,6 +891,50 @@
         "Use pnpm generate:scaffold to bootstrap missing golden-path files"
       ],
       "automatable": false
+    },
+    {
+      "code": "RPL-ADOPT-001",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Missing downstream adoption documentation — product roadmap, architecture, or API contracts not found or empty",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm generate:scaffold to bootstrap documentation templates",
+        "See docs/downstream-adoption-guide.md for required documentation",
+        "Minimum: product roadmap with Now/Next/Later structure, architecture overview",
+        "This is advisory and does not block CI"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-ADOPT-002",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Product roadmap is placeholder or empty — no structured roadmap items found",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Replace scaffold placeholder checkboxes with structured roadmap items",
+        "Follow the Now/Next/Later timeline structure",
+        "Use a numbered prefix convention (e.g., MY-001) for items",
+        "Include: status, priority, dependencies, definition of done per item",
+        "See docs/downstream-adoption-guide.md for roadmap template"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ADOPT-003",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Architecture documentation missing — no system overview, stack table, or architecture decisions documented",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Create docs/architecture.md with system overview and stack table",
+        "Document which @ripple-next/* packages are consumed and why",
+        "Document any deviations from the golden-path architecture",
+        "Add at least one ADR for the most significant architecture decision",
+        "See docs/downstream-adoption-guide.md for architecture doc template"
+      ],
+      "automatable": true
     }
   ]
 }

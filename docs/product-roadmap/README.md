@@ -8,7 +8,7 @@
 > with Now/Next/Later planning.
 >
 > 54 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 3 in Done below).
-> 6 items active. 5 items parked.
+> 7 items active. 5 items parked.
 
 ---
 
@@ -26,6 +26,7 @@ gantt
     RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
 
     section Next (6–12 weeks)
+    RN-061 Downstream adoption standards   :active, rn061, 2026-03-01, 7d
     RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
     RN-058 Licensing resolution ADR        :rn058, 2026-03-10, 7d
     RN-054 Downstream proof-of-life        :rn054, 2026-03-17, 14d
@@ -50,7 +51,7 @@ gantt
 | Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc = engines.node = 22.22.0) + pnpm (packageManager) with doctor guards (RN-055 done) | — |
 | Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics | — |
 | Automated remediation | 3/5 | `pnpm doctor --json`, conformance CLI, error taxonomy | `conform --fix` not implemented ([RN-060](#rn-060-conformance-cli-auto-remediation-prs)); fleet sync untested |
-| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) | — |
+| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)). Downstream adoption guide and documentation standards ([RN-061](#rn-061-downstream-adoption-documentation-standards)) | — |
 
 **Overall: 35/40** (interim; gaps tracked as active roadmap items)
 
@@ -74,7 +75,7 @@ per-subsystem detail.
 ## Themes
 
 1. **Honesty & trust** — ~~Fix self-assessed scores, label subsystem maturity correctly, make CI gates deterministic~~ (RN-053 done, RN-055 done, RN-056 done). Remaining: automated evidence generation (RN-057)
-2. **Production credibility** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054)
+2. **Production credibility** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054). Downstream documentation standards ensure agents produce conformant repos (RN-061)
 3. **Quality depth** — Live CMS validation, runtime monitoring (RN-017, RN-059)
 4. **Fleet automation** — Auto-remediation for downstream repos once fleet exists (RN-060)
 
@@ -126,6 +127,45 @@ per-subsystem detail.
 ## Next (6–12 weeks)
 
 > Resolve blockers for production credibility. Dependencies from Now items understood.
+
+### RN-061: Downstream Adoption Documentation Standards
+
+**Tier:** 1 | **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** Low
+**Source:** Copilot agent failure — built standalone project, ignored all documentation and ripple-next conventions
+**AI-first benefit:** Deterministic adoption path ensures any agent can scaffold, document, and govern a downstream repo end-to-end.
+**Status:** In Progress
+**Dependencies:** None
+
+Fills the gap that caused a Copilot agent to produce zero documentation when migrating
+Mule 3 APIs. Establishes what every downstream repo must produce: product roadmap,
+architecture documentation, API contracts, ADRs, readiness manifest, README, and CLAUDE.md.
+Provides two adoption paths (greenfield and legacy migration) with machine-readable runbooks.
+
+#### Definition of Done
+
+- [x] ADR-023 documenting downstream adoption standards decision
+- [x] Platform capabilities catalog (`docs/platform-capabilities.md`)
+- [x] Downstream adoption guide (`docs/downstream-adoption-guide.md`) with 7 documentation categories
+- [x] Adoption runbook (`docs/runbooks/adopt-ripple-next.json`) — greenfield path
+- [x] Migration runbook (`docs/runbooks/migrate-legacy-api.json`) — legacy path
+- [x] Fleet policy surfaces FLEET-SURF-012 (downstream docs) and FLEET-SURF-013 (API contracts)
+- [x] Conformance rubric `downstream-docs` category (3 checks, 10 points)
+- [x] Error taxonomy ADOPT category (RPL-ADOPT-001 through RPL-ADOPT-003)
+- [x] Scaffold generator enhanced: Now/Next/Later roadmap, architecture template, API contracts template
+- [x] All existing docs updated with cross-references (architecture, developer guide, downstream workflows, AGENTS.md)
+- [x] Readiness manifest updated for fleet-governance subsystem
+- [ ] `pnpm verify` passes cleanly
+
+#### Verification
+
+- `pnpm conform` includes `downstream-docs` category in scoring
+- Scaffold generates Now/Next/Later roadmap, architecture doc, and API contracts doc
+- Downstream adoption guide referenced from AGENTS.md routing table
+- Fleet policy v1.3.0 includes FLEET-SURF-012 and FLEET-SURF-013
+
+**Links:** [ADR-023](../adr/023-downstream-adoption-standards.md), [Adoption Guide](../downstream-adoption-guide.md), [Platform Capabilities](../platform-capabilities.md)
+
+---
 
 ### RN-057: Agent-Friction Scorecard — Evidence-Based Generation
 
@@ -319,6 +359,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | ~~CI gates suppressed (`\|\| true`)~~ | Resolved: RN-053 done — gates classified as blocking or advisory in `docs/ci-gates.md` |
 | Agent-Friction Scorecard self-assessed | [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) in Next |
 | Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first real publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
+| AI agents ignore downstream adoption guide | CLAUDE.md routing, conformance scoring, advisory fleet surfaces ([RN-061](#rn-061-downstream-adoption-documentation-standards)) |
 
 ---
 
@@ -390,4 +431,4 @@ _No open suggestions._
 54 items completed (RN-001 through RN-056, excluding RN-017 and RN-054).
 51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056 in Done section above.
 
-Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md)
+Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Platform Capabilities](../platform-capabilities.md)

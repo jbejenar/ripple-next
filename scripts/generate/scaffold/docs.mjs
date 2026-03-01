@@ -2,7 +2,8 @@
  * Scaffold: Documentation structure.
  *
  * Generates starter readiness.json, error-taxonomy.json, ADR index,
- * first ADR, runbook template, and product roadmap template.
+ * first ADR, runbook templates, product roadmap (Now/Next/Later),
+ * architecture doc, API contracts doc, and adoption guide reference.
  */
 import { join } from 'node:path'
 import { writeFileExternal } from '../lib.mjs'
@@ -327,9 +328,21 @@ replacement.
   )
 
   // ── docs/product-roadmap/README.md ────────────────────────────────
+  // Derive a prefix from the project name (e.g., my-gov-site → MGS)
+  const prefix = name
+    .split('-')
+    .map((w) => w[0]?.toUpperCase() || '')
+    .join('')
+    .slice(0, 4) || 'PRJ'
+  const today = new Date().toISOString().slice(0, 10)
+
   writeFileExternal(
     join(targetDir, 'docs', 'product-roadmap', 'README.md'),
     `# Product Roadmap — ${name}
+
+> Version 0.1.0 | Last updated: ${today}
+>
+> **Structure:** Now / Next / Later — see [downstream adoption guide](../downstream-adoption-guide.md) for requirements.
 
 ## Overview
 
@@ -339,31 +352,245 @@ ${description}.
 
 | Status | Meaning |
 |--------|---------|
-| Planned | Not yet started |
-| In Progress | Active development |
 | Done | Completed and verified |
+| In Progress | Active development |
+| Planned | Scheduled, not yet started |
 | Blocked | Waiting on external dependency |
-
-## Roadmap Items
-
-### Foundation
-
-- [ ] Project scaffold and tooling setup
-- [ ] CI/CD pipeline configuration
-- [ ] Core package architecture
-- [ ] Documentation framework
-
-### Phase 1
-
-- [ ] TODO: Add your first phase items here
-
-### Phase 2
-
-- [ ] TODO: Add your second phase items here
 
 ---
 
-*Updated by AI agents as part of the documentation maintenance directive.*
+## Now (Current Sprint)
+
+| # | Item | Status | Priority | Impact | Effort | Risk |
+|---|------|--------|----------|--------|--------|------|
+| ${prefix}-001 | Project Setup and Scaffold | In Progress | Critical | High | Low | Low |
+
+### ${prefix}-001: Project Setup and Scaffold
+
+**Status:** In Progress | **Priority:** Critical | **Impact:** High | **Effort:** Low | **Risk:** Low
+
+Scaffold the downstream repo with ripple-next conventions, configure tooling,
+and establish the documentation framework.
+
+**Definition of Done:**
+- [ ] Repository scaffolded with \`pnpm generate:scaffold\`
+- [ ] CI/CD pipeline configured and passing
+- [ ] \`.env.example\` created with all required variables
+- [ ] CLAUDE.md and AGENTS.md reviewed and customised
+- [ ] \`pnpm verify\` passes cleanly
+
+---
+
+## Next (1–3 Sprints)
+
+| # | Item | Status | Priority | Impact | Effort | Risk |
+|---|------|--------|----------|--------|--------|------|
+| ${prefix}-002 | TODO: First Feature | Planned | High | High | Medium | Medium |
+
+### ${prefix}-002: TODO: First Feature
+
+**Status:** Planned | **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+
+TODO: Describe the first feature to be implemented after scaffold setup.
+
+**Definition of Done:**
+- [ ] TODO: Add acceptance criteria
+
+---
+
+## Later (3+ Sprints / Backlog)
+
+| # | Item | Status | Priority |
+|---|------|--------|----------|
+| ${prefix}-003 | TODO: Future capability | Planned | Medium |
+
+---
+
+## Risks & Unknowns
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|-----------|--------|------------|
+| TODO: Identify project risks | Medium | High | TODO: Add mitigation strategy |
+
+## Parked (Considered, Not Scheduled)
+
+- None yet
+
+---
+
+*Maintained by AI agents as part of the documentation governance directive (ADR-023).*
+*Use the [downstream adoption guide](../downstream-adoption-guide.md) for documentation standards.*
+`,
+    targetDir,
+    opts
+  )
+
+  // ── docs/architecture.md ────────────────────────────────────────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'architecture.md'),
+    `# Architecture — ${name}
+
+> Last updated: ${today}
+>
+> See [downstream adoption guide](./downstream-adoption-guide.md) for documentation requirements.
+
+## System Overview
+
+\`\`\`mermaid
+graph TD
+    subgraph "Client"
+        A[Browser / Mobile]
+    end
+
+    subgraph "${name}"
+        B[Nuxt 3 Application]
+        C[API Routes / oRPC]
+        D[ripple-next Providers]
+    end
+
+    subgraph "External Services"
+        E[Auth Provider]
+        F[Database]
+        G[CMS]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    D --> F
+    D --> G
+\`\`\`
+
+> **Edit this diagram** to reflect your actual system topology.
+
+## Stack
+
+| Layer | Technology | ripple-next Package | ADR |
+|-------|-----------|---------------------|-----|
+| Framework | Nuxt 3 | — | — |
+| UI Components | Vue 3 | \`@ripple-next/ui\` | — |
+| API Layer | oRPC | \`@ripple-next/api\` | — |
+| Auth | OIDC | \`@ripple-next/auth\` | ADR-001 |
+| Database | Drizzle ORM | \`@ripple-next/db\` | — |
+| CMS | Decoupled | \`@ripple-next/cms\` | — |
+| Validation | Zod | \`@ripple-next/validation\` | — |
+| Infrastructure | SST v3 (Pulumi) | — | — |
+| Compute | Lambda (default) | — | — |
+
+> **Update this table** with your actual stack choices and link to relevant ADRs.
+
+## Provider Pattern
+
+Every infrastructure concern uses the [provider pattern](https://github.com/TODO/ripple-next/blob/main/docs/provider-pattern.md).
+Tests always use memory/mock providers — never cloud services.
+
+| Concern | Test Provider | Local Provider | Production Provider |
+|---------|--------------|----------------|---------------------|
+| Auth | MockAuthProvider | MockAuthProvider | OidcAuthProvider |
+| Database | MemoryDbProvider | SqliteProvider | PostgresProvider |
+| TODO | TODO | TODO | TODO |
+
+> **Fill in** providers for each infrastructure concern in your project.
+
+## Compute Decisions
+
+| Route/Function | Compute | Rationale |
+|---------------|---------|-----------|
+| API routes | Lambda | Default — stateless request/response |
+| TODO | TODO | TODO |
+
+## Deviations from Golden Path
+
+| Area | Golden Path | Our Choice | Rationale | ADR |
+|------|-------------|------------|-----------|-----|
+| None yet | — | — | — | — |
+
+> Document any deviations from ripple-next conventions here with an ADR reference.
+
+## Related Documentation
+
+- [Product Roadmap](./product-roadmap/README.md)
+- [API Contracts](./api-contracts.md)
+- [Readiness Manifest](./readiness.json)
+- [ADR Index](./adr/README.md)
+- [Downstream Adoption Guide](./downstream-adoption-guide.md)
+- [Platform Capabilities](https://github.com/TODO/ripple-next/blob/main/docs/platform-capabilities.md)
+`,
+    targetDir,
+    opts
+  )
+
+  // ── docs/api-contracts.md ───────────────────────────────────────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'api-contracts.md'),
+    `# API Contracts — ${name}
+
+> Last updated: ${today}
+>
+> See [downstream adoption guide](./downstream-adoption-guide.md) for documentation requirements.
+> See [ADR-021: API Contract Strategy](https://github.com/TODO/ripple-next/blob/main/docs/adr/021-api-contract-strategy.md) for conventions.
+
+## Endpoint Inventory
+
+| Procedure | Method | Path | Visibility | Auth | Description |
+|-----------|--------|------|-----------|------|-------------|
+| \`health.check\` | GET | \`/api/health\` | Public | None | Health check endpoint |
+| TODO | TODO | TODO | TODO | TODO | TODO: Add your endpoints |
+
+> **Update this table** with every API endpoint in your project.
+
+## OpenAPI Pipeline
+
+\`\`\`mermaid
+graph LR
+    A[oRPC Router] --> B[pnpm generate:openapi]
+    B --> C[docs/api/openapi.json]
+    C --> D[CI: Check for breaking changes]
+    D --> E[PR Comment: Contract diff]
+\`\`\`
+
+If your project uses oRPC, run \`pnpm generate:openapi\` to produce the OpenAPI spec
+at \`docs/api/openapi.json\`.
+
+## Contract Testing
+
+- All API endpoints must have contract tests verifying request/response schemas
+- Use Zod schemas from \`@ripple-next/validation\` or your project's schema directory
+- Tests use memory providers — never call external services
+
+## Breaking Change Policy
+
+1. **No unannounced breaking changes** — all contract changes must be documented
+2. **Deprecation window** — deprecated endpoints must remain functional for at least one release
+3. **Migration notes** — breaking changes require an entry in \`docs/migration-notes.md\`
+
+## Related Documentation
+
+- [Architecture](./architecture.md)
+- [Product Roadmap](./product-roadmap/README.md)
+- [Readiness Manifest](./readiness.json)
+- [Downstream Adoption Guide](./downstream-adoption-guide.md)
+`,
+    targetDir,
+    opts
+  )
+
+  // ── docs/downstream-adoption-guide.md (link to upstream) ───────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'downstream-adoption-guide.md'),
+    `# Downstream Adoption Guide
+
+> This is a local reference. The authoritative version lives in the
+> [ripple-next upstream repository](https://github.com/TODO/ripple-next/blob/main/docs/downstream-adoption-guide.md).
+
+See the upstream guide for:
+- 7 mandatory documentation categories
+- Greenfield and legacy migration adoption paths
+- Provider pattern adoption
+- Conformance requirements and fleet governance
+
+Run \`pnpm conform\` to check your documentation compliance score.
 `,
     targetDir,
     opts

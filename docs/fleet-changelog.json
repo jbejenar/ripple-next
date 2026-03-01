@@ -6,6 +6,65 @@
   "schema": "ripple-fleet-changelog/v1",
   "entries": [
     {
+      "version": "1.3.0",
+      "date": "2026-03-01",
+      "summary": "Downstream adoption standards — documentation governance, adoption guide, migration runbook, conformance checks (ADR-023)",
+      "changes": [
+        {
+          "type": "surface-added",
+          "id": "FLEET-SURF-012",
+          "description": "Downstream documentation quality now tracked as advisory governed surface (product roadmap, architecture, readiness content)"
+        },
+        {
+          "type": "surface-added",
+          "id": "FLEET-SURF-013",
+          "description": "API contract documentation now tracked as advisory governed surface"
+        },
+        {
+          "type": "capability-added",
+          "name": "downstream-adoption-guide",
+          "description": "Comprehensive guide for downstream repos: 7 documentation categories, greenfield and migration paths"
+        },
+        {
+          "type": "capability-added",
+          "name": "platform-capabilities",
+          "description": "Authoritative inventory of what ripple-next provides to downstream consumers"
+        },
+        {
+          "type": "capability-added",
+          "name": "adopt-ripple-next-runbook",
+          "description": "Machine-readable runbook for full downstream adoption flow"
+        },
+        {
+          "type": "capability-added",
+          "name": "migrate-legacy-api-runbook",
+          "description": "Machine-readable runbook for legacy API migration methodology"
+        },
+        {
+          "type": "conformance-added",
+          "category": "downstream-docs",
+          "checks": 3,
+          "description": "Conformance checks for product roadmap, architecture doc, and API contracts"
+        },
+        {
+          "type": "taxonomy-added",
+          "category": "ADOPT",
+          "codes": 3,
+          "description": "Error codes for downstream adoption documentation governance (RPL-ADOPT-001 through RPL-ADOPT-003)"
+        },
+        {
+          "type": "scaffold-enhanced",
+          "description": "Product roadmap template now uses Now/Next/Later structure. New architecture and API contract templates added."
+        }
+      ],
+      "upgradeActions": [
+        "Run pnpm fleet:sync to receive updated documentation templates",
+        "Review FLEET-SURF-012 advisory drift report for documentation gaps",
+        "Follow docs/downstream-adoption-guide.md to complete missing documentation",
+        "Run pnpm conform to check new downstream-docs conformance category"
+      ]
+    },
+    {
       "version": "1.2.0",
       "date": "2026-03-01",
       "summary": "Bidirectional fleet communication — downstream feedback, AI instruction governance, version tracking",

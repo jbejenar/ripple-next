@@ -1,0 +1,122 @@
+{
+  "name": "adopt-ripple-next",
+  "description": "Full adoption flow for building a downstream repo on the ripple-next golden path. Covers scaffold, configure, document, verify, and deploy. See ADR-023 and docs/downstream-adoption-guide.md.",
+  "args": {
+    "TARGET_DIR": "Absolute path to the target repository directory",
+    "NAME": "Project name in kebab-case",
+    "ORG": "GitHub organization name"
+  },
+  "preconditions": [
+    {
+      "description": "Target directory exists",
+      "command": "test -d ${TARGET_DIR}",
+      "expect": "exit 0"
+    },
+    {
+      "description": "ripple-next environment passes doctor checks",
+      "command": "pnpm doctor -- --json",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm generate:scaffold ${TARGET_DIR} --name=${NAME} --org=${ORG} --dry-run",
+      "description": "Preview scaffold output before generation"
+    },
+    {
+      "order": 2,
+      "command": "pnpm generate:scaffold ${TARGET_DIR} --name=${NAME} --org=${ORG}",
+      "description": "Generate all scaffold files (~35+ files across AI docs, quality gates, CI, fleet governance, documentation templates)"
+    },
+    {
+      "order": 3,
+      "command": "cp ${TARGET_DIR}/.env.example ${TARGET_DIR}/.env",
+      "description": "Copy environment example to .env for local development"
+    },
+    {
+      "order": 4,
+      "description": "Update .github/CODEOWNERS with your team, customise CLAUDE.md and AGENTS.md for your project"
+    },
+    {
+      "order": 5,
+      "description": "Install @ripple-next/* packages needed by your project (e.g., pnpm add @ripple-next/auth @ripple-next/db @ripple-next/validation)"
+    },
+    {
+      "order": 6,
+      "description": "Replace docs/product-roadmap/README.md scaffold template with real roadmap items. Use Now/Next/Later structure with numbered items (e.g., MY-001). Include status, priority, and AI-first benefit per item."
+    },
+    {
+      "order": 7,
+      "description": "Create docs/architecture.md with system overview (Mermaid diagram), stack table, provider pattern decisions, compute choices, and deviations from golden path."
+    },
+    {
+      "order": 8,
+      "description": "If repo has API endpoints: create docs/api-contracts.md with endpoint table (method, path, visibility, auth, description) and OpenAPI spec reference."
+    },
+    {
+      "order": 9,
+      "description": "Update docs/readiness.json: replace the 'example' placeholder subsystem with real subsystems including status, maturity, blockers, and test coverage."
+    },
+    {
+      "order": 10,
+      "description": "Write at least one ADR beyond ADR-001 in docs/adr/ for your most significant architecture decision. Update the ADR index."
+    },
+    {
+      "order": 11,
+      "description": "Update README.md with project purpose, setup instructions, and links to architecture and roadmap docs."
+    },
+    {
+      "order": 12,
+      "command": "pnpm conform -- --target=${TARGET_DIR} --json",
+      "description": "Run conformance scoring to verify adoption quality (target: score >= 70)"
+    },
+    {
+      "order": 13,
+      "command": "pnpm check:fleet-drift -- --target=${TARGET_DIR}",
+      "description": "Check fleet compliance — verify no security-critical drift"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Product roadmap has real content (not placeholder)",
+      "command": "grep -qE '## (Now|Next|Later)' ${TARGET_DIR}/docs/product-roadmap/README.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Architecture doc exists",
+      "command": "test -f ${TARGET_DIR}/docs/architecture.md",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Readiness manifest has real subsystems (not just 'example')",
+      "command": "node -e \"const r=JSON.parse(require('fs').readFileSync('${TARGET_DIR}/docs/readiness.json','utf-8')); const subs=Object.keys(r.subsystems); process.exit(subs.length>1||subs[0]!=='example'?0:1)\"",
+      "expect": "exit 0"
+    },
+    {
+      "description": "At least 2 ADRs exist",
+      "command": "test $(ls ${TARGET_DIR}/docs/adr/*.md 2>/dev/null | wc -l) -ge 3",
+      "expect": "exit 0"
+    },
+    {
+      "description": "CLAUDE.md exists and has verify command",
+      "command": "grep -q 'verify' ${TARGET_DIR}/CLAUDE.md",
+      "expect": "exit 0"
+    }
+  ],
+  "postActions": [
+    "Commit all documentation to the downstream repo",
+    "Set up CI using reusable workflows (see docs/downstream-workflows.md)",
+    "Configure fleet feedback token for ongoing governance",
+    "Schedule periodic fleet drift checks",
+    "Run pnpm verify to ensure all quality gates pass"
+  ],
+  "related": [
+    "docs/downstream-adoption-guide.md",
+    "docs/platform-capabilities.md",
+    "docs/conformance-rubric.json",
+    "docs/fleet-policy.json",
+    "scripts/generate/scaffold.mjs",
+    "docs/adr/023-downstream-adoption-standards.md"
+  ]
+}

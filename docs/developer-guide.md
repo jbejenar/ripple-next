@@ -103,6 +103,11 @@ The Ripple platform publishes `@ripple-next/*` packages to a private npm registr
 
 All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9** (`corepack enable pnpm`).
 
+> **Scaffold shortcut:** Run `pnpm generate:scaffold /path/to/repo --name=my-project --org=my-org`
+> to create the full DX infrastructure (~35+ files) including documentation templates,
+> CI/CD, quality gates, and fleet governance. See the [Downstream Adoption Guide](./downstream-adoption-guide.md)
+> for documentation requirements (product roadmap, architecture doc, readiness manifest, CLAUDE.md).
+
 ---
 
 ### Private registry setup (all workflows)
@@ -1117,3 +1122,5 @@ If a port is in use, either stop the conflicting service or change the port mapp
 - [AGENTS.md](../AGENTS.md) — AI agent conventions
 - [ADR Index](./adr/) — all Architecture Decision Records
 - [ADR-012: Env Schema Validation](./adr/012-env-schema-validation.md) — environment variable validation gate
+- [Downstream Adoption Guide](./downstream-adoption-guide.md) — documentation standards for downstream repos
+- [Platform Capabilities](./platform-capabilities.md) — inventory of what ripple-next provides

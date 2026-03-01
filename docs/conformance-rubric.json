@@ -157,12 +157,12 @@
       "id": "documentation",
       "name": "Documentation",
       "description": "Essential project documentation for humans and AI agents",
-      "weight": 10,
+      "weight": 7,
       "checks": [
         {
           "id": "CONFORM-DOCS-001",
           "description": "README.md exists",
-          "points": 3,
+          "points": 2,
           "type": "file-exists",
           "path": "README.md",
           "remediation": "Create README.md with project overview, setup instructions, and usage"
@@ -170,7 +170,7 @@
         {
           "id": "CONFORM-DOCS-002",
           "description": "AI agent instructions exist (CLAUDE.md)",
-          "points": 3,
+          "points": 2,
           "type": "file-exists",
           "path": "CLAUDE.md",
           "remediation": "Create CLAUDE.md with verify command, lint rules, and key conventions (see ADR-020)"
@@ -178,7 +178,7 @@
         {
           "id": "CONFORM-DOCS-003",
           "description": "Readiness manifest exists",
-          "points": 4,
+          "points": 3,
           "type": "file-exists",
           "path": "docs/readiness.json",
           "remediation": "Create docs/readiness.json with subsystem status tracking"
@@ -224,15 +224,47 @@
       "id": "fleet",
       "name": "Fleet Governance",
       "description": "Fleet tracking and governance integration",
-      "weight": 5,
+      "weight": 3,
       "checks": [
         {
           "id": "CONFORM-FLEET-001",
           "description": "Fleet version tracking configured",
-          "points": 5,
+          "points": 3,
           "type": "file-exists-any",
           "paths": [".fleet.json", "docs/fleet-policy.json"],
           "remediation": "Create .fleet.json with upstream version tracking (see pnpm generate:scaffold)"
+        }
+      ]
+    },
+    {
+      "id": "downstream-docs",
+      "name": "Downstream Documentation",
+      "description": "Documentation quality for downstream repos — product roadmap structure, architecture documentation, API contracts. See ADR-023.",
+      "weight": 10,
+      "checks": [
+        {
+          "id": "CONFORM-DSDOCS-001",
+          "description": "Product roadmap exists with structured content",
+          "points": 4,
+          "type": "file-exists",
+          "path": "docs/product-roadmap/README.md",
+          "remediation": "Create docs/product-roadmap/README.md with Now/Next/Later structure and numbered items. See docs/downstream-adoption-guide.md for template."
+        },
+        {
+          "id": "CONFORM-DSDOCS-002",
+          "description": "Architecture documentation exists with system overview",
+          "points": 3,
+          "type": "file-exists",
+          "path": "docs/architecture.md",
+          "remediation": "Create docs/architecture.md with system overview diagram, stack table, provider pattern decisions. See docs/downstream-adoption-guide.md for template."
+        },
+        {
+          "id": "CONFORM-DSDOCS-003",
+          "description": "API contract documentation exists (for repos with API endpoints)",
+          "points": 3,
+          "type": "file-exists-any",
+          "paths": ["docs/api-contracts.md", "docs/api/openapi.json"],
+          "remediation": "Create docs/api-contracts.md with endpoint table (method, path, visibility, auth). If using oRPC, run pnpm generate:openapi to create docs/api/openapi.json. See docs/downstream-adoption-guide.md."
         }
       ]
     }
