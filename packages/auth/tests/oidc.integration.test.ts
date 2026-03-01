@@ -93,6 +93,7 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
         clientId: TEST_CLIENT.clientId,
         clientSecret: TEST_CLIENT.clientSecret,
         redirectUri: TEST_CLIENT.redirectUri,
+        allowHttpRequests: true,
       },
       sessionStore,
       userStore

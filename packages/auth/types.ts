@@ -18,6 +18,8 @@ export interface OidcConfig {
   clientSecret: string
   redirectUri: string
   scopes?: string[]
+  /** Allow plain HTTP issuer URLs (for local/test identity providers). Never enable in production. */
+  allowHttpRequests?: boolean
 }
 
 export interface AuthProvider {
