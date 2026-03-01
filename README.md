@@ -57,23 +57,50 @@ pnpm dev
 
 ## Documentation
 
-| Document                                           | Description                                           |
-| -------------------------------------------------- | ----------------------------------------------------- |
-| [Developer Guide](docs/developer-guide.md)         | **Start here** — bare Mac to deployment               |
-| [Architecture](docs/architecture.md)               | System overview, stack, and high-level design         |
-| [Provider Pattern](docs/provider-pattern.md)       | Core pattern for environment-swappable infrastructure |
-| [Data Model](docs/data-model.md)                   | PostgreSQL schema and entity relationships            |
-| [API Contracts](docs/api-contracts.md)             | oRPC routers and REST endpoints                       |
-| [Deployment Guide](docs/deployment.md)             | Local dev, preview, staging, and production           |
-| [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
-| [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
-| [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
-| [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
+> **AI agents:** start with [AGENTS.md](AGENTS.md). **Developers:** start with the [Developer Guide](docs/developer-guide.md). **Downstream consumers:** see [Platform Capabilities](docs/platform-capabilities.md).
+
+### Start Here
+
+| Document | Description |
+| --- | --- |
+| [AGENTS.md](AGENTS.md) | **AI agents start here** — conventions, patterns, task routing |
+| [Developer Guide](docs/developer-guide.md) | **Developers start here** — bare Mac to deployment |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and upstream Ripple sync procedure |
+
+### Architecture & Design
+
+| Document | Description |
+| --- | --- |
+| [Architecture](docs/architecture.md) | System overview, stack, and high-level design |
+| [Provider Pattern](docs/provider-pattern.md) | Core pattern for environment-swappable infrastructure |
+| [Data Model](docs/data-model.md) | PostgreSQL schema and entity relationships |
+| [API Contracts](docs/api-contracts.md) | oRPC routers and REST endpoints |
+| [Lambda vs ECS](docs/lambda-vs-ecs.md) | Compute decision framework |
+| [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions |
+
+### Operations & Quality
+
+| Document | Description |
+| --- | --- |
+| [Deployment Guide](docs/deployment.md) | Local dev, preview, staging, and production |
+| [Testing Guide](docs/testing-guide.md) | Test pyramid, examples, and mock providers |
+| [CI Gates](docs/ci-gates.md) | Blocking vs advisory CI gate classification |
+| [Accessibility](docs/accessibility.md) | WCAG 2.1 AA compliance audit pipeline |
+| [Performance](docs/performance.md) | Core Web Vitals budgets and audit pipeline |
+| [Release Verification](docs/release-verification.md) | Checksums, SBOM, and build provenance |
+| [Session Observability](docs/session-observability.md) | AI agent session metrics and friction tracking |
+| [Runbooks](docs/runbooks/) | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
+
+### Platform & Ecosystem
+
+| Document | Description |
+| --- | --- |
+| [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers |
+| [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions |
 | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Documentation standards for downstream repos |
-| [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
-| [Runbooks](docs/runbooks/)                         | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
-| [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
-| [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
+| [Product Roadmap](docs/product-roadmap/) | Platform roadmap, priorities, and archive |
+
+> Domain-specific instructions for frontend, API, database, testing, and infrastructure are auto-loaded from [`.github/instructions/`](.github/instructions/) by supported tools.
 
 ### Architecture Decision Records
 
