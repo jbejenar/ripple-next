@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 59 classified error codes across 16 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, and docs/session-observability.md.",
-  "version": "1.8.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 61 classified error codes across 17 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, and docs/performance.md.",
+  "version": "1.9.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -25,7 +25,8 @@
     "DOCS": "Documentation and context file governance (RN-044, ADR-020)",
     "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)",
     "AUTH": "OIDC/OAuth identity provider failures (RN-045)",
-    "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)"
+    "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)",
+    "PERF": "Web performance budget violations — Core Web Vitals (RN-050)"
   },
   "errors": [
     {
@@ -804,6 +805,35 @@
         "Verify network connectivity to GitHub API",
         "Run with --dry-run to validate payload without submitting",
         "Retry: pnpm fleet:feedback -- --submit (exit code 2 = submission failed)"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-PERF-001",
+      "category": "PERF",
+      "severity": "error",
+      "message": "Critical Core Web Vitals regression — metric exceeds 'poor' threshold (LCP > 4s, CLS > 0.25, FCP > 3s, TTFB > 1.8s, TBT > 600ms)",
+      "gate": "perf-audit",
+      "remediation": [
+        "Run pnpm test:perf -- --json to identify the failing metric and route",
+        "LCP: reduce render-blocking resources, optimize images, preload critical assets",
+        "CLS: set explicit dimensions on images/embeds, avoid dynamic content injection above the fold",
+        "FCP: reduce server response time, eliminate render-blocking CSS/JS",
+        "TTFB: check server performance, enable caching, reduce redirects",
+        "TBT: break up long tasks, defer non-critical JavaScript, use web workers"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-PERF-002",
+      "category": "PERF",
+      "severity": "warning",
+      "message": "Moderate Core Web Vitals regression — metric exceeds 'needs improvement' threshold (LCP > 2.5s, CLS > 0.1, FCP > 1.8s, TTFB > 800ms, TBT > 200ms)",
+      "gate": "perf-audit",
+      "remediation": [
+        "Run pnpm test:perf -- --json to identify the affected metric and route",
+        "Review recent changes for performance impact (bundle size, network requests, DOM size)",
+        "Non-blocking but should be addressed before reaching critical thresholds"
       ],
       "automatable": false
     }

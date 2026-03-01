@@ -51,6 +51,7 @@
     "generate:openapi": "node scripts/generate-openapi.mjs",
     "runbook": "node scripts/runbook.mjs",
     "test:a11y": "node scripts/a11y-audit.mjs",
+    "test:perf": "node scripts/perf-audit.mjs",
     "session:start": "node scripts/session-logger.mjs start",
     "session:end": "node scripts/session-logger.mjs end",
     "session:snapshot": "node scripts/session-logger.mjs snapshot",

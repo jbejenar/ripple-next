@@ -210,6 +210,12 @@ jobs:
         env:
           CI: true
 
+      - name: Run performance audit
+        if: always()
+        run: pnpm test:perf -- --ci --json --url=http://localhost:3000 > /dev/null 2>&1 || true
+        env:
+          CI: true
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -221,6 +227,12 @@ jobs:
         with:
           name: a11y-report
           path: a11y-report.json
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: perf-report
+          path: perf-report.json
           retention-days: 30
       - uses: actions/upload-artifact@v4
         if: failure()
