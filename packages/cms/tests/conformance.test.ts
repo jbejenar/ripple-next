@@ -1,4 +1,4 @@
-import { cmsConformance, createTestPage, createTestPageTwo, createDraftPage } from '@ripple/testing/conformance/cms.conformance'
+import { cmsConformance, createTestPage, createTestPageTwo, createDraftPage } from '@ripple-next/testing/conformance/cms.conformance'
 import { MockCmsProvider } from '../providers/mock'
 
 cmsConformance({

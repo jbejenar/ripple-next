@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { defineComponent } from 'vue'
 import { mount } from '@vue/test-utils'
-import type { CmsPage } from '@ripple/cms'
+import type { CmsPage } from '@ripple-next/cms'
 import PageTemplateLanding from '../../../components/templates/PageTemplateLanding.vue'
 import PageTemplateContent from '../../../components/templates/PageTemplateContent.vue'
 import PageTemplateCampaign from '../../../components/templates/PageTemplateCampaign.vue'

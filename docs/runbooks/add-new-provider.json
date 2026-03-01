@@ -1,6 +1,6 @@
 {
   "name": "add-new-provider",
-  "description": "Scaffold and implement a new provider for an existing @ripple/* package using the provider pattern.",
+  "description": "Scaffold and implement a new provider for an existing @ripple-next/* package using the provider pattern.",
   "args": {
     "package": "Package name under packages/ (e.g. 'email', 'storage', 'queue')",
     "name": "Provider name in kebab-case (e.g. 'resend', 's3', 'sqs')"
@@ -35,7 +35,7 @@
     },
     {
       "order": 3,
-      "command": "pnpm test -- --filter @ripple/${PACKAGE}",
+      "command": "pnpm test -- --filter @ripple-next/${PACKAGE}",
       "description": "Run package tests including the conformance suite to validate the provider"
     },
     {
@@ -72,7 +72,7 @@
     },
     {
       "description": "Conformance tests pass",
-      "command": "pnpm test -- --filter @ripple/${PACKAGE}",
+      "command": "pnpm test -- --filter @ripple-next/${PACKAGE}",
       "expect": "exit 0"
     },
     {

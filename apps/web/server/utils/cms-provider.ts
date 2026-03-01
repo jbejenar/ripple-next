@@ -1,5 +1,5 @@
-import type { CmsProvider } from '@ripple/cms'
-import { createCmsProvider } from '@ripple/cms'
+import type { CmsProvider } from '@ripple-next/cms'
+import { createCmsProvider } from '@ripple-next/cms'
 
 let provider: CmsProvider | null = null
 let providerPromise: Promise<CmsProvider> | null = null
@@ -7,7 +7,7 @@ let providerPromise: Promise<CmsProvider> | null = null
 /**
  * Returns the configured CMS provider instance.
  *
- * Uses the factory pattern from @ripple/cms so Drupal-specific code is
+ * Uses the factory pattern from @ripple-next/cms so Drupal-specific code is
  * only loaded when NUXT_CMS_BASE_URL is configured. When not configured
  * (or in test mode), uses MockCmsProvider with zero Drupal dependency.
  *

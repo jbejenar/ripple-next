@@ -45,7 +45,7 @@
     },
     {
       "order": 6,
-      "command": "pnpm test -- --filter @ripple/web",
+      "command": "pnpm test -- --filter @ripple-next/web",
       "description": "Run web app tests to verify the new endpoint"
     },
     {
@@ -87,7 +87,7 @@
     },
     {
       "description": "Tests pass",
-      "command": "pnpm test -- --filter @ripple/web",
+      "command": "pnpm test -- --filter @ripple-next/web",
       "expect": "exit 0"
     }
   ],

@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   // Database check
   try {
     const start = Date.now()
-    const { getDatabase } = await import('@ripple/db')
+    const { getDatabase } = await import('@ripple-next/db')
     const db = getDatabase()
     await (db as unknown as { execute: (sql: unknown) => Promise<unknown> }).execute(
       /* sql */ 'SELECT 1'

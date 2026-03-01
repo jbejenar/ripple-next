@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 import { sql } from 'drizzle-orm'
-import type { TestDb } from '@ripple/testing/helpers/db'
-import { setupTestDb, teardownTestDb, isDockerAvailable } from '@ripple/testing/helpers/db'
+import type { TestDb } from '@ripple-next/testing/helpers/db'
+import { setupTestDb, teardownTestDb, isDockerAvailable } from '@ripple-next/testing/helpers/db'
 import { UserRepository } from '../../repositories/user.repository'
 import * as schema from '../../schema'
 

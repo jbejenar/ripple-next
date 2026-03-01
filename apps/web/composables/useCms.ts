@@ -1,4 +1,4 @@
-import type { CmsPage, CmsMenu, CmsSearchResult, CmsListResult, CmsTaxonomyTerm } from '@ripple/cms'
+import type { CmsPage, CmsMenu, CmsSearchResult, CmsListResult, CmsTaxonomyTerm } from '@ripple-next/cms'
 
 export function useCms() {
   async function getPage(slug: string): Promise<CmsPage | null> {

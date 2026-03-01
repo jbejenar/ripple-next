@@ -1,5 +1,5 @@
 {
-  "name": "@ripple/event-handlers",
+  "name": "@ripple-next/event-handlers",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,11 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ripple/db": "workspace:*",
-    "@ripple/email": "workspace:*",
-    "@ripple/events": "workspace:*",
-    "@ripple/queue": "workspace:*",
-    "@ripple/shared": "workspace:*"
+    "@ripple-next/db": "workspace:*",
+    "@ripple-next/email": "workspace:*",
+    "@ripple-next/events": "workspace:*",
+    "@ripple-next/queue": "workspace:*",
+    "@ripple-next/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",

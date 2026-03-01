@@ -10,7 +10,7 @@
 We have two competing models for scaling ripple-next across many projects and teams:
 
 1. **Stay pure monorepo** — all projects in one repo, workspace:\* links everywhere.
-2. **Extract to published libraries** — publish `@ripple/*` packages to a private registry, each project installs them like any npm dependency.
+2. **Extract to published libraries** — publish `@ripple-next/*` packages to a private registry, each project installs them like any npm dependency.
 3. **Hybrid** — keep the monorepo as the development hub, but publish stable packages to a private registry so external projects can consume them independently.
 
 ### Constraints
@@ -26,12 +26,12 @@ We have two competing models for scaling ripple-next across many projects and te
 
 ### How It Works
 
-1. **This monorepo** (`ripple-next`) remains the **source of truth** for all `@ripple/*` packages.
-2. Core infrastructure packages (`@ripple/auth`, `@ripple/queue`, `@ripple/storage`, `@ripple/email`, `@ripple/events`, `@ripple/db`, `@ripple/shared`, `@ripple/validation`, `@ripple/ui`, `@ripple/testing`) are **published to a private npm registry** (GitHub Packages or AWS CodeArtifact) on release.
-3. **Consumer projects** (other teams' apps/services) install published versions: `"@ripple/auth": "^0.2.0"` — not workspace links.
+1. **This monorepo** (`ripple-next`) remains the **source of truth** for all `@ripple-next/*` packages.
+2. Core infrastructure packages (`@ripple-next/auth`, `@ripple-next/queue`, `@ripple-next/storage`, `@ripple-next/email`, `@ripple-next/events`, `@ripple-next/db`, `@ripple-next/shared`, `@ripple-next/validation`, `@ripple-next/ui`, `@ripple-next/testing`) are **published to a private npm registry** (GitHub Packages or AWS CodeArtifact) on release.
+3. **Consumer projects** (other teams' apps/services) install published versions: `"@ripple-next/auth": "^0.2.0"` — not workspace links.
 4. **This monorepo's own apps/services** (`apps/web`, `services/*`) continue using `workspace:*` for instant feedback during development.
 5. Each package follows **semver** — breaking changes bump major, new features bump minor, fixes bump patch.
-6. Consumers **upgrade at their own pace** — `pnpm update @ripple/auth` when ready. No coordinated redeployment needed.
+6. Consumers **upgrade at their own pace** — `pnpm update @ripple-next/auth` when ready. No coordinated redeployment needed.
 
 ### Why Not Pure Library?
 
@@ -42,7 +42,7 @@ We have two competing models for scaling ripple-next across many projects and te
 ### Why Not Pure Monorepo?
 
 - With "a huge amount of projects and many teams," you can't fit every team's app in one repo.
-- Monorepo-only means every team's build runs against HEAD — a breaking change in `@ripple/auth` breaks all teams simultaneously.
+- Monorepo-only means every team's build runs against HEAD — a breaking change in `@ripple-next/auth` breaks all teams simultaneously.
 - No version pinning means no upgrade control.
 
 ### Why Hybrid Wins
@@ -60,7 +60,7 @@ We have two competing models for scaling ripple-next across many projects and te
 
 ### Positive
 
-- Teams upgrade `@ripple/*` packages independently — no forced redeployments.
+- Teams upgrade `@ripple-next/*` packages independently — no forced redeployments.
 - Breaking changes are caught in the monorepo CI before publishing.
 - Consumers can pin versions and upgrade when ready.
 - The monorepo remains the single development environment with fast iteration.

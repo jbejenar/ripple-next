@@ -32,7 +32,7 @@
 - [ ] **A UI component**: Added or updated component tests
 - [ ] **A Lambda handler**: Added or updated handler tests with mock providers
 - [ ] **Infrastructure** (`sst.config.ts`): Tested with preview deploy (`pr-*` stage)
-- [ ] **Shared packages** (`@ripple/shared`, `@ripple/validation`): Checked downstream consumers
+- [ ] **Shared packages** (`@ripple-next/shared`, `@ripple-next/validation`): Checked downstream consumers
 
 ### For breaking changes
 

@@ -9,7 +9,7 @@
 A full-stack government digital platform built with Nuxt 3, Ripple UI,
 and TypeScript. Deployed to AWS via SST v3 (Pulumi — NOT CDK/CloudFormation).
 
-**Hybrid monorepo** — `@ripple/*` packages are published to a private npm registry.
+**Hybrid monorepo** — `@ripple-next/*` packages are published to a private npm registry.
 Consumer teams upgrade at their own pace. See [ADR-007](docs/adr/007-library-vs-monorepo.md).
 
 ## Validate Changes
@@ -98,7 +98,7 @@ Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
 
 ### NOT auto-imported (you must import explicitly):
 
-- Anything from `@ripple/*` packages (e.g. `import { AuthProvider } from '@ripple/auth'`)
+- Anything from `@ripple-next/*` packages (e.g. `import { AuthProvider } from '@ripple-next/auth'`)
 - Anything from `node_modules` (e.g. `import { z } from 'zod'`)
 - Server-side oRPC utilities (e.g. `import { protectedProcedure } from '../orpc/base'`)
 

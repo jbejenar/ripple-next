@@ -1,4 +1,4 @@
-import type { CmsMenu, CmsMenuItem } from '@ripple/cms'
+import type { CmsMenu, CmsMenuItem } from '@ripple-next/cms'
 
 export function useNavigation() {
   const headerMenu = useState<CmsMenu | null>('nav:header', () => null)

@@ -1,5 +1,5 @@
 {
-  "name": "@ripple/testing",
+  "name": "@ripple-next/testing",
   "version": "0.1.0",
   "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
@@ -10,13 +10,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ripple/auth": "workspace:*",
-    "@ripple/cms": "workspace:*",
-    "@ripple/db": "workspace:*",
-    "@ripple/email": "workspace:*",
-    "@ripple/events": "workspace:*",
-    "@ripple/queue": "workspace:*",
-    "@ripple/storage": "workspace:*",
+    "@ripple-next/auth": "workspace:*",
+    "@ripple-next/cms": "workspace:*",
+    "@ripple-next/db": "workspace:*",
+    "@ripple-next/email": "workspace:*",
+    "@ripple-next/events": "workspace:*",
+    "@ripple-next/queue": "workspace:*",
+    "@ripple-next/storage": "workspace:*",
     "fishery": "^2.2.2"
   },
   "devDependencies": {

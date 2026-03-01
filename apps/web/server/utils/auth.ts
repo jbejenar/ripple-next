@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
 import { getCookie } from 'h3'
-import type { Session } from '@ripple/auth'
+import type { Session } from '@ripple-next/auth'
 import { getAuthProvider } from './auth-provider'
 
 const SESSION_COOKIE = 'session_token'

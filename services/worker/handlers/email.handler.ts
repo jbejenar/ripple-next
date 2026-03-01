@@ -1,6 +1,6 @@
 import type { SQSEvent, SQSHandler } from 'aws-lambda'
-import type { SendEmailEvent } from '@ripple/queue'
-import type { EmailProvider } from '@ripple/email'
+import type { SendEmailEvent } from '@ripple-next/queue'
+import type { EmailProvider } from '@ripple-next/email'
 
 interface EmailHandlerDeps {
   emailProvider: EmailProvider
@@ -27,7 +27,7 @@ export function createEmailHandler(deps: EmailHandlerDeps): (event: SQSEvent) =>
 // Default export for SST Lambda handler
 export const handler: SQSHandler = async (event) => {
   // In production, instantiate real providers via SST Resource
-  const { SesEmailProvider } = await import('@ripple/email')
+  const { SesEmailProvider } = await import('@ripple-next/email')
   const emailProvider = new SesEmailProvider('noreply@ripple.dev')
 
   const emailHandler = createEmailHandler({ emailProvider })

@@ -10,12 +10,12 @@ Most confusion comes from mixing two valid workflows. This repo supports both:
    - You are changing `apps/web` and/or `packages/*` in `ripple-next` itself.
    - Use this when you are building or changing the shared Ripple platform.
 2. **Consumer app development (separate app repo)**
-   - You are building your own app that depends on published `@ripple/*` packages.
+   - You are building your own app that depends on published `@ripple-next/*` packages.
    - Use this when your team is consuming Ripple as a library.
 
 > **Do you need to replicate this repo?**
 >
-> - **No** for normal consumer app work: create a separate app repo and install `@ripple/*` packages from the private npm registry.
+> - **No** for normal consumer app work: create a separate app repo and install `@ripple-next/*` packages from the private npm registry.
 > - **No** for platform contributions: clone this repo once and work directly in it.
 > - **Only clone/fork this repo** if you need to modify platform internals (shared packages, providers, infra, docs, or `apps/web`).
 
@@ -89,7 +89,7 @@ Typical platform tasks:
 
 If your team is building a product _with_ Ripple libraries, create a **separate repo**. Do **not** copy or fork the monorepo — that is only for platform contributors.
 
-The Ripple platform publishes `@ripple/*` packages to a private npm registry. Your consumer repo installs them like any other dependency, upgrades on its own schedule, and deploys independently. See [ADR-007](./adr/007-library-vs-monorepo.md) for the rationale.
+The Ripple platform publishes `@ripple-next/*` packages to a private npm registry. Your consumer repo installs them like any other dependency, upgrades on its own schedule, and deploys independently. See [ADR-007](./adr/007-library-vs-monorepo.md) for the rationale.
 
 ---
 
@@ -97,8 +97,8 @@ The Ripple platform publishes `@ripple/*` packages to a private npm registry. Yo
 
 | Workflow | When to choose | What you install | Run locally | Deploy |
 |----------|---------------|-----------------|-------------|--------|
-| **Frontend-only** (Nuxt) | Building a website or portal that calls existing APIs | `@ripple/ui`, `@ripple/validation`, `@ripple/shared`, optionally `@ripple/auth` | `pnpm dev` (Nuxt) | Static/SSR host (Vercel, Netlify, Lambda, etc.) |
-| **Backend-service-only** | Building an API, worker, or automation that has no UI | `@ripple/validation`, `@ripple/shared`, optionally `@ripple/auth`, `@ripple/queue`, `@ripple/db` | `pnpm dev` (Node server) | Container, Lambda, or VM |
+| **Frontend-only** (Nuxt) | Building a website or portal that calls existing APIs | `@ripple-next/ui`, `@ripple-next/validation`, `@ripple-next/shared`, optionally `@ripple-next/auth` | `pnpm dev` (Nuxt) | Static/SSR host (Vercel, Netlify, Lambda, etc.) |
+| **Backend-service-only** | Building an API, worker, or automation that has no UI | `@ripple-next/validation`, `@ripple-next/shared`, optionally `@ripple-next/auth`, `@ripple-next/queue`, `@ripple-next/db` | `pnpm dev` (Node server) | Container, Lambda, or VM |
 | **Full-stack** (UI + service) | Building a complete product with its own frontend and backend | All of the above, organised in a pnpm workspace | `pnpm dev` (starts both) | UI + API deployed independently |
 
 All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9** (`corepack enable pnpm`).
@@ -107,10 +107,10 @@ All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9
 
 ### Private registry setup (all workflows)
 
-`@ripple/*` packages are published to a private npm registry. Before you can install them, create a `.npmrc` in your project root:
+`@ripple-next/*` packages are published to a private npm registry. Before you can install them, create a `.npmrc` in your project root:
 
 ```ini
-# .npmrc — private registry auth for @ripple/* packages
+# .npmrc — private registry auth for @ripple-next/* packages
 # Replace the URL and token with values from your platform team.
 @ripple:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${RIPPLE_NPM_TOKEN}
@@ -122,7 +122,7 @@ After creating `.npmrc`, verify access:
 
 ```bash
 export RIPPLE_NPM_TOKEN=<your-token>
-pnpm info @ripple/shared --registry https://npm.pkg.github.com
+pnpm info @ripple-next/shared --registry https://npm.pkg.github.com
 ```
 
 ---
@@ -141,7 +141,7 @@ pnpm dlx nuxi@latest init .
 pnpm install
 
 # Install Ripple packages
-pnpm add @ripple/ui @ripple/validation @ripple/shared
+pnpm add @ripple-next/ui @ripple-next/validation @ripple-next/shared
 ```
 
 #### 2. Folder layout
@@ -164,9 +164,9 @@ my-portal/
 ```vue
 <!-- pages/index.vue -->
 <script setup lang="ts">
-import { RplButton, RplHeroHeader } from '@ripple/ui'
-import { loginSchema } from '@ripple/validation'
-import { formatDate } from '@ripple/shared'
+import { RplButton, RplHeroHeader } from '@ripple-next/ui'
+import { loginSchema } from '@ripple-next/validation'
+import { formatDate } from '@ripple-next/shared'
 
 const status = ref<'idle' | 'valid' | 'invalid'>('idle')
 
@@ -240,7 +240,7 @@ A frontend-only Nuxt app can be deployed as:
 
 ### B. Backend-service-only consumer repo
 
-A standalone Node service (API or worker) that uses `@ripple/*` packages for validation, auth, shared types, or queue processing — no UI.
+A standalone Node service (API or worker) that uses `@ripple-next/*` packages for validation, auth, shared types, or queue processing — no UI.
 
 #### 1. Scaffold
 
@@ -250,7 +250,7 @@ git init
 pnpm init
 
 # Install Ripple packages
-pnpm add @ripple/validation @ripple/shared @ripple/auth
+pnpm add @ripple-next/validation @ripple-next/shared @ripple-next/auth
 
 # Install dev tooling
 pnpm add -D typescript vitest tsx @types/node
@@ -321,7 +321,7 @@ server.listen(port, () => {
 ```typescript
 // src/routes/health.ts
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { APP_NAME } from '@ripple/shared'
+import { APP_NAME } from '@ripple-next/shared'
 
 export function healthHandler(_req: IncomingMessage, res: ServerResponse): void {
   res.writeHead(200, { 'Content-Type': 'application/json' })
@@ -332,7 +332,7 @@ export function healthHandler(_req: IncomingMessage, res: ServerResponse): void 
 ```typescript
 // src/routes/validate.ts
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { createUserSchema } from '@ripple/validation'
+import { createUserSchema } from '@ripple-next/validation'
 
 export function validateHandler(req: IncomingMessage, res: ServerResponse): void {
   let body = ''
@@ -371,7 +371,7 @@ export function validateHandler(req: IncomingMessage, res: ServerResponse): void
 ```typescript
 // tests/validate.test.ts
 import { describe, it, expect } from 'vitest'
-import { createUserSchema } from '@ripple/validation'
+import { createUserSchema } from '@ripple-next/validation'
 
 describe('createUserSchema', () => {
   it('accepts valid user input', () => {
@@ -527,9 +527,9 @@ packages:
     "typecheck": "nuxi typecheck"
   },
   "dependencies": {
-    "@ripple/ui": "^0.1.0",
-    "@ripple/validation": "^0.1.0",
-    "@ripple/shared": "^0.1.0",
+    "@ripple-next/ui": "^0.1.0",
+    "@ripple-next/validation": "^0.1.0",
+    "@ripple-next/shared": "^0.1.0",
     "@my-product/shared": "workspace:*"
   }
 }
@@ -550,9 +550,9 @@ packages:
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ripple/validation": "^0.1.0",
-    "@ripple/shared": "^0.1.0",
-    "@ripple/auth": "^0.1.0",
+    "@ripple-next/validation": "^0.1.0",
+    "@ripple-next/shared": "^0.1.0",
+    "@ripple-next/auth": "^0.1.0",
     "@my-product/shared": "workspace:*"
   }
 }
@@ -606,7 +606,7 @@ export default defineNuxtConfig({
 ```vue
 <!-- apps/web/pages/index.vue -->
 <script setup lang="ts">
-import { RplButton } from '@ripple/ui'
+import { RplButton } from '@ripple-next/ui'
 
 const config = useRuntimeConfig()
 
@@ -678,9 +678,9 @@ This section applies to all three consumer archetypes: frontend-only, backend-on
 
 | Strategy | When to use | Example |
 |----------|-------------|---------|
-| **Caret range** (`^0.2.0`) | Default for most teams — accepts compatible minor/patch updates | `"@ripple/ui": "^0.2.0"` |
-| **Exact pin** (`0.2.3`) | High-stability environments where any change must be deliberate | `"@ripple/ui": "0.2.3"` |
-| **Tilde range** (`~0.2.0`) | Accept patches only, reject new features | `"@ripple/ui": "~0.2.0"` |
+| **Caret range** (`^0.2.0`) | Default for most teams — accepts compatible minor/patch updates | `"@ripple-next/ui": "^0.2.0"` |
+| **Exact pin** (`0.2.3`) | High-stability environments where any change must be deliberate | `"@ripple-next/ui": "0.2.3"` |
+| **Tilde range** (`~0.2.0`) | Accept patches only, reject new features | `"@ripple-next/ui": "~0.2.0"` |
 
 > **Recommendation:** Use caret ranges (`^`) and upgrade monthly. This balances stability with staying current on bug fixes and security patches.
 
@@ -693,8 +693,8 @@ This section applies to all three consumer archetypes: frontend-only, backend-on
 #### Safe upgrade checklist
 
 ```bash
-# 1. Update all @ripple/* packages to latest compatible versions
-pnpm up '@ripple/*'
+# 1. Update all @ripple-next/* packages to latest compatible versions
+pnpm up '@ripple-next/*'
 
 # 2. Verify nothing broke
 pnpm test
@@ -702,12 +702,12 @@ pnpm typecheck
 pnpm lint
 
 # 3. Review what changed
-pnpm outdated '@ripple/*'          # See current vs latest versions
+pnpm outdated '@ripple-next/*'          # See current vs latest versions
 # Check the platform changelog/release notes for breaking changes
 
 # 4. Commit the updated lockfile
 git add pnpm-lock.yaml package.json
-git commit -m "chore: upgrade @ripple/* packages"
+git commit -m "chore: upgrade @ripple-next/* packages"
 ```
 
 #### Rollback strategy
@@ -879,7 +879,7 @@ ripple-next/
 ### Key conventions
 
 - **Provider pattern**: Every infrastructure concern (auth, CMS, queue, storage, email, events) has a typed interface with mock, local, and production implementations. Tests always use mock providers. See [Provider Pattern](./provider-pattern.md).
-- **Nuxt auto-imports**: `ref`, `computed`, `useState`, `useFetch`, `navigateTo`, etc. are auto-imported. Do NOT add manual imports for these. DO manually import anything from `@ripple/*` packages.
+- **Nuxt auto-imports**: `ref`, `computed`, `useState`, `useFetch`, `navigateTo`, etc. are auto-imported. Do NOT add manual imports for these. DO manually import anything from `@ripple-next/*` packages.
 - **`no-console` is an error**: Use `console.warn` or `console.error` only when needed. Test files and handler files are exempt.
 - **`no-explicit-any` is an error**: Use `unknown` with type guards instead of `any`.
 
@@ -917,7 +917,7 @@ Each provider has a conformance test suite that validates the contract:
 
 ```bash
 # Example: validate a new queue provider
-import { queueConformance } from '@ripple/testing/conformance/queue.conformance'
+import { queueConformance } from '@ripple-next/testing/conformance/queue.conformance'
 import { MyQueueProvider } from './my-provider'
 
 queueConformance({
@@ -1034,7 +1034,7 @@ See [Architecture](./architecture.md) for CI observability details.
 
 ## 13. Publishing Packages
 
-All `@ripple/*` packages are developed in-monorepo and published to a private npm registry:
+All `@ripple-next/*` packages are developed in-monorepo and published to a private npm registry:
 
 ```bash
 # Add a version intent after changing a published package's API
@@ -1088,7 +1088,7 @@ docker compose up -d
 
 ### Tests fail with provider errors
 
-Tests use mock/memory providers and never connect to real services. If you see connection errors in tests, check that the test is using `createMockProviders()` from `@ripple/testing`.
+Tests use mock/memory providers and never connect to real services. If you see connection errors in tests, check that the test is using `createMockProviders()` from `@ripple-next/testing`.
 
 ### Readiness drift
 

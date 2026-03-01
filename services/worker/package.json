@@ -1,5 +1,5 @@
 {
-  "name": "@ripple/worker",
+  "name": "@ripple-next/worker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,11 +11,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ripple/db": "workspace:*",
-    "@ripple/email": "workspace:*",
-    "@ripple/queue": "workspace:*",
-    "@ripple/storage": "workspace:*",
-    "@ripple/shared": "workspace:*"
+    "@ripple-next/db": "workspace:*",
+    "@ripple-next/email": "workspace:*",
+    "@ripple-next/queue": "workspace:*",
+    "@ripple-next/storage": "workspace:*",
+    "@ripple-next/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",

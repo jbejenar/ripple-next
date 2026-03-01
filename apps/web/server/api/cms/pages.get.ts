@@ -1,5 +1,5 @@
 import { getCmsProvider } from '../../utils/cms-provider'
-import type { CmsListOptions } from '@ripple/cms'
+import type { CmsListOptions } from '@ripple-next/cms'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)

@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     typeCheck: false // Type checking runs separately via `pnpm typecheck`
   },
 
-  modules: ['@pinia/nuxt', '@ripple/ui/nuxt'],
+  modules: ['@pinia/nuxt', '@ripple-next/ui/nuxt'],
 
   // Nuxt layers for feature separation
   extends: ['./layers/core', './layers/auth', './layers/admin', './layers/public'],

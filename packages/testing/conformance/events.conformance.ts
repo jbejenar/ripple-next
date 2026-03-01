@@ -5,8 +5,8 @@
  *
  * @example
  * ```ts
- * import { eventBusConformance } from '@ripple/testing/conformance/events.conformance'
- * import { MemoryEventBus } from '@ripple/events'
+ * import { eventBusConformance } from '@ripple-next/testing/conformance/events.conformance'
+ * import { MemoryEventBus } from '@ripple-next/events'
  *
  * eventBusConformance({
  *   name: 'MemoryEventBus',
@@ -15,7 +15,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { EventBus, DomainEvent, UserCreatedEvent } from '@ripple/events'
+import type { EventBus, DomainEvent, UserCreatedEvent } from '@ripple-next/events'
 
 interface EventBusConformanceOptions {
   name: string

@@ -1,6 +1,6 @@
 {
   "name": "add-new-component",
-  "description": "Scaffold and implement a new Vue component in @ripple/ui with test, Storybook story, and index export.",
+  "description": "Scaffold and implement a new Vue component in @ripple-next/ui with test, Storybook story, and index export.",
   "args": {
     "name": "Component name in PascalCase (e.g. 'Checkbox', 'DateInput'). Auto-prefixed with 'Rpl' if not present.",
     "tier": "Atomic design tier: atoms (default), molecules, or organisms"
@@ -40,7 +40,7 @@
     },
     {
       "order": 5,
-      "command": "pnpm test -- --filter @ripple/ui",
+      "command": "pnpm test -- --filter @ripple-next/ui",
       "description": "Run all UI component tests to verify nothing is broken"
     },
     {
@@ -56,7 +56,7 @@
     {
       "order": 8,
       "command": "pnpm changeset",
-      "description": "Add a changeset for the new component (minor version bump for @ripple/ui)"
+      "description": "Add a changeset for the new component (minor version bump for @ripple-next/ui)"
     }
   ],
   "validation": [
@@ -82,7 +82,7 @@
     },
     {
       "description": "Tests pass",
-      "command": "pnpm test -- --filter @ripple/ui",
+      "command": "pnpm test -- --filter @ripple-next/ui",
       "expect": "exit 0"
     }
   ],

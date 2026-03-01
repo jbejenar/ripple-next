@@ -5,8 +5,8 @@
  *
  * @example
  * ```ts
- * import { cmsConformance } from '@ripple/testing/conformance/cms.conformance'
- * import { MockCmsProvider } from '@ripple/cms'
+ * import { cmsConformance } from '@ripple-next/testing/conformance/cms.conformance'
+ * import { MockCmsProvider } from '@ripple-next/cms'
  *
  * cmsConformance({
  *   name: 'MockCmsProvider',
@@ -20,7 +20,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { CmsProvider, CmsPage } from '@ripple/cms'
+import type { CmsProvider, CmsPage } from '@ripple-next/cms'
 
 interface CmsConformanceOptions {
   name: string

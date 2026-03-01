@@ -5,8 +5,8 @@
  *
  * @example
  * ```ts
- * import { storageConformance } from '@ripple/testing/conformance/storage.conformance'
- * import { FilesystemStorageProvider } from '@ripple/storage'
+ * import { storageConformance } from '@ripple-next/testing/conformance/storage.conformance'
+ * import { FilesystemStorageProvider } from '@ripple-next/storage'
  *
  * storageConformance({
  *   name: 'FilesystemStorageProvider',
@@ -15,7 +15,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { StorageProvider } from '@ripple/storage'
+import type { StorageProvider } from '@ripple-next/storage'
 
 interface StorageConformanceOptions {
   name: string

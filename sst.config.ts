@@ -96,7 +96,7 @@ export default $config({
         cpuUtilization: 70
       },
       dev: {
-        command: 'pnpm --filter @ripple/worker dev'
+        command: 'pnpm --filter @ripple-next/worker dev'
       }
     })
 

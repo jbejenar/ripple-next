@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CmsPage, PageSection } from '@ripple/cms'
+import type { CmsPage, PageSection } from '@ripple-next/cms'
 
 const props = defineProps<{
   page: CmsPage

@@ -139,7 +139,7 @@ paragraph mapping closes this gap.
 ## Consequences
 
 - Drupal/Tide code isolated to 2 files in `packages/cms/providers/`
-- `createCmsProvider()` factory exported from `@ripple/cms`
+- `createCmsProvider()` factory exported from `@ripple-next/cms`
 - Dynamic imports make Drupal code tree-shakeable
 - Full paragraph-to-section mapping for all 8 Tide paragraph types
 - DrupalCmsProvider unit tests with JSON:API fixture data (no live Drupal needed)

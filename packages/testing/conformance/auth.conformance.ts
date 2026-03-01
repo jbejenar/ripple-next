@@ -5,8 +5,8 @@
  *
  * @example
  * ```ts
- * import { authConformance } from '@ripple/testing/conformance/auth.conformance'
- * import { MockAuthProvider } from '@ripple/auth'
+ * import { authConformance } from '@ripple-next/testing/conformance/auth.conformance'
+ * import { MockAuthProvider } from '@ripple-next/auth'
  *
  * authConformance({
  *   name: 'MockAuthProvider',
@@ -15,7 +15,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { AuthProvider } from '@ripple/auth'
+import type { AuthProvider } from '@ripple-next/auth'
 
 interface AuthConformanceOptions {
   name: string

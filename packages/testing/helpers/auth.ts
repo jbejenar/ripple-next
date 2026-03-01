@@ -1,4 +1,4 @@
-import { MockAuthProvider, type AuthUser } from '@ripple/auth'
+import { MockAuthProvider, type AuthUser } from '@ripple-next/auth'
 
 /**
  * Create a pre-authenticated mock auth provider.

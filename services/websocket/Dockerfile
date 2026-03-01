@@ -7,13 +7,13 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/db/package.json packages/db/
 COPY packages/shared/package.json packages/shared/
 COPY services/websocket/package.json services/websocket/
-RUN pnpm install --frozen-lockfile --filter @ripple/websocket...
+RUN pnpm install --frozen-lockfile --filter @ripple-next/websocket...
 
 FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm --filter @ripple/websocket... build
+RUN pnpm --filter @ripple-next/websocket... build
 
 FROM base AS runtime
 WORKDIR /app

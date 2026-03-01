@@ -9,12 +9,12 @@
 
 See [ADR-007](./adr/007-library-vs-monorepo.md) for full rationale.
 
-**TL;DR:** The monorepo stays as the development hub. The `@ripple/*` packages get published to a private registry so external teams install versioned releases (`"@ripple/auth": "^0.2.0"`). This means:
+**TL;DR:** The monorepo stays as the development hub. The `@ripple-next/*` packages get published to a private registry so external teams install versioned releases (`"@ripple-next/auth": "^0.2.0"`). This means:
 
 - **No forced redeployments** — each team upgrades when they choose to.
 - **Breaking changes** are caught in monorepo CI before publishing.
 - **Many teams, many projects** — each has its own repo consuming published packages.
-- **Upgrades are just `pnpm update @ripple/auth`** — zero coordination required.
+- **Upgrades are just `pnpm update @ripple-next/auth`** — zero coordination required.
 
 ---
 
@@ -114,7 +114,7 @@ production government platform.
 ### Every Package Is Still v0.1.0
 
 Despite claiming 49 completed roadmap items, 22 ADRs, 16/16 "implemented"
-subsystems, and a 40/40 Agent-Friction score — every single `@ripple/*`
+subsystems, and a 40/40 Agent-Friction score — every single `@ripple-next/*`
 package is still at version `0.1.0`. No package has ever been published or
 consumed by an external team. The "hybrid monorepo with published packages"
 model (ADR-007) describes a publishing pipeline that has never been exercised
@@ -125,11 +125,11 @@ with real consumers.
 The readiness manifest claims all 16 subsystems are "implemented." Looking at
 actual code volume tells a different story:
 
-- `@ripple/email`: 136 lines total. That's an interface and a memory stub.
-- `@ripple/events`: 133 lines. Same pattern.
-- `@ripple/shared`: 88 lines.
-- `@ripple/storage`: 213 lines.
-- `@ripple/queue`: 343 lines.
+- `@ripple-next/email`: 136 lines total. That's an interface and a memory stub.
+- `@ripple-next/events`: 133 lines. Same pattern.
+- `@ripple-next/shared`: 88 lines.
+- `@ripple-next/storage`: 213 lines.
+- `@ripple-next/queue`: 343 lines.
 
 These are correctly described as "provider interfaces with conformance tests."
 Calling them "implemented" conflates having a clean interface with having a

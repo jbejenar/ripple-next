@@ -4,7 +4,7 @@
 
 ## Overview
 
-Every `@ripple/*` package release includes:
+Every `@ripple-next/*` package release includes:
 
 1. **SHA-256 checksums** for all dist files (`release-checksums.json`)
 2. **SBOM** in CycloneDX JSON format (`sbom.cdx.json`)
@@ -39,7 +39,7 @@ pnpm verify:release -- --generate
   "generator": "verify-release.mjs --generate",
   "packages": [
     {
-      "name": "@ripple/auth",
+      "name": "@ripple-next/auth",
       "version": "0.2.0",
       "checksums": {
         "dist/index.js": "sha256-hex...",
@@ -54,7 +54,7 @@ pnpm verify:release -- --generate
 
 ### Verifying Installed Packages
 
-After installing `@ripple/*` packages in your project:
+After installing `@ripple-next/*` packages in your project:
 
 ```bash
 # Verify against a checksums manifest
@@ -74,7 +74,7 @@ pnpm verify:release -- --checksums=path/to/release-checksums.json --json
   "checksumsSource": "release-checksums.json",
   "packages": [
     {
-      "name": "@ripple/auth",
+      "name": "@ripple-next/auth",
       "version": "0.2.0",
       "status": "verified",
       "reason": "All checksums match"
@@ -133,7 +133,7 @@ The release workflow automatically:
 Add verification to your CI pipeline:
 
 ```yaml
-- name: Verify @ripple/* package integrity
+- name: Verify @ripple-next/* package integrity
   run: |
     # Download checksums from the latest release
     gh release download --repo jbejenar/ripple-next --pattern release-checksums.json

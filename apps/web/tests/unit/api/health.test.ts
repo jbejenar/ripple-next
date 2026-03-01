@@ -39,7 +39,7 @@ describe('/api/health', () => {
     mockGetQuery.mockReturnValue({})
 
     // Mock the DB import to simulate unhealthy (no real DB in unit test)
-    vi.doMock('@ripple/db', () => ({
+    vi.doMock('@ripple-next/db', () => ({
       getDatabase: () => ({
         execute: () => Promise.reject(new Error('no db'))
       })

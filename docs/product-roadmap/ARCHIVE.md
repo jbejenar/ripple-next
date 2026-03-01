@@ -61,12 +61,12 @@ descriptions. Added `pnpm bootstrap` command for zero-to-ready setup.
 
 ---
 
-### RN-004: Drupal/Tide CMS Integration (`@ripple/cms`)
+### RN-004: Drupal/Tide CMS Integration (`@ripple-next/cms`)
 
 **Phase:** 1 | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Resolved blocker:** Missing CMS content layer
 
-The original Ripple design system is built on Drupal/Tide. Created `@ripple/cms`
+The original Ripple design system is built on Drupal/Tide. Created `@ripple-next/cms`
 with Drupal JSON:API integration and a mock provider for testing, following the
 provider pattern. Full decoupling architecture isolates Drupal to 2 files.
 
@@ -135,7 +135,7 @@ optional coverage flags.
 **Phase:** 2 | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** AI Principal Engineer review
 
-Added Zod-based env schema validation to `@ripple/validation` with a
+Added Zod-based env schema validation to `@ripple-next/validation` with a
 `pnpm validate:env` command that fails with structured JSON diagnostics when
 the required env contract is invalid.
 
@@ -335,7 +335,7 @@ operations to the inner provider.
 - [x] Implement `MeiliSearchEngine` for local dev (MeiliSearch HTTP API)
 - [x] Implement `SearchEnhancedCmsProvider` decorator pattern
 - [x] Add unit tests for search provider (MemorySearchEngine + integration)
-- [x] Export search provider from `@ripple/cms` package
+- [x] Export search provider from `@ripple-next/cms` package
 
 ---
 
@@ -381,7 +381,7 @@ from "partial" to "implemented" status.
 **Phase:** 2 | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** AI agent gap analysis
 
-Integration tests using Testcontainers for `@ripple/db` repositories. Tests run
+Integration tests using Testcontainers for `@ripple-next/db` repositories. Tests run
 against a real PostgreSQL 17 container — no mocking of database behavior.
 
 **Reference:** `packages/db/tests/integration/`
@@ -510,7 +510,7 @@ safety, cost, and reliability. Machine-readable `ripple-iac-report/v1` JSON outp
 **Priority:** High | **Impact:** Very High | **Effort:** High | **Risk:** Medium
 **Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) | **AI-first benefit:** Agents can build complete government pages without external component gaps
 
-Port high-priority components from upstream Ripple 2 into `@ripple/ui`, rewritten
+Port high-priority components from upstream Ripple 2 into `@ripple-next/ui`, rewritten
 to follow our conventions. Closes the ~4-component gap with upstream.
 
 **Reference:** `packages/ui/`, [ADR-017](../adr/017-upstream-ripple-component-strategy.md)
@@ -842,7 +842,7 @@ gantt
     RN-001 Security Pipeline              :done, rn001, 2026-02-27, 7d
     RN-002 Doctor --json + --offline       :done, rn002, 2026-02-27, 5d
     RN-003 .env.example + bootstrap        :done, rn003, 2026-02-27, 5d
-    RN-004 @ripple/cms + Drupal            :done, rn004, 2026-02-28, 14d
+    RN-004 @ripple-next/cms + Drupal            :done, rn004, 2026-02-28, 14d
     RN-005 CI test artifact upload         :done, rn005, 2026-03-03, 7d
 
     section Phase 2

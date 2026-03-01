@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { ORPCError } from '@orpc/server'
-import { UserRepository } from '@ripple/db'
+import { UserRepository } from '@ripple-next/db'
 import { protectedProcedure } from '../base'
 import type { Context } from '../context'
 

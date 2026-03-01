@@ -5,8 +5,8 @@
  *
  * @example
  * ```ts
- * import { emailConformance } from '@ripple/testing/conformance/email.conformance'
- * import { MemoryEmailProvider } from '@ripple/email'
+ * import { emailConformance } from '@ripple-next/testing/conformance/email.conformance'
+ * import { MemoryEmailProvider } from '@ripple-next/email'
  *
  * emailConformance({
  *   name: 'MemoryEmailProvider',
@@ -15,7 +15,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { EmailProvider, EmailMessage } from '@ripple/email'
+import type { EmailProvider, EmailMessage } from '@ripple-next/email'
 
 interface EmailConformanceOptions {
   name: string
