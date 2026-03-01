@@ -137,7 +137,7 @@ JSON procedures in `docs/runbooks/` for structured, repeatable operations:
 | `fleet-feedback-intake.json` | Process incoming fleet feedback |
 | `fleet-feedback-submit.json` | Submit feedback to the golden-path upstream |
 | `fleet-sync.json` | Synchronise downstream repo with golden path |
-| `fleet-drift-check.json` | Check downstream repo for governance drift |
+| `rollback-production.json` | Rollback a production deployment |
 
 ---
 

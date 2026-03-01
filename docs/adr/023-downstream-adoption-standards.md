@@ -1,16 +1,8 @@
 # ADR-023: Downstream Adoption Standards — Documentation Governance for Fleet Consumers
 
-## Status
-
-Accepted
-
-## Date
-
-2026-03-01
-
-## Deciders
-
-Architecture team, AI agents (Claude Code)
+**Status:** Accepted
+**Date:** 2026-03-01
+**Deciders:** Architecture team, AI agents (Claude Code)
 
 ## Context
 
@@ -81,7 +73,7 @@ Add conformance checks beyond file-exists:
 - Architecture documentation exists with system overview
 - API contract documentation exists (for repos with API endpoints)
 
-New conformance category: `downstream-docs` (10 points, 3 checks).
+New conformance category: `downstream-docs` (5 points, 3 checks).
 
 ### 4. Advisory Fleet Surfaces
 

@@ -9,7 +9,7 @@ import { join } from 'node:path'
 import { writeFileExternal } from '../lib.mjs'
 
 export function scaffoldDocs(targetDir, config, options = {}) {
-  const { name, description } = config
+  const { name, org, description } = config
   const opts = { dryRun: options.dryRun, force: options.force }
 
   console.log('\n  Documentation')
@@ -470,8 +470,8 @@ graph TD
 |-------|-----------|---------------------|-----|
 | Framework | Nuxt 3 | — | — |
 | UI Components | Vue 3 | \`@ripple-next/ui\` | — |
-| API Layer | oRPC | \`@ripple-next/api\` | — |
-| Auth | OIDC | \`@ripple-next/auth\` | ADR-001 |
+| API Layer | oRPC | — | — |
+| Auth | OIDC | \`@ripple-next/auth\` | — |
 | Database | Drizzle ORM | \`@ripple-next/db\` | — |
 | CMS | Decoupled | \`@ripple-next/cms\` | — |
 | Validation | Zod | \`@ripple-next/validation\` | — |
@@ -482,7 +482,7 @@ graph TD
 
 ## Provider Pattern
 
-Every infrastructure concern uses the [provider pattern](https://github.com/TODO/ripple-next/blob/main/docs/provider-pattern.md).
+Every infrastructure concern uses the [provider pattern](https://github.com/${org}/ripple-next/blob/main/docs/provider-pattern.md).
 Tests always use memory/mock providers — never cloud services.
 
 | Concern | Test Provider | Local Provider | Production Provider |
@@ -515,7 +515,7 @@ Tests always use memory/mock providers — never cloud services.
 - [Readiness Manifest](./readiness.json)
 - [ADR Index](./adr/README.md)
 - [Downstream Adoption Guide](./downstream-adoption-guide.md)
-- [Platform Capabilities](https://github.com/TODO/ripple-next/blob/main/docs/platform-capabilities.md)
+- [Platform Capabilities](https://github.com/${org}/ripple-next/blob/main/docs/platform-capabilities.md)
 `,
     targetDir,
     opts
@@ -529,7 +529,7 @@ Tests always use memory/mock providers — never cloud services.
 > Last updated: ${today}
 >
 > See [downstream adoption guide](./downstream-adoption-guide.md) for documentation requirements.
-> See [ADR-021: API Contract Strategy](https://github.com/TODO/ripple-next/blob/main/docs/adr/021-api-contract-strategy.md) for conventions.
+> See [ADR-021: API Contract Strategy](https://github.com/${org}/ripple-next/blob/main/docs/adr/021-api-contract-strategy.md) for conventions.
 
 ## Endpoint Inventory
 
@@ -582,7 +582,7 @@ at \`docs/api/openapi.json\`.
     `# Downstream Adoption Guide
 
 > This is a local reference. The authoritative version lives in the
-> [ripple-next upstream repository](https://github.com/TODO/ripple-next/blob/main/docs/downstream-adoption-guide.md).
+> [ripple-next upstream repository](https://github.com/${org}/ripple-next/blob/main/docs/downstream-adoption-guide.md).
 
 See the upstream guide for:
 - 7 mandatory documentation categories

@@ -149,7 +149,7 @@ Provides two adoption paths (greenfield and legacy migration) with machine-reada
 - [x] Adoption runbook (`docs/runbooks/adopt-ripple-next.json`) — greenfield path
 - [x] Migration runbook (`docs/runbooks/migrate-legacy-api.json`) — legacy path
 - [x] Fleet policy surfaces FLEET-SURF-012 (downstream docs) and FLEET-SURF-013 (API contracts)
-- [x] Conformance rubric `downstream-docs` category (3 checks, 10 points)
+- [x] Conformance rubric `downstream-docs` category (3 checks, 5 points)
 - [x] Error taxonomy ADOPT category (RPL-ADOPT-001 through RPL-ADOPT-003)
 - [x] Scaffold generator enhanced: Now/Next/Later roadmap, architecture template, API contracts template
 - [x] All existing docs updated with cross-references (architecture, developer guide, downstream workflows, AGENTS.md)
