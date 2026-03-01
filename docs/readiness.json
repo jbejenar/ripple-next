@@ -185,9 +185,7 @@
         "docs/accessibility.md",
         "docs/session-observability.md"
       ],
-      "blockers": [
-        "Bootstrap has no fallback when npm registry policy blocks @axe-core/playwright fetch; add documented offline/skip-a11y bootstrap mode for restricted agents."
-      ],
+      "blockers": [],
       "testCoverage": "gate-tested"
     },
     "fleet-governance": {

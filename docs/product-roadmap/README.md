@@ -252,7 +252,7 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 
 | Item | Reason |
 |------|--------|
-| RN-049: Licensing Clarity Guardrail | Risk flag only. Keep SPDX-standard licence. No action needed. |
+| RN-049: Licensing Clarity Guardrail | PolyForm Noncommercial 1.0.0 adopted (PR #49). Contradicts prior SPDX-standard guidance — needs ADR to document rationale. |
 | Visual regression (Chromatic/Percy) | Deferred in [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components). Not justified by current UI churn. |
 
 ---
@@ -267,7 +267,7 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | ~~Auth integration test gap~~ | ~~RN-045~~ **Resolved** — Keycloak Testcontainer integration tests added |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
 | ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
-| Licensing drift (RN-049) | Keep SPDX-standard; reject custom non-commercial wording |
+| Licensing drift (RN-049) | PolyForm Noncommercial 1.0.0 adopted (PR #49) — diverges from prior SPDX-standard guidance; needs ADR |
 
 ---
 
