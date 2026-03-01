@@ -848,7 +848,7 @@ ripple-next/
 │   ├── composables/           # Vue composables (auto-imported)
 │   ├── server/
 │   │   ├── api/               # Nitro API routes (REST + CMS)
-│   │   ├── trpc/              # tRPC routers
+│   │   ├── orpc/              # oRPC routers (OpenAPI 3.1.1)
 │   │   └── utils/             # Server utilities
 │   └── tests/                 # Unit + E2E tests
 ├── packages/
@@ -951,9 +951,9 @@ See [Data Model](./data-model.md) for the schema reference.
 
 ## 11. Adding an API Route
 
-### tRPC router (recommended for typed client-server communication)
+### oRPC router (recommended for typed client-server communication)
 
-Add a procedure to an existing router in `apps/web/server/trpc/routers/` or create a new one. See [API Contracts](./api-contracts.md).
+Add a procedure to an existing router in `apps/web/server/orpc/routers/` or create a new one with `pnpm generate:endpoint <router> <procedure>`. Run `pnpm generate:openapi` after changes. See [API Contracts](./api-contracts.md) and [ADR-021](./adr/021-api-contract-strategy.md).
 
 ### Nitro REST endpoint
 
@@ -1109,7 +1109,7 @@ If a port is in use, either stop the conflicting service or change the port mapp
 - [Architecture](./architecture.md) — system overview, stack, and design
 - [Provider Pattern](./provider-pattern.md) — core infrastructure abstraction
 - [Data Model](./data-model.md) — PostgreSQL schema
-- [API Contracts](./api-contracts.md) — tRPC and REST endpoints
+- [API Contracts](./api-contracts.md) — oRPC and REST endpoints
 - [Deployment Guide](./deployment.md) — environment-specific deployment
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework

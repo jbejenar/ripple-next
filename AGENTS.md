@@ -70,11 +70,11 @@ In tests, use mock providers. In local dev, use docker-compose services.
 ### Repository Pattern
 
 All database access goes through repositories in `packages/db/repositories/`.
-tRPC routers receive the database connection via context (`ctx.db`) and
+oRPC routers receive the database connection via context (`context.db`) and
 instantiate repositories per-request:
 
 ```ts
-const repo = new UserRepository(ctx.db)
+const repo = new UserRepository(context.db)
 const user = await repo.findById(input.id)
 ```
 
@@ -100,7 +100,7 @@ Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
 
 - Anything from `@ripple/*` packages (e.g. `import { AuthProvider } from '@ripple/auth'`)
 - Anything from `node_modules` (e.g. `import { z } from 'zod'`)
-- Server-side tRPC utilities (e.g. `import { router, protectedProcedure } from '../trpc/trpc'`)
+- Server-side oRPC utilities (e.g. `import { protectedProcedure } from '../orpc/base'`)
 
 ### If you see import errors:
 

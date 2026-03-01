@@ -1,18 +1,18 @@
 /**
- * Contract tests for the user tRPC router.
+ * Contract tests for the user oRPC router.
  *
  * These tests verify the API contract (input validation, auth enforcement,
- * error codes) using a mock database layer. They do NOT hit a real DB —
- * that's the integration test layer's job.
+ * error codes) using a mock database layer via createRouterClient.
+ * They do NOT hit a real DB — that's the integration test layer's job.
  */
 import { describe, it, expect, vi } from 'vitest'
-import { TRPCError } from '@trpc/server'
-import { appRouter } from '../../../server/trpc/routers/index'
-import type { Context, Session } from '../../../server/trpc/context'
+import { ORPCError, createRouterClient } from '@orpc/server'
+import { appRouter } from '../../../server/orpc/router'
+import type { Context, AppSession } from '../../../server/orpc/context'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 function makeContext(overrides: Partial<Context> = {}): Context {
-  const authenticatedSession: Session = {
+  const authenticatedSession: AppSession = {
     user: { id: 'user-1', email: 'test@example.com', role: 'admin' }
   }
 
@@ -62,7 +62,6 @@ function makeMockDb(): Context['db'] {
     }
   ]
 
-  // This mock supports the Drizzle query builder chain pattern
   const createChain = (result: unknown): Record<string, unknown> => {
     const chain: Record<string, unknown> = {}
     chain.from = vi.fn().mockReturnValue(chain)
@@ -102,8 +101,10 @@ function makeMockDb(): Context['db'] {
 
 describe('user.me', () => {
   it('returns the authenticated user from session', async () => {
-    const caller = appRouter.createCaller(makeContext())
-    const result = await caller.user.me()
+    const client = createRouterClient(appRouter, {
+      context: makeContext()
+    })
+    const result = await client.user.me()
     expect(result).toEqual({
       id: 'user-1',
       email: 'test@example.com',
@@ -112,81 +113,104 @@ describe('user.me', () => {
   })
 
   it('throws UNAUTHORIZED when not authenticated', async () => {
-    const caller = appRouter.createCaller(makeUnauthenticatedContext())
-    await expect(caller.user.me()).rejects.toThrow(TRPCError)
-    await expect(caller.user.me()).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
+    const client = createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
+    })
+    await expect(client.user.me()).rejects.toThrow(ORPCError)
+    await expect(client.user.me()).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
   })
 })
 
 describe('user.getById', () => {
   it('requires a valid UUID input', async () => {
-    const caller = appRouter.createCaller(makeContext())
-    await expect(caller.user.getById({ id: 'not-a-uuid' })).rejects.toThrow()
+    const client = createRouterClient(appRouter, {
+      context: makeContext()
+    })
+    await expect(client.user.getById({ id: 'not-a-uuid' })).rejects.toThrow()
   })
 
   it('throws UNAUTHORIZED when not authenticated', async () => {
-    const caller = appRouter.createCaller(makeUnauthenticatedContext())
+    const client = createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
+    })
     await expect(
-      caller.user.getById({ id: '550e8400-e29b-41d4-a716-446655440000' })
+      client.user.getById({ id: '550e8400-e29b-41d4-a716-446655440000' })
     ).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
   })
 })
 
 describe('user.create', () => {
   it('validates email format', async () => {
-    const caller = appRouter.createCaller(makeContext())
+    const client = createRouterClient(appRouter, {
+      context: makeContext()
+    })
     await expect(
-      caller.user.create({ email: 'not-an-email', name: 'Test' })
+      client.user.create({ email: 'not-an-email', name: 'Test' })
     ).rejects.toThrow()
   })
 
   it('validates name is not empty', async () => {
-    const caller = appRouter.createCaller(makeContext())
+    const client = createRouterClient(appRouter, {
+      context: makeContext()
+    })
     await expect(
-      caller.user.create({ email: 'valid@example.com', name: '' })
+      client.user.create({ email: 'valid@example.com', name: '' })
     ).rejects.toThrow()
   })
 
   it('throws UNAUTHORIZED when not authenticated', async () => {
-    const caller = appRouter.createCaller(makeUnauthenticatedContext())
+    const client = createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
+    })
     await expect(
-      caller.user.create({ email: 'new@example.com', name: 'New User' })
+      client.user.create({ email: 'new@example.com', name: 'New User' })
     ).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
   })
 })
 
 describe('user.list', () => {
   it('throws UNAUTHORIZED when not authenticated', async () => {
-    const caller = appRouter.createCaller(makeUnauthenticatedContext())
-    await expect(caller.user.list()).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
+    const client = createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
+    })
+    await expect(client.user.list()).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
   })
 })
 
 describe('API contract: all protected procedures require auth', () => {
+  function makeClient() {
+    return createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
+    })
+  }
+
   const protectedEndpoints = [
-    { name: 'user.me', call: (c: ReturnType<typeof appRouter.createCaller>) => c.user.me() },
+    { name: 'user.me', call: (c: ReturnType<typeof makeClient>) => c.user.me() },
     {
       name: 'user.getById',
-      call: (c: ReturnType<typeof appRouter.createCaller>) =>
+      call: (c: ReturnType<typeof makeClient>) =>
         c.user.getById({ id: '550e8400-e29b-41d4-a716-446655440000' })
     },
     {
       name: 'user.create',
-      call: (c: ReturnType<typeof appRouter.createCaller>) =>
+      call: (c: ReturnType<typeof makeClient>) =>
         c.user.create({ email: 'test@test.com', name: 'Test' })
     },
-    { name: 'user.list', call: (c: ReturnType<typeof appRouter.createCaller>) => c.user.list() }
+    {
+      name: 'user.list',
+      call: (c: ReturnType<typeof makeClient>) => c.user.list()
+    }
   ]
 
   for (const endpoint of protectedEndpoints) {
     it(`${endpoint.name} rejects unauthenticated requests`, async () => {
-      const caller = appRouter.createCaller(makeUnauthenticatedContext())
+      const client = makeClient()
       try {
-        await endpoint.call(caller)
+        await endpoint.call(client)
         expect.fail(`${endpoint.name} should have thrown UNAUTHORIZED`)
       } catch (e) {
-        expect(e).toBeInstanceOf(TRPCError)
-        expect((e as TRPCError).code).toBe('UNAUTHORIZED')
+        expect(e).toBeInstanceOf(ORPCError)
+        expect((e as ORPCError<string, unknown>).code).toBe('UNAUTHORIZED')
       }
     })
   }

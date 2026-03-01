@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Readiness Manifest",
-  "description": "Machine-readable subsystem status for agent planning. Updated 2026-02-28. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and ADR-021 for API contract strategy (oRPC, OpenAPI-first).",
-  "version": "0.20.0",
+  "description": "Machine-readable subsystem status for agent planning. Updated 2026-03-01. See ADR-018 for AI-first workflow strategy, ADR-019 for fleet governance, and ADR-021 for API contract strategy (oRPC, OpenAPI-first).",
+  "version": "0.21.0",
   "subsystems": {
     "auth": {
       "status": "implemented",
@@ -73,21 +73,20 @@
       "testCoverage": "component-tested + storybook-stories + template-tested + a11y-audited"
     },
     "api": {
-      "status": "partial",
-      "description": "oRPC adopted as canonical API boundary (ADR-021). OpenAPI-first contracts with public/internal classification. Currently tRPC routers (pre-migration) wired to @ripple/db repositories. User router supports me/getById/create/list via UserRepository. Health endpoint checks DB and Redis connectivity with latency metrics. Contract tests validate auth enforcement, input validation, and error codes. API contract drift gate (check:api-contract) ready — activates after oRPC migration (RN-046).",
+      "status": "implemented",
+      "description": "oRPC is the canonical API boundary (ADR-021). OpenAPI 3.1.1 spec generated from router definition via pnpm generate:openapi. Public/internal endpoint classification via route metadata. User router (me/getById/create/list) migrated from tRPC to oRPC with OpenAPI routes at /v1/users/*. Health endpoint at /health (internal). Contract tests validate auth enforcement, input validation, and error codes via createRouterClient. API contract drift gate (check:api-contract) active — prevents spec drift in CI. OpenAPI handler mounted at /api/orpc/*.",
       "packages": [],
       "paths": [
-        "apps/web/server/trpc/",
-        "apps/web/server/api/",
+        "apps/web/server/orpc/",
+        "apps/web/server/api/orpc/",
+        "apps/web/server/api/health.get.ts",
         "docs/adr/021-api-contract-strategy.md",
+        "docs/api/openapi.json",
         "scripts/generate-openapi.mjs",
         "scripts/check-api-contract.mjs"
       ],
-      "blockers": [
-        "oRPC migration not yet executed — tRPC routers still active (RN-046, Phase 2 of ADR-021)",
-        "No integration tests for routers with real DB (Testcontainers, RN-046)"
-      ],
-      "testCoverage": "contract-tested + db-integration-tested"
+      "blockers": [],
+      "testCoverage": "contract-tested"
     },
     "infrastructure": {
       "status": "implemented",

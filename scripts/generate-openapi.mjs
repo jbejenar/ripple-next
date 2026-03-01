@@ -46,11 +46,28 @@ async function generateSpec() {
   }
 
   // Phase 2+: oRPC router exists. Dynamically import and generate.
-  // This path activates after RN-046 migration.
+  // Uses tsx to handle TypeScript imports from the oRPC router.
   try {
-    const { generateOpenAPI } = await import(routerPath)
-    const spec = await generateOpenAPI({ publicOnly })
-    return spec
+    const { execFileSync } = await import('node:child_process')
+    const { writeFileSync, unlinkSync } = await import('node:fs')
+    const tmpScript = resolve(ROOT, 'scripts/.generate-openapi-runner.mts')
+    writeFileSync(tmpScript, [
+      `import { generateOpenAPI } from '${routerPath.replace(/\\/g, '/')}'`,
+      `const spec = await generateOpenAPI({ publicOnly: ${publicOnly} })`,
+      `process.stdout.write(JSON.stringify(spec))`,
+    ].join('\n'))
+    try {
+      const tsxBin = resolve(ROOT, 'node_modules/.bin/tsx')
+      const output = execFileSync(tsxBin, [tmpScript], {
+        encoding: 'utf-8',
+        cwd: ROOT,
+        timeout: 30_000,
+        env: { ...process.env, NODE_NO_WARNINGS: '1' }
+      })
+      return JSON.parse(output)
+    } finally {
+      try { unlinkSync(tmpScript) } catch { /* ignore cleanup errors */ }
+    }
   } catch (err) {
     console.error(`Error generating OpenAPI spec: ${err.message}`)
     process.exit(1)
@@ -58,10 +75,21 @@ async function generateSpec() {
 }
 
 /**
- * Normalise spec to deterministic JSON (sorted keys, 2-space indent).
+ * Normalise spec to deterministic JSON (sorted keys at every level, 2-space indent).
  */
+function sortKeys(obj) {
+  if (Array.isArray(obj)) return obj.map(sortKeys)
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).sort().reduce((sorted, key) => {
+      sorted[key] = sortKeys(obj[key])
+      return sorted
+    }, {})
+  }
+  return obj
+}
+
 function serialise(spec) {
-  return JSON.stringify(spec, Object.keys(spec).sort(), 2) + '\n'
+  return JSON.stringify(sortKeys(spec), null, 2) + '\n'
 }
 
 // ── Main ──────────────────────────────────────────────────────────────

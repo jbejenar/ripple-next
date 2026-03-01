@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Endpoint Generator — scaffolds a tRPC router with validation schema and test.
+ * Endpoint Generator — scaffolds an oRPC procedure with validation schema and test.
  *
  * Usage:
  *   pnpm generate:endpoint <router> <procedure> [--dry-run]
@@ -11,8 +11,10 @@
  *   pnpm generate:endpoint audit log --dry-run
  *
  * Output files:
- *   apps/web/server/trpc/routers/{router}.ts (created or appended)
- *   apps/web/tests/unit/trpc/{router}-router.test.ts (created if new)
+ *   apps/web/server/orpc/routers/{router}.ts (created or appended)
+ *   apps/web/tests/unit/orpc/{router}-router.test.ts (created if new)
+ *
+ * After RN-046: emits oRPC boilerplate (previously tRPC).
  */
 import { join } from 'node:path'
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -25,9 +27,9 @@ export function generateEndpoint(routerName, procedureName, options = {}) {
   }
   const dryRun = options.dryRun || false
   const camelRouter = toCamelCase(routerName)
-  const routerFile = join(ROOT, 'apps/web/server/trpc/routers', `${routerName}.ts`)
-  const indexFile = join(ROOT, 'apps/web/server/trpc/routers/index.ts')
-  const testFile = join(ROOT, 'apps/web/tests/unit/trpc', `${routerName}-router.test.ts`)
+  const routerFile = join(ROOT, 'apps/web/server/orpc/routers', `${routerName}.ts`)
+  const routerIndexFile = join(ROOT, 'apps/web/server/orpc/router.ts')
+  const testFile = join(ROOT, 'apps/web/tests/unit/orpc', `${routerName}-router.test.ts`)
 
   // Check if router already exists (try read instead of existsSync to avoid TOCTOU)
   let isNewRouter = true
@@ -42,104 +44,119 @@ export function generateEndpoint(routerName, procedureName, options = {}) {
   console.log('─'.repeat(40))
 
   if (isNewRouter) {
-    // Create new router file
+    // Create new oRPC router file
     writeFile(
       routerFile,
       `import { z } from 'zod'
-import { TRPCError } from '@trpc/server'
-import { router, protectedProcedure } from '../trpc'
+import { ORPCError } from '@orpc/server'
+import { protectedProcedure } from '../base'
 
-export const ${camelRouter}Router = router({
-  ${procedureName}: protectedProcedure
-    .input(
-      z.object({
-        // TODO: Define input schema
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      // TODO: Implement procedure
-      throw new TRPCError({ code: 'NOT_IMPLEMENTED', message: 'Not implemented' })
-    }),
-})
+export const ${procedureName} = protectedProcedure
+  .route({ method: 'GET', path: '/v1/${routerName}s', tags: ['${routerName}s'] })
+  .meta({ visibility: 'internal' })
+  .input(
+    z.object({
+      // TODO: Define input schema
+    })
+  )
+  .handler(async ({ context, input }) => {
+    // TODO: Implement procedure
+    throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Not implemented' })
+  })
 `,
       dryRun
     )
 
-    // Register in index.ts
-    let indexContent
-    try {
-      indexContent = !dryRun ? readFileSync(indexFile, 'utf-8') : null
-    } catch {
-      indexContent = null
-    }
-    if (indexContent) {
-      if (!indexContent.includes(`${camelRouter}Router`)) {
-        // Add import and registration — read-then-write is safe here
-        // because this is a single-user CLI tool, not a concurrent server.
-        const newImport = `import { ${camelRouter}Router } from './${routerName}'`
+    // Register in router.ts
+    if (!dryRun) {
+      let indexContent
+      try {
+        indexContent = readFileSync(routerIndexFile, 'utf-8')
+      } catch {
+        indexContent = null
+      }
+      if (indexContent && !indexContent.includes(`* as ${camelRouter}Router`)) {
+        const importLine = `import * as ${camelRouter}Router from './routers/${routerName}'`
         const updated = indexContent
           .replace(
-            /(import { router } from '\.\.\/trpc')/,
-            `$1\n${newImport}`
+            /(import \{ healthCheck \}.*\n)/,
+            `$1${importLine}\n`
           )
           .replace(
-            /router\(\{/,
-            `router({\n  ${routerName}: ${camelRouter}Router,`
+            /export const appRouter = \{/,
+            `export const appRouter = {\n  ${routerName}: {\n    ${procedureName}: ${camelRouter}Router.${procedureName}\n  },`
           )
-        writeFileSync(indexFile, updated) // eslint-disable-line no-unsanitized/method -- CLI tool, not a server
-        console.log(`  Updated: apps/web/server/trpc/routers/index.ts`)
+        writeFileSync(routerIndexFile, updated)
+        console.log(`  Updated: apps/web/server/orpc/router.ts`)
       }
-    } else if (dryRun) {
-      console.log(`  [dry-run] Would update: apps/web/server/trpc/routers/index.ts`)
+    } else {
+      console.log(`  [dry-run] Would update: apps/web/server/orpc/router.ts`)
     }
 
     // Create test file
     writeFile(
       testFile,
       `import { describe, it, expect, vi } from 'vitest'
+import { ORPCError, createRouterClient } from '@orpc/server'
+import { appRouter } from '../../../server/orpc/router'
+import type { Context } from '../../../server/orpc/context'
 
-describe('${camelRouter}Router', () => {
-  describe('${procedureName}', () => {
-    it('should require authentication', async () => {
-      // TODO: Test that unauthenticated calls are rejected
-      expect(true).toBe(true)
+function makeUnauthenticatedContext(): Context {
+  return {
+    event: {} as Context['event'],
+    session: null,
+    db: undefined
+  }
+}
+
+describe('${camelRouter}.${procedureName}', () => {
+  it('should require authentication', async () => {
+    const client = createRouterClient(appRouter, {
+      context: makeUnauthenticatedContext()
     })
-
-    it('should validate input', async () => {
-      // TODO: Test input validation
-      expect(true).toBe(true)
-    })
-
-    // TODO: Add procedure-specific tests
+    await expect(client.${routerName}.${procedureName}({})).rejects.toThrow(ORPCError)
+    await expect(client.${routerName}.${procedureName}({})).rejects.toMatchObject({ code: 'UNAUTHORIZED' })
   })
+
+  it('should validate input', async () => {
+    // TODO: Test input validation with authenticated context
+    expect(true).toBe(true)
+  })
+
+  // TODO: Add procedure-specific tests
 })
 `,
       dryRun
     )
   } else {
-    console.log(`  Router already exists: apps/web/server/trpc/routers/${routerName}.ts`)
+    console.log(`  Router already exists: apps/web/server/orpc/routers/${routerName}.ts`)
     console.log(`  Add the "${procedureName}" procedure manually to the existing router.`)
     console.log()
     console.log(`  Suggested code:`)
     console.log()
-    console.log(`    ${procedureName}: protectedProcedure`)
+    console.log(`    export const ${procedureName} = protectedProcedure`)
+    console.log(`      .route({ method: 'GET', path: '/v1/${routerName}s/${procedureName}', tags: ['${routerName}s'] })`)
+    console.log(`      .meta({ visibility: 'internal' })`)
     console.log(`      .input(z.object({ /* TODO */ }))`)
-    console.log(`      .query(async ({ ctx, input }) => {`)
+    console.log(`      .handler(async ({ context, input }) => {`)
     console.log(`        // TODO: Implement`)
-    console.log(`      }),`)
+    console.log(`      })`)
   }
 
   console.log()
   console.log(`Done! Next steps:`)
   if (isNewRouter) {
-    console.log(`  1. Implement: apps/web/server/trpc/routers/${routerName}.ts`)
+    console.log(`  1. Implement: apps/web/server/orpc/routers/${routerName}.ts`)
     console.log(`  2. Add validation schemas (Zod)`)
-    console.log(`  3. Write tests: apps/web/tests/unit/trpc/${routerName}-router.test.ts`)
+    console.log(`  3. Write tests: apps/web/tests/unit/orpc/${routerName}-router.test.ts`)
+    console.log(`  4. Register procedures in apps/web/server/orpc/router.ts`)
   } else {
     console.log(`  1. Add the procedure to the existing router`)
-    console.log(`  2. Add tests for the new procedure`)
+    console.log(`  2. Register in apps/web/server/orpc/router.ts`)
+    console.log(`  3. Add tests for the new procedure`)
   }
-  console.log(`  4. Run: pnpm test && pnpm typecheck`)
+  console.log(`  5. Run: pnpm test && pnpm typecheck`)
+  console.log(`  6. Run: pnpm generate:openapi (to update OpenAPI spec)`)
 }
 
 // CLI entrypoint

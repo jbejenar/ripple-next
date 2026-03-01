@@ -22,8 +22,8 @@ export function useAuth() {
   async function fetchUser(): Promise<void> {
     try {
       const headers = import.meta.server ? useRequestHeaders(['cookie']) : undefined
-      const data = await $fetch<{ result: { data: AuthUser } }>('/api/trpc/user.me', { headers })
-      user.value = data?.result?.data ?? null
+      const data = await $fetch<AuthUser>('/api/orpc/v1/users/me', { headers })
+      user.value = data ?? null
     } catch {
       user.value = null
     }

@@ -1,0 +1,174 @@
+{
+  "info": {
+    "description": "Government digital platform API. Public endpoints are versioned and breaking-change gated (ADR-021).",
+    "title": "Ripple Next API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.1",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {},
+                    {
+                      "not": {}
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/v1/users": {
+      "get": {
+        "operationId": "user.list",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {},
+                    {
+                      "not": {}
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "post": {
+        "operationId": "user.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "format": "email",
+                    "type": "string"
+                  },
+                  "name": {
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {},
+                    {
+                      "not": {}
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/me": {
+      "get": {
+        "operationId": "user.me",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {},
+                    {
+                      "not": {}
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/v1/users/{id}": {
+      "get": {
+        "operationId": "user.getById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {},
+                    {
+                      "not": {}
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ]
+}
