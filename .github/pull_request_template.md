@@ -28,7 +28,7 @@
 
 - [ ] **A package interface** (`types.ts`): Updated all provider implementations
 - [ ] **Database schema**: Migration generated (`pnpm db:generate`) and included
-- [ ] **An API route/tRPC procedure**: Added or updated integration tests
+- [ ] **An API route/oRPC procedure**: Added or updated tests; ran `pnpm generate:openapi`
 - [ ] **A UI component**: Added or updated component tests
 - [ ] **A Lambda handler**: Added or updated handler tests with mock providers
 - [ ] **Infrastructure** (`sst.config.ts`): Tested with preview deploy (`pr-*` stage)

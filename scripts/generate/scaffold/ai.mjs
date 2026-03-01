@@ -213,7 +213,7 @@ ${description}. TypeScript monorepo with pnpm workspaces.
   const agents = {
     'api-designer': {
       title: 'API Designer',
-      desc: `You are an API designer agent for ${name}. Design RESTful and tRPC endpoints following project conventions. Always validate input with Zod schemas. Write tests for all new endpoints.`,
+      desc: `You are an API designer agent for ${name}. Design oRPC and REST endpoints following project conventions. Always validate input with Zod schemas. Write tests for all new endpoints.`,
     },
     'docs-writer': {
       title: 'Documentation Writer',
@@ -252,7 +252,7 @@ ${agent.desc}
   const instructions = {
     api: {
       title: 'API Development',
-      content: `Follow REST/tRPC conventions. Validate all input with Zod. Return typed responses. Write integration tests for every endpoint.`,
+      content: `Follow oRPC/REST conventions. Validate all input with Zod. Return typed responses. Write integration tests for every endpoint.`,
     },
     database: {
       title: 'Database',

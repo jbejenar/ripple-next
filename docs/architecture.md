@@ -13,7 +13,7 @@ graph TB
 
     subgraph "Nuxt 3 Application"
         SSR[Nuxt SSR / Nitro]
-        tRPC[tRPC Router]
+        API[oRPC Router]
         Pages[Vue 3 Pages]
     end
 
@@ -40,12 +40,12 @@ graph TB
     end
 
     Browser --> SSR
-    SSR --> tRPC
+    SSR --> API
     SSR --> Pages
-    tRPC --> Auth
+    API --> Auth
     SSR --> CMS
-    tRPC --> PG
-    tRPC --> Redis
+    API --> PG
+    API --> Redis
     Queue --> Worker
     Events --> EventHandlers
     Worker --> Email
@@ -61,7 +61,7 @@ graph TB
 | Frontend       | Nuxt 3 + Vue 3 (Composition API) + TypeScript           | [ADR-001](./adr/001-nuxt-over-next.md) |
 | UI Components  | Ripple UI Core + Storybook 10                           | — |
 | Page Templates | Landing, Content, Campaign (contentType-driven)         | [RN-023](./product-roadmap/ARCHIVE.md#rn-023-landing-page--content-templates) |
-| API            | Nitro server routes + tRPC-nuxt                         | — |
+| API            | Nitro server routes + oRPC (OpenAPI 3.1.1)              | [ADR-021](./adr/021-api-contract-strategy.md) |
 | Database       | PostgreSQL (Drizzle ORM) + DynamoDB (ElectroDB) + Redis | [ADR-002](./adr/002-drizzle-over-prisma.md) |
 | Queue          | SQS (prod) / BullMQ (local) / Memory (test)             | [ADR-003](./adr/003-provider-pattern.md) |
 | Auth           | OIDC/OAuth (oauth4webapi) — provider-agnostic           | [ADR-008](./adr/008-oidc-over-lucia.md) |
@@ -151,7 +151,7 @@ structured CI artifacts.
 - [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
 - [Provider Pattern](./provider-pattern.md) — core architecture pattern
 - [Data Model](./data-model.md) — PostgreSQL schema
-- [API Contracts](./api-contracts.md) — tRPC routers and REST endpoints
+- [API Contracts](./api-contracts.md) — oRPC routers and REST endpoints
 - [Deployment Guide](./deployment.md) — local dev, staging, production
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework

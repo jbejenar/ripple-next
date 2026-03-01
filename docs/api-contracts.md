@@ -1,30 +1,46 @@
 # API Contracts
 
-## tRPC Router
+## oRPC Router (ADR-021)
 
-The main API is served via tRPC at `/api/trpc/[trpc]`.
+The main API is served via oRPC at `/api/orpc/*` with OpenAPI 3.1.1 as the
+first-class contract format. The generated spec is committed at `docs/api/openapi.json`.
 
 ```mermaid
 graph LR
-    Client[Vue 3 Client] -->|"$client.user.me()"| tRPC[tRPC Router]
-    tRPC --> Auth{Auth Middleware}
+    Client[Vue 3 Client] -->|"$fetch('/api/orpc/v1/users/me')"| oRPC[oRPC OpenAPI Handler]
+    oRPC --> Auth{Auth Middleware}
     Auth -->|Protected| Repo[Repository Layer]
     Repo --> DB[(PostgreSQL)]
 ```
 
 ### user router
 
-| Procedure     | Type     | Auth      | Input             | Output       |
-| ------------- | -------- | --------- | ----------------- | ------------ |
-| `user.me`     | query    | protected | -                 | User \| null |
-| `user.create` | mutation | protected | `{ email, name }` | User         |
-| `user.list`   | query    | protected | -                 | User[]       |
+| Procedure      | Method | Path              | Visibility | Auth      | Input             | Output       |
+| -------------- | ------ | ----------------- | ---------- | --------- | ----------------- | ------------ |
+| `user.me`      | GET    | `/v1/users/me`    | public     | protected | -                 | SessionUser  |
+| `user.getById` | GET    | `/v1/users/{id}`  | public     | protected | `{ id: uuid }`    | User         |
+| `user.create`  | POST   | `/v1/users`       | public     | protected | `{ email, name }` | User         |
+| `user.list`    | GET    | `/v1/users`       | public     | protected | -                 | User[]       |
 
-### REST Endpoints
+### Health endpoint
+
+| Procedure | Method | Path      | Visibility | Auth   |
+| --------- | ------ | --------- | ---------- | ------ |
+| `health`  | GET    | `/health` | internal   | public |
+
+### OpenAPI Contract Pipeline
+
+```
+oRPC router definition (apps/web/server/orpc/router.ts)
+  → pnpm generate:openapi           → docs/api/openapi.json
+  → pnpm check:api-contract         → CI drift gate (wired into pnpm verify)
+```
+
+### REST Endpoints (H3 file-based)
 
 | Method | Path          | Description  |
 | ------ | ------------- | ------------ |
-| GET    | `/api/health` | Health check |
+| GET    | `/api/health` | Full health check with dependency probes (DB, Redis) |
 
 ### CMS Endpoints
 
@@ -79,3 +95,4 @@ Shared validation schemas are in `packages/validation/`:
 - [Architecture](./architecture.md) — system overview
 - [Data Model](./data-model.md) — database schema these APIs operate on
 - [Testing Guide](./testing-guide.md) — testing API endpoints
+- [ADR-021](./adr/021-api-contract-strategy.md) — API contract strategy (oRPC + OpenAPI-first)

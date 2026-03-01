@@ -6,7 +6,7 @@ Add a new feature to the application following these steps:
 2. **Schema**: If DB changes needed, update `packages/db/schema/` and run `pnpm db:generate`
 3. **Validation**: Add Zod schemas to `packages/validation/schemas/`
 4. **Repository**: Add/update repository in `packages/db/repositories/`
-5. **API**: Add tRPC procedure in `apps/web/server/trpc/routers/`
+5. **API**: Add oRPC procedure in `apps/web/server/orpc/routers/` and run `pnpm generate:openapi`
 6. **UI**: Create components in `packages/ui/` or `apps/web/components/`
 7. **Page**: Create page in `apps/web/pages/`
 8. **Tests**: Write unit + integration tests

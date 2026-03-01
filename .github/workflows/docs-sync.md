@@ -21,7 +21,7 @@ When schemas, types, or infrastructure change, update the relevant documentation
 ## Check and update:
 
 - `docs/data-model.md` when `packages/db/schema/` changes
-- `docs/api-contracts.md` when tRPC routers change
+- `docs/api-contracts.md` when oRPC routers change (also run `pnpm generate:openapi`)
 - `docs/architecture.md` when `sst.config.ts` changes
 - `AGENTS.md` when new patterns are introduced
 
