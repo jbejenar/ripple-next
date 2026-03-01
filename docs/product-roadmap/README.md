@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v6.5.0 | 2026-03-01
+> v6.6.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 47 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 49 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -23,12 +23,12 @@ gantt
     RN-051 ADR: API boundary strategy       :done, rn051, 2026-02-28, 1d
     RN-046 oRPC migration + integration     :done, rn046, 2026-03-01, 1d
     RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
-    RN-052 Bidirectional fleet comms        :active, rn052, 2026-03-01, 21d
+    RN-052 Bidirectional fleet comms        :done, rn052, 2026-03-01, 1d
+    RN-050 Web performance budgets          :done, rn050, 2026-03-01, 1d
 
     section Next (6–12 weeks)
-    RN-050 Web performance budgets          :rn050, 2026-04-13, 21d
-    RN-025 Contract testing                 :rn025, 2026-05-04, 30d
-    RN-028 Golden-path conformance CLI      :rn028, 2026-05-04, 30d
+    RN-025 Contract testing                 :rn025, 2026-04-13, 30d
+    RN-028 Golden-path conformance CLI      :rn028, 2026-04-13, 30d
 
     section Later (Quarter+)
     RN-017 Live Drupal integration          :rn017, 2026-06-01, 21d
@@ -65,8 +65,8 @@ across the fleet.
 
 1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045)
 2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
-3. **Quality depth** — performance budgets, live CMS validation
-4. **Bidirectional fleet governance** — downstream→upstream feedback, AI instruction sync, version tracking, update notifications (ADR-022, RN-052)
+3. **Quality depth** — ~~performance budgets~~ Core Web Vitals pipeline implemented (RN-050), live CMS validation
+4. **Bidirectional fleet governance** — ~~downstream→upstream feedback, AI instruction sync, version tracking, update notifications~~ done (ADR-022, RN-052)
 
 ---
 
@@ -177,11 +177,11 @@ and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
 
 ---
 
-### RN-052: Bidirectional Fleet Communication (Downstream↔Upstream)
+### RN-052: Bidirectional Fleet Communication (Downstream↔Upstream) ✓
 
 **Impact:** Very High | **Effort:** High | **Risk:** Medium | **Priority:** P0
 **Source:** Tech-lead directive — fleet governance gap analysis | **Date:** 2026-03-01
-**ADR:** [ADR-022](../adr/022-bidirectional-fleet-communication.md)
+**Completed:** 2026-03-01 | **ADR:** [ADR-022](../adr/022-bidirectional-fleet-communication.md)
 **AI-first benefit:** Enables AI agents to autonomously submit feedback upstream, detect and share local improvements, and receive proactive update notifications — closing the only communication gap in the fleet governance system. No existing platform (Backstage, Cruft, Copier, Nx) provides AI-assisted bidirectional sync.
 
 #### Upstream → Downstream Enhancements
@@ -215,27 +215,32 @@ and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
 
 ---
 
+### RN-050: Web Performance Budgets (Core Web Vitals) ✓
+
+**Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** Gap analysis — a11y auditing exists ([RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline)) but no performance equivalent | **Date:** 2026-03-01
+**Completed:** 2026-03-01
+**AI-first benefit:** Agents get structured performance regression signals in CI — `ripple-perf-report/v1` JSON enables automated detection and remediation of Core Web Vitals regressions.
+
+Government sites have performance obligations. The platform had WCAG a11y auditing
+but no Core Web Vitals monitoring. Now implemented using Playwright's Performance
+API — zero new dependencies, matching the a11y audit pattern.
+
+- [x] Define performance budgets (LCP, FCP, CLS, TTFB, TBT thresholds based on Google CWV)
+- [x] Playwright-based performance audit in CI pipeline (`pnpm test:perf`)
+- [x] Emit structured `ripple-perf-report/v1` JSON
+- [x] Block on critical performance regressions (exit code 1 on critical thresholds)
+- [x] Error taxonomy expanded: PERF category with RPL-PERF-001 (critical), RPL-PERF-002 (warning)
+- [x] CI integration: perf audit step + `perf-report.json` artifact upload in e2e job
+- [x] Documentation: `docs/performance.md` with budgets, pipeline, report schema, remediation guide
+
+**Verification:** `pnpm test:perf -- --json` emits valid `ripple-perf-report/v1` JSON; CI includes performance audit step; `pnpm verify` passes; error taxonomy v1.9.0 with 61 codes across 17 categories.
+
+---
+
 ## Next (6–12 weeks)
 
 > Items planned for the near term. Dependencies understood, design work may be needed.
-
-### RN-050: Web Performance Budgets (Lighthouse CI)
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low
-**Source:** Gap analysis — a11y auditing exists ([RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline)) but no performance equivalent
-**AI-first benefit:** Agents get structured performance regression signals in CI.
-
-Government sites have performance obligations. The platform has WCAG a11y auditing
-but no Core Web Vitals monitoring. Lighthouse CI provides the performance analog.
-
-- [ ] Define performance budgets (LCP, CLS, INP thresholds)
-- [ ] Lighthouse CI integration in CI pipeline
-- [ ] Emit structured `ripple-perf-report/v1` JSON
-- [ ] Block on critical performance regressions
-
-**Verification:** `pnpm test:perf -- --json` emits valid JSON; CI includes performance job; `pnpm verify` passes.
-
----
 
 ### RN-025: Contract Testing Across Consumers
 
@@ -369,7 +374,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-47 items completed (RN-001 through RN-051, excluding RN-017/025/028/052).
+49 items completed (RN-001 through RN-052, excluding RN-017/025/028).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
