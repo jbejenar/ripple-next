@@ -20,7 +20,7 @@ gantt
     axisFormat %b %Y
 
     section Now (0–6 weeks)
-    RN-051 ADR: API boundary strategy       :done, rn051, 2026-02-28, 1d
+    RN-051 ADR - API boundary strategy      :done, rn051, 2026-02-28, 1d
     RN-046 oRPC migration + integration     :done, rn046, 2026-03-01, 1d
     RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
     RN-052 Bidirectional fleet comms        :done, rn052, 2026-03-01, 1d
