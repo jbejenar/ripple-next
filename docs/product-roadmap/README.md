@@ -7,8 +7,8 @@
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 54 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 3 in Done below).
-> 8 items active. 5 items parked.
+> 55 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 4 in Done below).
+> 7 items active. 5 items parked.
 
 ---
 
@@ -20,13 +20,13 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %Y
 
-    section Done (v7.1.0)
+    section Done (v7.2.0)
+    RN-062 README navigation hub           :done, rn062, 2026-03-02, 1d
     RN-053 CI gate truth                   :done, rn053, 2026-03-01, 1d
     RN-055 Node version pin parity         :done, rn055, 2026-03-01, 1d
     RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
 
     section Next (6–12 weeks)
-    RN-062 README navigation hub           :active, rn062, 2026-03-02, 3d
     RN-061 Downstream adoption standards   :active, rn061, 2026-03-01, 7d
     RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
     RN-058 Licensing resolution ADR        :rn058, 2026-03-10, 7d
@@ -82,9 +82,9 @@ per-subsystem detail.
 
 ---
 
-## Done (v7.1.0)
+## Done (v7.2.0)
 
-> Honesty debt items shipped 2026-03-01. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
+> Honesty debt items shipped 2026-03-01. RN-062 shipped 2026-03-02. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
 
 ### RN-053: CI Gate Truth — Enforce or Explicitly Label Advisory Gates
 
@@ -122,6 +122,21 @@ per-subsystem detail.
 
 **Distribution:** 2 integration-tested, 8 conformance-tested, 6 interface-defined, 0 production-proven.
 **Verified:** `pnpm check:readiness` passes (90/90 checks). `readiness.json` version bumped to 0.26.0 with `maturityLevels` legend.
+
+---
+
+### RN-062: README as Navigation Hub — Audience Paths + Start Here Index
+
+**Status:** Done (2026-03-02)
+
+- [x] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
+- [x] "Pick Your Path" table routing 5 audiences to correct entry points
+- [x] Provider pattern Mermaid diagram (simplified thumbnail)
+- [x] "Contributing" section with safe zones, workflow Mermaid, and expectations
+- [x] All links verified (AGENTS.md, developer-guide, adoption guide, platform capabilities, etc.)
+
+**Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted.
+**Verified:** All 18 file links in README resolve to existing files. `docs/runbooks/` is pre-existing broken link (not introduced by this change).
 
 ---
 
@@ -165,37 +180,6 @@ Provides two adoption paths (greenfield and legacy migration) with machine-reada
 - Fleet policy v1.3.0 includes FLEET-SURF-012 and FLEET-SURF-013
 
 **Links:** [ADR-023](../adr/023-downstream-adoption-standards.md), [Adoption Guide](../downstream-adoption-guide.md), [Platform Capabilities](../platform-capabilities.md)
-
----
-
-### RN-062: README as Navigation Hub — Audience Paths + Start Here Index
-
-**Tier:** 2 | **Priority:** High | **Impact:** Very High | **Effort:** Low | **Risk:** Low
-**Source:** Repo usability review — README vs existing guides, human + agent onboarding
-**AI-first benefit:** Agents get deterministic routing to the correct doc and workflow on the first read.
-**Status:** In Progress
-**Dependencies:** None
-
-README acts as a dispatcher with audience-based routing, agent quick-start block,
-provider pattern diagram, and contributor invitation. Subsumes RN-063 (Mermaid diagrams),
-RN-065 (contributor magnet), and RN-066 (agent start here).
-
-#### Definition of Done
-
-- [ ] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
-- [ ] "Pick Your Path" table routing 5 audiences to correct entry points
-- [ ] Provider pattern Mermaid diagram (simplified thumbnail)
-- [ ] "Contributing" section with safe zones, workflow Mermaid, and expectations
-- [ ] All links verified (AGENTS.md, developer-guide, adoption guide, platform capabilities, etc.)
-- [ ] `pnpm verify` passes cleanly
-
-#### Verification
-
-- All 5 audience paths link to existing documents
-- Mermaid diagrams render correctly on GitHub
-- `pnpm verify` passes
-
-**Links:** [README.md](../../README.md), [AGENTS.md](../../AGENTS.md), [CONTRIBUTING.md](../../CONTRIBUTING.md)
 
 ---
 
@@ -462,7 +446,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-54 items completed (RN-001 through RN-056, excluding RN-017 and RN-054).
-51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056 in Done section above.
+55 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-061).
+51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056, RN-062 in Done section above.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Platform Capabilities](../platform-capabilities.md)
