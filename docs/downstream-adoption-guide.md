@@ -343,7 +343,7 @@ Downstream repos are scored against the [conformance rubric](./conformance-rubri
 | Documentation | 7 | README.md, CLAUDE.md, readiness.json |
 | Security & Licensing | 10 | SPDX license, LICENSE file, .env gitignored |
 | Fleet Governance | 3 | .fleet.json exists |
-| Downstream Documentation | 10 | Product roadmap, architecture, API contracts |
+| Downstream Documentation | 5 | Product roadmap, architecture, API contracts |
 
 **Passing threshold:** 70/100. Run `pnpm conform -- --target=/path/to/repo --json`.
 
