@@ -72,6 +72,7 @@ async function waitForIssuer(issuerUrl: string, maxRetries = 30): Promise<void> 
 }
 
 export interface AuthCodeResult {
+  callbackUrl: URL
   code: string
   state: string
 }
@@ -156,7 +157,7 @@ export async function simulateAuthCodeFlow(options: {
     throw new Error(`No auth code in callback. Error: ${error ?? 'unknown'}`)
   }
 
-  return { code, state: state ?? '' }
+  return { callbackUrl, code, state: state ?? '' }
 }
 
 function collectCookies(response: Response, jar: string[]): void {

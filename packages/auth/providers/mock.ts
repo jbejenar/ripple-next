@@ -46,7 +46,7 @@ export class MockAuthProvider implements AuthProvider {
     return new URL(`https://mock-idp.test/authorize?state=${state}`)
   }
 
-  async handleCallback(_code: string, _state: string, _codeVerifier: string): Promise<AuthUser> {
+  async handleCallback(_callbackParams: URLSearchParams, _expectedState: string, _codeVerifier: string): Promise<AuthUser> {
     return this.defaultUser
   }
 

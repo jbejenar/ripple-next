@@ -28,7 +28,7 @@ export interface AuthProvider {
   invalidateSession(sessionId: string): Promise<void>
   validateCredentials(email: string, password: string): Promise<AuthUser | null>
   getAuthorizationUrl(state: string, codeVerifier: string): Promise<URL>
-  handleCallback(code: string, state: string, codeVerifier: string): Promise<AuthUser>
+  handleCallback(callbackParams: URLSearchParams, expectedState: string, codeVerifier: string): Promise<AuthUser>
 }
 
 export type Permission = 'read' | 'write' | 'admin'

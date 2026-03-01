@@ -126,7 +126,7 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const state = crypto.randomUUID()
       const authUrl = await provider.getAuthorizationUrl(state, verifier)
 
-      const { code, state: returnedState } = await simulateAuthCodeFlow({
+      const { callbackUrl, code, state: returnedState } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
@@ -135,7 +135,7 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       expect(returnedState).toBe(state)
       expect(code).toBeTruthy()
 
-      const user = await provider.handleCallback(code, returnedState, verifier)
+      const user = await provider.handleCallback(callbackUrl.searchParams, state, verifier)
 
       expect(user).toBeDefined()
       expect(user.email).toBe(TEST_USER.email)
@@ -145,15 +145,16 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
 
     it('links OIDC sub to user on callback', async () => {
       const verifier = oauth.generateRandomCodeVerifier()
-      const authUrl = await provider.getAuthorizationUrl('link-test', verifier)
+      const state = 'link-test'
+      const authUrl = await provider.getAuthorizationUrl(state, verifier)
 
-      const { code, state: returnedState } = await simulateAuthCodeFlow({
+      const { callbackUrl } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, returnedState, verifier)
+      const user = await provider.handleCallback(callbackUrl.searchParams, state, verifier)
 
       // User should be stored by OIDC sub
       expect(userStore.users.has(user.id)).toBe(true)
@@ -165,15 +166,16 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
   describe('Session Lifecycle', () => {
     it('creates and validates a session after OIDC auth', async () => {
       const verifier = oauth.generateRandomCodeVerifier()
-      const authUrl = await provider.getAuthorizationUrl('session-create', verifier)
+      const state = 'session-create'
+      const authUrl = await provider.getAuthorizationUrl(state, verifier)
 
-      const { code, state: returnedState } = await simulateAuthCodeFlow({
+      const { callbackUrl } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, returnedState, verifier)
+      const user = await provider.handleCallback(callbackUrl.searchParams, state, verifier)
       const session = await provider.createSession(user.id)
 
       expect(session.userId).toBe(user.id)
@@ -186,15 +188,16 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
 
     it('invalidates a session (logout)', async () => {
       const verifier = oauth.generateRandomCodeVerifier()
-      const authUrl = await provider.getAuthorizationUrl('logout-test', verifier)
+      const state = 'logout-test'
+      const authUrl = await provider.getAuthorizationUrl(state, verifier)
 
-      const { code, state: returnedState } = await simulateAuthCodeFlow({
+      const { callbackUrl } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, returnedState, verifier)
+      const user = await provider.handleCallback(callbackUrl.searchParams, state, verifier)
       const session = await provider.createSession(user.id)
 
       await provider.invalidateSession(session.id)
@@ -207,25 +210,27 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
   describe('Error Handling', () => {
     it('rejects invalid authorization code', async () => {
       const verifier = oauth.generateRandomCodeVerifier()
+      const fakeParams = new URLSearchParams({ code: 'invalid-code', state: 'fake-state' })
 
       await expect(
-        provider.handleCallback('invalid-code', 'invalid-state', verifier)
+        provider.handleCallback(fakeParams, 'fake-state', verifier)
       ).rejects.toThrow()
     })
 
     it('rejects mismatched PKCE verifier', async () => {
       const verifier = oauth.generateRandomCodeVerifier()
       const wrongVerifier = oauth.generateRandomCodeVerifier()
-      const authUrl = await provider.getAuthorizationUrl('wrong-verifier', verifier)
+      const state = 'wrong-verifier'
+      const authUrl = await provider.getAuthorizationUrl(state, verifier)
 
-      const { code, state: returnedState } = await simulateAuthCodeFlow({
+      const { callbackUrl } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
       await expect(
-        provider.handleCallback(code, returnedState, wrongVerifier)
+        provider.handleCallback(callbackUrl.searchParams, state, wrongVerifier)
       ).rejects.toThrow()
     })
 
