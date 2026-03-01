@@ -337,10 +337,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: your-org/ripple-next/.github/actions/setup@v1
         with:
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
       - uses: your-org/ripple-next/.github/actions/quality@v1
       - uses: your-org/ripple-next/.github/actions/test@v1
-      - run: pnpm publish --access restricted
+      - run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```

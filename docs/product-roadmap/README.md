@@ -7,7 +7,7 @@
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 49 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 50 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -26,6 +26,7 @@ gantt
     RN-052 Bidirectional fleet comms        :done, rn052, 2026-03-01, 1d
     RN-050 Web performance budgets          :done, rn050, 2026-03-01, 1d
     RN-025 Contract testing                 :done, rn025, 2026-03-01, 1d
+    RN-049 Licensing clarity (SPDX)         :done, rn049, 2026-03-01, 1d
 
     section Next (6–12 weeks)
     RN-028 Golden-path conformance CLI      :rn028, 2026-04-13, 30d
@@ -236,6 +237,41 @@ API — zero new dependencies, matching the a11y audit pattern.
 
 **Verification:** `pnpm test:perf -- --json` emits valid `ripple-perf-report/v1` JSON; CI includes performance audit step; `pnpm verify` passes; error taxonomy v1.9.0 with 61 codes across 17 categories.
 
+### RN-049: Licensing Clarity Guardrail (SPDX + Dual-License Model) ✓
+
+**Impact:** Medium | **Effort:** Low | **Risk:** Medium | **Priority:** P1
+**Source:** Tech-lead directive — NPM publishing requires license metadata | **Date:** 2026-03-01
+**Completed:** 2026-03-01
+**AI-first benefit:** SPDX-standard `license` field in every `package.json` makes license scanning deterministic for agents and automated compliance tools (SBOM, Snyk, FOSSA).
+
+Resolved the licensing drift flagged when PolyForm Noncommercial 1.0.0 was adopted
+(PR #49) without updating SPDX metadata. All `package.json` files now carry the
+SPDX identifier, and the dual-licensing model is documented.
+
+#### License Model
+
+| Use Case | License | Cost |
+|----------|---------|------|
+| Non-commercial (personal, research, education, government, charity) | [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0) | Free |
+| Commercial (for-profit products, SaaS, consulting deliverables) | Commercial license | Contact licensor |
+
+#### Recommendations
+
+1. **npm consumers** see `PolyForm-Noncommercial-1.0.0` in the `license` field on npmjs.org — this is the SPDX-standard identifier for the PolyForm Noncommercial license
+2. **Commercial users** should contact the licensor to obtain a commercial license before using `@ripple/*` packages in revenue-generating products or services
+3. **SBOM/compliance tools** (CycloneDX, Snyk, FOSSA) can now auto-detect the license from `package.json` — no manual classification needed
+4. **Downstream repos** scaffolded via `pnpm generate:scaffold` inherit the same license field
+
+#### Definition of Done
+
+- [x] SPDX `license` field added to root `package.json`
+- [x] SPDX `license` field added to all 11 workspace `package.json` files
+- [x] LICENSE file already present (PolyForm Noncommercial 1.0.0 full text)
+- [x] Dual-license model documented in roadmap
+- [x] Risks table updated — licensing drift resolved
+
+---
+
 ### RN-025: Contract Testing Across Consumers ✓
 
 **Impact:** High | **Effort:** High | **Risk:** Medium
@@ -313,7 +349,6 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 
 | Item | Reason |
 |------|--------|
-| RN-049: Licensing Clarity Guardrail | PolyForm Noncommercial 1.0.0 adopted (PR #49). Contradicts prior SPDX-standard guidance — needs ADR to document rationale. |
 | Visual regression (Chromatic/Percy) | Deferred in [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components). Not justified by current UI churn. |
 
 ---
@@ -328,7 +363,7 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | ~~Auth integration test gap~~ | ~~RN-045~~ **Resolved** — Keycloak Testcontainer integration tests added |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
 | ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
-| Licensing drift (RN-049) | PolyForm Noncommercial 1.0.0 adopted (PR #49) — diverges from prior SPDX-standard guidance; needs ADR |
+| ~~Licensing drift (RN-049)~~ | ~~PolyForm Noncommercial 1.0.0 adopted (PR #49)~~ **Resolved** — SPDX `license` field added to all `package.json` files; dual-license model documented |
 
 ---
 
@@ -390,7 +425,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-49 items completed (RN-001 through RN-052, excluding RN-017/028/049).
+50 items completed (RN-001 through RN-052, excluding RN-017/028).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)

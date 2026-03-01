@@ -1,6 +1,7 @@
 {
   "name": "@ripple/cms",
   "version": "0.1.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -9,7 +10,8 @@
   },
   "files": ["dist"],
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
