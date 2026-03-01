@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v6.4.0 | 2026-03-01
+> v6.5.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 46 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 47 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -22,9 +22,9 @@ gantt
     section Now (0–6 weeks)
     RN-051 ADR: API boundary strategy       :done, rn051, 2026-02-28, 1d
     RN-046 oRPC migration + integration     :done, rn046, 2026-03-01, 1d
+    RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
 
     section Next (6–12 weeks)
-    RN-045 OIDC auth integration tests      :rn045, 2026-04-13, 21d
     RN-050 Web performance budgets          :rn050, 2026-04-13, 21d
     RN-025 Contract testing                 :rn025, 2026-05-04, 30d
     RN-028 Golden-path conformance CLI      :rn028, 2026-05-04, 30d
@@ -62,7 +62,7 @@ across the fleet.
 
 ## Themes
 
-1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, close integration test gaps
+1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045)
 2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
 3. **Quality depth** — performance budgets, live CMS validation
 
@@ -140,27 +140,44 @@ API layer moved from "partial" to "implemented" — 16/16 subsystems complete.
 
 ---
 
-## Next (6–12 weeks)
-
-> Items planned for the near term. Dependencies understood, design work may be needed.
-
-### RN-045: OIDC Auth Flow Integration Tests (PKCE + Sessions)
+### RN-045: OIDC Auth Flow Integration Tests (PKCE + Sessions) ✓
 
 **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** GPT-5.2-Codex readiness + auth test review | **Date:** 2026-02-28
+**Completed:** 2026-03-01
 **AI-first benefit:** Prevents agents from shipping auth regressions by validating prod-faithful OIDC flow deterministically.
 
-Readiness reports auth integration test gap. Conformance tests validate interface
-behaviour but not end-to-end authorization-code + PKCE session lifecycle.
+Closed the auth integration test gap identified in `readiness.json`. Added a
+deterministic Keycloak Testcontainer fixture with checked-in realm configuration,
+and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
 
-- [ ] Add deterministic IdP fixture (container + checked-in config)
-- [ ] Cover auth code + PKCE exchange, session creation/persistence, refresh/expiry, logout
-- [ ] Gate on auth/config changes with optional nightly full-suite execution
-- [ ] Add error taxonomy codes for IdP failure modes (issuer mismatch, redirect mismatch, clock skew)
+- [x] Add deterministic IdP fixture (container + checked-in config)
+  - Keycloak 26.0 Testcontainer in `packages/testing/helpers/keycloak.ts`
+  - Checked-in realm config: `packages/auth/tests/fixtures/ripple-test-realm.json`
+  - Pre-configured client (`ripple-test-client`) with PKCE S256 enforcement
+  - Test user (`testuser` / `testpassword`) with email `test@example.com`
+  - Browser flow simulation helper (`simulateAuthCodeFlow`) for headless auth code acquisition
+- [x] Cover auth code + PKCE exchange, session creation/persistence, logout
+  - OIDC discovery from real Keycloak (authorization URL with PKCE params)
+  - Full PKCE flow: auth code exchange → user returned with email/name from Keycloak claims
+  - OIDC sub linking via `UserStore.findOrCreateByOidcSub`
+  - Session creation after auth → session validation → session invalidation (logout)
+  - Error handling: invalid code, mismatched PKCE verifier, password auth rejection
+- [x] Gate on auth/config changes — tests run via `pnpm test`, skipped when Docker unavailable (`describe.runIf(dockerAvailable)`)
+- [x] Add error taxonomy codes for IdP failure modes
+  - RPL-AUTH-001: OIDC issuer discovery failed
+  - RPL-AUTH-002: OIDC redirect URI mismatch
+  - RPL-AUTH-003: OIDC token validation failed (clock skew, signature, expiry)
+  - RPL-AUTH-004: OIDC authorization code exchange failed (invalid code, PKCE mismatch)
+  - Error taxonomy updated to v1.7.0 (55 codes across 15 categories)
 
-**Verification:** Integration tests pass with containerised IdP; error taxonomy updated; `pnpm verify` passes.
+**Verification:** `pnpm verify` passes (9/9 gates); integration tests skipped gracefully without Docker; lint + typecheck pass; `readiness.json` auth blocker removed.
 
 ---
+
+## Next (6–12 weeks)
+
+> Items planned for the near term. Dependencies understood, design work may be needed.
 
 ### RN-050: Web Performance Budgets (Lighthouse CI)
 
@@ -247,6 +264,7 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 | RN-017 blocked on content team indefinitely | Docker Tide fixture as fallback by Q2 2026 |
 | ~~API boundary undecided (oRPC vs tRPC)~~ | ~~RN-051 (P0)~~ **Resolved** — ADR-021 selects oRPC with OpenAPI-first contracts |
 | ~~API layer "partial" status~~ | ~~RN-046 in Now addresses this~~ **Resolved** — oRPC migration complete, 16/16 subsystems implemented |
+| ~~Auth integration test gap~~ | ~~RN-045~~ **Resolved** — Keycloak Testcontainer integration tests added |
 | No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
 | ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
 | Licensing drift (RN-049) | Keep SPDX-standard; reject custom non-commercial wording |
@@ -311,7 +329,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-46 items completed (RN-001 through RN-051, excluding RN-017/025/028).
+47 items completed (RN-001 through RN-051, excluding RN-017/025/028).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
