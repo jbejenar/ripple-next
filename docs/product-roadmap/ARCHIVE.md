@@ -780,6 +780,129 @@ regex matches and reports advisory findings.
 
 ---
 
+## Now (v6.8.0) — Completed
+
+---
+
+### RN-051: ADR — API Boundary Strategy (oRPC vs tRPC, Public vs Internal + Portal Publishing)
+
+**Completed:** 2026-02-28 | **Impact:** Very High | **Effort:** Medium
+**ADR:** [ADR-021](../adr/021-api-contract-strategy.md)
+
+**Outcome shipped:**
+- ADR-021 selects oRPC as canonical API boundary with OpenAPI 3.1.1 contracts
+- `pnpm generate:openapi` and `pnpm check:api-contract` CI gate wired into `pnpm verify`
+- Error taxonomy expanded: RPL-API-001 (spec drift), RPL-API-002 (breaking change)
+
+**Evidence:** `docs/adr/021-api-contract-strategy.md`, `docs/api/openapi.json`, `scripts/generate-openapi.mjs`, `scripts/check-api-contract.mjs`
+
+**Follow-ups:** RN-046 (oRPC migration, completed), RN-025 (contract testing, completed)
+
+---
+
+### RN-046: oRPC Migration + Router Integration Harness (Testcontainers)
+
+**Completed:** 2026-03-01 | **Impact:** High | **Effort:** Medium
+
+**Outcome shipped:**
+- oRPC installed; user router (4 procedures) migrated from tRPC
+- First `openapi.json` generated; contract drift gate activated
+- tRPC fully removed; API subsystem → "implemented" (16/16)
+
+**Evidence:** `apps/web/server/orpc/router.ts`, `docs/api/openapi.json`, `apps/web/package.json`
+
+**Follow-ups:** Testcontainers router integration tests (parked), CI DATABASE_URL job (parked)
+
+---
+
+### RN-045: OIDC Auth Flow Integration Tests (PKCE + Sessions)
+
+**Completed:** 2026-03-01 | **Impact:** High | **Effort:** Medium
+
+**Outcome shipped:**
+- Keycloak 26.0 Testcontainer fixture with checked-in realm configuration
+- 8 integration tests: discovery, PKCE exchange, session lifecycle, error handling
+- Error taxonomy: RPL-AUTH-001 through RPL-AUTH-004
+
+**Evidence:** `packages/auth/tests/integration/`, `packages/testing/helpers/keycloak.ts`, `packages/auth/tests/fixtures/ripple-test-realm.json`
+
+---
+
+### RN-052: Bidirectional Fleet Communication (Downstream↔Upstream)
+
+**Completed:** 2026-03-01 | **Impact:** Very High | **Effort:** High
+**ADR:** [ADR-022](../adr/022-bidirectional-fleet-communication.md)
+
+**Outcome shipped:**
+- Fleet changelog, feedback schema, feedback generator, intake engine
+- 11 governed surfaces; FLEET-SURF-010/011 added
+- Downstream scaffold updated with `.fleet.json` and feedback/update workflows
+
+**Evidence:** `docs/fleet-changelog.json`, `docs/fleet-feedback-schema.json`, `scripts/fleet-feedback.mjs`, `scripts/fleet-feedback-intake.mjs`, `.github/workflows/fleet-feedback-intake.yml`
+
+**Follow-ups:** Validation with real downstream repos → [RN-054](./README.md#rn-054-downstream-proof-of-life--first-consumer-deployment)
+
+---
+
+### RN-050: Web Performance Budgets (Core Web Vitals)
+
+**Completed:** 2026-03-01 | **Impact:** Medium | **Effort:** Medium
+
+**Outcome shipped:**
+- Playwright-based performance audit (`pnpm test:perf`) with Core Web Vitals thresholds
+- `ripple-perf-report/v1` JSON output; RPL-PERF-001/002 error codes
+- CI integration with `perf-report.json` artifact upload
+
+**Evidence:** `scripts/perf-audit.mjs`, `docs/performance.md`, `.github/workflows/ci.yml`
+
+**Follow-ups:** CI gate currently advisory (`|| true`) → [RN-053](./README.md#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
+
+---
+
+### RN-049: Licensing Clarity Guardrail (SPDX + Dual-License Model)
+
+**Completed:** 2026-03-01 | **Impact:** Medium | **Effort:** Low
+
+**Outcome shipped:**
+- SPDX `license` field added to all 12 `package.json` files
+- Dual-license model documented (noncommercial free, commercial by agreement)
+
+**Evidence:** `package.json` (root + 11 workspaces), LICENSE
+
+**Follow-ups:** Government procurement compatibility review → [RN-058](./README.md#rn-058-licensing-resolution-adr--government-procurement-compatibility)
+
+---
+
+### RN-025: Contract Testing Across Consumers
+
+**Completed:** 2026-03-01 | **Impact:** High | **Effort:** High
+
+**Outcome shipped:**
+- 22 consumer contract tests (spec ↔ router agreement)
+- Breaking-change detection (`pnpm check:api-breaking`) with `ripple-api-breaking/v1` JSON
+- Wired into `pnpm verify` (10th gate) and release workflow
+
+**Evidence:** `apps/web/tests/unit/orpc/openapi-contract.test.ts`, `scripts/check-api-breaking.mjs`, `.github/workflows/release.yml`
+
+**Follow-ups:** Portal publication (parked), SDK generation (parked)
+
+---
+
+### RN-028: Golden-Path Conformance CLI
+
+**Completed:** 2026-03-01 | **Impact:** Very High | **Effort:** High
+
+**Outcome shipped:**
+- `pnpm conform` CLI: 7 categories, 21 checks, 100-point scale
+- `ripple-conformance/v1` JSON; golden path scores 100/100
+- RPL-CONFORM-001/002/003 error codes
+
+**Evidence:** `scripts/conform.mjs`, `docs/conformance-rubric.json`, `docs/runbooks/run-conformance.json`
+
+**Follow-ups:** Auto-remediation PRs → [RN-060](./README.md#rn-060-conformance-cli-auto-remediation-prs); optional verify integration (parked)
+
+---
+
 ## Summary
 
 | ID | Item | Phase | Status |
@@ -827,6 +950,14 @@ regex matches and reports advisory findings.
 | [RN-043](#rn-043-agent-session-observability) | Agent Session Observability | Tier 4 | **Done** |
 | [RN-047](#rn-047-persist-turbo-cache-in-ci) | Persist Turbo Cache in CI | Now | **Done** |
 | [RN-048](#rn-048-downstream-workflow-pinning-policy) | Downstream Workflow Pinning Policy | Now | **Done** |
+| [RN-051](#rn-051-adr--api-boundary-strategy-orpc-vs-trpc-public-vs-internal--portal-publishing) | ADR — API Boundary Strategy | Now | **Done** |
+| [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) | oRPC Migration | Now | **Done** |
+| [RN-045](#rn-045-oidc-auth-flow-integration-tests-pkce--sessions) | OIDC Auth Integration Tests | Now | **Done** |
+| [RN-052](#rn-052-bidirectional-fleet-communication-downstreamupstream) | Bidirectional Fleet Communication | Now | **Done** |
+| [RN-050](#rn-050-web-performance-budgets-core-web-vitals) | Web Performance Budgets | Now | **Done** |
+| [RN-049](#rn-049-licensing-clarity-guardrail-spdx--dual-license-model) | Licensing Clarity Guardrail (SPDX) | Now | **Done** |
+| [RN-025](#rn-025-contract-testing-across-consumers) | Contract Testing Across Consumers | Now | **Done** |
+| [RN-028](#rn-028-golden-path-conformance-cli) | Golden-Path Conformance CLI | Now | **Done** |
 
 ---
 
@@ -875,6 +1006,16 @@ gantt
     section Now (v6.1.0)
     RN-047 Persist Turbo cache in CI       :done, rn047, 2026-02-28, 1d
     RN-048 Downstream workflow pinning     :done, rn048, 2026-02-28, 1d
+
+    section Now (v6.8.0)
+    RN-051 ADR - API boundary strategy     :done, rn051, 2026-02-28, 1d
+    RN-046 oRPC migration                  :done, rn046, 2026-03-01, 1d
+    RN-045 OIDC auth integration tests     :done, rn045, 2026-03-01, 1d
+    RN-052 Bidirectional fleet comms       :done, rn052, 2026-03-01, 1d
+    RN-050 Web performance budgets         :done, rn050, 2026-03-01, 1d
+    RN-025 Contract testing                :done, rn025, 2026-03-01, 1d
+    RN-049 Licensing clarity (SPDX)        :done, rn049, 2026-03-01, 1d
+    RN-028 Conformance CLI                 :done, rn028, 2026-03-01, 1d
 ```
 
 ---
@@ -915,3 +1056,11 @@ All standards achieved during the initial platform build-out (v1.0–v5.0):
 - [x] Context file minimalism with line-count gate (RN-044)
 - [x] Turbo cache persistence in CI (RN-047)
 - [x] Downstream workflow pinning policy with fleet-drift advisory check (RN-048)
+- [x] API boundary strategy ADR — oRPC + OpenAPI-first contracts (RN-051, ADR-021)
+- [x] oRPC migration — tRPC removed, 16/16 subsystems implemented (RN-046)
+- [x] OIDC auth integration tests — Keycloak Testcontainer, PKCE lifecycle (RN-045)
+- [x] Bidirectional fleet communication — downstream↔upstream feedback system (RN-052, ADR-022)
+- [x] Web performance budgets — Core Web Vitals pipeline (RN-050)
+- [x] Licensing clarity — SPDX metadata across all packages (RN-049)
+- [x] Contract testing — 22 consumer contract tests + breaking-change detection (RN-025)
+- [x] Golden-path conformance CLI — `pnpm conform` with 100-point scoring (RN-028)

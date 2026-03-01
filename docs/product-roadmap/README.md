@@ -1,13 +1,14 @@
 # Ripple Next — Product Roadmap
 
-> v6.8.0 | 2026-03-01
+> v7.0.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 51 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 51 items completed → **[ARCHIVE.md](./ARCHIVE.md)**
+> 8 items active. 5 items parked.
 
 ---
 
@@ -20,35 +21,38 @@ gantt
     axisFormat %b %Y
 
     section Now (0–6 weeks)
-    RN-051 ADR - API boundary strategy      :done, rn051, 2026-02-28, 1d
-    RN-046 oRPC migration + integration     :done, rn046, 2026-03-01, 1d
-    RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
-    RN-052 Bidirectional fleet comms        :done, rn052, 2026-03-01, 1d
-    RN-050 Web performance budgets          :done, rn050, 2026-03-01, 1d
-    RN-025 Contract testing                 :done, rn025, 2026-03-01, 1d
-    RN-049 Licensing clarity (SPDX)         :done, rn049, 2026-03-01, 1d
+    RN-053 CI gate truth                   :rn053, 2026-03-03, 5d
+    RN-055 Node version pin parity         :rn055, 2026-03-03, 2d
+    RN-056 Readiness manifest honesty      :rn056, 2026-03-05, 3d
 
-    section Now (cont.)
-    RN-028 Golden-path conformance CLI      :done, rn028, 2026-03-01, 1d
+    section Next (6–12 weeks)
+    RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
+    RN-058 Licensing resolution ADR        :rn058, 2026-03-10, 7d
+    RN-054 Downstream proof-of-life        :rn054, 2026-03-17, 14d
+    RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
 
     section Later (Quarter+)
-    RN-017 Live Drupal integration          :rn017, 2026-06-01, 21d
+    RN-059 Runtime monitoring ADR          :rn059, 2026-05-01, 7d
+    RN-060 Conformance auto-remediation    :rn060, 2026-05-01, 7d
 ```
 
 ## Agent-Friction Scorecard
 
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer |
-| One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive |
-| Local dev parity with CI | 5/5 | Shared tooling, dockerized deps, devcontainer, Testcontainers |
-| Test reliability | 5/5 | Quarantine policy (ADR-013), unified `pnpm test:ci`, mock providers |
-| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc) + pnpm (packageManager) with doctor guards |
-| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics |
-| Automated remediation | 5/5 | `pnpm doctor --json`, conformance suites, documented procedures |
-| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) |
+> **Status:** Interim self-assessment with known gaps flagged. Pending automated
+> evidence generation ([RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation)).
 
-**Overall: 40/40**
+| Dimension | Score | Notes | Known gaps |
+|-----------|-------|-------|------------|
+| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer | `engines.node` uses range not exact ([RN-055](#rn-055-node-version-pin-parity)) |
+| One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive | — |
+| Local dev parity with CI | 3/5 | Shared tooling, dockerized deps, devcontainer | 5 CI gates suppressed via `\|\| true` / `continue-on-error` ([RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)) |
+| Test reliability | 3/5 | Quarantine policy, unified `test:ci`, mock providers | No multi-contributor validation; no production evidence |
+| Dependency + toolchain pinning | 4/5 | Exact Node (.nvmrc) + pnpm (packageManager) with doctor guards | `.nvmrc` vs `engines.node` mismatch ([RN-055](#rn-055-node-version-pin-parity)) |
+| Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics | — |
+| Automated remediation | 3/5 | `pnpm doctor --json`, conformance CLI, error taxonomy | `conform --fix` not implemented ([RN-060](#rn-060-conformance-cli-auto-remediation-prs)); fleet sync untested |
+| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) | — |
+
+**Overall: 33/40** (interim; gaps tracked as active roadmap items)
 
 ---
 
@@ -59,319 +63,306 @@ Downstream teams ship faster, safer, and more accessibly because the golden path
 eliminates undifferentiated work and AI agents operate as first-class contributors
 across the fleet.
 
-**Platform status:** 16/16 subsystems implemented. All subsystems are at
-"implemented" status. Agent-Friction Scorecard: 40/40.
+**Platform status:** 16/16 subsystems at interface-defined or above. Maturity
+varies: 2 integration-tested (auth, database), 6 conformance-tested (queue,
+storage, email, events, CMS, testing-infra), 8 interface/pipeline-defined
+(UI, API, infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance).
+No production deployments yet. See [`readiness.json`](../readiness.json) for
+per-subsystem detail.
 
 ## Themes
 
-1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045), ~~contract testing~~ OpenAPI breaking-change detection + consumer contract validation (RN-025)
-2. **Fleet adoption** — ~~conformance CLI~~ golden-path scoring implemented (RN-028), CI speed, deterministic pinning
-3. **Quality depth** — ~~performance budgets~~ Core Web Vitals pipeline implemented (RN-050), live CMS validation
-4. **Bidirectional fleet governance** — ~~downstream→upstream feedback, AI instruction sync, version tracking, update notifications~~ done (ADR-022, RN-052)
+1. **Honesty & trust** — Fix self-assessed scores, label subsystem maturity correctly, make CI gates deterministic (RN-053, RN-055, RN-056, RN-057)
+2. **Production credibility** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054)
+3. **Quality depth** — Live CMS validation, runtime monitoring (RN-017, RN-059)
+4. **Fleet automation** — Auto-remediation for downstream repos once fleet exists (RN-060)
 
 ---
 
 ## Now (0–6 weeks)
 
-> Items that close the remaining platform gap. Agents should start here.
+> Honesty debt: fix the gaps between claims and evidence. Agents should start here.
 
-### RN-051: ADR — API Boundary Strategy (oRPC vs tRPC, Public vs Internal + Portal Publishing) ✓
+### RN-053: CI Gate Truth — Enforce or Explicitly Label Advisory Gates
 
-**Impact:** Very High | **Effort:** Medium | **Risk:** High | **Priority:** P0
-**Source:** Tech-lead directive — external integrator requirement | **Date:** 2026-02-28
-**Completed:** 2026-02-28 | **ADR:** [ADR-021](../adr/021-api-contract-strategy.md)
-**AI-first benefit:** Contracts must be deterministic, tool-neutral, and low-friction for autonomous agents (Codex + Claude parity). A single canonical boundary prevents agent confusion from dual-stack patterns.
+**Tier:** 1 | **Priority:** Critical | **Impact:** High | **Effort:** Low | **Risk:** Low
+**Source:** AI Product Owner + Critique 3 (self-assessed perfect scores lack credibility)
+**AI-first benefit:** Agents need deterministic CI signals — a gate that never fails is invisible noise, not a signal.
+**Status:** Planned
+**Dependencies:** None
 
-#### Decision Summary
+Five CI gates currently use `|| true` or `continue-on-error: true`, making them decorative:
 
-ADR-021 selects **oRPC** as the canonical API boundary framework with OpenAPI 3.1.1
-as the first-class contract artifact. Key decisions:
+- `ci.yml:60` — `verify.mjs --ci --json || true`
+- `ci.yml:209` — `pnpm test:a11y || true`
+- `ci.yml:215` — `pnpm test:perf || true`
+- `reusable-quality.yml:66` — readiness drift guard `continue-on-error: true`
+- `reusable-quality.yml:70` — quarantine policy check `continue-on-error: true`
 
-- **oRPC replaces tRPC** — single framework, no dual-stack
-- **Public/internal classification** via route metadata (`visibility: 'public' | 'internal'`)
-- **`pnpm generate:openapi`** generates deterministic `docs/api/openapi.json`
-- **`pnpm check:api-contract`** CI gate prevents contract drift (wired into `pnpm verify`)
-- **Error taxonomy** expanded: RPL-API-001 (spec drift), RPL-API-002 (breaking change)
-- **4-phase migration**: ADR → oRPC migration (RN-046) → endpoint classification → contract testing (RN-025)
-
-#### Definition of Done
-
-- [x] ADR-021 created in `docs/adr/021-api-contract-strategy.md`
-- [x] ADR includes: context, decision drivers, options considered (tRPC, oRPC, gateway, hybrid), decision, consequences, rollout plan
-- [x] `pnpm generate:openapi` command added with deterministic output
-- [x] `pnpm check:api-contract` CI gate added for contract drift detection
-- [x] Follow-up roadmap items identified (RN-046 updated, RN-025 dependency noted)
-- [x] Roadmap updated with ADR status and links; `readiness.json` updated
-- [x] Commands and gates feasible within current toolchain (no new dependencies)
-
-**Prerequisite for:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers), [RN-025](#rn-025-contract-testing-across-consumers)
-
-**Verification:** ADR reviewed for completeness; `pnpm verify` passes; readiness.json updated.
-
----
-
-### RN-046: oRPC Migration + Router Integration Harness (Testcontainers) ✓
-
-**Impact:** High | **Effort:** Medium | **Risk:** Low
-**Source:** GPT-5.2-Codex API topology review + ADR-021 | **Date:** 2026-02-28
-**Completed:** 2026-03-01
-**AI-first benefit:** Gives agents production-semantics confidence when refactoring router logic. Activates OpenAPI contract generation.
-**Depends on:** [RN-051](#rn-051-adr--api-boundary-strategy-orpc-vs-trpc-public-vs-internal--portal-publishing) (ADR-021, completed)
-
-ADR-021 Phase 2: installed oRPC, migrated the user router (4 procedures) from tRPC,
-generated the first `openapi.json`, and activated the contract drift gate.
-API layer moved from "partial" to "implemented" — 16/16 subsystems complete.
-
-**Affected items:** [RN-025](#rn-025-contract-testing-across-consumers) (now unblocked — OpenAPI spec available)
-
-- [x] Install `@orpc/server`, `@orpc/openapi`, `@orpc/zod` — update `apps/web/package.json`
-- [x] Create `apps/web/server/orpc/router.ts` — migrate user router from tRPC
-- [x] Add `generateOpenAPI()` export to router for `pnpm generate:openapi`
-- [x] Classify routes: user CRUD as `visibility: 'public'`, health as `visibility: 'internal'`
-- [x] Generate and commit first `docs/api/openapi.json`
-- [x] Remove tRPC (`@trpc/server`, `@trpc/client`, `trpc-nuxt`) — no dual-stack (ADR-021)
-- [x] Contract tests for all 4 user procedures via `createRouterClient` (auth + validation)
-- [x] Update `docs/readiness.json` API status to "implemented"
-- [x] Update `generate:endpoint` generator to emit oRPC boilerplate instead of tRPC
-- [x] Update `add-api-endpoint` runbook to reference oRPC patterns
-
-**Deferred to follow-up:**
-- Testcontainers integration tests for router paths with real DB (split to future item — contract tests provide sufficient coverage for Phase 2; DB integration tests exist at repository layer in `@ripple-next/db`)
-- CI job with `DATABASE_URL` env (activates when Testcontainers router tests are added)
-
-**Verification:** `pnpm generate:openapi` produces valid OpenAPI 3.1.1; `pnpm check:api-contract` passes; `pnpm test` passes (12 contract tests); `readiness.json` updated; `pnpm verify` passes.
-
----
-
-### RN-045: OIDC Auth Flow Integration Tests (PKCE + Sessions) ✓
-
-**Impact:** High | **Effort:** Medium | **Risk:** Medium
-**Source:** GPT-5.2-Codex readiness + auth test review | **Date:** 2026-02-28
-**Completed:** 2026-03-01
-**AI-first benefit:** Prevents agents from shipping auth regressions by validating prod-faithful OIDC flow deterministically.
-
-Closed the auth integration test gap identified in `readiness.json`. Added a
-deterministic Keycloak Testcontainer fixture with checked-in realm configuration,
-and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
-
-- [x] Add deterministic IdP fixture (container + checked-in config)
-  - Keycloak 26.0 Testcontainer in `packages/testing/helpers/keycloak.ts`
-  - Checked-in realm config: `packages/auth/tests/fixtures/ripple-test-realm.json`
-  - Pre-configured client (`ripple-test-client`) with PKCE S256 enforcement
-  - Test user (`testuser` / `testpassword`) with email `test@example.com`
-  - Browser flow simulation helper (`simulateAuthCodeFlow`) for headless auth code acquisition
-- [x] Cover auth code + PKCE exchange, session creation/persistence, logout
-  - OIDC discovery from real Keycloak (authorization URL with PKCE params)
-  - Full PKCE flow: auth code exchange → user returned with email/name from Keycloak claims
-  - OIDC sub linking via `UserStore.findOrCreateByOidcSub`
-  - Session creation after auth → session validation → session invalidation (logout)
-  - Error handling: invalid code, mismatched PKCE verifier, password auth rejection
-- [x] Gate on auth/config changes — tests run via `pnpm test`, skipped when Docker unavailable (`describe.runIf(dockerAvailable)`)
-- [x] Add error taxonomy codes for IdP failure modes
-  - RPL-AUTH-001: OIDC issuer discovery failed
-  - RPL-AUTH-002: OIDC redirect URI mismatch
-  - RPL-AUTH-003: OIDC token validation failed (clock skew, signature, expiry)
-  - RPL-AUTH-004: OIDC authorization code exchange failed (invalid code, PKCE mismatch)
-  - Error taxonomy updated to v1.7.0 (55 codes across 15 categories)
-
-**Verification:** `pnpm verify` passes (9/9 gates); integration tests skipped gracefully without Docker; lint + typecheck pass; `readiness.json` auth blocker removed.
-
----
-
-### RN-052: Bidirectional Fleet Communication (Downstream↔Upstream) ✓
-
-**Impact:** Very High | **Effort:** High | **Risk:** Medium | **Priority:** P0
-**Source:** Tech-lead directive — fleet governance gap analysis | **Date:** 2026-03-01
-**Completed:** 2026-03-01 | **ADR:** [ADR-022](../adr/022-bidirectional-fleet-communication.md)
-**AI-first benefit:** Enables AI agents to autonomously submit feedback upstream, detect and share local improvements, and receive proactive update notifications — closing the only communication gap in the fleet governance system. No existing platform (Backstage, Cruft, Copier, Nx) provides AI-assisted bidirectional sync.
-
-#### Upstream → Downstream Enhancements
-
-- [x] FLEET-SURF-010: AI agent instructions governed (advisory strategy) — 15 files now tracked
-- [x] FLEET-SURF-011: Fleet governance tooling governed (sync strategy)
-- [x] Fleet changelog (`docs/fleet-changelog.json`) — machine-readable for AI consumption
-- [x] Fleet feedback schema (`docs/fleet-feedback-schema.json`) — `ripple-fleet-feedback/v1`
-- [x] Error taxonomy expanded: FEEDBACK category, 4 codes (RPL-FEEDBACK-001–004)
-- [x] Fleet policy updated: 11 governed surfaces, feedbackPolicy section
-- [x] `.fleet.json` version tracking scaffolded into downstream repos (Cruft-inspired)
-- [x] Fleet update notification workflow (`fleet-update-notify.yml`)
-- [x] Fleet changelog generator script (`fleet-changelog.mjs`)
-
-#### Downstream → Upstream Feedback System
-
-- [x] `fleet-feedback.mjs` — downstream feedback generator (5 types, `--json`, `--dry-run`, `--submit`)
-- [x] `fleet-feedback-intake.mjs` — upstream triage engine (validate, label, deduplicate, priority-score)
-- [x] Fleet feedback intake workflow (`fleet-feedback-intake.yml`)
-- [x] Reusable fleet feedback submit workflow (`fleet-feedback-submit.yml`)
-- [x] Fleet feedback composite action (`.github/actions/fleet-feedback/action.yml`)
-
-#### Scaffold & Documentation
-
-- [x] Downstream scaffold: `.fleet.json`, `fleet-feedback.yml`, `fleet-update.yml` workflows
-- [x] Runbooks: `fleet-feedback-submit.json`, `fleet-feedback-intake.json`
-- [x] `downstream-workflows.md` updated with bidirectional communication sections
-- [x] Template config updated with new governed paths
-
-**Verification:** `pnpm fleet:feedback -- --type=feature-request --title="test" --dry-run` produces valid JSON; `pnpm verify` passes; 11 governed surfaces in fleet policy.
-
----
-
-### RN-050: Web Performance Budgets (Core Web Vitals) ✓
-
-**Impact:** Medium | **Effort:** Medium | **Risk:** Low
-**Source:** Gap analysis — a11y auditing exists ([RN-042](./ARCHIVE.md#rn-042-accessibility-audit-pipeline)) but no performance equivalent | **Date:** 2026-03-01
-**Completed:** 2026-03-01
-**AI-first benefit:** Agents get structured performance regression signals in CI — `ripple-perf-report/v1` JSON enables automated detection and remediation of Core Web Vitals regressions.
-
-Government sites have performance obligations. The platform had WCAG a11y auditing
-but no Core Web Vitals monitoring. Now implemented using Playwright's Performance
-API — zero new dependencies, matching the a11y audit pattern.
-
-- [x] Define performance budgets (LCP, FCP, CLS, TTFB, TBT thresholds based on Google CWV)
-- [x] Playwright-based performance audit in CI pipeline (`pnpm test:perf`)
-- [x] Emit structured `ripple-perf-report/v1` JSON
-- [x] Block on critical performance regressions (exit code 1 on critical thresholds)
-- [x] Error taxonomy expanded: PERF category with RPL-PERF-001 (critical), RPL-PERF-002 (warning)
-- [x] CI integration: perf audit step + `perf-report.json` artifact upload in e2e job
-- [x] Documentation: `docs/performance.md` with budgets, pipeline, report schema, remediation guide
-
-**Verification:** `pnpm test:perf -- --json` emits valid `ripple-perf-report/v1` JSON; CI includes performance audit step; `pnpm verify` passes; error taxonomy v1.9.0 with 61 codes across 17 categories.
-
-### RN-049: Licensing Clarity Guardrail (SPDX + Dual-License Model) ✓
-
-**Impact:** Medium | **Effort:** Low | **Risk:** Medium | **Priority:** P1
-**Source:** Tech-lead directive — NPM publishing requires license metadata | **Date:** 2026-03-01
-**Completed:** 2026-03-01
-**AI-first benefit:** SPDX-standard `license` field in every `package.json` makes license scanning deterministic for agents and automated compliance tools (SBOM, Snyk, FOSSA).
-
-Resolved the licensing drift flagged when PolyForm Noncommercial 1.0.0 was adopted
-(PR #49) without updating SPDX metadata. All `package.json` files now carry the
-SPDX identifier, and the dual-licensing model is documented.
-
-#### License Model
-
-| Use Case | License | Cost |
-|----------|---------|------|
-| Non-commercial (personal, research, education, government, charity) | [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0) | Free |
-| Commercial (for-profit products, SaaS, consulting deliverables) | Commercial license | Contact licensor |
-
-#### Recommendations
-
-1. **npm consumers** see `PolyForm-Noncommercial-1.0.0` in the `license` field on npmjs.org — this is the SPDX-standard identifier for the PolyForm Noncommercial license
-2. **Commercial users** should contact the licensor to obtain a commercial license before using `@ripple-next/*` packages in revenue-generating products or services
-3. **SBOM/compliance tools** (CycloneDX, Snyk, FOSSA) can now auto-detect the license from `package.json` — no manual classification needed
-4. **Downstream repos** scaffolded via `pnpm generate:scaffold` inherit the same license field
+This undermines the "deterministic blocking semantics" ethos and the scorecard's
+test reliability claim.
 
 #### Definition of Done
 
-- [x] SPDX `license` field added to root `package.json`
-- [x] SPDX `license` field added to all 11 workspace `package.json` files
-- [x] LICENSE file already present (PolyForm Noncommercial 1.0.0 full text)
-- [x] Dual-license model documented in roadmap
-- [x] Risks table updated — licensing drift resolved
+- [ ] Each `|| true` gate either made blocking (remove `|| true`) or explicitly labeled "advisory" with workflow comment and entry in `docs/ci-gates.md`
+- [ ] Scorecard "Local dev parity with CI" updated to reflect blocking vs advisory distinction
+- [ ] `pnpm verify` remains the authoritative local gate (no `|| true`)
+
+#### Verification
+
+- `grep -rn '|| true' .github/workflows/` returns only expected soft-fail cases (deploy health checks, fleet sync)
+- `grep -rn 'continue-on-error' .github/workflows/` returns only documented advisory gates
+- `pnpm verify` exits non-zero on any gate failure
+
+**Links:** `.github/workflows/ci.yml`, `.github/workflows/reusable-quality.yml`, [Critique 3](../critique-evaluation.md)
 
 ---
 
-### RN-025: Contract Testing Across Consumers ✓
+### RN-055: Node Version Pin Parity
 
-**Impact:** High | **Effort:** High | **Risk:** Medium
-**Source:** AI Principal Engineer review | **Date:** 2026-03-01
-**Completed:** 2026-03-01
-**Depends on:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) (completed — `docs/api/openapi.json` available)
-**AI-first benefit:** Agents get automated breaking-change signals before release — `ripple-api-breaking/v1` JSON enables autonomous detection of API incompatibilities. Consumer contract tests ensure spec ↔ router agreement, preventing spec drift from causing downstream failures.
+**Tier:** 1 | **Priority:** High | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Source:** AI agent analysis (confirmed) — three different Node version values across config files
+**AI-first benefit:** Eliminates agent confusion from contradictory version signals across config files.
+**Status:** Planned
+**Dependencies:** None
 
-ADR-021 Phase 4: implemented consumer contract testing and automated
-breaking-change detection using the OpenAPI spec as the contract format.
-22 consumer contract tests validate spec ↔ router agreement.
+Three config sources specify different Node expectations:
 
-- [x] Define contract test patterns for package consumers (OpenAPI-based)
-  - 22 consumer contract validation tests in `apps/web/tests/unit/orpc/openapi-contract.test.ts`
-  - Tests validate: spec validity, operationId ↔ procedure mapping, request validation, response codes, tag classification, auth enforcement, operationId stability
-- [x] Integrate consumer contract tests into release workflow
-  - `pnpm check:api-breaking -- --ci` step added before package publication
-  - `api-breaking-report.json` artifact uploaded (90-day retention)
-  - Breaking changes block release; non-breaking changes are informational
-- [x] Automated breaking-change detection via OpenAPI spec diffing
-  - `scripts/check-api-breaking.mjs` — structural diff against baseline (default: `main` branch)
-  - Detects: removed paths/methods, added required fields/params, removed response codes, changed operationIds
-  - Outputs `ripple-api-breaking/v1` JSON report
-  - Wired into `pnpm verify` (10th gate) and release workflow
-  - Error taxonomy: RPL-API-002 (breaking) updated, RPL-API-003 (non-breaking) added
-- [x] Portal publication pipeline deferred — spec committed at `docs/api/openapi.json` is the publication artifact; infrastructure target (Backstage, S3, SwaggerUI) deferred to follow-up when external integrators are onboarded
+- `.nvmrc`: `22.22.0` (exact)
+- `package.json` → `engines.node`: `>=22.14.0` (range)
+- `conformance-rubric.json` remediation example: `22.14.0`
 
-**Deferred to follow-up:**
-- Portal publication infrastructure (Phase 4b) — target TBD based on integrator needs
-- SDK generation from OpenAPI spec — deferred until consumer demand exists
+#### Definition of Done
 
-**Verification:** `pnpm verify` passes (10/10 gates); `pnpm test` passes (22 new contract tests + 32 existing); `pnpm check:api-breaking -- --json` emits valid `ripple-api-breaking/v1` JSON; release workflow includes breaking-change gate; error taxonomy v1.10.0 with 62 codes.
+- [ ] `engines.node` in `package.json` changed to exact version matching `.nvmrc`
+- [ ] `pnpm doctor` validates `.nvmrc` and `engines.node` show same value
+- [ ] Conformance rubric remediation text references `.nvmrc` as source of truth
+- [ ] Upgrade procedure: update `.nvmrc` first, then `engines.node` follows
+
+#### Verification
+
+- `node -e "const n=require('fs').readFileSync('.nvmrc','utf8').trim();const e=require('./package.json').engines.node;console.log(n===e?'MATCH':'MISMATCH')"` → `MATCH`
+- `pnpm doctor --json | jq '.checks[] | select(.name | contains("node"))'` — passes with exact version check
+
+**Links:** `.nvmrc`, `package.json`, `docs/conformance-rubric.json`
 
 ---
 
-### RN-028: Golden-Path Conformance CLI ✓
+### RN-056: Readiness Manifest Honesty — Subsystem Maturity Levels
 
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-**Source:** AI Principal Engineer review | **Date:** 2026-03-01
-**Completed:** 2026-03-01
-**AI-first benefit:** Agents get a single-command conformance score with actionable remediation, enabling autonomous onboarding of downstream repos to golden-path standards.
+**Tier:** 1 | **Priority:** High | **Impact:** High | **Effort:** Low | **Risk:** Medium
+**Source:** Critique 3 — "'16/16 Subsystems Implemented' conflates interface stubs with production systems"
+**AI-first benefit:** Agents need accurate maturity signals to assess what is production-safe vs interface-only.
+**Status:** Planned
+**Dependencies:** None
 
-One command (`pnpm conform`) that scores repos against required golden-path
-standards using a weighted rubric. Builds on fleet governance
-([RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation)).
+Add a `maturity` field to each subsystem in `readiness.json`:
 
-- [x] Define scoring rubric based on minimal repo standards
-  - `docs/conformance-rubric.json` — 7 categories, 21 checks, 100-point scale
-  - Categories: Setup (20), Quality (20), CI (20), Testing (15), Docs (10), Security (10), Fleet (5)
-  - Check types: file-exists, file-exists-any, json-field, script-exists, file-not-tracked
-- [x] Build CLI tool (`pnpm conform`)
-  - `scripts/conform.mjs` — evaluates target directory against rubric
-  - Outputs `ripple-conformance/v1` JSON with category breakdown and per-check results
-  - Supports `--json`, `--ci`, `--target=path`, `--output=path` flags
-  - Visual progress bars per category in human-readable mode
-  - Exit code 0 if score >= 70 (passing), exit code 1 otherwise
-  - Golden path self-scores 100/100
-- [x] Error taxonomy expanded: CONFORM category with RPL-CONFORM-001/002/003 codes
-- [x] Runbook added: `docs/runbooks/run-conformance.json`
+| Level | Meaning | Example |
+|-------|---------|---------|
+| `interface-defined` | Contract + memory/mock provider | email (136 lines), events (133 lines) |
+| `conformance-tested` | Provider conformance suite passes | queue, storage, CMS |
+| `integration-tested` | Tests against real infrastructure | auth (Keycloak), database (Postgres) |
+| `production-proven` | Deployed and exercised in production | (none currently) |
 
-**Deferred to follow-up:**
-- Auto-remediation PR generation (requires GitHub API integration; `pnpm generate:scaffold` provides manual remediation path today)
-- Wiring `pnpm conform` as an optional gate in `pnpm verify -- --conform`
+#### Definition of Done
 
-**Verification:** `pnpm conform -- --json` emits valid `ripple-conformance/v1` JSON; golden path scores 100/100; empty repo scores 0/100 with exit code 1; `pnpm verify` passes (10/10 gates); error taxonomy v1.11.0 with 65 codes across 18 categories.
+- [ ] `maturity` field added to all 16 subsystems in `readiness.json`
+- [ ] `pnpm check:readiness` validates `maturity` field exists and value is valid
+- [ ] North Star section updated to reference maturity distribution
+
+#### Verification
+
+- `jq '[.subsystems | to_entries[] | .value.maturity] | unique' docs/readiness.json` — returns valid levels
+- `jq '.subsystems | to_entries | group_by(.value.maturity) | map({(.[0].value.maturity): length}) | add' docs/readiness.json` — shows distribution
+- `pnpm check:readiness` passes
+
+**Links:** `docs/readiness.json`, [Critique 3](../critique-evaluation.md)
 
 ---
 
 ## Next (6–12 weeks)
 
-> Items planned for the near term. Dependencies understood, design work may be needed.
+> Resolve blockers for production credibility. Dependencies from Now items understood.
 
-_No items currently in Next. All active items completed or in Later._
+### RN-057: Agent-Friction Scorecard — Evidence-Based Generation
+
+**Tier:** 2 | **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** Critique 3 — "A perfect score across all 8 dimensions is not credible self-assessment"
+**AI-first benefit:** Replaces manual self-assessment with a deterministic, reproducible measurement command.
+**Status:** Planned
+**Dependencies:** [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) (gate classification needed for scoring)
+
+#### Definition of Done
+
+- [ ] `scripts/scorecard.mjs` evaluates all 8 dimensions against verifiable criteria
+- [ ] Output: `ripple-scorecard/v1` JSON with dimension scores, evidence links, gap descriptions
+- [ ] Static scorecard in roadmap replaced with `pnpm scorecard -- --json` reference
+- [ ] Dimensions with gaps score < 5 with remediation notes
+
+#### Verification
+
+- `pnpm scorecard -- --json` outputs valid `ripple-scorecard/v1` JSON
+- No dimension shows 5/5 without corresponding evidence artifact
+- Score matches interim manual assessment (±2 points total)
+
+**Links:** [Critique 3](../critique-evaluation.md), `scripts/conform.mjs` (pattern reference)
+
+---
+
+### RN-058: Licensing Resolution ADR — Government Procurement Compatibility
+
+**Tier:** 2 | **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** High
+**Source:** Critique 3 — "Non-commercial licensing for government software is unusual and potentially incompatible with government procurement"
+**AI-first benefit:** License ambiguity blocks automated publishing gates; clear licensing enables deterministic npm publish decisions.
+**Status:** Planned
+**Dependencies:** None
+
+PolyForm Noncommercial 1.0.0 may conflict with government contractor usage and
+standard procurement frameworks. [RN-049](./ARCHIVE.md#rn-049-licensing-clarity-guardrail-spdx--dual-license-model)
+added SPDX metadata but did not resolve the underlying licensing question.
+
+#### Definition of Done
+
+- [ ] ADR evaluating license options (PolyForm Noncommercial, Apache 2.0, MIT, dual-license, AGPL)
+- [ ] Government procurement compatibility analysis included
+- [ ] Decision documented with explicit rationale
+- [ ] All `package.json` license fields updated if license changes
+- [ ] LICENSE file updated if license changes
+
+#### Verification
+
+- ADR exists in `docs/adr/`
+- `jq '.license' package.json` returns chosen SPDX identifier
+- License compatible with identified government procurement frameworks
+
+**Links:** [Critique 3](../critique-evaluation.md), [RN-049](./ARCHIVE.md#rn-049-licensing-clarity-guardrail-spdx--dual-license-model), LICENSE
+
+---
+
+### RN-054: Downstream Proof-of-Life — First Consumer Deployment
+
+**Tier:** 2 | **Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** High
+**Source:** Critique 3 — "the project is a promising skeleton with exceptional documentation — but a skeleton nonetheless"
+**AI-first benefit:** Validates that agents can scaffold, configure, test, and deploy a downstream repo end-to-end using platform tooling.
+**Status:** Planned
+**Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility), [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
+
+The single most important item on the roadmap. Creates one downstream repo using
+`pnpm generate:scaffold`, publishes @ripple-next/* packages, consumes them, and
+deploys to staging. Validates or invalidates Critique 3's central finding.
+
+#### Definition of Done
+
+- [ ] Downstream repo created via `pnpm generate:scaffold`
+- [ ] At least 3 @ripple-next/* packages consumed from registry (auth, db, ui)
+- [ ] Downstream CI passes using golden-path reusable workflows
+- [ ] Fleet drift detection runs against downstream repo
+- [ ] Downstream deployed to staging environment (SST)
+- [ ] `pnpm conform -- --target=../downstream-repo` scores ≥ 70
+
+#### Verification
+
+- `npm view @ripple-next/auth versions` returns ≥ 1 published version
+- Downstream repo CI green with artifact uploads
+- `pnpm conform -- --json --target=../downstream-repo` → score ≥ 70
+- Fleet drift report shows compliance status
+
+**Links:** [Critique 3](../critique-evaluation.md), `scripts/generate/scaffold.mjs`, `docs/downstream-workflows.md`
+
+---
+
+### RN-017: Live Drupal Integration Testing
+
+**Tier:** 2 | **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+**Source:** CMS integration gap — continues [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
+**AI-first benefit:** Validates CMS provider against real Drupal, giving agents confidence in content-layer operations.
+**Status:** Blocked → activating Docker fallback (Q2 2026 deadline reached)
+**Dependencies:** None
+
+Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
+Original plan awaited live URLs from content team. Q2 2026 Docker fallback now active.
+
+#### Definition of Done
+
+- [ ] Docker-based Tide fixture (Drupal + Tide modules) in `docker-compose.test.yml` or Testcontainer
+- [ ] Integration test suite exercising all CMS provider methods against real Drupal
+- [ ] CI job runs integration tests on schedule (not every PR)
+- [ ] `readiness.json` CMS blocker removed
+
+#### Verification
+
+- `docker compose -f docker-compose.test.yml up drupal` starts Tide instance
+- `pnpm test:integration -- --filter=cms` passes against Docker Drupal
+- `jq '.subsystems.cms.blockers' docs/readiness.json` returns `[]`
+
+**Links:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms), `packages/cms/`
 
 ---
 
 ## Later (Quarter+)
 
-> Strategic items without a committed timeline.
+> Strategic items. Execute after downstream proof-of-life validates the platform.
 
-### RN-017: Live Drupal Integration Testing
+### RN-059: Runtime Monitoring ADR — Observability for Lambda-First Architecture
 
-**Impact:** Medium | **Effort:** Medium | **Risk:** Medium
-**Status:** Blocked — awaiting live Drupal/Tide URLs from content team.
-**Continues:** [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
+**Tier:** 3 | **Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Source:** Risks table (ongoing) — "No runtime monitoring/alerting"
+**AI-first benefit:** Structured monitoring enables agents to diagnose production issues using machine-readable telemetry.
+**Status:** Planned
+**Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (needs production-like deployment)
 
-Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
-**Fallback:** Docker-based Tide fixture if not unblocked by Q2 2026.
+#### Definition of Done
 
-- [ ] Set up test Drupal instance (Docker-based or hosted)
-- [ ] Write integration test suite exercising all CMS provider methods
-- [ ] Add CI job that runs integration tests on schedule (not every PR)
+- [ ] ADR evaluating CloudWatch, Datadog, OpenTelemetry for Lambda + Nuxt SSR
+- [ ] Cost model for each option at 3 scale tiers
+- [ ] Structured alert schema for agent-parseable alerts
+- [ ] Error taxonomy integration plan (RPL-MONITOR-* codes)
+
+#### Verification
+
+- ADR exists in `docs/adr/`
+- Decision rationale includes Lambda cold-start and SSR considerations
+- Cost estimates provided for 3 scale tiers
+
+**Links:** Risks table, `sst.config.ts`
+
+---
+
+### RN-060: Conformance CLI Auto-Remediation PRs
+
+**Tier:** 3 | **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
+**Source:** Deferred follow-up from [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli)
+**AI-first benefit:** Agents auto-fix downstream conformance gaps without human scaffolding decisions.
+**Status:** Planned
+**Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (needs downstream repo to target)
+
+#### Definition of Done
+
+- [ ] `pnpm conform -- --fix --target=path` generates missing files from templates
+- [ ] `pnpm conform -- --fix --pr` creates a GitHub PR with remediation changes
+- [ ] Only scaffolds files for failed checks; does not overwrite existing
+- [ ] Dry-run mode shows what would be created
+
+#### Verification
+
+- Running against repo missing 3 conformance files creates exactly those 3 files
+- `pnpm conform -- --fix --dry-run --target=path` shows planned changes without writing
+- Post-fix conformance score improves
+
+**Links:** [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli), `scripts/conform.mjs`, `docs/conformance-rubric.json`
 
 ---
 
 ## Parked / Not Doing
 
-| Item | Reason |
-|------|--------|
-| Visual regression (Chromatic/Percy) | Deferred in [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components). Not justified by current UI churn. |
+| Item | Reason | Trigger |
+|------|--------|---------|
+| Visual regression (Chromatic/Percy) | Deferred from [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components). Not justified by current UI churn. | Pull in when UI library has ≥ 3 downstream consumers |
+| Portal publication infrastructure | Deferred from [RN-025](./ARCHIVE.md#rn-025-contract-testing-across-consumers) Phase 4b. | Pull in when external integrators are onboarded |
+| SDK generation from OpenAPI spec | Deferred from [RN-025](./ARCHIVE.md#rn-025-contract-testing-across-consumers). | Pull in when consumer demand exists |
+| Testcontainers router integration tests | Deferred from [RN-046](./ARCHIVE.md#rn-046-orpc-migration--router-integration-harness-testcontainers). Contract tests sufficient. | Pull in when API complexity warrants router-level DB tests |
+| Conform as optional verify gate | Deferred from [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli). | Pull in when downstream repos use conform regularly |
 
 ---
 
@@ -379,13 +370,32 @@ Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
 
 | Risk | Mitigation |
 |------|------------|
-| RN-017 blocked on content team indefinitely | Docker Tide fixture as fallback by Q2 2026 |
-| ~~API boundary undecided (oRPC vs tRPC)~~ | ~~RN-051 (P0)~~ **Resolved** — ADR-021 selects oRPC with OpenAPI-first contracts |
-| ~~API layer "partial" status~~ | ~~RN-046 in Now addresses this~~ **Resolved** — oRPC migration complete, 16/16 subsystems implemented |
-| ~~Auth integration test gap~~ | ~~RN-045~~ **Resolved** — Keycloak Testcontainer integration tests added |
-| No runtime monitoring/alerting | Evaluate when production deployment is imminent; needs ADR |
-| ~~`@main` refs in downstream workflow examples~~ | ~~RN-048 in Now addresses this~~ **Resolved** (v6.1.0) |
-| ~~Licensing drift (RN-049)~~ | ~~PolyForm Noncommercial 1.0.0 adopted (PR #49)~~ **Resolved** — SPDX `license` field added to all `package.json` files; dual-license model documented |
+| RN-017 blocked on content team | Docker Tide fixture fallback activated (Q2 2026 deadline reached) |
+| PolyForm Noncommercial may conflict with government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) in Next |
+| No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) in Later |
+| No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) in Next |
+| CI gates suppressed (`|| true`) | [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) in Now |
+| Agent-Friction Scorecard self-assessed | [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) in Next |
+| Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first real publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
+
+---
+
+## Suggestion Triage Log (v7.0.0)
+
+### Adopted
+
+| Suggestion | Source | Action |
+|-----------|--------|--------|
+| Enforce perf/a11y CI pass/fail semantics | AI agent analysis | Folded into [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) (broader scope — all 5 suppressed gates) |
+| Node pin policy parity (.nvmrc vs engines) | AI agent analysis | Adopted as [RN-055](#rn-055-node-version-pin-parity) |
+| Phase RN-028 into scoring then auto-remediation | AI agent analysis | RN-028 scoring complete; auto-remediation captured as [RN-060](#rn-060-conformance-cli-auto-remediation-prs) |
+| Replace static perfect score with evidence artifact | AI agent analysis | Adopted as [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) |
+
+### Rejected
+
+| Suggestion | Source | Rationale |
+|-----------|--------|-----------|
+| Bootstrap contract truth enforcement | AI agent analysis | Bootstrap script (`pnpm install && pnpm doctor`) matches its documentation. No docs-script discrepancy found. Adding `validate:env` to bootstrap would fail on fresh clones without `.env` file. |
 
 ---
 
@@ -419,25 +429,13 @@ Checklist (if `[New Item]`):
 
 ### Open AI Suggestions
 
-_No open suggestions. All previous suggestions triaged into active roadmap (v6.0.0)._
+_No open suggestions. All suggestions triaged in v7.0.0 (see Triage Log above)._
 
 ---
 
 ## Tech Lead Suggestions
 
 > Human tech leads propose changes here. AI agents MUST read but MUST NOT modify.
-
-### Template
-
-```markdown
-#### [Category] Short Title
-**Author:** @yourname | **Date:** YYYY-MM-DD
-
-Description, rationale, and evidence.
-
-**Affected items:** RN-XXX, RN-YYY (if applicable)
-**Proposed action:** What should happen
-```
 
 ### Open Suggestions
 
@@ -450,4 +448,4 @@ _No open suggestions._
 51 items completed (RN-001 through RN-052, excluding RN-017).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
-Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
+Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md)
