@@ -1,6 +1,7 @@
 {
   "name": "@ripple/testing",
   "version": "0.1.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "main": "./setup.ts",
   "scripts": {
