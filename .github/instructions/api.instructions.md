@@ -6,16 +6,17 @@ applyTo: 'apps/web/server/**'
 
 ## API Boundary (ADR-021)
 
-- **oRPC** is the canonical API framework (replacing tRPC — migration in RN-046)
+- **oRPC** is the canonical API framework (ADR-021, RN-046 complete)
 - OpenAPI 3.1.1 spec is a first-class build product: `pnpm generate:openapi`
 - CI validates contract drift: `pnpm check:api-contract`
 - Every route must declare `visibility: 'public'` or `visibility: 'internal'`
 - Public routes are versioned (`/v1/`), breaking-change gated, and published to portal
 - Internal routes are not published; can change freely
 
-## Current State (Pre-Migration)
+## File Layout
 
-- tRPC procedures are in `apps/web/server/trpc/routers/` (migration pending)
+- oRPC procedures are in `apps/web/server/orpc/routers/`
+- oRPC handler is mounted at `apps/web/server/api/orpc/[...].ts`
 - REST endpoints are in `apps/web/server/api/` (file-based routing)
 - Auth routes are in `apps/web/server/routes/auth/` (remain as H3 handlers)
 

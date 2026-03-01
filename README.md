@@ -26,7 +26,7 @@ pnpm dev
 | -------- | ----------------------------- |
 | Frontend | Nuxt 3 + Vue 3 + TypeScript   |
 | UI       | Ripple UI Core + Storybook 10 |
-| API      | Nitro server routes + tRPC    |
+| API      | Nitro server routes + oRPC (OpenAPI 3.1.1) |
 | Database | PostgreSQL (Drizzle ORM)      |
 | CMS      | Drupal/Tide (JSON:API) / Mock |
 | Queue    | SQS / BullMQ / Memory         |
@@ -61,7 +61,7 @@ pnpm dev
 | [Architecture](docs/architecture.md)               | System overview, stack, and high-level design         |
 | [Provider Pattern](docs/provider-pattern.md)       | Core pattern for environment-swappable infrastructure |
 | [Data Model](docs/data-model.md)                   | PostgreSQL schema and entity relationships            |
-| [API Contracts](docs/api-contracts.md)             | tRPC routers and REST endpoints                       |
+| [API Contracts](docs/api-contracts.md)             | oRPC routers and REST endpoints                       |
 | [Deployment Guide](docs/deployment.md)             | Local dev, preview, staging, and production           |
 | [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
@@ -93,6 +93,8 @@ pnpm dev
 | [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
 | [ADR-018](docs/adr/018-ai-first-workflow-strategy.md) | AI-first workflow — runbooks, generators, error taxonomy |
 | [ADR-019](docs/adr/019-fleet-governance.md) | Fleet governance — drift detection + sync automation |
+| [ADR-020](docs/adr/020-context-file-minimalism.md) | Context file minimalism — evidence-based line limits |
+| [ADR-021](docs/adr/021-api-contract-strategy.md) | API contract strategy — oRPC + OpenAPI-first |
 
 ## Repository Structure
 

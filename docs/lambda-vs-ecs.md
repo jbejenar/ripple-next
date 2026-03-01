@@ -13,7 +13,7 @@ flowchart TD
     Q3 -->|Yes| ECS
     Q3 -->|No| Lambda["Use Lambda (default)"]
 
-    Lambda --> Examples1["Nuxt SSR, tRPC, Queue consumers,<br/>Cron jobs, Event handlers"]
+    Lambda --> Examples1["Nuxt SSR, oRPC API, Queue consumers,<br/>Cron jobs, Event handlers"]
     ECS --> Examples2["WebSockets, Video transcoding,<br/>PDF generation, Long-running jobs"]
 
     style Lambda fill:#e8f5e9
@@ -25,7 +25,7 @@ flowchart TD
 Use Lambda for:
 
 - Nuxt SSR pages (via Nitro)
-- tRPC/API endpoints
+- oRPC/API endpoints
 - Queue consumers that complete in <15 minutes
 - Cron jobs that complete in <15 minutes
 - EventBridge event handlers

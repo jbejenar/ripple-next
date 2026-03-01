@@ -25,7 +25,7 @@ const GENERATORS = {
   },
   endpoint: {
     usage: 'pnpm generate:endpoint <router> <procedure> [--dry-run]',
-    description: 'tRPC router + validation schema + test stub'
+    description: 'oRPC router + validation schema + test stub'
   },
   package: {
     usage: 'pnpm generate:package <name> [--dry-run]',

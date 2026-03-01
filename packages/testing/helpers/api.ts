@@ -1,6 +1,6 @@
 /**
  * Test API client helpers.
- * Will be extended when tRPC test utils are configured.
+ * Will be extended when oRPC test utils are configured.
  */
 export interface TestContext {
   baseUrl: string

@@ -22,7 +22,7 @@ You review code changes for security vulnerabilities.
 
 ## Project-specific:
 
-- Auth uses `protectedProcedure` from tRPC — verify it's used on all private endpoints
+- Auth uses `protectedProcedure` from oRPC — verify it's used on all private endpoints
 - File uploads go through `@ripple/storage` — verify content type validation
 - Queue messages are JSON-parsed — verify schema validation
 - SST Resource links handle secrets — never log or expose Resource values
