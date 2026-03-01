@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 55 classified error codes across 15 categories. See ADR-018, ADR-019, ADR-020, ADR-021, docs/accessibility.md, and docs/session-observability.md.",
-  "version": "1.7.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 59 classified error codes across 16 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, and docs/session-observability.md.",
+  "version": "1.8.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -24,7 +24,8 @@
     "SCAFFOLD": "Project scaffold generator failures (RN-041)",
     "DOCS": "Documentation and context file governance (RN-044, ADR-020)",
     "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)",
-    "AUTH": "OIDC/OAuth identity provider failures (RN-045)"
+    "AUTH": "OIDC/OAuth identity provider failures (RN-045)",
+    "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)"
   },
   "errors": [
     {
@@ -749,6 +750,60 @@
         "Codes expire quickly (typically 60s) — check for latency in the callback handler",
         "PKCE mismatch: ensure the same code_verifier is used for both authorization and token exchange",
         "Verify client_secret is correct if using confidential client authentication"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FEEDBACK-001",
+      "category": "FEEDBACK",
+      "severity": "error",
+      "message": "Fleet feedback envelope validation failed — payload does not conform to ripple-fleet-feedback/v1 schema",
+      "gate": "fleet:feedback",
+      "remediation": [
+        "Run: pnpm fleet:feedback -- --type=<type> --title=\"...\" --dry-run to preview the payload",
+        "Ensure required fields are present: feedbackType, title, description",
+        "Valid feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point",
+        "Check docs/fleet-feedback-schema.json for full schema"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-FEEDBACK-002",
+      "category": "FEEDBACK",
+      "severity": "info",
+      "message": "Duplicate fleet feedback detected — similar feedback already exists in upstream",
+      "gate": "fleet:feedback-intake",
+      "remediation": [
+        "Check existing upstream issues for duplicates before submitting",
+        "Use --json flag to get the duplicate issue URL",
+        "Consider adding a comment to the existing issue instead of creating a new one"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FEEDBACK-003",
+      "category": "FEEDBACK",
+      "severity": "info",
+      "message": "Fleet feedback submitted successfully — upstream issue created",
+      "gate": "fleet:feedback",
+      "remediation": [
+        "No action required — feedback has been submitted",
+        "Track the upstream issue URL returned in the --json output",
+        "Upstream team will triage within the configured SLA"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FEEDBACK-004",
+      "category": "FEEDBACK",
+      "severity": "error",
+      "message": "Fleet feedback submission failed — could not create upstream issue",
+      "gate": "fleet:feedback",
+      "remediation": [
+        "Check FLEET_FEEDBACK_TOKEN is set and has issues:write scope on the upstream repo",
+        "Verify network connectivity to GitHub API",
+        "Run with --dry-run to validate payload without submitting",
+        "Retry: pnpm fleet:feedback -- --submit (exit code 2 = submission failed)"
       ],
       "automatable": false
     }

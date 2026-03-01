@@ -216,4 +216,118 @@ scripts/ @${org}/platform
     targetDir,
     opts
   )
+
+  // ── .github/workflows/fleet-feedback.yml ────────────────────────────
+  writeFileExternal(
+    join(targetDir, '.github', 'workflows', 'fleet-feedback.yml'),
+    `name: Fleet Feedback
+
+on:
+  workflow_dispatch:
+    inputs:
+      feedback-type:
+        required: true
+        type: choice
+        options:
+          - feature-request
+          - bug-report
+          - policy-exception
+          - improvement-share
+          - pain-point
+        description: 'Feedback type'
+      title:
+        required: true
+        type: string
+        description: 'Feedback title'
+      description:
+        required: true
+        type: string
+        description: 'Feedback description'
+      surface-id:
+        required: false
+        type: string
+        description: 'Governed surface ID (optional)'
+  schedule:
+    - cron: '0 3 1 * *' # Monthly — 1st of month, 3am UTC
+
+jobs:
+  manual-feedback:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Submit feedback
+        run: |
+          ARGS="--type=\${{ github.event.inputs.feedback-type }} --title=\\"\${{ github.event.inputs.title }}\\" --description=\\"\${{ github.event.inputs.description }}\\" --submit"
+          if [ -n "\${{ github.event.inputs.surface-id }}" ]; then
+            ARGS="$ARGS --surface=\${{ github.event.inputs.surface-id }}"
+          fi
+          eval "node scripts/fleet-feedback.mjs $ARGS"
+        env:
+          FLEET_FEEDBACK_TOKEN: \${{ secrets.FLEET_FEEDBACK_TOKEN }}
+
+  auto-improvement-scan:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Scan for shareable improvements
+        run: |
+          echo "Scanning advisory-governed files for local improvements..."
+          node scripts/fleet-feedback.mjs --type=improvement-share --scan --json || true
+`,
+    targetDir,
+    opts
+  )
+
+  // ── .github/workflows/fleet-update.yml ──────────────────────────────
+  writeFileExternal(
+    join(targetDir, '.github', 'workflows', 'fleet-update.yml'),
+    `name: Fleet Update
+
+on:
+  repository_dispatch:
+    types: [fleet-update-available]
+
+permissions:
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create update awareness issue
+        run: |
+          VERSION="\${{ github.event.client_payload.version }}"
+          RELEASE_URL="\${{ github.event.client_payload.release_url }}"
+
+          BODY="## Golden Path Update Available
+
+          **Version:** \${VERSION}
+          **Release:** \${RELEASE_URL}
+
+          ### What to do
+
+          1. Review the release notes and changelog
+          2. Run \\\`pnpm check:fleet-drift\\\` to see what's changed
+          3. Run \\\`pnpm fleet:sync\\\` to apply updates
+          4. Review and merge the sync PR
+
+          ---
+          *Created automatically by fleet-update notification (ADR-022)*"
+
+          gh issue create \\
+            --title "Fleet Update: Golden path \${VERSION} available" \\
+            --body "$BODY" \\
+            --label "fleet:update"
+        env:
+          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+`,
+    targetDir,
+    opts
+  )
 }

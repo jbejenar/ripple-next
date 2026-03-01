@@ -1,0 +1,49 @@
+name: Fleet Feedback Submit
+
+on:
+  workflow_call:
+    inputs:
+      feedback-type:
+        required: true
+        type: string
+        description: 'Feedback type: feature-request, bug-report, policy-exception, improvement-share, pain-point'
+      surface-id:
+        required: false
+        type: string
+        description: 'Governed surface ID (e.g. FLEET-SURF-001)'
+      title:
+        required: true
+        type: string
+        description: 'Feedback title'
+      description:
+        required: true
+        type: string
+        description: 'Feedback description'
+      upstream-repo:
+        required: false
+        type: string
+        default: 'org/ripple-next'
+        description: 'Upstream golden-path repository'
+    secrets:
+      FLEET_FEEDBACK_TOKEN:
+        required: true
+        description: 'Fine-grained PAT with issues:write scope on upstream repo'
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Generate and submit feedback
+        run: |
+          ARGS="--type=${{ inputs.feedback-type }} --title=\"${{ inputs.title }}\" --description=\"${{ inputs.description }}\" --submit"
+          if [ -n "${{ inputs.surface-id }}" ]; then
+            ARGS="$ARGS --surface=${{ inputs.surface-id }}"
+          fi
+          eval "node scripts/fleet-feedback.mjs $ARGS"
+        env:
+          FLEET_FEEDBACK_TOKEN: ${{ secrets.FLEET_FEEDBACK_TOKEN }}
+          FLEET_UPSTREAM_REPO: ${{ inputs.upstream-repo }}

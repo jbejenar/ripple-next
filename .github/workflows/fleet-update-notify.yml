@@ -1,0 +1,41 @@
+name: Fleet Update Notification
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo: ${{ fromJSON(vars.FLEET_DOWNSTREAM_REPOS || '[]') }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read fleet changelog
+        id: changelog
+        run: |
+          if [ -f docs/fleet-changelog.json ]; then
+            CHANGELOG=$(cat docs/fleet-changelog.json)
+          else
+            CHANGELOG='{"entries":[]}'
+          fi
+          echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGELOG" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch fleet-update-available event
+        run: |
+          gh api repos/${{ matrix.repo }}/dispatches \
+            --method POST \
+            -f event_type=fleet-update-available \
+            -f "client_payload[version]=${{ github.event.release.tag_name }}" \
+            -f "client_payload[release_url]=${{ github.event.release.html_url }}" \
+            -f "client_payload[changelog]=${{ steps.changelog.outputs.changelog }}"
+        env:
+          GH_TOKEN: ${{ secrets.FLEET_SYNC_TOKEN }}

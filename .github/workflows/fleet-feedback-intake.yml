@@ -1,0 +1,71 @@
+name: Fleet Feedback Intake
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  intake:
+    if: contains(github.event.issue.body, 'fleet-feedback-begin')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Extract feedback payload
+        id: extract
+        run: |
+          BODY='${{ github.event.issue.body }}'
+          PAYLOAD=$(echo "$BODY" | sed -n '/<!-- fleet-feedback-begin -->/,/<!-- fleet-feedback-end -->/p' | sed '1d;$d')
+          echo "payload<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$PAYLOAD" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Run intake triage
+        id: triage
+        run: |
+          echo '${{ steps.extract.outputs.payload }}' | node scripts/fleet-feedback-intake.mjs --json > triage-result.json
+          cat triage-result.json
+
+      - name: Apply labels
+        run: |
+          LABELS=$(node -e "const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));console.log(r.labels.join(','))")
+          gh issue edit ${{ github.event.issue.number }} --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post triage comment
+        run: |
+          COMMENT=$(node -e "
+            const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));
+            let c='## Fleet Feedback Triage\n\n';
+            c+='| Field | Value |\n|-------|-------|\n';
+            c+='| Type | \`'+r.feedbackType+'\` |\n';
+            c+='| Priority | '+r.priorityScore+'/10 |\n';
+            c+='| Surface | '+(r.governedSurface||'N/A')+' |\n';
+            c+='| Duplicate | '+(r.isDuplicate?'Yes (#'+r.duplicateOf+')':'No')+' |\n\n';
+            if(r.feedbackType==='improvement-share'&&r.draftPrUrl){
+              c+='Draft PR created: '+r.draftPrUrl+'\n\n';
+            }
+            c+='---\n*Triaged automatically by fleet-feedback-intake (ADR-022)*';
+            console.log(c);
+          ")
+          gh issue comment ${{ github.event.issue.number }} --body "$COMMENT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create draft PR for improvement-share
+        if: ${{ fromJSON(steps.triage.outputs.result || '{}').feedbackType == 'improvement-share' }}
+        run: |
+          node -e "
+            const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));
+            if(r.feedbackType==='improvement-share' && r.patchApplies){
+              console.log('Patch applies cleanly — draft PR would be created');
+            }
+          "

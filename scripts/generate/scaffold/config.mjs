@@ -5,6 +5,7 @@
  * .changeset/config.json, and .gitignore.
  */
 import { join } from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { writeFileExternal, copyFileFromSource } from '../lib.mjs'
 
 export function scaffoldConfig(targetDir, config, options = {}) {
@@ -150,6 +151,28 @@ logs/
 # Turbo
 .turbo/
 `,
+    targetDir,
+    opts
+  )
+
+  // ── .fleet.json ─────────────────────────────────────────────────────
+  const goldenPathVersion = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).trim()
+  const scaffoldedAt = new Date().toISOString()
+
+  writeFileExternal(
+    join(targetDir, '.fleet.json'),
+    JSON.stringify(
+      {
+        schema: 'ripple-fleet-version/v1',
+        goldenPathRepo: 'org/ripple-next',
+        goldenPathVersion,
+        scaffoldedAt,
+        lastSyncedAt: '',
+        fleetPolicyVersion: '1.2.0',
+      },
+      null,
+      2
+    ) + '\n',
     targetDir,
     opts
   )
