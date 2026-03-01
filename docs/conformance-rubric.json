@@ -19,7 +19,7 @@
           "points": 5,
           "type": "file-exists",
           "path": ".nvmrc",
-          "remediation": "Create .nvmrc with the required Node.js version (e.g., 22.14.0)"
+          "remediation": "Create .nvmrc with the exact Node.js version from the upstream repo's .nvmrc (source of truth)"
         },
         {
           "id": "CONFORM-SETUP-002",

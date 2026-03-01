@@ -107,6 +107,18 @@ else
   fail "Node.js not found" "runtime" "RPL-ENV-001"
 fi
 
+# ── 1b. Node.js version pin parity (.nvmrc vs engines.node) ────────
+if [ -n "$PINNED_NODE" ] && [ -f "package.json" ]; then
+  ENGINES_NODE=$(node -e "try{const p=require('./package.json');process.stdout.write(p.engines?.node||'')}catch{}" 2>/dev/null || echo "")
+  if [ -n "$ENGINES_NODE" ]; then
+    if [ "$PINNED_NODE" = "$ENGINES_NODE" ]; then
+      pass ".nvmrc ($PINNED_NODE) matches engines.node ($ENGINES_NODE)" "runtime" "RPL-ENV-008"
+    else
+      fail ".nvmrc ($PINNED_NODE) differs from engines.node ($ENGINES_NODE) — update engines.node to match .nvmrc" "runtime" "RPL-ENV-008"
+    fi
+  fi
+fi
+
 # ── 2. pnpm ─────────────────────────────────────────────────────────
 if command -v pnpm &>/dev/null; then
   PNPM_VER=$(pnpm -v)

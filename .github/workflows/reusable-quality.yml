@@ -63,11 +63,9 @@ jobs:
 
       - name: Readiness drift guard
         run: pnpm check:readiness
-        continue-on-error: true
 
       - name: Quarantine policy check
         run: pnpm check:quarantine
-        continue-on-error: true
 
       - name: IaC policy scan
         if: inputs.run-iac-scan
