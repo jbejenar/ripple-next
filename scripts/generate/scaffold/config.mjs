@@ -12,7 +12,7 @@ import { writeFileExternal, copyFileFromSource } from '../lib.mjs'
 const ROOT = resolve(import.meta.dirname, '..', '..', '..')
 
 export function scaffoldConfig(targetDir, config, options = {}) {
-  const { name } = config
+  const { name, org } = config
   const opts = { dryRun: options.dryRun, force: options.force }
 
   console.log('\n  Config Files')
@@ -181,7 +181,7 @@ logs/
     JSON.stringify(
       {
         schema: 'ripple-fleet-version/v1',
-        goldenPathRepo: 'org/ripple-next',
+        goldenPathRepo: `${org}/ripple-next`,
         goldenPathVersion,
         scaffoldedAt,
         lastSyncedAt: '',

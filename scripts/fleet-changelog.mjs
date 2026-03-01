@@ -16,7 +16,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
@@ -28,17 +28,16 @@ const jsonMode = args.includes('--json')
 const validateMode = args.includes('--validate')
 
 // ── Load changelog ───────────────────────────────────────────────────
-if (!existsSync(CHANGELOG_PATH)) {
-  console.error('Error: docs/fleet-changelog.json not found')
-  console.error('Create it manually or run fleet governance setup.')
-  process.exit(1)
-}
-
 let changelog
 try {
   changelog = JSON.parse(readFileSync(CHANGELOG_PATH, 'utf-8'))
-} catch {
-  console.error('Error: docs/fleet-changelog.json is not valid JSON')
+} catch (err) {
+  if (err?.code === 'ENOENT') {
+    console.error('Error: docs/fleet-changelog.json not found')
+    console.error('Create it manually or run fleet governance setup.')
+  } else {
+    console.error('Error: docs/fleet-changelog.json is not valid JSON')
+  }
   process.exit(1)
 }
 

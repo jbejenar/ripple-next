@@ -277,10 +277,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - name: Scan for shareable improvements
+      - name: Check for fleet drift
+        id: drift
         run: |
-          echo "Scanning advisory-governed files for local improvements..."
-          node scripts/fleet-feedback.mjs --type=improvement-share --scan --json || true
+          echo "Checking for fleet drift and local improvements..."
+          node scripts/check-fleet-drift.mjs --json > fleet-drift-report.json 2>/dev/null || true
+          if [ -f fleet-drift-report.json ]; then
+            echo "drift-report=true" >> "\$GITHUB_OUTPUT"
+          fi
+      - name: Report findings
+        if: steps.drift.outputs.drift-report == 'true'
+        run: |
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8'));
+            const drifted = (r.findings || []).filter(f => f.status === 'drifted' || f.status === 'missing');
+            if (drifted.length > 0) {
+              console.log('Fleet drift detected on ' + drifted.length + ' surface(s):');
+              for (const f of drifted) console.log('  - ' + f.surfaceId + ': ' + f.name + ' (' + f.status + ')');
+              console.log('Run: pnpm fleet:sync to apply updates, or submit improvements upstream.');
+            } else {
+              console.log('No fleet drift detected — repo is in sync with golden path.');
+            }
+          "
 `,
     targetDir,
     opts

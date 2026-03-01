@@ -72,6 +72,38 @@ Never lower a threshold — only raise it.
 - \`@typescript-eslint/no-explicit-any\` is an **error** (use \`unknown\` + type guards)
 - Test files are exempt from no-console
 
+## Fleet Governance
+
+This project follows the ripple-next golden-path conventions and uses fleet
+governance to stay in sync. Key commands:
+
+\`\`\`bash
+# Check drift against the golden path
+node scripts/check-fleet-drift.mjs                # self-check
+node scripts/check-fleet-drift.mjs --json         # JSON output for CI
+
+# Submit feedback to the golden-path upstream
+node scripts/fleet-feedback.mjs --type=feature-request --title="Title" --description="Why" --dry-run
+node scripts/fleet-feedback.mjs --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit
+node scripts/fleet-feedback.mjs --type=bug-report --title="Title" --description="Details" --submit
+\`\`\`
+
+### Feedback Types
+
+| Type | When to Use |
+|------|-------------|
+| \`feature-request\` | Request a new golden-path capability |
+| \`bug-report\` | Report an issue with a governed surface |
+| \`policy-exception\` | Request a formal exception to a policy |
+| \`improvement-share\` | Share a local improvement upstream |
+| \`pain-point\` | Report friction with a governed surface |
+
+### Version Tracking
+
+The \`.fleet.json\` file tracks this repo's relationship to the golden path.
+AI agents should read it to understand how far behind the repo is.
+The \`lastSyncedAt\` field is updated automatically by fleet-sync.
+
 ## AI-First Workflow Strategy
 
 This project treats AI agents as first-class developers. Three pillars:
@@ -130,13 +162,18 @@ ${name}/
 ├── apps/                    # Application entry points
 ├── packages/                # Shared packages
 ├── services/                # Internal services
-├── scripts/                 # Quality gates, generators, runbooks
+├── scripts/                 # Quality gates, generators, fleet governance
+│   ├── check-readiness.mjs  # Readiness manifest validation
+│   ├── check-fleet-drift.mjs # Fleet drift detection
+│   ├── fleet-feedback.mjs   # Submit feedback to golden path
+│   └── verify.mjs           # Unified quality gate runner
 ├── docs/                    # Documentation, ADRs, runbooks
 │   ├── readiness.json       # Machine-readable subsystem status
 │   ├── error-taxonomy.json  # Classified error codes
 │   ├── adr/                 # Architecture Decision Records
 │   ├── runbooks/            # Executable procedures (JSON)
 │   └── product-roadmap/     # Roadmap tracking
+├── .fleet.json              # Fleet version tracking (golden-path relationship)
 ├── .github/                 # CI/CD, agent configs, instructions
 ├── CLAUDE.md                # Claude Code configuration
 └── AGENTS.md                # This file
@@ -162,6 +199,29 @@ All changes must pass:
 - \`pnpm typecheck\` — zero type errors
 - \`pnpm check:readiness\` — manifest in sync
 
+### Fleet Governance
+
+This repo is part of the ripple-next fleet and governed by the golden-path
+source. Fleet governance keeps CI workflows, toolchain versions, security
+config, and quality gates in sync across repos.
+
+**Key files:**
+- \`.fleet.json\` — tracks golden-path version, last sync time
+- \`scripts/check-fleet-drift.mjs\` — detects config drift from golden path
+- \`scripts/fleet-feedback.mjs\` — submits structured feedback upstream
+
+**Governed surfaces:** CI workflows, composite actions, toolchain pinning,
+quality scripts, ESLint config, security config, IaC policies, error taxonomy,
+action version pinning, AI agent instructions, fleet governance tooling.
+
+**Feedback loop:** Use \`node scripts/fleet-feedback.mjs\` to send feature
+requests, bug reports, policy exceptions, improvement shares, or pain points
+to the golden-path maintainers. See \`CLAUDE.md\` for usage examples.
+
+**Automated workflows:**
+- \`.github/workflows/fleet-feedback.yml\` — manual dispatch or monthly auto-scan
+- \`.github/workflows/fleet-update.yml\` — receives update notifications from golden path
+
 ### Agent Task Routing
 
 | Change Type | Required Validation |
@@ -171,6 +231,7 @@ All changes must pass:
 | UI change | \`pnpm test && pnpm lint\` |
 | Config/CI | \`pnpm verify\` |
 | Docs only | \`pnpm check:readiness\` |
+| Fleet governance | \`node scripts/check-fleet-drift.mjs\` |
 `,
     targetDir,
     opts
@@ -204,6 +265,14 @@ ${description}. TypeScript monorepo with pnpm workspaces.
 - Provider pattern for all infrastructure concerns
 - See \`AGENTS.md\` for full architecture reference
 - See \`docs/readiness.json\` for subsystem status
+
+## Fleet Governance
+
+- This repo is governed by the ripple-next golden path
+- Check \`.fleet.json\` to see the current golden-path version
+- Run \`node scripts/check-fleet-drift.mjs\` to detect drift
+- Use \`node scripts/fleet-feedback.mjs\` to submit feedback upstream
+- See \`CLAUDE.md\` for fleet command examples
 `,
     targetDir,
     opts
@@ -226,6 +295,10 @@ ${description}. TypeScript monorepo with pnpm workspaces.
     'test-engineer': {
       title: 'Test Engineer',
       desc: `You are a test engineering agent for ${name}. Write comprehensive tests using Vitest. Ensure coverage meets tier thresholds. Use memory/mock providers for unit tests. Run the full test suite before marking work as done.`,
+    },
+    'fleet-governance': {
+      title: 'Fleet Governance',
+      desc: `You are a fleet governance agent for ${name}. Your responsibilities: (1) Run \\\`node scripts/check-fleet-drift.mjs\\\` to detect drift from the golden path. (2) Submit feedback upstream using \\\`node scripts/fleet-feedback.mjs\\\`. (3) When local improvements are made to governed files, share them upstream using \\\`--type=improvement-share\\\`. (4) When fleet updates arrive, evaluate and apply them. (5) Monitor \\\`.fleet.json\\\` to track how far behind the golden path this repo is.`,
     },
   }
 

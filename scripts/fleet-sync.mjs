@@ -202,13 +202,11 @@ if (!dryRun && targetArg) {
   // ── Update .fleet.json in target repo ──────────────────────────────
   const fleetJsonPath = join(targetPath, '.fleet.json')
   let fleetJson = {}
-  if (existsSync(fleetJsonPath)) {
-    try {
-      fleetJson = JSON.parse(readFileSync(fleetJsonPath, 'utf-8'))
-    } catch {
-      // If .fleet.json is invalid, start fresh
-      fleetJson = {}
-    }
+  try {
+    fleetJson = JSON.parse(readFileSync(fleetJsonPath, 'utf-8'))
+  } catch {
+    // File missing or invalid JSON — start fresh
+    fleetJson = {}
   }
 
   try {

@@ -27,7 +27,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, readdirSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs'
 import { resolve, join, dirname } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
@@ -63,12 +63,15 @@ function getGitSha() {
 function loadReportsFromDir(dirPath) {
   const reports = []
   const absDir = resolve(dirPath)
-  if (!existsSync(absDir)) {
+  let dirEntries
+  try {
+    dirEntries = readdirSync(absDir)
+  } catch {
     console.error(`Reports directory not found: ${absDir}`)
     return reports
   }
 
-  for (const file of readdirSync(absDir)) {
+  for (const file of dirEntries) {
     if (!file.endsWith('.json')) continue
     try {
       const content = JSON.parse(readFileSync(join(absDir, file), 'utf-8'))

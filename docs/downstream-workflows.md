@@ -1,6 +1,42 @@
 # Downstream Workflow Consumption Guide
 
-> How to use Ripple Next's reusable workflows and composite actions in downstream repositories.
+> How to use Ripple Next's reusable workflows, composite actions, and fleet governance in downstream repositories.
+
+## Fleet Management Quick Reference
+
+| Task | Command |
+|------|---------|
+| **Bootstrap a new downstream repo** | `pnpm generate:scaffold /path/to/repo --name=my-project --org=my-org` |
+| **Check drift against golden path** | `pnpm check:fleet-drift -- --target=/path/to/repo` |
+| **Preview sync changes (dry run)** | `pnpm fleet:sync -- --target=/path/to/repo --dry-run` |
+| **Apply sync to downstream repo** | `pnpm fleet:sync -- --target=/path/to/repo` |
+| **View fleet compliance (multi-repo)** | `pnpm fleet:compliance -- --reports=./reports` |
+| **Submit feedback upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
+| **Share a local improvement upstream** | `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit` |
+| **View fleet changelog** | `pnpm fleet:changelog` |
+| **Validate changelog structure** | `pnpm fleet:changelog -- --validate` |
+
+### Downstream repo commands (after scaffolding)
+
+| Task | Command |
+|------|---------|
+| **Self-check for drift** | `node scripts/check-fleet-drift.mjs` |
+| **Submit feedback to upstream** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --description="..." --submit` |
+| **Preview feedback payload** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --dry-run --json` |
+| **Run fleet feedback submit runbook** | `pnpm runbook fleet-feedback-submit` |
+
+### Key files in downstream repos
+
+| File | Purpose |
+|------|---------|
+| `.fleet.json` | Tracks golden-path version, last sync time, policy version |
+| `scripts/check-fleet-drift.mjs` | Drift detection against golden path (synced via SURF-011) |
+| `scripts/fleet-feedback.mjs` | Structured feedback submission to upstream |
+| `.github/workflows/fleet-feedback.yml` | Manual dispatch + monthly auto-scan for drift |
+| `.github/workflows/fleet-update.yml` | Receives update notifications from golden path |
+| `docs/runbooks/fleet-feedback-submit.json` | Step-by-step runbook for feedback submission |
+
+---
 
 ## Overview
 
@@ -459,13 +495,14 @@ pnpm generate:scaffold /path/to/downstream-repo \
   --description="My downstream project"
 ```
 
-This generates ~30 files across 5 categories:
+This generates ~35 files across 6 categories:
 
 | Category | What's Generated |
 |----------|-----------------|
-| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/`, `.github/instructions/`, `.github/prompts/`, Copilot instructions |
-| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates, product roadmap template |
+| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/` (5 agents incl. fleet-governance), `.github/instructions/`, `.github/prompts/`, Copilot instructions |
+| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates (deploy, fleet-feedback-submit, fleet-drift-check), product roadmap template |
 | Quality Gates | `scripts/verify.mjs`, `scripts/doctor.sh`, `scripts/check-readiness.mjs`, `scripts/validate-env.mjs` |
+| Fleet Governance | `.fleet.json`, `scripts/check-fleet-drift.mjs`, `scripts/fleet-feedback.mjs`, `.github/workflows/fleet-feedback.yml`, `.github/workflows/fleet-update.yml` |
 | CI / CD | `.github/workflows/ci.yml`, `.github/workflows/security.yml`, composite actions, PR template, CODEOWNERS |
 | Config | `.env.example`, `.nvmrc`, `eslint.config.js`, `.changeset/config.json`, `.gitignore` |
 

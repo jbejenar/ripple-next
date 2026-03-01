@@ -33,7 +33,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
@@ -159,10 +159,12 @@ function extractPayload() {
   if (issueBody) {
     rawBody = issueBody
   } else if (issueFilePath) {
-    if (!existsSync(issueFilePath)) {
+    let content
+    try {
+      content = readFileSync(issueFilePath, 'utf-8')
+    } catch (err) {
       throw new Error(`Issue file not found: ${issueFilePath}`)
     }
-    const content = readFileSync(issueFilePath, 'utf-8')
 
     // If the file ends in .json, try parsing it directly as the payload
     if (issueFilePath.endsWith('.json')) {

@@ -36,7 +36,7 @@
  *
  * Zero external dependencies — uses only Node.js built-ins.
  */
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
@@ -118,12 +118,10 @@ const sourceRef = getSourceRef()
 // ── Load .fleet.json ─────────────────────────────────────────────────
 const fleetJsonPath = resolve(ROOT, '.fleet.json')
 let fleetConfig = {}
-if (existsSync(fleetJsonPath)) {
-  try {
-    fleetConfig = JSON.parse(readFileSync(fleetJsonPath, 'utf-8'))
-  } catch {
-    // .fleet.json exists but is not valid JSON — continue with defaults
-  }
+try {
+  fleetConfig = JSON.parse(readFileSync(fleetJsonPath, 'utf-8'))
+} catch {
+  // .fleet.json missing or not valid JSON — continue with defaults
 }
 
 const goldenPathVersion = fleetConfig.goldenPathVersion ?? 'unknown'
@@ -142,68 +140,64 @@ const evidence = {
 // For improvement-share with --file: generate a diff
 if (feedbackType === 'improvement-share' && filePath) {
   const localFilePath = resolve(ROOT, filePath)
-  if (existsSync(localFilePath)) {
+  try {
+    const localContent = readFileSync(localFilePath, 'utf-8')
     evidence.affectedFiles.push(filePath)
-    try {
-      const localContent = readFileSync(localFilePath, 'utf-8')
 
-      // Try to get the golden-path version from git using goldenPathVersion
-      let goldenContent = null
-      if (goldenPathVersion !== 'unknown') {
-        try {
-          goldenContent = execFileSync(
-            'git',
-            ['show', `${goldenPathVersion}:${filePath}`],
-            { cwd: ROOT, encoding: 'utf-8' }
-          )
-        } catch {
-          // Could not retrieve golden-path version from git
-        }
-      }
-
-      if (goldenContent !== null) {
-        // Generate a unified diff
-        evidence.diff = generateUnifiedDiff(
-          filePath,
-          goldenContent,
-          localContent
+    // Try to get the golden-path version from git using goldenPathVersion
+    let goldenContent = null
+    if (goldenPathVersion !== 'unknown') {
+      try {
+        goldenContent = execFileSync(
+          'git',
+          ['show', `${goldenPathVersion}:${filePath}`],
+          { cwd: ROOT, encoding: 'utf-8' }
         )
-      } else {
-        // No golden-path baseline available — include file content as context
-        evidence.diff = `--- a/${filePath} (golden-path: unavailable)\n+++ b/${filePath} (local)\n${localContent}`
+      } catch {
+        // Could not retrieve golden-path version from git
       }
-    } catch {
-      // Could not read local file for diff
     }
+
+    if (goldenContent !== null) {
+      // Generate a unified diff
+      evidence.diff = generateUnifiedDiff(
+        filePath,
+        goldenContent,
+        localContent
+      )
+    } else {
+      // No golden-path baseline available — include file content as context
+      evidence.diff = `--- a/${filePath} (golden-path: unavailable)\n+++ b/${filePath} (local)\n${localContent}`
+    }
+  } catch {
+    // File not found or unreadable — skip diff generation
   }
 }
 
 // For bug-report: include drift report if available
 if (feedbackType === 'bug-report') {
   const driftReportPath = resolve(ROOT, 'fleet-drift-report.json')
-  if (existsSync(driftReportPath)) {
-    try {
-      const driftData = JSON.parse(readFileSync(driftReportPath, 'utf-8'))
-      evidence.driftReport = driftData
+  try {
+    const driftData = JSON.parse(readFileSync(driftReportPath, 'utf-8'))
+    evidence.driftReport = driftData
 
-      // Extract affected files from drift findings
-      if (driftData.findings) {
-        for (const finding of driftData.findings) {
-          if (
-            finding.status === 'drifted' ||
-            finding.status === 'missing'
-          ) {
-            if (finding.details) {
-              for (const detail of finding.details) {
-                evidence.affectedFiles.push(detail)
-              }
+    // Extract affected files from drift findings
+    if (driftData.findings) {
+      for (const finding of driftData.findings) {
+        if (
+          finding.status === 'drifted' ||
+          finding.status === 'missing'
+        ) {
+          if (finding.details) {
+            for (const detail of finding.details) {
+              evidence.affectedFiles.push(detail)
             }
           }
         }
       }
-    } catch {
-      // Could not parse drift report
     }
+  } catch {
+    // Drift report not found or invalid — skip
   }
 }
 
