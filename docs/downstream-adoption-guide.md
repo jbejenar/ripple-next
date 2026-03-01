@@ -18,6 +18,15 @@
 
 ---
 
+## Before You Start
+
+This guide covers **mandatory documentation and governance standards**
+for downstream repos. For implementation details (scaffolding code, folder
+layouts, code examples, quality gates, deployment), see the
+**[Consumer App Guide](./consumer-app-guide.md)**.
+
+---
+
 ## Quick Start
 
 ### Greenfield (New Project)
@@ -184,7 +193,7 @@ cp .env.example .env
 ### Step 3: Install Packages
 
 ```bash
-# Set up private registry (see developer-guide.md for registry setup)
+# Set up private registry (see consumer-app-guide.md for registry setup)
 pnpm add @ripple-next/validation @ripple-next/shared
 
 # Add packages based on your needs:
@@ -374,7 +383,8 @@ See [`fleet-policy.json`](./fleet-policy.json) and [Downstream Workflows](./down
 
 - [Platform Capabilities](./platform-capabilities.md) — what ripple-next provides
 - [Downstream Workflows](./downstream-workflows.md) — CI consumption and fleet operations
-- [Developer Guide](./developer-guide.md) — consumer app setup (frontend, backend, full-stack)
+- [Consumer App Guide](./consumer-app-guide.md) — consumer app setup (frontend, backend, full-stack)
+- [Platform Developer Guide](./platform-developer-guide.md) — contributing to ripple-next internals
 - [Architecture](./architecture.md) — ripple-next system architecture
 - [Provider Pattern](./provider-pattern.md) — core infrastructure abstraction
 - [API Contracts](./api-contracts.md) — oRPC and REST endpoints

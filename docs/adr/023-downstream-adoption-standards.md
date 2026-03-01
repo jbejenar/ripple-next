@@ -117,7 +117,7 @@ Add `RPL-ADOPT-*` codes for documentation governance failures (advisory, non-blo
   build standalone projects ignoring conventions.
 
 - **The adoption guide fills a critical gap.** `downstream-workflows.md` covers
-  CI consumption. `developer-guide.md` covers consumer app setup. Neither tells
+  CI consumption. `consumer-app-guide.md` covers consumer app setup. Neither tells
   downstream repos what **documentation** to produce.
 
 - **Content quality matters.** File-exists checks are necessary but insufficient.

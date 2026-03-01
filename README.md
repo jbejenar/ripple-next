@@ -21,12 +21,16 @@ pnpm verify -- --json       # all quality gates (lint, typecheck, test)
 | You are... | Start here |
 | --- | --- |
 | **AI agent** | [AGENTS.md](AGENTS.md) then `pnpm bootstrap` and `pnpm verify` |
-| **Platform contributor** | [Developer Guide](docs/developer-guide.md) — bare Mac to deployment |
-| **Downstream team** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) — scaffold, adopt, conform |
+| **Platform developer** | [Platform Developer Guide](docs/platform-developer-guide.md) — contributing to ripple-next internals |
+| **Consumer app developer** | [Consumer App Guide](docs/consumer-app-guide.md) — building apps with `@ripple-next/*` packages |
+| **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) — mandatory documentation standards and conformance |
 | **Architect / reviewer** | [Platform Capabilities](docs/platform-capabilities.md) and [Critique Evaluation](docs/critique-evaluation.md) |
 | **Curious contributor** | [Contributing](#contributing) — safe zones, workflow, and expectations |
 
 ## Quick Start
+
+> This quick start is for **platform development** (the ripple-next monorepo).
+> For consumer app setup, see the [Consumer App Guide](docs/consumer-app-guide.md).
 
 ```bash
 # One-command setup (install + doctor + validate)
@@ -95,7 +99,8 @@ graph LR
 
 | Document                                           | Description                                           |
 | -------------------------------------------------- | ----------------------------------------------------- |
-| [Developer Guide](docs/developer-guide.md)         | **Start here** — bare Mac to deployment               |
+| [Platform Developer Guide](docs/platform-developer-guide.md) | Platform internals — bare Mac to deployment  |
+| [Consumer App Guide](docs/consumer-app-guide.md)   | Building apps with `@ripple-next/*` packages          |
 | [Architecture](docs/architecture.md)               | System overview, stack, and high-level design         |
 | [Provider Pattern](docs/provider-pattern.md)       | Core pattern for environment-swappable infrastructure |
 | [Data Model](docs/data-model.md)                   | PostgreSQL schema and entity relationships            |
@@ -105,7 +110,7 @@ graph LR
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
 | [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
-| [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Documentation standards for downstream repos |
+| [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Mandatory documentation standards for downstream repos |
 | [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
 | [Runbooks](docs/runbooks/)                         | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
 | [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |

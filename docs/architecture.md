@@ -164,7 +164,7 @@ for the full inventory of what ripple-next provides.
 
 ## Related Documentation
 
-- [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
+- [Platform Developer Guide](./platform-developer-guide.md) — **start here** for setup and onboarding
 - [Provider Pattern](./provider-pattern.md) — core architecture pattern
 - [Data Model](./data-model.md) — PostgreSQL schema
 - [API Contracts](./api-contracts.md) — oRPC routers and REST endpoints

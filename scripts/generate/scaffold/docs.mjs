@@ -590,6 +590,9 @@ See the upstream guide for:
 - Provider pattern adoption
 - Conformance requirements and fleet governance
 
+For implementation details (folder layouts, code examples, deployment):
+- [Consumer App Guide](https://github.com/${org}/ripple-next/blob/main/docs/consumer-app-guide.md)
+
 Run \`pnpm conform\` to check your documentation compliance score.
 `,
     targetDir,

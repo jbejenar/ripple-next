@@ -133,7 +133,7 @@ per-subsystem detail.
 - [x] "Pick Your Path" table routing 5 audiences to correct entry points
 - [x] Provider pattern Mermaid diagram (simplified thumbnail)
 - [x] "Contributing" section with safe zones, workflow Mermaid, and expectations
-- [x] All links verified (AGENTS.md, developer-guide, adoption guide, platform capabilities, etc.)
+- [x] All links verified (AGENTS.md, platform-developer-guide, consumer-app-guide, adoption guide, platform capabilities, etc.)
 
 **Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted.
 **Verified:** All 18 file links in README resolve to existing files. `docs/runbooks/` is pre-existing broken link (not introduced by this change).
