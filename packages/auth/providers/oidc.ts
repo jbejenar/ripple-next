@@ -63,17 +63,20 @@ export class OidcAuthProvider implements AuthProvider {
     return url
   }
 
-  async handleCallback(code: string, codeVerifier: string): Promise<AuthUser> {
+  async handleCallback(code: string, state: string, codeVerifier: string): Promise<AuthUser> {
     const as = await this.getAuthServer()
 
-    const callbackParams = new URLSearchParams()
-    callbackParams.set('code', code)
+    const rawParams = new URLSearchParams()
+    rawParams.set('code', code)
+    rawParams.set('state', state)
+
+    const validatedParams = oauth.validateAuthResponse(as, this.client, rawParams, state)
 
     const response = await oauth.authorizationCodeGrantRequest(
       as,
       this.client,
       this.clientAuth,
-      callbackParams,
+      validatedParams,
       this.config.redirectUri,
       codeVerifier,
       this.httpOptions

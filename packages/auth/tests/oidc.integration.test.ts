@@ -135,7 +135,7 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       expect(returnedState).toBe(state)
       expect(code).toBeTruthy()
 
-      const user = await provider.handleCallback(code, verifier)
+      const user = await provider.handleCallback(code, returnedState, verifier)
 
       expect(user).toBeDefined()
       expect(user.email).toBe(TEST_USER.email)
@@ -147,13 +147,13 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const verifier = oauth.generateRandomCodeVerifier()
       const authUrl = await provider.getAuthorizationUrl('link-test', verifier)
 
-      const { code } = await simulateAuthCodeFlow({
+      const { code, state: returnedState } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, verifier)
+      const user = await provider.handleCallback(code, returnedState, verifier)
 
       // User should be stored by OIDC sub
       expect(userStore.users.has(user.id)).toBe(true)
@@ -167,13 +167,13 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const verifier = oauth.generateRandomCodeVerifier()
       const authUrl = await provider.getAuthorizationUrl('session-create', verifier)
 
-      const { code } = await simulateAuthCodeFlow({
+      const { code, state: returnedState } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, verifier)
+      const user = await provider.handleCallback(code, returnedState, verifier)
       const session = await provider.createSession(user.id)
 
       expect(session.userId).toBe(user.id)
@@ -188,13 +188,13 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const verifier = oauth.generateRandomCodeVerifier()
       const authUrl = await provider.getAuthorizationUrl('logout-test', verifier)
 
-      const { code } = await simulateAuthCodeFlow({
+      const { code, state: returnedState } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
-      const user = await provider.handleCallback(code, verifier)
+      const user = await provider.handleCallback(code, returnedState, verifier)
       const session = await provider.createSession(user.id)
 
       await provider.invalidateSession(session.id)
@@ -209,7 +209,7 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const verifier = oauth.generateRandomCodeVerifier()
 
       await expect(
-        provider.handleCallback('invalid-code', verifier)
+        provider.handleCallback('invalid-code', 'invalid-state', verifier)
       ).rejects.toThrow()
     })
 
@@ -218,14 +218,14 @@ describe.runIf(dockerAvailable)('OidcAuthProvider (Keycloak Integration)', () =>
       const wrongVerifier = oauth.generateRandomCodeVerifier()
       const authUrl = await provider.getAuthorizationUrl('wrong-verifier', verifier)
 
-      const { code } = await simulateAuthCodeFlow({
+      const { code, state: returnedState } = await simulateAuthCodeFlow({
         authorizationUrl: authUrl,
         username: TEST_USER.username,
         password: TEST_USER.password,
       })
 
       await expect(
-        provider.handleCallback(code, wrongVerifier)
+        provider.handleCallback(code, returnedState, wrongVerifier)
       ).rejects.toThrow()
     })
 

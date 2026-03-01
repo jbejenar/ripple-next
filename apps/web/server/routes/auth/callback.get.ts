@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   deleteCookie(event, 'oidc_verifier')
 
   const auth = getAuthProvider()
-  const user = await auth.handleCallback(code, codeVerifier)
+  const user = await auth.handleCallback(code, returnedState, codeVerifier)
   const session = await auth.createSession(user.id)
   const isSecure = process.env.NODE_ENV === 'production'
 
