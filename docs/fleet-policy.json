@@ -188,15 +188,17 @@
       }
     },
     "severityLabels": {
-      "security-critical": "priority:critical",
-      "standards-required": "priority:high",
-      "recommended": "priority:normal"
+      "critical": "priority:critical",
+      "high": "priority:high",
+      "medium": "priority:medium",
+      "low": "priority:low"
     },
     "deduplicationWindow": "30d",
     "triageSla": {
-      "security-critical": "24h",
-      "standards-required": "7d",
-      "recommended": "30d"
+      "critical": "24h",
+      "high": "7d",
+      "medium": "30d",
+      "low": "90d"
     },
     "reverseSync": {
       "enabled": true,

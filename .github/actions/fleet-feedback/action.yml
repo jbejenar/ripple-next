@@ -37,26 +37,33 @@ runs:
     - name: Generate feedback payload
       id: generate
       shell: bash
+      env:
+        INPUT_TYPE: ${{ inputs.feedback-type }}
+        INPUT_SURFACE: ${{ inputs.surface-id }}
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_DESCRIPTION: ${{ inputs.description }}
       run: |
-        ARGS="--type=${{ inputs.feedback-type }} --title=\"${{ inputs.title }}\" --description=\"${{ inputs.description }}\" --json"
-        if [ -n "${{ inputs.surface-id }}" ]; then
-          ARGS="$ARGS --surface=${{ inputs.surface-id }}"
+        ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --json)
+        if [ -n "$INPUT_SURFACE" ]; then
+          ARGS+=(--surface="$INPUT_SURFACE")
         fi
-        eval "node scripts/fleet-feedback.mjs $ARGS" > /tmp/fleet-feedback-payload.json
+        node scripts/fleet-feedback.mjs "${ARGS[@]}" > /tmp/fleet-feedback-payload.json
 
     - name: Submit feedback
       id: submit
       shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.feedback-token }}
+        UPSTREAM_REPO: ${{ inputs.upstream-repo }}
       run: |
         PAYLOAD=$(cat /tmp/fleet-feedback-payload.json)
         TITLE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).title))")
         TYPE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).feedbackType))")
-        BODY="<!-- fleet-feedback-begin -->
-        $(echo "$PAYLOAD")
-        <!-- fleet-feedback-end -->"
+
+        BODY=$(printf '<!-- fleet-feedback-begin -->\n%s\n<!-- fleet-feedback-end -->' "$PAYLOAD")
 
         ISSUE_URL=$(gh issue create \
-          --repo "${{ inputs.upstream-repo }}" \
+          --repo "$UPSTREAM_REPO" \
           --title "[fleet-feedback:${TYPE}] ${TITLE}" \
           --body "$BODY" \
           --label "fleet:feedback,fleet:feedback:${TYPE}")
@@ -64,5 +71,3 @@ runs:
         echo "issue-url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
         FEEDBACK_ID=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).metadata?.feedbackId||'unknown'))")
         echo "feedback-id=$FEEDBACK_ID" >> "$GITHUB_OUTPUT"
-      env:
-        GH_TOKEN: ${{ inputs.feedback-token }}

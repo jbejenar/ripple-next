@@ -38,15 +38,15 @@ import { resolve } from 'node:path'
 import { execFileSync } from 'node:child_process'
 
 const ROOT = resolve(import.meta.dirname, '..')
-const POLICY_PATH = resolve(import.meta.dirname, '../docs/fleet-policy.json')
+const POLICY_PATH = resolve(ROOT, 'docs/fleet-policy.json')
 
 // ── Valid feedback types ─────────────────────────────────────────────
 const VALID_FEEDBACK_TYPES = [
   'feature-request',
   'bug-report',
+  'policy-exception',
   'improvement-share',
-  'documentation',
-  'deprecation-notice'
+  'pain-point',
 ]
 
 // ── Severity weights ─────────────────────────────────────────────────
@@ -126,7 +126,7 @@ if (payload.feedbackType === 'improvement-share' && payload.evidence && payload.
 }
 
 // ── Determine triage action ──────────────────────────────────────────
-const triage = determineTriage(payload, duplicate, patchApplicable)
+const triage = determineTriage(payload, duplicate, patchApplicable, duplicateOf)
 
 // ── Build triage report ──────────────────────────────────────────────
 const report = {
@@ -233,9 +233,9 @@ function computeLabels(p) {
   result.push(`fleet:feedback:${p.feedbackType}`)
 
   // Surface labels — look up matching surfaces from fleet-policy.json
-  if (p.surface && policy.governedSurfaces) {
+  if (p.governedSurface && policy.governedSurfaces) {
     const matchedSurface = policy.governedSurfaces.find(
-      (s) => s.name === p.surface || s.id === p.surface
+      (s) => s.name === p.governedSurface || s.id === p.governedSurface
     )
     if (matchedSurface) {
       result.push(`surface:${matchedSurface.name}`)
@@ -243,8 +243,8 @@ function computeLabels(p) {
   }
 
   // Also check for surfaces array
-  if (p.surfaces && Array.isArray(p.surfaces) && policy.governedSurfaces) {
-    for (const surfRef of p.surfaces) {
+  if (p.governedSurfaces && Array.isArray(p.governedSurfaces) && policy.governedSurfaces) {
+    for (const surfRef of p.governedSurfaces) {
       const matchedSurface = policy.governedSurfaces.find(
         (s) => s.name === surfRef || s.id === surfRef
       )
@@ -264,7 +264,7 @@ function computePriorityScore(p) {
 
   // Check if referenced surface is security-critical
   if (policy.governedSurfaces) {
-    const surfaceRef = p.surface || (p.surfaces && p.surfaces[0])
+    const surfaceRef = p.governedSurface || (p.governedSurfaces && p.governedSurfaces[0])
     if (surfaceRef) {
       const matchedSurface = policy.governedSurfaces.find(
         (s) => s.name === surfaceRef || s.id === surfaceRef
@@ -364,12 +364,12 @@ function checkPatchApplicability(diff) {
 }
 
 // ── Triage determination ─────────────────────────────────────────────
-function determineTriage(p, isDuplicate, patchResult) {
+function determineTriage(p, isDuplicate, patchResult, dupOf) {
   if (isDuplicate) {
     return {
       status: 'triaged',
       action: 'duplicate',
-      notes: `Duplicate detected — linked to original issue #${duplicateOf}`
+      notes: `Duplicate detected — linked to original issue #${dupOf}`
     }
   }
 

@@ -322,27 +322,30 @@ function generateUnifiedDiff(fileName, oldContent, newContent) {
   // for human-readable feedback payloads
   let i = 0
   let j = 0
-  let hunkStart = null
+  let hunkOldStart = null
+  let hunkNewStart = null
   let hunkLines = []
 
   function flushHunk() {
     if (hunkLines.length === 0) return
-    const oldStart = hunkStart + 1
+    const oldStart = (hunkOldStart ?? 0) + 1
+    const newStart = (hunkNewStart ?? 0) + 1
     const removals = hunkLines.filter((l) => l.startsWith('-')).length
     const additions = hunkLines.filter((l) => l.startsWith('+')).length
     const context = hunkLines.filter((l) => l.startsWith(' ')).length
     const oldCount = removals + context
     const newCount = additions + context
-    result.push(`@@ -${oldStart},${oldCount} +${oldStart},${newCount} @@`)
+    result.push(`@@ -${oldStart},${oldCount} +${newStart},${newCount} @@`)
     result.push(...hunkLines)
     hunkLines = []
-    hunkStart = null
+    hunkOldStart = null
+    hunkNewStart = null
   }
 
   while (i < oldLines.length || j < newLines.length) {
     if (i < oldLines.length && j < newLines.length && oldLines[i] === newLines[j]) {
       // Context line — include if near a change
-      if (hunkStart !== null) {
+      if (hunkOldStart !== null) {
         hunkLines.push(` ${oldLines[i]}`)
         // Flush hunk if we have 3+ consecutive context lines after changes
         const recentChanges = hunkLines
@@ -355,11 +358,11 @@ function generateUnifiedDiff(fileName, oldContent, newContent) {
       i++
       j++
     } else if (i < oldLines.length && (j >= newLines.length || oldLines[i] !== newLines[j])) {
-      if (hunkStart === null) hunkStart = i
+      if (hunkOldStart === null) { hunkOldStart = i; hunkNewStart = j }
       hunkLines.push(`-${oldLines[i]}`)
       i++
     } else {
-      if (hunkStart === null) hunkStart = j
+      if (hunkOldStart === null) { hunkOldStart = i; hunkNewStart = j }
       hunkLines.push(`+${newLines[j]}`)
       j++
     }

@@ -4,9 +4,12 @@
  * Generates .env.example, .nvmrc, eslint.config.js,
  * .changeset/config.json, and .gitignore.
  */
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { writeFileExternal, copyFileFromSource } from '../lib.mjs'
+
+const ROOT = resolve(import.meta.dirname, '..', '..', '..')
 
 export function scaffoldConfig(targetDir, config, options = {}) {
   const { name } = config
@@ -156,7 +159,21 @@ logs/
   )
 
   // ── .fleet.json ─────────────────────────────────────────────────────
-  const goldenPathVersion = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8' }).trim()
+  let goldenPathVersion = 'unknown'
+  try {
+    goldenPathVersion = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf-8' }).trim()
+  } catch {
+    // Not in a git repo or git unavailable — use fallback
+  }
+
+  let fleetPolicyVersion = '1.2.0'
+  try {
+    const policyData = JSON.parse(readFileSync(resolve(ROOT, 'docs/fleet-policy.json'), 'utf-8'))
+    fleetPolicyVersion = policyData.version ?? fleetPolicyVersion
+  } catch {
+    // Fleet policy unavailable — use hardcoded fallback
+  }
+
   const scaffoldedAt = new Date().toISOString()
 
   writeFileExternal(
@@ -168,7 +185,7 @@ logs/
         goldenPathVersion,
         scaffoldedAt,
         lastSyncedAt: '',
-        fleetPolicyVersion: '1.2.0',
+        fleetPolicyVersion,
       },
       null,
       2

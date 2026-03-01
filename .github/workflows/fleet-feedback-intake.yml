@@ -7,7 +7,6 @@ on:
 permissions:
   issues: write
   contents: read
-  pull-requests: write
 
 jobs:
   intake:
@@ -20,27 +19,43 @@ jobs:
 
       - name: Extract feedback payload
         id: extract
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          BODY='${{ github.event.issue.body }}'
-          PAYLOAD=$(echo "$BODY" | sed -n '/<!-- fleet-feedback-begin -->/,/<!-- fleet-feedback-end -->/p' | sed '1d;$d')
-          echo "payload<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$PAYLOAD" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          node -e "
+            const body = process.env.ISSUE_BODY;
+            const begin = '<!-- fleet-feedback-begin -->';
+            const end = '<!-- fleet-feedback-end -->';
+            const beginIdx = body.indexOf(begin);
+            const endIdx = body.indexOf(end);
+            if (beginIdx === -1 || endIdx === -1) { process.exit(1); }
+            const payload = body.slice(beginIdx + begin.length, endIdx).trim();
+            JSON.parse(payload); // validate JSON
+            process.stdout.write(payload);
+          " > /tmp/fleet-feedback-payload.json
 
       - name: Run intake triage
-        id: triage
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          echo '${{ steps.extract.outputs.payload }}' | node scripts/fleet-feedback-intake.mjs --json > triage-result.json
+          node scripts/fleet-feedback-intake.mjs \
+            --issue-file=/tmp/fleet-feedback-payload.json \
+            --issue-number="$ISSUE_NUMBER" \
+            --json > triage-result.json
           cat triage-result.json
 
       - name: Apply labels
-        run: |
-          LABELS=$(node -e "const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));console.log(r.labels.join(','))")
-          gh issue edit ${{ github.event.issue.number }} --add-label "$LABELS"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          LABELS=$(node -e "const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));console.log(r.labels.join(','))")
+          gh issue edit "$ISSUE_NUMBER" --add-label "$LABELS"
 
       - name: Post triage comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           COMMENT=$(node -e "
             const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));
@@ -49,23 +64,11 @@ jobs:
             c+='| Type | \`'+r.feedbackType+'\` |\n';
             c+='| Priority | '+r.priorityScore+'/10 |\n';
             c+='| Surface | '+(r.governedSurface||'N/A')+' |\n';
-            c+='| Duplicate | '+(r.isDuplicate?'Yes (#'+r.duplicateOf+')':'No')+' |\n\n';
-            if(r.feedbackType==='improvement-share'&&r.draftPrUrl){
-              c+='Draft PR created: '+r.draftPrUrl+'\n\n';
+            c+='| Duplicate | '+(r.duplicate?'Yes (#'+r.duplicateOf+')':'No')+' |\n\n';
+            if(r.feedbackType==='improvement-share'&&r.patchApplicable){
+              c+='Patch applies cleanly — draft PR can be created.\n\n';
             }
             c+='---\n*Triaged automatically by fleet-feedback-intake (ADR-022)*';
             console.log(c);
           ")
-          gh issue comment ${{ github.event.issue.number }} --body "$COMMENT"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create draft PR for improvement-share
-        if: ${{ fromJSON(steps.triage.outputs.result || '{}').feedbackType == 'improvement-share' }}
-        run: |
-          node -e "
-            const r=JSON.parse(require('fs').readFileSync('triage-result.json','utf-8'));
-            if(r.feedbackType==='improvement-share' && r.patchApplies){
-              console.log('Patch applies cleanly — draft PR would be created');
-            }
-          "
+          gh issue comment "$ISSUE_NUMBER" --body "$COMMENT"

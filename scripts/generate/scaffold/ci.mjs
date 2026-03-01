@@ -258,14 +258,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - name: Submit feedback
-        run: |
-          ARGS="--type=\${{ github.event.inputs.feedback-type }} --title=\\"\${{ github.event.inputs.title }}\\" --description=\\"\${{ github.event.inputs.description }}\\" --submit"
-          if [ -n "\${{ github.event.inputs.surface-id }}" ]; then
-            ARGS="$ARGS --surface=\${{ github.event.inputs.surface-id }}"
-          fi
-          eval "node scripts/fleet-feedback.mjs $ARGS"
         env:
           FLEET_FEEDBACK_TOKEN: \${{ secrets.FLEET_FEEDBACK_TOKEN }}
+          INPUT_TYPE: \${{ github.event.inputs.feedback-type }}
+          INPUT_SURFACE: \${{ github.event.inputs.surface-id }}
+          INPUT_TITLE: \${{ github.event.inputs.title }}
+          INPUT_DESCRIPTION: \${{ github.event.inputs.description }}
+        run: |
+          ARGS=(--type="\$INPUT_TYPE" --title="\$INPUT_TITLE" --description="\$INPUT_DESCRIPTION" --submit)
+          if [ -n "\$INPUT_SURFACE" ]; then
+            ARGS+=(--surface="\$INPUT_SURFACE")
+          fi
+          node scripts/fleet-feedback.mjs "\$\{ARGS[@]}"
 
   auto-improvement-scan:
     if: github.event_name == 'schedule'
@@ -301,31 +305,30 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create update awareness issue
+        env:
+          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          VERSION: \${{ github.event.client_payload.version }}
+          RELEASE_URL: \${{ github.event.client_payload.release_url }}
         run: |
-          VERSION="\${{ github.event.client_payload.version }}"
-          RELEASE_URL="\${{ github.event.client_payload.release_url }}"
-
           BODY="## Golden Path Update Available
 
-          **Version:** \${VERSION}
-          **Release:** \${RELEASE_URL}
+**Version:** \${VERSION}
+**Release:** \${RELEASE_URL}
 
-          ### What to do
+### What to do
 
-          1. Review the release notes and changelog
-          2. Run \\\`pnpm check:fleet-drift\\\` to see what's changed
-          3. Run \\\`pnpm fleet:sync\\\` to apply updates
-          4. Review and merge the sync PR
+1. Review the release notes and changelog
+2. Run \`pnpm check:fleet-drift\` to see what changed
+3. Run \`pnpm fleet:sync\` to apply updates
+4. Review and merge the sync PR
 
-          ---
-          *Created automatically by fleet-update notification (ADR-022)*"
+---
+*Created automatically by fleet-update notification (ADR-022)*"
 
           gh issue create \\
             --title "Fleet Update: Golden path \${VERSION} available" \\
-            --body "$BODY" \\
+            --body "\$BODY" \\
             --label "fleet:update"
-        env:
-          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `,
     targetDir,
     opts

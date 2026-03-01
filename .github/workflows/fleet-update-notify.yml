@@ -3,12 +3,14 @@ name: Fleet Update Notification
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   notify:
+    if: ${{ fromJSON(vars.FLEET_DOWNSTREAM_REPOS || '["__skip__"]')[0] != '__skip__' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,12 +32,16 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch fleet-update-available event
-        run: |
-          gh api repos/${{ matrix.repo }}/dispatches \
-            --method POST \
-            -f event_type=fleet-update-available \
-            -f "client_payload[version]=${{ github.event.release.tag_name }}" \
-            -f "client_payload[release_url]=${{ github.event.release.html_url }}" \
-            -f "client_payload[changelog]=${{ steps.changelog.outputs.changelog }}"
         env:
           GH_TOKEN: ${{ secrets.FLEET_SYNC_TOKEN }}
+          TARGET_REPO: ${{ matrix.repo }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || 'manual' }}
+          RELEASE_URL: ${{ github.event.release.html_url || '' }}
+          CHANGELOG_CONTENT: ${{ steps.changelog.outputs.changelog }}
+        run: |
+          gh api "repos/${TARGET_REPO}/dispatches" \
+            --method POST \
+            -f event_type=fleet-update-available \
+            -f "client_payload[version]=${RELEASE_TAG}" \
+            -f "client_payload[release_url]=${RELEASE_URL}" \
+            -f "client_payload[changelog]=${CHANGELOG_CONTENT}"

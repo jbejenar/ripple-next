@@ -211,8 +211,12 @@ if (!dryRun && targetArg) {
     }
   }
 
-  const currentSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8', cwd: ROOT }).trim()
-  fleetJson.goldenPathVersion = currentSha
+  try {
+    const currentSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf-8', cwd: ROOT }).trim()
+    fleetJson.goldenPathVersion = currentSha
+  } catch {
+    fleetJson.goldenPathVersion = fleetJson.goldenPathVersion ?? 'unknown'
+  }
   fleetJson.lastSyncedAt = new Date().toISOString()
   fleetJson.fleetPolicyVersion = policy.version ?? policy.fleetPolicyVersion ?? '1.2.0'
 

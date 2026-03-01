@@ -192,24 +192,24 @@ and 8 integration tests covering the full Authorization Code + PKCE lifecycle.
 - [x] Fleet feedback schema (`docs/fleet-feedback-schema.json`) — `ripple-fleet-feedback/v1`
 - [x] Error taxonomy expanded: FEEDBACK category, 4 codes (RPL-FEEDBACK-001–004)
 - [x] Fleet policy updated: 11 governed surfaces, feedbackPolicy section
-- [ ] `.fleet.json` version tracking in downstream repos (Cruft-inspired)
-- [ ] Fleet update notification workflow (`fleet-update-notify.yml`)
-- [ ] Fleet changelog generator script (`fleet-changelog.mjs`)
+- [x] `.fleet.json` version tracking scaffolded into downstream repos (Cruft-inspired)
+- [x] Fleet update notification workflow (`fleet-update-notify.yml`)
+- [x] Fleet changelog generator script (`fleet-changelog.mjs`)
 
 #### Downstream → Upstream Feedback System
 
 - [x] `fleet-feedback.mjs` — downstream feedback generator (5 types, `--json`, `--dry-run`, `--submit`)
 - [x] `fleet-feedback-intake.mjs` — upstream triage engine (validate, label, deduplicate, priority-score)
-- [ ] Fleet feedback intake workflow (`fleet-feedback-intake.yml`)
-- [ ] Reusable fleet feedback submit workflow (`fleet-feedback-submit.yml`)
-- [ ] Fleet feedback composite action (`.github/actions/fleet-feedback/action.yml`)
+- [x] Fleet feedback intake workflow (`fleet-feedback-intake.yml`)
+- [x] Reusable fleet feedback submit workflow (`fleet-feedback-submit.yml`)
+- [x] Fleet feedback composite action (`.github/actions/fleet-feedback/action.yml`)
 
 #### Scaffold & Documentation
 
-- [ ] Downstream scaffold: `.fleet.json`, `fleet-feedback.yml`, `fleet-update.yml` workflows
-- [ ] Runbooks: `fleet-feedback-submit.json`, `fleet-feedback-intake.json`
-- [ ] `downstream-workflows.md` updated with bidirectional communication sections
-- [ ] Template config updated with new governed paths
+- [x] Downstream scaffold: `.fleet.json`, `fleet-feedback.yml`, `fleet-update.yml` workflows
+- [x] Runbooks: `fleet-feedback-submit.json`, `fleet-feedback-intake.json`
+- [x] `downstream-workflows.md` updated with bidirectional communication sections
+- [x] Template config updated with new governed paths
 
 **Verification:** `pnpm fleet:feedback -- --type=feature-request --title="test" --dry-run` produces valid JSON; `pnpm verify` passes; 11 governed surfaces in fleet policy.
 

@@ -63,12 +63,14 @@ Expand the fleet policy with two new governed surfaces:
 | `FLEET-SURF-011` | Fleet Governance Tooling | `sync` | `standards-required` |
 
 - **FLEET-SURF-010** covers `CLAUDE.md`, `AGENTS.md`,
-  `.github/instructions/*`, `.github/agents/*`, `.github/prompts/*`. Advisory
-  strategy because downstream repos legitimately customise their AI
-  instructions — auto-overwrite would destroy domain-specific guidance.
-- **FLEET-SURF-011** covers fleet governance scripts and workflows:
-  `scripts/check-fleet-drift.mjs`, `.github/workflows/fleet-*.yml`. Sync
-  strategy ensures all repos run the same drift detection logic.
+  `.github/copilot-instructions.md`, `.github/instructions/*`,
+  `.github/agents/*`, `.github/prompts/*`. Advisory strategy because
+  downstream repos legitimately customise their AI instructions —
+  auto-overwrite would destroy domain-specific guidance.
+- **FLEET-SURF-011** covers fleet governance scripts and policy files:
+  `scripts/check-fleet-drift.mjs`, `docs/fleet-policy.json`,
+  `.github/actions/fleet-drift/action.yml`. Sync strategy ensures all repos
+  run the same drift detection logic.
 
 ### 3. Golden-Path Version Tracking (`.fleet.json`)
 
@@ -79,10 +81,10 @@ Introduce a `.fleet.json` file in downstream repos, inspired by Copier's
 {
   "schema": "ripple-fleet-version/v1",
   "goldenPathRepo": "org/ripple-next",
-  "goldenPathRef": "<commit SHA>",
+  "goldenPathVersion": "<commit SHA>",
   "scaffoldedAt": "2026-01-15T10:30:00Z",
   "lastSyncedAt": "2026-02-28T14:00:00Z",
-  "lastSyncedRef": "<commit SHA>"
+  "fleetPolicyVersion": "1.2.0"
 }
 ```
 
@@ -156,7 +158,7 @@ notification and creates an awareness issue with:
 ### Neutral
 
 - +4 error taxonomy codes (FEEDBACK category), bringing the taxonomy total to
-  43 codes.
+  59 codes across 16 categories.
 - +2 governed surfaces (11 total), expanding fleet-policy.json.
 - 3 new schema versions: `ripple-fleet-feedback/v1`,
   `ripple-fleet-changelog/v1`, `ripple-fleet-version/v1`.
