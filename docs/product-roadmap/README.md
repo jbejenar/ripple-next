@@ -362,7 +362,111 @@ Checklist (if `[New Item]`):
 
 ### Open AI Suggestions
 
-_No open suggestions. All previous suggestions triaged into active roadmap (v6.0.0)._
+#### RN-053: Make Bootstrap Contract Truthful and Enforced
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex autonomous repo analysis (bootstrap/verify parity)
+**Date:** 2026-03-01
+**Impact:** High
+**Effort:** Low
+**Risk:** Medium
+**AI-first benefit:** Removes first-run ambiguity by making `pnpm bootstrap` deterministically match documented zero-to-ready behavior.
+
+`README.md` and `AGENTS.md` describe bootstrap as install + doctor + validate,
+but `package.json` currently runs install + doctor only. This mismatch creates
+agent-to-agent drift and delayed failures on first verify.
+
+**Affected items:** RN-028
+**Proposed action:** Add `pnpm verify` (or a documented minimal gate subset) to
+bootstrap, and add a CI check that asserts bootstrap script semantics are aligned
+with docs.
+
+Checklist:
+- [ ] Update `bootstrap` script to execute validated gates non-interactively
+- [ ] Add bootstrap contract assertion in CI (fails on script/docs drift)
+- [ ] Update bootstrap timing expectations in docs (target runtime band)
+
+#### RN-054: Enforce Perf/A11y Gate Semantics in CI
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex autonomous repo analysis (quality gate consistency)
+**Date:** 2026-03-01
+**Impact:** High
+**Effort:** Low
+**Risk:** Medium
+**AI-first benefit:** Converts advisory-only audit runs into deterministic pass/fail outcomes agents can trust.
+
+Roadmap and docs state critical accessibility/performance issues should block,
+but `.github/workflows/ci.yml` currently runs `pnpm test:a11y` and
+`pnpm test:perf` with `|| true`, which suppresses failures in PR gating.
+
+**Affected items:** RN-050, RN-042 (archive)
+**Proposed action:** Remove unconditional failure suppression, keep JSON artifact
+uploads via `if: always()`, and explicitly encode blocking thresholds.
+
+Checklist:
+- [ ] Make critical a11y/perf regressions fail CI status checks
+- [ ] Keep structured artifact emission on pass/fail
+- [ ] Document non-blocking warning class behavior separately from blocking errors
+
+#### RN-055: Toolchain Pin Strictness Parity (Engines ↔ .nvmrc)
+
+**Category:** `[New Item]`
+**Source:** GPT-5.2-Codex autonomous repo analysis (determinism hardening)
+**Date:** 2026-03-01
+**Impact:** Medium
+**Effort:** Low
+**Risk:** Low
+**AI-first benefit:** Reduces environment variance by ensuring local and CI runtimes converge on one exact Node target.
+
+Toolchain policy says exact runtime pinning, but Node engine constraints in
+`package.json` are currently range-based (`>=22.14.0`) while `.nvmrc` pins
+`22.22.0`. This can silently admit untested Node minors in some agent runners.
+
+**Affected items:** RN-028
+**Proposed action:** Align engines with exact pin (or add explicit rationale for
+range semantics) and enforce parity in doctor/CI.
+
+Checklist:
+- [ ] Decide and document exact-vs-range engine policy
+- [ ] Add parity check between `.nvmrc` and `package.json` engines
+- [ ] Fail fast with taxonomy-coded remediation when mismatch is detected
+
+#### RN-056: Reprioritise RN-028 into Two Phases (Scoring First, Auto-PR Later)
+
+**Category:** `[Priority Change]`
+**Source:** GPT-5.2-Codex autonomous repo analysis (scope control)
+**Date:** 2026-03-01
+**Impact:** Very High
+**Effort:** Medium
+**Risk:** High
+**AI-first benefit:** Delivers a deterministic conformance signal earlier while reducing rollout risk from premature auto-remediation.
+
+RN-028 currently bundles scoring and auto-remediation PR generation into one
+high-effort item. Split it into a scoring-only first phase (blocking drift
+detection) and a second phase for guarded remediation PR automation.
+
+**Affected items:** RN-028
+**Proposed action:** Phase RN-028 into 028a (read-only scorer + JSON report) and
+028b (opt-in remediation PR generator with dry-run and approval guardrails).
+
+#### RN-057: Remove Stale “40/40” Scorecard Claim in Favor of Measured Artifact
+
+**Category:** `[Removal]`
+**Source:** GPT-5.2-Codex autonomous repo analysis (docs truth)
+**Date:** 2026-03-01
+**Impact:** Medium
+**Effort:** Low
+**Risk:** Low
+**AI-first benefit:** Replaces static self-assessment with machine-generated evidence agents can verify.
+
+The roadmap declares a perfect 40/40 agent-friction score. Static, manually
+maintained scores can drift from actual repo behavior and reduce trust in
+planning signals.
+
+**Affected items:** Agent-Friction Scorecard section
+**Proposed action:** Replace static scores with a generated score artifact (or
+remove score totals until generation exists), then track trend deltas over time.
 
 ---
 
