@@ -22,6 +22,7 @@ These gates fail the CI pipeline on violation. They run in the `quality` and
 | Quarantine policy check | `reusable-quality.yml` | `pnpm check:quarantine` |
 | IaC policy scan | `ci.yml` → iac-policy (infra changes only) | `pnpm check:iac -- --ci` |
 | E2E tests | `ci.yml` → e2e (high-risk/merge only) | `pnpm test:e2e` |
+| Devcontainer validation | `ci.yml` → devcontainer (`.devcontainer/`, `.nvmrc`, `package.json` changes) | `docker build` + smoke tests (Node version, pnpm, tools) |
 
 ## Advisory Gates
 

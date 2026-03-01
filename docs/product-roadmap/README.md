@@ -7,7 +7,7 @@
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 54 items completed → **[ARCHIVE.md](./ARCHIVE.md)**
+> 54 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 3 in Done below).
 > 6 items active. 5 items parked.
 
 ---
@@ -388,6 +388,6 @@ _No open suggestions._
 ## Archive (Done)
 
 54 items completed (RN-001 through RN-056, excluding RN-017 and RN-054).
-See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
+51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056 in Done section above.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md)
