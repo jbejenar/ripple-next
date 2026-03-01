@@ -15,7 +15,7 @@ access and erode trust.
 |--------|------|---------|----------|-------------|
 | LCP | <= 2500ms | > 2500ms | > 4000ms | Largest Contentful Paint — main content visible |
 | FCP | <= 1800ms | > 1800ms | > 3000ms | First Contentful Paint — first render |
-| CLS | < 0.1 | >= 0.1 | >= 0.25 | Cumulative Layout Shift — visual stability |
+| CLS | < 0.1 | > 0.1 | > 0.25 | Cumulative Layout Shift — visual stability |
 | TTFB | <= 800ms | > 800ms | > 1800ms | Time to First Byte — server responsiveness |
 | TBT | <= 200ms | > 200ms | > 600ms | Total Blocking Time — main thread availability |
 
