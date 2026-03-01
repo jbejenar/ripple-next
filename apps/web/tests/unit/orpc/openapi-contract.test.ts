@@ -12,13 +12,12 @@
  * - OperationIds are stable and unique
  * - Auth requirements are consistent (public endpoints are reachable)
  */
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect, beforeAll, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createRouterClient, ORPCError } from '@orpc/server'
 import { appRouter } from '../../../server/orpc/router'
 import type { Context, AppSession } from '../../../server/orpc/context'
-import { vi } from 'vitest'
 
 // ── Load the committed OpenAPI spec ──────────────────────────────────
 
@@ -136,10 +135,6 @@ function makeMockDb(): Context['db'] {
 }
 
 /**
- * Map of operationId → callable function on the router client.
- * This bridges the OpenAPI spec's operationIds to actual router calls.
- */
-/**
  * Build a map of operationId → callable for a given router client.
  * Uses the specific client type inferred from appRouter.
  */
@@ -152,14 +147,7 @@ function buildOperationMap(context: Context) {
     'user.list': () => client.user.list(),
     health: () => client.health(),
   }
-  return { client, callMap }
-}
-
-function getOperationCallable(
-  callMap: Record<string, () => Promise<unknown>>,
-  operationId: string,
-): (() => Promise<unknown>) | null {
-  return callMap[operationId] ?? null
+  return callMap
 }
 
 // ── Tests ────────────────────────────────────────────────────────────
@@ -203,13 +191,13 @@ describe('OpenAPI ↔ Router: every spec endpoint is callable', () => {
   })
 
   it('every operationId maps to a callable router procedure', () => {
-    const { callMap } = buildOperationMap(makeAuthenticatedContext())
+    const callMap = buildOperationMap(makeAuthenticatedContext())
 
     for (const [, methods] of Object.entries(spec.paths)) {
       for (const [method, operation] of Object.entries(methods)) {
         if (!httpMethods.includes(method)) continue
         const op = operation as OpenAPIOperation
-        const callable = getOperationCallable(callMap, op.operationId!)
+        const callable = callMap[op.operationId!] ?? null
         expect(callable, `operationId "${op.operationId}" has no router mapping`).not.toBeNull()
       }
     }
@@ -260,7 +248,8 @@ describe('OpenAPI ↔ Router: authenticated endpoints return valid responses', (
     const result = await client.user.getById({
       id: '550e8400-e29b-41d4-a716-446655440000',
     })
-    expect(result).toBeDefined()
+    expect(result).toHaveProperty('id')
+    expect(result).toHaveProperty('email')
   })
 })
 
