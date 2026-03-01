@@ -119,4 +119,6 @@ services/events/     — Event handlers
 
 ## License
 
-Apache-2.0
+This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+
+Free to use for personal, academic, research, and other noncommercial purposes. Commercial use requires a separate license — contact the maintainers for details.
