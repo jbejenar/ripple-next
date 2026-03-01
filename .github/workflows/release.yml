@@ -24,6 +24,19 @@ jobs:
 
       - run: pnpm build
 
+      # ─── API Breaking-Change Detection (RN-025) ────────────────
+      - name: Check for API breaking changes
+        run: pnpm check:api-breaking -- --ci
+
+      - name: Upload API breaking-change report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-breaking-report
+          path: api-breaking-report.json
+          retention-days: 90
+          if-no-files-found: ignore
+
       # Smoke test: ensure all published packages have valid exports
       - name: Validate package exports
         run: |

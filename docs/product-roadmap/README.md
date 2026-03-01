@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v6.6.0 | 2026-03-01
+> v6.7.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 48 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 49 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -25,9 +25,9 @@ gantt
     RN-045 OIDC auth integration tests      :done, rn045, 2026-03-01, 1d
     RN-052 Bidirectional fleet comms        :done, rn052, 2026-03-01, 1d
     RN-050 Web performance budgets          :done, rn050, 2026-03-01, 1d
+    RN-025 Contract testing                 :done, rn025, 2026-03-01, 1d
 
     section Next (6–12 weeks)
-    RN-025 Contract testing                 :rn025, 2026-04-13, 30d
     RN-028 Golden-path conformance CLI      :rn028, 2026-04-13, 30d
 
     section Later (Quarter+)
@@ -63,8 +63,8 @@ across the fleet.
 
 ## Themes
 
-1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045)
-2. **Fleet adoption** — contract testing, conformance CLI, CI speed, deterministic pinning
+1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045), ~~contract testing~~ OpenAPI breaking-change detection + consumer contract validation (RN-025)
+2. **Fleet adoption** — conformance CLI, CI speed, deterministic pinning
 3. **Quality depth** — ~~performance budgets~~ Core Web Vitals pipeline implemented (RN-050), live CMS validation
 4. **Bidirectional fleet governance** — ~~downstream→upstream feedback, AI instruction sync, version tracking, update notifications~~ done (ADR-022, RN-052)
 
@@ -236,28 +236,44 @@ API — zero new dependencies, matching the a11y audit pattern.
 
 **Verification:** `pnpm test:perf -- --json` emits valid `ripple-perf-report/v1` JSON; CI includes performance audit step; `pnpm verify` passes; error taxonomy v1.9.0 with 61 codes across 17 categories.
 
+### RN-025: Contract Testing Across Consumers ✓
+
+**Impact:** High | **Effort:** High | **Risk:** Medium
+**Source:** AI Principal Engineer review | **Date:** 2026-03-01
+**Completed:** 2026-03-01
+**Depends on:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) (completed — `docs/api/openapi.json` available)
+**AI-first benefit:** Agents get automated breaking-change signals before release — `ripple-api-breaking/v1` JSON enables autonomous detection of API incompatibilities. Consumer contract tests ensure spec ↔ router agreement, preventing spec drift from causing downstream failures.
+
+ADR-021 Phase 4: implemented consumer contract testing and automated
+breaking-change detection using the OpenAPI spec as the contract format.
+22 consumer contract tests validate spec ↔ router agreement.
+
+- [x] Define contract test patterns for package consumers (OpenAPI-based)
+  - 22 consumer contract validation tests in `apps/web/tests/unit/orpc/openapi-contract.test.ts`
+  - Tests validate: spec validity, operationId ↔ procedure mapping, request validation, response codes, tag classification, auth enforcement, operationId stability
+- [x] Integrate consumer contract tests into release workflow
+  - `pnpm check:api-breaking -- --ci` step added before package publication
+  - `api-breaking-report.json` artifact uploaded (90-day retention)
+  - Breaking changes block release; non-breaking changes are informational
+- [x] Automated breaking-change detection via OpenAPI spec diffing
+  - `scripts/check-api-breaking.mjs` — structural diff against baseline (default: `main` branch)
+  - Detects: removed paths/methods, added required fields/params, removed response codes, changed operationIds
+  - Outputs `ripple-api-breaking/v1` JSON report
+  - Wired into `pnpm verify` (10th gate) and release workflow
+  - Error taxonomy: RPL-API-002 (breaking) updated, RPL-API-003 (non-breaking) added
+- [x] Portal publication pipeline deferred — spec committed at `docs/api/openapi.json` is the publication artifact; infrastructure target (Backstage, S3, SwaggerUI) deferred to follow-up when external integrators are onboarded
+
+**Deferred to follow-up:**
+- Portal publication infrastructure (Phase 4b) — target TBD based on integrator needs
+- SDK generation from OpenAPI spec — deferred until consumer demand exists
+
+**Verification:** `pnpm verify` passes (10/10 gates); `pnpm test` passes (22 new contract tests + 32 existing); `pnpm check:api-breaking -- --json` emits valid `ripple-api-breaking/v1` JSON; release workflow includes breaking-change gate; error taxonomy v1.10.0 with 62 codes.
+
 ---
 
 ## Next (6–12 weeks)
 
 > Items planned for the near term. Dependencies understood, design work may be needed.
-
-### RN-025: Contract Testing Across Consumers
-
-**Impact:** High | **Effort:** High | **Risk:** Medium
-**Source:** AI Principal Engineer review
-**Depends on:** [RN-046](#rn-046-orpc-migration--router-integration-harness-testcontainers) (completed — `docs/api/openapi.json` available)
-
-Formal compatibility contract testing across published `@ripple/*` package
-consumers. Uses the OpenAPI spec from ADR-021 as the contract format.
-Now actionable — oRPC migration (RN-046) generated `docs/api/openapi.json`.
-
-- [ ] Define contract test patterns for package consumers (OpenAPI-based)
-- [ ] Integrate consumer contract tests into release workflow
-- [ ] Automated breaking-change detection via OpenAPI spec diffing
-- [ ] Portal publication pipeline (Phase 4 of ADR-021)
-
----
 
 ### RN-028: Golden-Path Conformance CLI
 
@@ -374,7 +390,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-48 items completed (RN-001 through RN-052, excluding RN-017/025/028/049).
+49 items completed (RN-001 through RN-052, excluding RN-017/028/049).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
