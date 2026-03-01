@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ripple Golden-Path Conformance Rubric",
+  "description": "Machine-readable scoring rubric for evaluating downstream repo conformance to golden-path standards. Used by pnpm conform CLI (RN-028). See ADR-019 for fleet governance.",
+  "version": "1.0.0",
+  "schema": "ripple-conformance-rubric/v1",
+  "maxScore": 100,
+  "passingScore": 70,
+  "categories": [
+    {
+      "id": "setup",
+      "name": "Setup & Toolchain",
+      "description": "Node.js and package manager pinning, environment validation",
+      "weight": 20,
+      "checks": [
+        {
+          "id": "CONFORM-SETUP-001",
+          "description": "Node.js version pinned via .nvmrc",
+          "points": 5,
+          "type": "file-exists",
+          "path": ".nvmrc",
+          "remediation": "Create .nvmrc with the required Node.js version (e.g., 22.14.0)"
+        },
+        {
+          "id": "CONFORM-SETUP-002",
+          "description": "Package manager pinned via packageManager field",
+          "points": 5,
+          "type": "json-field",
+          "path": "package.json",
+          "field": "packageManager",
+          "remediation": "Add packageManager field to package.json (e.g., pnpm@9.15.4)"
+        },
+        {
+          "id": "CONFORM-SETUP-003",
+          "description": "Engine constraints defined via engines field",
+          "points": 5,
+          "type": "json-field",
+          "path": "package.json",
+          "field": "engines",
+          "remediation": "Add engines field to package.json with node and pnpm constraints"
+        },
+        {
+          "id": "CONFORM-SETUP-004",
+          "description": "Environment example file exists",
+          "points": 5,
+          "type": "file-exists",
+          "path": ".env.example",
+          "remediation": "Create .env.example with all required environment variables documented"
+        }
+      ]
+    },
+    {
+      "id": "quality",
+      "name": "Quality Gates",
+      "description": "Linting, type checking, formatting, and unified verification",
+      "weight": 20,
+      "checks": [
+        {
+          "id": "CONFORM-QUALITY-001",
+          "description": "ESLint configured",
+          "points": 5,
+          "type": "file-exists-any",
+          "paths": ["eslint.config.js", "eslint.config.mjs", "eslint.config.ts", ".eslintrc.js", ".eslintrc.json"],
+          "remediation": "Create eslint.config.js with project lint rules"
+        },
+        {
+          "id": "CONFORM-QUALITY-002",
+          "description": "TypeScript configured with strict mode",
+          "points": 5,
+          "type": "file-exists",
+          "path": "tsconfig.json",
+          "remediation": "Create tsconfig.json with strict: true"
+        },
+        {
+          "id": "CONFORM-QUALITY-003",
+          "description": "Code formatter configured",
+          "points": 5,
+          "type": "file-exists-any",
+          "paths": [".prettierrc", ".prettierrc.js", ".prettierrc.json", ".prettierrc.yaml", "prettier.config.js", "prettier.config.mjs"],
+          "remediation": "Create .prettierrc or prettier.config.js with formatting rules"
+        },
+        {
+          "id": "CONFORM-QUALITY-004",
+          "description": "Unified verify command exists",
+          "points": 5,
+          "type": "script-exists",
+          "script": "verify",
+          "remediation": "Add a verify script to package.json that runs all quality gates"
+        }
+      ]
+    },
+    {
+      "id": "ci",
+      "name": "CI/CD Pipeline",
+      "description": "Continuous integration workflows and security scanning",
+      "weight": 20,
+      "checks": [
+        {
+          "id": "CONFORM-CI-001",
+          "description": "CI workflow exists",
+          "points": 7,
+          "type": "file-exists",
+          "path": ".github/workflows/ci.yml",
+          "remediation": "Create .github/workflows/ci.yml with lint, typecheck, and test jobs"
+        },
+        {
+          "id": "CONFORM-CI-002",
+          "description": "Security workflow exists",
+          "points": 7,
+          "type": "file-exists",
+          "path": ".github/workflows/security.yml",
+          "remediation": "Create .github/workflows/security.yml with CodeQL and dependency review"
+        },
+        {
+          "id": "CONFORM-CI-003",
+          "description": "Code ownership defined",
+          "points": 6,
+          "type": "file-exists",
+          "path": ".github/CODEOWNERS",
+          "remediation": "Create .github/CODEOWNERS to define review requirements"
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "Testing Infrastructure",
+      "description": "Test framework configuration and test scripts",
+      "weight": 15,
+      "checks": [
+        {
+          "id": "CONFORM-TEST-001",
+          "description": "Test framework configured",
+          "points": 5,
+          "type": "file-exists-any",
+          "paths": ["vitest.config.ts", "vitest.config.js", "vitest.config.mts", "vitest.workspace.ts", "jest.config.js", "jest.config.ts"],
+          "remediation": "Create vitest.config.ts (recommended) or jest.config.js for test configuration"
+        },
+        {
+          "id": "CONFORM-TEST-002",
+          "description": "Test script defined in package.json",
+          "points": 5,
+          "type": "script-exists",
+          "script": "test",
+          "remediation": "Add a test script to package.json (e.g., vitest run)"
+        },
+        {
+          "id": "CONFORM-TEST-003",
+          "description": "Environment validation script exists",
+          "points": 5,
+          "type": "script-exists",
+          "script": "validate:env",
+          "remediation": "Add validate:env script for Zod-based environment variable validation"
+        }
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation",
+      "description": "Essential project documentation for humans and AI agents",
+      "weight": 10,
+      "checks": [
+        {
+          "id": "CONFORM-DOCS-001",
+          "description": "README.md exists",
+          "points": 3,
+          "type": "file-exists",
+          "path": "README.md",
+          "remediation": "Create README.md with project overview, setup instructions, and usage"
+        },
+        {
+          "id": "CONFORM-DOCS-002",
+          "description": "AI agent instructions exist (CLAUDE.md)",
+          "points": 3,
+          "type": "file-exists",
+          "path": "CLAUDE.md",
+          "remediation": "Create CLAUDE.md with verify command, lint rules, and key conventions (see ADR-020)"
+        },
+        {
+          "id": "CONFORM-DOCS-003",
+          "description": "Readiness manifest exists",
+          "points": 4,
+          "type": "file-exists",
+          "path": "docs/readiness.json",
+          "remediation": "Create docs/readiness.json with subsystem status tracking"
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security & Licensing",
+      "description": "License metadata, secret management, and security posture",
+      "weight": 10,
+      "checks": [
+        {
+          "id": "CONFORM-SEC-001",
+          "description": "SPDX license field in package.json",
+          "points": 3,
+          "type": "json-field",
+          "path": "package.json",
+          "field": "license",
+          "remediation": "Add SPDX-standard license field to package.json"
+        },
+        {
+          "id": "CONFORM-SEC-002",
+          "description": "LICENSE file exists",
+          "points": 4,
+          "type": "file-exists-any",
+          "paths": ["LICENSE", "LICENSE.md", "LICENSE.txt"],
+          "remediation": "Add a LICENSE file with the full license text"
+        },
+        {
+          "id": "CONFORM-SEC-003",
+          "description": ".env file is git-ignored",
+          "points": 3,
+          "type": "file-not-tracked",
+          "path": ".env",
+          "gitignorePath": ".gitignore",
+          "pattern": "^.env$",
+          "remediation": "Add .env to .gitignore to prevent secrets from being committed"
+        }
+      ]
+    },
+    {
+      "id": "fleet",
+      "name": "Fleet Governance",
+      "description": "Fleet tracking and governance integration",
+      "weight": 5,
+      "checks": [
+        {
+          "id": "CONFORM-FLEET-001",
+          "description": "Fleet version tracking configured",
+          "points": 5,
+          "type": "file-exists-any",
+          "paths": [".fleet.json", "docs/fleet-policy.json"],
+          "remediation": "Create .fleet.json with upstream version tracking (see pnpm generate:scaffold)"
+        }
+      ]
+    }
+  ]
+}

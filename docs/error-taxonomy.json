@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 62 classified error codes across 17 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, and docs/performance.md.",
-  "version": "1.10.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 65 classified error codes across 18 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, docs/accessibility.md, docs/session-observability.md, docs/performance.md, and docs/conformance-rubric.json.",
+  "version": "1.11.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -26,7 +26,8 @@
     "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)",
     "AUTH": "OIDC/OAuth identity provider failures (RN-045)",
     "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)",
-    "PERF": "Web performance budget violations — Core Web Vitals (RN-050)"
+    "PERF": "Web performance budget violations — Core Web Vitals (RN-050)",
+    "CONFORM": "Golden-path conformance scoring failures (RN-028)"
   },
   "errors": [
     {
@@ -848,6 +849,45 @@
         "Run pnpm test:perf -- --json to identify the affected metric and route",
         "Review recent changes for performance impact (bundle size, network requests, DOM size)",
         "Non-blocking but should be addressed before reaching critical thresholds"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CONFORM-001",
+      "category": "CONFORM",
+      "severity": "error",
+      "message": "Conformance rubric missing or invalid — cannot load docs/conformance-rubric.json",
+      "gate": "conform",
+      "remediation": [
+        "Ensure docs/conformance-rubric.json exists and is valid JSON",
+        "Copy from the golden-path repo if missing",
+        "Run: pnpm conform -- --json for detailed diagnostics"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-CONFORM-002",
+      "category": "CONFORM",
+      "severity": "error",
+      "message": "Conformance check failed — repo does not meet golden-path standard",
+      "gate": "conform",
+      "remediation": [
+        "Run: pnpm conform to see the full conformance report",
+        "Each failed check includes specific remediation guidance",
+        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-CONFORM-003",
+      "category": "CONFORM",
+      "severity": "info",
+      "message": "Conformance score below passing threshold but no critical failures",
+      "gate": "conform",
+      "remediation": [
+        "Run: pnpm conform -- --json to see category-by-category breakdown",
+        "Focus on high-weight categories first (Setup, Quality, CI)",
+        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
       ],
       "automatable": false
     }

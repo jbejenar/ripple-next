@@ -36,6 +36,7 @@
     "check:readiness": "node scripts/check-readiness.mjs",
     "check:quarantine": "node scripts/check-quarantine.mjs",
     "check:context-size": "node scripts/check-context-size.mjs",
+    "conform": "node scripts/conform.mjs",
     "check:fleet-drift": "node scripts/check-fleet-drift.mjs",
     "check:api-contract": "node scripts/check-api-contract.mjs",
     "check:api-breaking": "node scripts/check-api-breaking.mjs",
