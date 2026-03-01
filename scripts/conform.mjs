@@ -9,7 +9,7 @@
  *
  * Usage:
  *   pnpm conform                          # score self (golden-path)
- *   pnpm conform -- --target /path/to/repo # score a downstream repo
+ *   pnpm conform -- --target=/path/to/repo # score a downstream repo
  *   pnpm conform -- --json                 # JSON report to stdout
  *   pnpm conform -- --ci                   # write conformance-report.json
  *   pnpm conform -- --output=path          # write JSON to a specific file
