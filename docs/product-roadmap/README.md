@@ -8,7 +8,7 @@
 > with Now/Next/Later planning.
 >
 > 51 items completed → **[ARCHIVE.md](./ARCHIVE.md)**
-> 8 items active. 5 items parked.
+> 9 items active. 5 items parked.
 
 ---
 

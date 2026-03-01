@@ -69,7 +69,10 @@ afterAll(async () => { await teardownTestDb(db) })
 Keycloak helper for OIDC integration tests:
 
 ```typescript
-import { startKeycloak } from '@ripple-next/testing/helpers'
+import { setupTestKeycloak } from '@ripple-next/testing/helpers'
 
-const keycloak = await startKeycloak() // Starts Keycloak Testcontainer
+const keycloak = await setupTestKeycloak({
+  realmImportPath: './test-realm.json',
+  realmName: 'test',
+})
 ```

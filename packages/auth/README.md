@@ -20,7 +20,7 @@ pnpm add @ripple-next/auth
 ```typescript
 interface AuthProvider {
   getAuthorizationUrl(state: string, codeVerifier: string): Promise<URL>
-  handleCallback(params: URLSearchParams, expectedState: string, codeVerifier: string): Promise<AuthUser>
+  handleCallback(callbackParams: URLSearchParams, expectedState: string, codeVerifier: string): Promise<AuthUser>
   validateSession(sessionId: string): Promise<Session | null>
   createSession(userId: string): Promise<Session>
   invalidateSession(sessionId: string): Promise<void>

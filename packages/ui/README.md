@@ -33,7 +33,7 @@ All components are auto-imported globally via Nuxt module.
 
 ### Molecules (14)
 
-`RplCard`, `RplHeroHeader`, `RplNavigation`, `RplPagination`, `RplInPageNavigation`, `RplTabs`, `RplSearchBar`, `RplRelatedLinks`, `RplTable`, `RplStatisticsGrid`, `RplCategoryGrid`, `RplResultsListing`, `RplDetailList`, `RplMediaGallery`, `RplDocumentDownload`
+`RplCard`, `RplHeroHeader`, `RplPagination`, `RplInPageNavigation`, `RplTabs`, `RplSearchBar`, `RplRelatedLinks`, `RplTable`, `RplStatisticsGrid`, `RplCategoryGrid`, `RplResultsListing`, `RplDetailList`, `RplMediaGallery`, `RplDocumentDownload`
 
 ### Organisms (2)
 
