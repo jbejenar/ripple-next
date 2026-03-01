@@ -3,6 +3,29 @@
 AI-agent-first government digital platform built with Nuxt 3, Ripple UI, and TypeScript.
 Port of the Victorian government [Ripple design system](https://github.com/dpc-sdp/ripple) to a modern, full-stack architecture optimized for AI coding agents.
 
+## For AI Agents
+
+> **Primary reference:** [AGENTS.md](AGENTS.md) — architecture, conventions, task routing.
+
+```bash
+pnpm bootstrap              # zero-to-ready (install + doctor + validate)
+pnpm doctor -- --json       # environment check with taxonomy codes
+pnpm verify -- --json       # all quality gates (lint, typecheck, test)
+```
+
+- **Error codes:** Look up `RPL-*` taxonomy codes in [`docs/error-taxonomy.json`](docs/error-taxonomy.json).
+- **What to build:** [Product Roadmap](docs/product-roadmap/README.md) — follow the AI Agent Suggestions format. Do not self-triage.
+
+## Pick Your Path
+
+| You are... | Start here |
+| --- | --- |
+| **AI agent** | [AGENTS.md](AGENTS.md) then `pnpm bootstrap` and `pnpm verify` |
+| **Platform contributor** | [Developer Guide](docs/developer-guide.md) — bare Mac to deployment |
+| **Downstream team** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) — scaffold, adopt, conform |
+| **Architect / reviewer** | [Platform Capabilities](docs/platform-capabilities.md) and [Critique Evaluation](docs/critique-evaluation.md) |
+| **Curious contributor** | [Contributing](#contributing) — safe zones, workflow, and expectations |
+
 ## Quick Start
 
 ```bash
@@ -34,6 +57,19 @@ pnpm dev
 | Infra    | SST v3 (Pulumi)               |
 | Compute  | Lambda + ECS Fargate          |
 | Testing  | Vitest + Playwright           |
+
+## Provider Pattern
+
+Every infrastructure concern has an interface with swappable implementations.
+Tests always use memory/mock providers — never cloud services.
+See [full docs](docs/provider-pattern.md) and [ADR-003](docs/adr/003-provider-pattern.md).
+
+```mermaid
+graph LR
+    Interface["Provider Interface"] --> Mock["Memory / Mock<br/>Tests + CI"]
+    Interface --> Local["Local<br/>Docker Compose"]
+    Interface --> Prod["AWS<br/>Lambda + ECS"]
+```
 
 ## Commands
 
@@ -123,6 +159,39 @@ services/websocket/  — WebSocket service
 services/cron/       — Cron jobs
 services/events/     — Event handlers
 ```
+
+## Contributing
+
+Ripple Next is the AI-augmented golden path for Victorian government digital platforms.
+Every contribution — from a typo fix to a new provider — improves the platform for all consumers.
+
+### Safe Contribution Zones
+
+- **Documentation** — improve guides, fix typos, add examples (`docs/`)
+- **Tests** — increase coverage toward thresholds (`packages/*/tests/`)
+- **Provider implementations** — add a new provider for an existing interface (`packages/*/providers/`)
+- **Mermaid diagrams** — add or improve architecture visuals in docs
+- **CI improvements** — improve pipeline reliability (`.github/workflows/`)
+
+### Workflow
+
+```mermaid
+graph LR
+    A["pnpm bootstrap"] --> B["Make changes"]
+    B --> C["pnpm verify"]
+    C --> D{"API change?"}
+    D -- Yes --> E["pnpm changeset"]
+    D -- No --> F["Open PR"]
+    E --> F
+```
+
+### What to Expect
+
+- PRs receive a first response within 48 hours on business days
+- All feedback is constructive — we explain the *why* behind requests
+- `pnpm verify` passing is the primary bar for merge-readiness
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow and upstream Ripple sync procedures.
 
 ## License
 

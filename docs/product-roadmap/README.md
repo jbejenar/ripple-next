@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> v7.1.0 | 2026-03-01
+> v7.2.0 | 2026-03-02
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
@@ -8,7 +8,7 @@
 > with Now/Next/Later planning.
 >
 > 54 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 3 in Done below).
-> 7 items active. 5 items parked.
+> 8 items active. 5 items parked.
 
 ---
 
@@ -26,6 +26,7 @@ gantt
     RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
 
     section Next (6–12 weeks)
+    RN-062 README navigation hub           :active, rn062, 2026-03-02, 3d
     RN-061 Downstream adoption standards   :active, rn061, 2026-03-01, 7d
     RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
     RN-058 Licensing resolution ADR        :rn058, 2026-03-10, 7d
@@ -164,6 +165,37 @@ Provides two adoption paths (greenfield and legacy migration) with machine-reada
 - Fleet policy v1.3.0 includes FLEET-SURF-012 and FLEET-SURF-013
 
 **Links:** [ADR-023](../adr/023-downstream-adoption-standards.md), [Adoption Guide](../downstream-adoption-guide.md), [Platform Capabilities](../platform-capabilities.md)
+
+---
+
+### RN-062: README as Navigation Hub — Audience Paths + Start Here Index
+
+**Tier:** 2 | **Priority:** High | **Impact:** Very High | **Effort:** Low | **Risk:** Low
+**Source:** Repo usability review — README vs existing guides, human + agent onboarding
+**AI-first benefit:** Agents get deterministic routing to the correct doc and workflow on the first read.
+**Status:** In Progress
+**Dependencies:** None
+
+README acts as a dispatcher with audience-based routing, agent quick-start block,
+provider pattern diagram, and contributor invitation. Subsumes RN-063 (Mermaid diagrams),
+RN-065 (contributor magnet), and RN-066 (agent start here).
+
+#### Definition of Done
+
+- [ ] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
+- [ ] "Pick Your Path" table routing 5 audiences to correct entry points
+- [ ] Provider pattern Mermaid diagram (simplified thumbnail)
+- [ ] "Contributing" section with safe zones, workflow Mermaid, and expectations
+- [ ] All links verified (AGENTS.md, developer-guide, adoption guide, platform capabilities, etc.)
+- [ ] `pnpm verify` passes cleanly
+
+#### Verification
+
+- All 5 audience paths link to existing documents
+- Mermaid diagrams render correctly on GitHub
+- `pnpm verify` passes
+
+**Links:** [README.md](../../README.md), [AGENTS.md](../../AGENTS.md), [CONTRIBUTING.md](../../CONTRIBUTING.md)
 
 ---
 
@@ -363,7 +395,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 ---
 
-## Suggestion Triage Log (v7.0.0)
+## Suggestion Triage Log (v7.2.0)
 
 ### Adopted
 
@@ -373,12 +405,14 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | Node pin policy parity (.nvmrc vs engines) | AI agent analysis | Adopted as [RN-055](#rn-055-node-version-pin-parity) |
 | Phase RN-028 into scoring then auto-remediation | AI agent analysis | RN-028 scoring complete; auto-remediation captured as [RN-060](#rn-060-conformance-cli-auto-remediation-prs) |
 | Replace static perfect score with evidence artifact | AI agent analysis | Adopted as [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) |
+| README as navigation hub (RN-062–066) | Tech lead review | Adopted as [RN-062](#rn-062-readme-as-navigation-hub--audience-paths--start-here-index). RN-063/065/066 folded in. RN-064 rejected (see below) |
 
 ### Rejected
 
 | Suggestion | Source | Rationale |
 |-----------|--------|-----------|
 | Bootstrap contract truth enforcement | AI agent analysis | Bootstrap script (`pnpm install && pnpm doctor`) matches its documentation. No docs-script discrepancy found. Adding `validate:env` to bootstrap would fail on fresh clones without `.env` file. |
+| RN-064 Reformat CONTRIBUTING/AGENTS | Tech lead review | Both files already use proper headings, bullet lists, tables, and code blocks. No formatting issues found. |
 
 ---
 
