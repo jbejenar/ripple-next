@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v7.1.0 | 2026-03-01
+> v7.2.0 | 2026-03-02
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 54 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 3 in Done below).
+> 55 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 4 in Done below).
 > 7 items active. 5 items parked.
 
 ---
@@ -20,7 +20,8 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %Y
 
-    section Done (v7.1.0)
+    section Done (v7.2.0)
+    RN-062 README navigation hub           :done, rn062, 2026-03-02, 1d
     RN-053 CI gate truth                   :done, rn053, 2026-03-01, 1d
     RN-055 Node version pin parity         :done, rn055, 2026-03-01, 1d
     RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
@@ -81,9 +82,9 @@ per-subsystem detail.
 
 ---
 
-## Done (v7.1.0)
+## Done (v7.2.0)
 
-> Honesty debt items shipped 2026-03-01. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
+> Honesty debt items shipped 2026-03-01. RN-062 shipped 2026-03-02. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
 
 ### RN-053: CI Gate Truth — Enforce or Explicitly Label Advisory Gates
 
@@ -121,6 +122,21 @@ per-subsystem detail.
 
 **Distribution:** 2 integration-tested, 8 conformance-tested, 6 interface-defined, 0 production-proven.
 **Verified:** `pnpm check:readiness` passes (90/90 checks). `readiness.json` version bumped to 0.26.0 with `maturityLevels` legend.
+
+---
+
+### RN-062: README as Navigation Hub — Audience Paths + Start Here Index
+
+**Status:** Done (2026-03-02)
+
+- [x] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
+- [x] "Pick Your Path" table routing 5 audiences to correct entry points
+- [x] Provider pattern Mermaid diagram (simplified thumbnail)
+- [x] "Contributing" section with safe zones, workflow Mermaid, and expectations
+- [x] All links verified (AGENTS.md, developer-guide, adoption guide, platform capabilities, etc.)
+
+**Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted.
+**Verified:** All 18 file links in README resolve to existing files. `docs/runbooks/` is pre-existing broken link (not introduced by this change).
 
 ---
 
@@ -363,7 +379,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 ---
 
-## Suggestion Triage Log (v7.0.0)
+## Suggestion Triage Log (v7.2.0)
 
 ### Adopted
 
@@ -373,12 +389,14 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | Node pin policy parity (.nvmrc vs engines) | AI agent analysis | Adopted as [RN-055](#rn-055-node-version-pin-parity) |
 | Phase RN-028 into scoring then auto-remediation | AI agent analysis | RN-028 scoring complete; auto-remediation captured as [RN-060](#rn-060-conformance-cli-auto-remediation-prs) |
 | Replace static perfect score with evidence artifact | AI agent analysis | Adopted as [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) |
+| README as navigation hub (RN-062–066) | Tech lead review | Adopted as [RN-062](#rn-062-readme-as-navigation-hub--audience-paths--start-here-index). RN-063/065/066 folded in. RN-064 rejected (see below) |
 
 ### Rejected
 
 | Suggestion | Source | Rationale |
 |-----------|--------|-----------|
 | Bootstrap contract truth enforcement | AI agent analysis | Bootstrap script (`pnpm install && pnpm doctor`) matches its documentation. No docs-script discrepancy found. Adding `validate:env` to bootstrap would fail on fresh clones without `.env` file. |
+| RN-064 Reformat CONTRIBUTING/AGENTS | Tech lead review | Both files already use proper headings, bullet lists, tables, and code blocks. No formatting issues found. |
 
 ---
 
@@ -428,7 +446,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-54 items completed (RN-001 through RN-056, excluding RN-017 and RN-054).
-51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056 in Done section above.
+55 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-061).
+51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056, RN-062 in Done section above.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Platform Capabilities](../platform-capabilities.md)
