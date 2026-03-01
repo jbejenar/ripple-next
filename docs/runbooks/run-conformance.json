@@ -1,0 +1,58 @@
+{
+  "name": "run-conformance",
+  "description": "Score a repository against the golden-path conformance rubric and address any gaps. Use when onboarding a new downstream repo or auditing an existing one.",
+  "args": {
+    "target": "Path to the target downstream repository (omit to check self)"
+  },
+  "preconditions": [
+    {
+      "description": "Conformance rubric exists",
+      "command": "test -f docs/conformance-rubric.json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "Node.js is available",
+      "command": "node --version",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "pnpm conform -- --target=${TARGET} --json",
+      "description": "Run conformance scoring and review the JSON report"
+    },
+    {
+      "order": 2,
+      "command": "pnpm conform -- --target=${TARGET}",
+      "description": "Review the human-readable report to identify failed checks"
+    },
+    {
+      "order": 3,
+      "command": "pnpm generate:scaffold ${TARGET}",
+      "description": "If score is low, scaffold missing golden-path files into the target"
+    },
+    {
+      "order": 4,
+      "command": "pnpm conform -- --target=${TARGET}",
+      "description": "Re-run conformance to verify score improved after remediation"
+    }
+  ],
+  "validation": [
+    {
+      "description": "Conformance score meets passing threshold",
+      "command": "pnpm conform -- --target=${TARGET} --json | node -e \"const r=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); process.exit(r.status==='pass'?0:1)\"",
+      "expect": "exit 0"
+    }
+  ],
+  "postActions": [
+    "Commit conformance improvements to the downstream repo",
+    "Run pnpm check:fleet-drift to verify fleet alignment"
+  ],
+  "related": [
+    "docs/conformance-rubric.json",
+    "scripts/conform.mjs",
+    "scripts/check-fleet-drift.mjs",
+    "scripts/generate/scaffold.mjs"
+  ]
+}

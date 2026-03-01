@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v6.7.0 | 2026-03-01
+> v6.8.0 | 2026-03-01
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
 > clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
 > with Now/Next/Later planning.
 >
-> 50 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
+> 51 items completed. See **[ARCHIVE.md](./ARCHIVE.md)**.
 
 ---
 
@@ -28,8 +28,8 @@ gantt
     RN-025 Contract testing                 :done, rn025, 2026-03-01, 1d
     RN-049 Licensing clarity (SPDX)         :done, rn049, 2026-03-01, 1d
 
-    section Next (6–12 weeks)
-    RN-028 Golden-path conformance CLI      :rn028, 2026-04-13, 30d
+    section Now (cont.)
+    RN-028 Golden-path conformance CLI      :done, rn028, 2026-03-01, 1d
 
     section Later (Quarter+)
     RN-017 Live Drupal integration          :rn017, 2026-06-01, 21d
@@ -65,7 +65,7 @@ across the fleet.
 ## Themes
 
 1. **Production confidence** — ~~execute oRPC migration (ADR-021)~~ done, ~~close integration test gaps~~ OIDC integration tested (RN-045), ~~contract testing~~ OpenAPI breaking-change detection + consumer contract validation (RN-025)
-2. **Fleet adoption** — conformance CLI, CI speed, deterministic pinning
+2. **Fleet adoption** — ~~conformance CLI~~ golden-path scoring implemented (RN-028), CI speed, deterministic pinning
 3. **Quality depth** — ~~performance budgets~~ Core Web Vitals pipeline implemented (RN-050), live CMS validation
 4. **Bidirectional fleet governance** — ~~downstream→upstream feedback, AI instruction sync, version tracking, update notifications~~ done (ADR-022, RN-052)
 
@@ -307,22 +307,44 @@ breaking-change detection using the OpenAPI spec as the contract format.
 
 ---
 
+### RN-028: Golden-Path Conformance CLI ✓
+
+**Impact:** Very High | **Effort:** High | **Risk:** Medium
+**Source:** AI Principal Engineer review | **Date:** 2026-03-01
+**Completed:** 2026-03-01
+**AI-first benefit:** Agents get a single-command conformance score with actionable remediation, enabling autonomous onboarding of downstream repos to golden-path standards.
+
+One command (`pnpm conform`) that scores repos against required golden-path
+standards using a weighted rubric. Builds on fleet governance
+([RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation)).
+
+- [x] Define scoring rubric based on minimal repo standards
+  - `docs/conformance-rubric.json` — 7 categories, 21 checks, 100-point scale
+  - Categories: Setup (20), Quality (20), CI (20), Testing (15), Docs (10), Security (10), Fleet (5)
+  - Check types: file-exists, file-exists-any, json-field, script-exists, file-not-tracked
+- [x] Build CLI tool (`pnpm conform`)
+  - `scripts/conform.mjs` — evaluates target directory against rubric
+  - Outputs `ripple-conformance/v1` JSON with category breakdown and per-check results
+  - Supports `--json`, `--ci`, `--target=path`, `--output=path` flags
+  - Visual progress bars per category in human-readable mode
+  - Exit code 0 if score >= 70 (passing), exit code 1 otherwise
+  - Golden path self-scores 100/100
+- [x] Error taxonomy expanded: CONFORM category with RPL-CONFORM-001/002/003 codes
+- [x] Runbook added: `docs/runbooks/run-conformance.json`
+
+**Deferred to follow-up:**
+- Auto-remediation PR generation (requires GitHub API integration; `pnpm generate:scaffold` provides manual remediation path today)
+- Wiring `pnpm conform` as an optional gate in `pnpm verify -- --conform`
+
+**Verification:** `pnpm conform -- --json` emits valid `ripple-conformance/v1` JSON; golden path scores 100/100; empty repo scores 0/100 with exit code 1; `pnpm verify` passes (10/10 gates); error taxonomy v1.11.0 with 65 codes across 18 categories.
+
+---
+
 ## Next (6–12 weeks)
 
 > Items planned for the near term. Dependencies understood, design work may be needed.
 
-### RN-028: Golden-Path Conformance CLI
-
-**Impact:** Very High | **Effort:** High | **Risk:** Medium
-**Source:** AI Principal Engineer review
-
-One command that scores repos against required standards and auto-opens
-remediation PRs. Builds on fleet governance ([RN-024](./ARCHIVE.md#rn-024-fleet-update-mechanism--template-drift-automation)).
-
-- [ ] Define scoring rubric based on minimal repo standards
-- [ ] Build CLI tool (`ripple-conform` or `pnpm conform`)
-- [ ] Implement auto-remediation PR generation
-- [ ] Integrate into fleet drift detection
+_No items currently in Next. All active items completed or in Later._
 
 ---
 
@@ -425,7 +447,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-50 items completed (RN-001 through RN-052, excluding RN-017/028).
+51 items completed (RN-001 through RN-052, excluding RN-017).
 See **[ARCHIVE.md](./ARCHIVE.md)** for full details.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md)
