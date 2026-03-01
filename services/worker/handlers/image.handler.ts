@@ -1,6 +1,6 @@
 import type { SQSEvent, SQSHandler } from 'aws-lambda'
-import type { ProcessImageEvent } from '@ripple/queue'
-import type { StorageProvider } from '@ripple/storage'
+import type { ProcessImageEvent } from '@ripple-next/queue'
+import type { StorageProvider } from '@ripple-next/storage'
 
 interface ImageHandlerDeps {
   storageProvider: StorageProvider
@@ -38,7 +38,7 @@ export function createImageHandler(deps: ImageHandlerDeps): (event: SQSEvent) =>
 
 // Default export for SST Lambda handler
 export const handler: SQSHandler = async (event) => {
-  const { S3StorageProvider } = await import('@ripple/storage')
+  const { S3StorageProvider } = await import('@ripple-next/storage')
   const storageProvider = new S3StorageProvider('uploads')
 
   const imageHandler = createImageHandler({ storageProvider })

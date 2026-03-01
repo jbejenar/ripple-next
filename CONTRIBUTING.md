@@ -52,7 +52,7 @@ For each upstream release, evaluate these categories:
       keyboard navigation fixes, screen reader improvements
 - [ ] **Design token updates** — Brand Victoria colour changes, typography updates,
       spacing adjustments from the official design system
-- [ ] **Bug fixes for ported components** — fixes for components already in `@ripple/ui`
+- [ ] **Bug fixes for ported components** — fixes for components already in `@ripple-next/ui`
 
 #### Sync If Aligned with Roadmap
 - [ ] **New component patterns** — components on our port priority list

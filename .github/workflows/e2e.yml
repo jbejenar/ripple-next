@@ -25,7 +25,7 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('.nvmrc') }}-
             turbo-${{ runner.os }}-
 
-      - run: pnpm --filter @ripple/web exec playwright install --with-deps chromium
+      - run: pnpm --filter @ripple-next/web exec playwright install --with-deps chromium
       - run: pnpm build
         env:
           NITRO_PRESET: node-server

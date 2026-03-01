@@ -91,7 +91,7 @@ packages/cms/
 ### Provider factory
 
 ```typescript
-import { createCmsProvider } from '@ripple/cms'
+import { createCmsProvider } from '@ripple-next/cms'
 
 // Test/local — no Drupal needed
 const cms = await createCmsProvider({ type: 'mock' })
@@ -115,7 +115,7 @@ const cms = await createCmsProvider({
 ## Usage in Tests
 
 ```typescript
-import { createMockProviders } from '@ripple/testing'
+import { createMockProviders } from '@ripple-next/testing'
 
 const providers = createMockProviders()
 // providers.queue, providers.auth, providers.storage, providers.cms, etc.

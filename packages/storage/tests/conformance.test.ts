@@ -1,4 +1,4 @@
-import { storageConformance } from '@ripple/testing/conformance/storage.conformance'
+import { storageConformance } from '@ripple-next/testing/conformance/storage.conformance'
 import { FilesystemStorageProvider } from '../providers/filesystem'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'

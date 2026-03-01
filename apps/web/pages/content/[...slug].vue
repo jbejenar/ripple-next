@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CmsPage } from '@ripple/cms'
+import type { CmsPage } from '@ripple-next/cms'
 
 const route = useRoute()
 const slug = Array.isArray(route.params.slug)

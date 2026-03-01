@@ -2,7 +2,7 @@ import { defineNuxtModule, addComponentsDir, createResolver } from '@nuxt/kit'
 
 export default defineNuxtModule({
   meta: {
-    name: '@ripple/ui',
+    name: '@ripple-next/ui',
     configKey: 'rippleUi'
   },
   defaults: {},

@@ -82,7 +82,7 @@ export class ${className} implements ${interfaceName} {
   writeFile(
     join(testDir, `${providerName}.provider.test.ts`),
     hasConformance
-      ? `import { ${packageName}Conformance } from '@ripple/testing/conformance/${packageName}.conformance'
+      ? `import { ${packageName}Conformance } from '@ripple-next/testing/conformance/${packageName}.conformance'
 import { ${className} } from '../providers/${providerName}'
 
 ${packageName}Conformance({
@@ -114,7 +114,7 @@ describe('${className}', () => {
   console.log(`  1. Implement: packages/${packageName}/providers/${providerName}.ts`)
   console.log(`  2. Add constructor params and implement all interface methods`)
   if (hasConformance) {
-    console.log(`  3. Run conformance tests: pnpm test --filter @ripple/${packageName}`)
+    console.log(`  3. Run conformance tests: pnpm test --filter @ripple-next/${packageName}`)
   } else {
     console.log(`  3. Add tests: packages/${packageName}/tests/${providerName}.provider.test.ts`)
   }

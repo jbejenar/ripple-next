@@ -130,7 +130,7 @@ Client → oRPC router → Repository/Service → Provider → Infrastructure
 ```
 
 The router layer does three things only:
-1. Validate input (Zod schemas, shared via `@ripple/validation`)
+1. Validate input (Zod schemas, shared via `@ripple-next/validation`)
 2. Enforce auth (middleware)
 3. Delegate to repositories/services
 

@@ -1,6 +1,6 @@
 {
   "name": "onboard-new-package",
-  "description": "Scaffold a complete @ripple/* workspace package with types, exports, tests, and publishing configuration.",
+  "description": "Scaffold a complete @ripple-next/* workspace package with types, exports, tests, and publishing configuration.",
   "args": {
     "name": "Package name in kebab-case (e.g. 'notifications', 'analytics', 'cache')"
   },
@@ -44,7 +44,7 @@
     },
     {
       "order": 6,
-      "command": "pnpm test -- --filter @ripple/${NAME}",
+      "command": "pnpm test -- --filter @ripple-next/${NAME}",
       "description": "Run the new package's tests"
     },
     {
@@ -81,12 +81,12 @@
     },
     {
       "description": "Package is recognized by pnpm workspace",
-      "command": "pnpm list --filter @ripple/${NAME} --depth 0",
+      "command": "pnpm list --filter @ripple-next/${NAME} --depth 0",
       "expect": "exit 0"
     },
     {
       "description": "Tests pass",
-      "command": "pnpm test -- --filter @ripple/${NAME}",
+      "command": "pnpm test -- --filter @ripple-next/${NAME}",
       "expect": "exit 0"
     },
     {

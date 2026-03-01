@@ -24,8 +24,8 @@ applyTo: 'apps/web/server/**'
 
 - Use `publicProcedure` for unauthenticated endpoints
 - Use `protectedProcedure` for authenticated endpoints
-- Validate all inputs with Zod schemas from `@ripple/validation`
-- Use repository pattern from `@ripple/db` for data access
+- Validate all inputs with Zod schemas from `@ripple-next/validation`
+- Use repository pattern from `@ripple-next/db` for data access
 - Never import Drizzle directly in API routes — use repositories
 - No business logic in the transport layer — delegate to repositories/services
 - Server middleware in `apps/web/server/middleware/`

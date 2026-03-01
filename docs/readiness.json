@@ -8,7 +8,7 @@
       "status": "implemented",
       "description": "OIDC/OAuth provider-agnostic auth via oauth4webapi. MockAuthProvider for tests, OidcAuthProvider for local dev and production (configurable OIDC issuer). Authorization Code Flow with PKCE, database-backed sessions. Conformance test suite validates provider contract. Integration tests (RN-045) validate full OIDC flow against containerised Keycloak: discovery, PKCE exchange, session lifecycle, and error handling (invalid code, verifier mismatch). Error taxonomy expanded with RPL-AUTH-* codes for IdP failure modes.",
       "packages": [
-        "@ripple/auth"
+        "@ripple-next/auth"
       ],
       "blockers": [],
       "testCoverage": "conformance-tested + integration-tested"
@@ -17,7 +17,7 @@
       "status": "implemented",
       "description": "Drizzle ORM with PostgreSQL. Schema for users, projects, audit_log, sessions. Repository pattern implemented. Migrations working. Testcontainers integration tests for UserRepository and ProjectRepository validate CRUD, unique constraints, and foreign key relationships against real PostgreSQL 17.",
       "packages": [
-        "@ripple/db"
+        "@ripple-next/db"
       ],
       "blockers": [],
       "testCoverage": "integration-tested"
@@ -26,7 +26,7 @@
       "status": "implemented",
       "description": "Full provider pattern: MemoryQueueProvider (test), BullMQQueueProvider (local), SqsQueueProvider (prod). Consumer pattern with DLQ retry logic. Conformance test suite validates provider contract.",
       "packages": [
-        "@ripple/queue"
+        "@ripple-next/queue"
       ],
       "blockers": [],
       "testCoverage": "conformance-tested"
@@ -35,7 +35,7 @@
       "status": "implemented",
       "description": "Full provider pattern: FilesystemStorageProvider (test), MinioStorageProvider (local), S3StorageProvider (prod). Presigned URL support. Conformance test suite validates provider contract.",
       "packages": [
-        "@ripple/storage"
+        "@ripple-next/storage"
       ],
       "blockers": [],
       "testCoverage": "conformance-tested"
@@ -44,7 +44,7 @@
       "status": "implemented",
       "description": "Full provider pattern: MemoryEmailProvider (test), SmtpEmailProvider (local/Mailpit), SesEmailProvider (prod). Conformance test suite validates provider contract.",
       "packages": [
-        "@ripple/email"
+        "@ripple-next/email"
       ],
       "blockers": [],
       "testCoverage": "conformance-tested"
@@ -53,7 +53,7 @@
       "status": "implemented",
       "description": "Domain event bus: MemoryEventBus (test/local), EventBridgeBus (prod). Typed domain events for users, projects. Conformance test suite validates bus contract.",
       "packages": [
-        "@ripple/events"
+        "@ripple-next/events"
       ],
       "blockers": [],
       "testCoverage": "conformance-tested"
@@ -62,7 +62,7 @@
       "status": "implemented",
       "description": "Ripple UI component library with atoms (Button, Icon, FormInput, Checkbox, Radio, Dropdown, DateInput, Textarea, FileUpload, FormAlert, OptionButton, Breadcrumb, SkipLink, Alert, Callout, Acknowledgement, BlockQuote, Tag, Chip), molecules (Card, HeroHeader, Navigation, Pagination, InPageNavigation, Tabs, SearchBar, RelatedLinks, Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList, MediaGallery, DocumentDownload), organisms (Header, Footer), and Tide-compatible content section renderers (Accordion, CardCollection, Timeline, CallToAction, KeyDates, ContentImage, EmbeddedVideo, Wysiwyg). 44 components total. Page templates (RN-023): 3 content-type-aware templates (Landing, Content, Campaign) in apps/web/components/templates/ \u2014 compose UI components into distinct layouts, switched by CMS page contentType field. Media components (RN-021): MediaGallery with keyboard-accessible lightbox and responsive grid; DocumentDownload with file type icons and size formatting. Data display components (Table, StatisticsGrid, CategoryGrid, ResultsListing, DetailList) for sortable tables, metric grids, category browsing, search results, and key-value detail lists. Interactive pattern components (Tabs, SearchBar, Tag, Chip, RelatedLinks) for tabbed navigation, site search, inline labels, filter chips, and contextual link lists. Messaging components (Alert, Callout, Acknowledgement, BlockQuote) for page-level notifications, callout boxes, acknowledgement of country/people, and attributed quotes. Navigation components (Breadcrumb, Pagination, InPageNavigation, SkipLink) with WCAG 2.1 AA compliance. Form validation composable (useRplFormValidation) with common government form rules. Storybook stories with autodocs and @storybook/addon-a11y for all components. Vue Test Utils component tests for all components (650 tests across 63 test files) with coverage of props, events, accessibility (WCAG 2.1 AA), and interactive state. Accessibility audit pipeline (RN-042): axe-core in Playwright E2E tests, standalone pnpm test:a11y with structured JSON reports.",
       "packages": [
-        "@ripple/ui"
+        "@ripple-next/ui"
       ],
       "paths": [
         "apps/web/components/templates/"
@@ -117,7 +117,7 @@
       "status": "implemented",
       "description": "Mock providers bundle (including CMS), test factories (Fishery), Testcontainers helper, Vitest workspace config, Playwright setup. Provider conformance test suites for auth, queue, email, storage, events, and CMS. Flaky test containment policy (ADR-013): quarantine convention, 14-day time box, 5% budget cap, Tier 1 protection, pnpm check:quarantine CI gate. Testcontainers integration tests for database repositories.",
       "packages": [
-        "@ripple/testing"
+        "@ripple-next/testing"
       ],
       "blockers": [],
       "testCoverage": "conformance-suites-used-by-providers"
@@ -126,7 +126,7 @@
       "status": "implemented",
       "description": "Hybrid monorepo model: packages developed in monorepo, published to private npm registry for external consumption. publishConfig and dist exports added to all packages. Changesets configured for version management. Release CI workflow builds, validates exports, publishes, generates CycloneDX SBOM, attests build provenance, and generates per-package SHA-256 checksums (RN-027). Verification CLI (pnpm verify:release) validates installed packages against checksums manifest. See ADR-007, ADR-010, and docs/release-verification.md.",
       "packages": [
-        "all @ripple/* packages"
+        "all @ripple-next/* packages"
       ],
       "paths": [
         "scripts/verify-release.mjs",
@@ -139,7 +139,7 @@
       "status": "implemented",
       "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide), SearchEnhancedCmsProvider (decorator for dedicated search engines). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) \u2014 removable without touching frontend, tests, or API layer. MeiliSearch integration for local dev search. See ADR-011.",
       "packages": [
-        "@ripple/cms"
+        "@ripple-next/cms"
       ],
       "paths": [
         "apps/web/server/api/cms/",
@@ -156,7 +156,7 @@
       "status": "implemented",
       "description": "Navigation composable (useNavigation) loads header and footer menus from CMS provider. RplNavigation component supports horizontal (header) and vertical (footer) variants with nested menu structures. Wired into default layout. Fully tested with Vue Test Utils.",
       "packages": [
-        "@ripple/ui"
+        "@ripple-next/ui"
       ],
       "paths": [
         "apps/web/composables/useNavigation.ts",

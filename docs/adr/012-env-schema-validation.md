@@ -19,7 +19,7 @@ checks for the presence of key variables. However:
 
 ## Decision
 
-### 1. Zod-based env schema in `@ripple/validation`
+### 1. Zod-based env schema in `@ripple-next/validation`
 
 Add `packages/validation/schemas/env.ts` with Zod schemas for all environment
 variables defined in `.env.example`:
@@ -45,7 +45,7 @@ the schema rules in plain JS) that can run before `pnpm install` completes:
   where database and Redis services are available, since the required env vars
   (`DATABASE_URL`, `NUXT_DATABASE_URL`, `REDIS_URL`) need to be set.
 - **Programmatic use** — Applications and tests import `validateEnv()` from
-  `@ripple/validation` for runtime env checking with full Zod schema.
+  `@ripple-next/validation` for runtime env checking with full Zod schema.
 
 ### 4. SBOM generation made mandatory
 
@@ -65,7 +65,7 @@ separate coverage generation step that could drift from the canonical test comma
 - Invalid env vars caught at bootstrap time with actionable error messages
 - Agents get structured JSON diagnostics for automated remediation
 - CI catches env misconfigurations before tests run
-- Schema lives alongside other Zod schemas in `@ripple/validation`
+- Schema lives alongside other Zod schemas in `@ripple-next/validation`
 - SBOM failures now block releases (stronger supply-chain guarantee)
 
 **Negative:**
@@ -75,5 +75,5 @@ separate coverage generation step that could drift from the canonical test comma
 **Trade-off:**
 The plain JS duplication was chosen over requiring zod at the root level because:
 - The validate-env script must work immediately after `pnpm install` (before builds)
-- pnpm strict isolation means zod is only available within `@ripple/validation`
+- pnpm strict isolation means zod is only available within `@ripple-next/validation`
 - Adding zod as a root devDependency would weaken the dependency boundary discipline

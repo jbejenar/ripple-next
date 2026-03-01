@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process'
-import type { Database } from '@ripple/db'
+import type { Database } from '@ripple-next/db'
 
 export interface TestDb {
   client: Database
@@ -26,7 +26,7 @@ export function isDockerAvailable(): boolean {
  */
 export async function setupTestDb(): Promise<TestDb> {
   const { PostgreSqlContainer } = await import('@testcontainers/postgresql')
-  const { createDatabase } = await import('@ripple/db')
+  const { createDatabase } = await import('@ripple-next/db')
 
   const container = await new PostgreSqlContainer('postgres:17-alpine').start()
   const connectionString = container.getConnectionUri()

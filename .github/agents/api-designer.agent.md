@@ -10,8 +10,8 @@ You design and implement API endpoints for this project.
 ## Guidelines:
 
 1. Use oRPC procedures for all API endpoints (ADR-021)
-2. Use Zod schemas from `@ripple/validation` for input validation
-3. Use repository pattern from `@ripple/db` for data access
+2. Use Zod schemas from `@ripple-next/validation` for input validation
+3. Use repository pattern from `@ripple-next/db` for data access
 4. Use `protectedProcedure` for authenticated endpoints
 5. Classify routes with `.meta({ visibility: 'public' })` or `'internal'`
 6. Return typed responses — never `any`

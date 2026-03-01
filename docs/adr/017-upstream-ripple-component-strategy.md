@@ -12,7 +12,7 @@ Victorian Government frontend component library. It provides approximately **46
 components** across layout, navigation, content, forms, and interactive patterns
 — built on **Vue 3, Nuxt 3, and TypeScript** (the same stack as this repository).
 
-Our `@ripple/ui` package currently has **24 components** (11 atoms, 3 molecules,
+Our `@ripple-next/ui` package currently has **24 components** (11 atoms, 3 molecules,
 2 organisms, and 8 Tide content renderers) with full test coverage,
 Storybook stories, and design tokens ported from Brand Victoria standards. There
 is currently **zero dependency on upstream** — all components were built from
@@ -36,7 +36,7 @@ or adopt a hybrid model?
 
 ### Component Gap Analysis
 
-| Category | Upstream Ripple 2 | Our @ripple/ui | Gap |
+| Category | Upstream Ripple 2 | Our @ripple-next/ui | Gap |
 |----------|-------------------|----------------|-----|
 | **Atoms** (button, icon, input) | ~5 | 3 | ~2 |
 | **Forms** (checkbox, radio, dropdown, date, file, textarea, form alert, option button) | ~10 | 1 (FormInput) | **~9** |
@@ -50,9 +50,9 @@ or adopt a hybrid model?
 
 **Adopt a hybrid model: port, own, and selectively sync.**
 
-### 1. Own and Port — `@ripple/ui` Is the Canonical Implementation
+### 1. Own and Port — `@ripple-next/ui` Is the Canonical Implementation
 
-All components live in `@ripple/ui` as first-class, owned code. Components are
+All components live in `@ripple-next/ui` as first-class, owned code. Components are
 ported from upstream Ripple 2 designs and patterns but rewritten to follow our
 conventions:
 
@@ -75,9 +75,9 @@ When porting a component:
 5. Add Storybook story with autodocs and multiple variants.
 6. Export from `packages/ui/index.ts` and register in `packages/ui/nuxt.ts`.
 
-### 2. Publish via `@ripple/ui` — Downstream Teams Consume Stable Semver
+### 2. Publish via `@ripple-next/ui` — Downstream Teams Consume Stable Semver
 
-`@ripple/ui` is published to the private npm registry via the existing changeset
+`@ripple-next/ui` is published to the private npm registry via the existing changeset
 and release workflow. Downstream teams consume stable semver releases — they
 never interact with upstream Ripple 2 directly.
 
@@ -172,7 +172,7 @@ anything beyond our scope.
 - **CMS-agnostic** — ported components work with any CMS backend, not just
   Tide/Drupal. This aligns with the provider pattern ([ADR-003](./003-provider-pattern.md))
   and CMS decoupling ([ADR-011](./011-cms-decoupling-pull-out-drupal.md)).
-- **Stable downstream API** — consumers get semver releases from `@ripple/ui`
+- **Stable downstream API** — consumers get semver releases from `@ripple-next/ui`
   with our quality gates (tests, lint, typecheck) enforced.
 - **Selective upstream adoption** — we get the best of upstream (accessibility
   improvements, design updates) without the worst (SDP coupling, breaking

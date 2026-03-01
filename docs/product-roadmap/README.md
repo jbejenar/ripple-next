@@ -136,7 +136,7 @@ API layer moved from "partial" to "implemented" — 16/16 subsystems complete.
 - [x] Update `add-api-endpoint` runbook to reference oRPC patterns
 
 **Deferred to follow-up:**
-- Testcontainers integration tests for router paths with real DB (split to future item — contract tests provide sufficient coverage for Phase 2; DB integration tests exist at repository layer in `@ripple/db`)
+- Testcontainers integration tests for router paths with real DB (split to future item — contract tests provide sufficient coverage for Phase 2; DB integration tests exist at repository layer in `@ripple-next/db`)
 - CI job with `DATABASE_URL` env (activates when Testcontainers router tests are added)
 
 **Verification:** `pnpm generate:openapi` produces valid OpenAPI 3.1.1; `pnpm check:api-contract` passes; `pnpm test` passes (12 contract tests); `readiness.json` updated; `pnpm verify` passes.
@@ -258,7 +258,7 @@ SPDX identifier, and the dual-licensing model is documented.
 #### Recommendations
 
 1. **npm consumers** see `PolyForm-Noncommercial-1.0.0` in the `license` field on npmjs.org — this is the SPDX-standard identifier for the PolyForm Noncommercial license
-2. **Commercial users** should contact the licensor to obtain a commercial license before using `@ripple/*` packages in revenue-generating products or services
+2. **Commercial users** should contact the licensor to obtain a commercial license before using `@ripple-next/*` packages in revenue-generating products or services
 3. **SBOM/compliance tools** (CycloneDX, Snyk, FOSSA) can now auto-detect the license from `package.json` — no manual classification needed
 4. **Downstream repos** scaffolded via `pnpm generate:scaffold` inherit the same license field
 

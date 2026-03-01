@@ -1,5 +1,5 @@
 import type { EventBridgeHandler } from 'aws-lambda'
-import type { UserCreatedEvent } from '@ripple/events'
+import type { UserCreatedEvent } from '@ripple-next/events'
 
 /**
  * EventBridge handler for UserCreated events.

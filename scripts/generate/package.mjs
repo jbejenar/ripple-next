@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Package Generator — scaffolds a full @ripple/* package.
+ * Package Generator — scaffolds a full @ripple-next/* package.
  *
  * Usage:
  *   pnpm generate:package <name> [--dry-run]
@@ -35,7 +35,7 @@ export function generatePackage(name, options = {}) {
     process.exit(1)
   }
 
-  console.log(`\nGenerating package: @ripple/${kebab}`)
+  console.log(`\nGenerating package: @ripple-next/${kebab}`)
   console.log('─'.repeat(40))
 
   // 1. package.json
@@ -43,7 +43,7 @@ export function generatePackage(name, options = {}) {
     join(pkgDir, 'package.json'),
     JSON.stringify(
       {
-        name: `@ripple/${kebab}`,
+        name: `@ripple-next/${kebab}`,
         version: '0.1.0',
         type: 'module',
         main: './index.ts',
@@ -103,7 +103,7 @@ export function generatePackage(name, options = {}) {
   writeFile(
     join(pkgDir, 'types.ts'),
     `/**
- * @ripple/${kebab} — Provider interface and types.
+ * @ripple-next/${kebab} — Provider interface and types.
  *
  * Define your provider interface here. All implementations must
  * conform to this contract. Tests use a memory/mock provider.
@@ -129,7 +129,7 @@ export interface ${pascal}Provider {
     join(pkgDir, 'tests', `${kebab}.test.ts`),
     `import { describe, it, expect } from 'vitest'
 
-describe('@ripple/${kebab}', () => {
+describe('@ripple-next/${kebab}', () => {
   it('should export types', () => {
     // Type-level test — verifies the module can be imported
     expect(true).toBe(true)

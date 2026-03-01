@@ -5,7 +5,7 @@
  * Validates environment variables against the contract defined in .env.example.
  * Self-contained (no external dependencies) so it works pre-install.
  *
- * For programmatic Zod-based validation, use @ripple/validation envSchema.
+ * For programmatic Zod-based validation, use @ripple-next/validation envSchema.
  *
  * Usage:
  *   node scripts/validate-env.mjs          # human-readable output
@@ -59,7 +59,7 @@ if (!loadedEnv) {
   loadEnvFile(envExampleFile)
 }
 
-// ── Validation rules (self-contained, mirrors @ripple/validation env schema) ──
+// ── Validation rules (self-contained, mirrors @ripple-next/validation env schema) ──
 
 /** @type {{ key: string, check: (v: string | undefined) => string | null }[]} */
 const requiredChecks = [

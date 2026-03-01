@@ -106,7 +106,7 @@ erDiagram
 ## CMS Content Model
 
 CMS content (pages, taxonomies, menus, media) is managed externally by
-Drupal/Tide and accessed via the `@ripple/cms` provider pattern. It is NOT
+Drupal/Tide and accessed via the `@ripple-next/cms` provider pattern. It is NOT
 stored in the PostgreSQL database above — it lives in the CMS backend.
 
 The CMS content model is defined in `packages/cms/types.ts` and validated

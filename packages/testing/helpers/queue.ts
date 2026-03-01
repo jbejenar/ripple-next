@@ -1,4 +1,4 @@
-import { MemoryQueueProvider, type QueueMessage } from '@ripple/queue'
+import { MemoryQueueProvider, type QueueMessage } from '@ripple-next/queue'
 
 /**
  * Assert that a queue has a specific number of messages.

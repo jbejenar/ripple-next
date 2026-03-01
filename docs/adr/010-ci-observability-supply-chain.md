@@ -14,7 +14,7 @@ security posture:
    No structured artifacts (JUnit XML, coverage reports) were uploaded, making it hard
    for agents and developers to diagnose failures at scale.
 
-2. **Supply-chain provenance** — Published `@ripple/*` packages had no SBOM or build
+2. **Supply-chain provenance** — Published `@ripple-next/*` packages had no SBOM or build
    provenance attestations, a gap for government security requirements.
 
 3. **Workflow duplication** — Setup steps (Node, pnpm, install) were repeated in every
@@ -53,7 +53,7 @@ Extract common CI patterns into `.github/actions/`:
 | `quality` | Lint + typecheck + readiness drift guard |
 | `test` | Run tests with JUnit reporter + artifact upload |
 
-These actions can be referenced by downstream repos that consume `@ripple/*` packages,
+These actions can be referenced by downstream repos that consume `@ripple-next/*` packages,
 reducing CI configuration drift across the fleet.
 
 ## Rationale

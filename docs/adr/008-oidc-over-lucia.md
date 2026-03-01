@@ -7,7 +7,7 @@
 
 ## Context
 
-The auth package (`@ripple/auth`) defined three providers following the project's provider pattern:
+The auth package (`@ripple-next/auth`) defined three providers following the project's provider pattern:
 
 - **MockAuthProvider** — fully implemented for testing
 - **LuciaAuthProvider** — stub (all methods throw "Not yet implemented")

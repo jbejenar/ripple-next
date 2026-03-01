@@ -50,7 +50,7 @@ preconditions:
 steps:
   - command: pnpm generate:component {name}
     description: Scaffold component SFC, test, and story
-  - command: pnpm test -- --filter @ripple/ui
+  - command: pnpm test -- --filter @ripple-next/ui
     description: Verify component tests pass
   - command: pnpm lint
     description: Verify lint passes

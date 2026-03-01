@@ -20,7 +20,7 @@ Ripple Next needs to:
 
 ## Decision
 
-Create `@ripple/cms` following the **provider pattern** with:
+Create `@ripple-next/cms` following the **provider pattern** with:
 
 - **`CmsProvider` interface** (`packages/cms/types.ts`) defining operations for pages, taxonomies, menus, routes, and search
 - **`MockCmsProvider`** (`packages/cms/providers/mock.ts`) — in-memory implementation for tests and local dev
@@ -75,10 +75,10 @@ CMS content is validated at the API boundary using Zod schemas in
 
 ## Consequences
 
-- `@ripple/cms` package created with `CmsProvider` interface
+- `@ripple-next/cms` package created with `CmsProvider` interface
 - `MockCmsProvider` enables CMS-dependent tests to run without Drupal (<100ms)
 - `DrupalCmsProvider` connects to Drupal/Tide via JSON:API with basic auth support
-- 28 Zod schemas added to `@ripple/validation` for CMS content types
+- 28 Zod schemas added to `@ripple-next/validation` for CMS content types
 - 18 conformance tests validate any CMS provider implementation
 - 6 Nuxt API routes under `/api/cms/` proxy to the configured provider
 - `useCms()` composable provides frontend access to CMS data

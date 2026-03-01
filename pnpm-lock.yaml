@@ -101,34 +101,34 @@ importers:
       '@pinia/nuxt':
         specifier: ^0.9.0
         version: 0.9.0(magicast@0.5.2)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3)))
-      '@ripple/auth':
+      '@ripple-next/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@ripple/cms':
+      '@ripple-next/cms':
         specifier: workspace:*
         version: link:../../packages/cms
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@ripple/email':
+      '@ripple-next/email':
         specifier: workspace:*
         version: link:../../packages/email
-      '@ripple/events':
+      '@ripple-next/events':
         specifier: workspace:*
         version: link:../../packages/events
-      '@ripple/queue':
+      '@ripple-next/queue':
         specifier: workspace:*
         version: link:../../packages/queue
-      '@ripple/shared':
+      '@ripple-next/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@ripple/storage':
+      '@ripple-next/storage':
         specifier: workspace:*
         version: link:../../packages/storage
-      '@ripple/ui':
+      '@ripple-next/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@ripple/validation':
+      '@ripple-next/validation':
         specifier: workspace:*
         version: link:../../packages/validation
       nuxt:
@@ -300,25 +300,25 @@ importers:
 
   packages/testing:
     dependencies:
-      '@ripple/auth':
+      '@ripple-next/auth':
         specifier: workspace:*
         version: link:../auth
-      '@ripple/cms':
+      '@ripple-next/cms':
         specifier: workspace:*
         version: link:../cms
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../db
-      '@ripple/email':
+      '@ripple-next/email':
         specifier: workspace:*
         version: link:../email
-      '@ripple/events':
+      '@ripple-next/events':
         specifier: workspace:*
         version: link:../events
-      '@ripple/queue':
+      '@ripple-next/queue':
         specifier: workspace:*
         version: link:../queue
-      '@ripple/storage':
+      '@ripple-next/storage':
         specifier: workspace:*
         version: link:../storage
       fishery:
@@ -378,16 +378,16 @@ importers:
 
   services/cron:
     dependencies:
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@ripple/events':
+      '@ripple-next/events':
         specifier: workspace:*
         version: link:../../packages/events
-      '@ripple/shared':
+      '@ripple-next/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@ripple/storage':
+      '@ripple-next/storage':
         specifier: workspace:*
         version: link:../../packages/storage
     devDependencies:
@@ -403,19 +403,19 @@ importers:
 
   services/events:
     dependencies:
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@ripple/email':
+      '@ripple-next/email':
         specifier: workspace:*
         version: link:../../packages/email
-      '@ripple/events':
+      '@ripple-next/events':
         specifier: workspace:*
         version: link:../../packages/events
-      '@ripple/queue':
+      '@ripple-next/queue':
         specifier: workspace:*
         version: link:../../packages/queue
-      '@ripple/shared':
+      '@ripple-next/shared':
         specifier: workspace:*
         version: link:../../packages/shared
     devDependencies:
@@ -431,10 +431,10 @@ importers:
 
   services/websocket:
     dependencies:
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@ripple/shared':
+      '@ripple-next/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       hono:
@@ -453,19 +453,19 @@ importers:
 
   services/worker:
     dependencies:
-      '@ripple/db':
+      '@ripple-next/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@ripple/email':
+      '@ripple-next/email':
         specifier: workspace:*
         version: link:../../packages/email
-      '@ripple/queue':
+      '@ripple-next/queue':
         specifier: workspace:*
         version: link:../../packages/queue
-      '@ripple/shared':
+      '@ripple-next/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@ripple/storage':
+      '@ripple-next/storage':
         specifier: workspace:*
         version: link:../../packages/storage
     devDependencies:

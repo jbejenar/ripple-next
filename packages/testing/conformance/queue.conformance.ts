@@ -6,8 +6,8 @@
  *
  * @example
  * ```ts
- * import { queueConformance } from '@ripple/testing/conformance/queue.conformance'
- * import { MemoryQueueProvider } from '@ripple/queue'
+ * import { queueConformance } from '@ripple-next/testing/conformance/queue.conformance'
+ * import { MemoryQueueProvider } from '@ripple-next/queue'
  *
  * queueConformance({
  *   name: 'MemoryQueueProvider',
@@ -16,7 +16,7 @@
  * ```
  */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import type { QueueProvider } from '@ripple/queue'
+import type { QueueProvider } from '@ripple-next/queue'
 
 interface QueueConformanceOptions {
   name: string

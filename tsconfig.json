@@ -17,17 +17,17 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["node"],
     "paths": {
-      "@ripple/ui": ["./packages/ui/index.ts"],
-      "@ripple/db": ["./packages/db/index.ts"],
-      "@ripple/queue": ["./packages/queue/index.ts"],
-      "@ripple/auth": ["./packages/auth/index.ts"],
-      "@ripple/storage": ["./packages/storage/index.ts"],
-      "@ripple/email": ["./packages/email/index.ts"],
-      "@ripple/events": ["./packages/events/index.ts"],
-      "@ripple/validation": ["./packages/validation/index.ts"],
-      "@ripple/shared": ["./packages/shared/index.ts"],
-      "@ripple/testing": ["./packages/testing/setup.ts"],
-      "@ripple/cms": ["./packages/cms/index.ts"]
+      "@ripple-next/ui": ["./packages/ui/index.ts"],
+      "@ripple-next/db": ["./packages/db/index.ts"],
+      "@ripple-next/queue": ["./packages/queue/index.ts"],
+      "@ripple-next/auth": ["./packages/auth/index.ts"],
+      "@ripple-next/storage": ["./packages/storage/index.ts"],
+      "@ripple-next/email": ["./packages/email/index.ts"],
+      "@ripple-next/events": ["./packages/events/index.ts"],
+      "@ripple-next/validation": ["./packages/validation/index.ts"],
+      "@ripple-next/shared": ["./packages/shared/index.ts"],
+      "@ripple-next/testing": ["./packages/testing/setup.ts"],
+      "@ripple-next/cms": ["./packages/cms/index.ts"]
     }
   },
   "exclude": ["node_modules", "**/dist/**", "**/.output/**", "**/.nuxt/**"]

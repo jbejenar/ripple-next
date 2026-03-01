@@ -1,5 +1,5 @@
 import { setCookie, sendRedirect } from 'h3'
-import { generateRandomCodeVerifier } from '@ripple/auth'
+import { generateRandomCodeVerifier } from '@ripple-next/auth'
 import { getAuthProvider } from '../../utils/auth-provider'
 
 export default defineEventHandler(async (event) => {

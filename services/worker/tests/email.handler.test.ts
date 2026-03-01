@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { MemoryEmailProvider } from '@ripple/email'
+import { MemoryEmailProvider } from '@ripple-next/email'
 import { createEmailHandler } from '../handlers/email.handler'
 import type { SQSEvent } from 'aws-lambda'
 

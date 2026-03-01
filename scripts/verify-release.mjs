@@ -2,7 +2,7 @@
 /**
  * Release Verification — Package Integrity + Provenance Checker
  *
- * Verifies that installed @ripple/* packages match their published
+ * Verifies that installed @ripple-next/* packages match their published
  * checksums and have valid build provenance attestations.
  * Part of RN-027: Signed Release Bundles + Verification.
  *
@@ -42,16 +42,16 @@ const checksumsFile = checksumsArg ? checksumsArg.split('=')[1] : null
 
 // ── Published package names ──────────────────────────────────────────
 const PUBLISHED_PACKAGES = [
-  '@ripple/auth',
-  '@ripple/cms',
-  '@ripple/db',
-  '@ripple/email',
-  '@ripple/events',
-  '@ripple/queue',
-  '@ripple/shared',
-  '@ripple/storage',
-  '@ripple/ui',
-  '@ripple/validation',
+  '@ripple-next/auth',
+  '@ripple-next/cms',
+  '@ripple-next/db',
+  '@ripple-next/email',
+  '@ripple-next/events',
+  '@ripple-next/queue',
+  '@ripple-next/shared',
+  '@ripple-next/storage',
+  '@ripple-next/ui',
+  '@ripple-next/validation',
 ]
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ if (generateMode) {
   const packages = []
 
   for (const pkgName of PUBLISHED_PACKAGES) {
-    const shortName = pkgName.replace('@ripple/', '')
+    const shortName = pkgName.replace('@ripple-next/', '')
     const pkgDir = resolve(ROOT, 'packages', shortName)
 
     if (!existsSync(pkgDir)) continue
@@ -173,7 +173,7 @@ const checksumManifest = loadChecksums()
 const results = []
 
 for (const pkgName of PUBLISHED_PACKAGES) {
-  const shortName = pkgName.replace('@ripple/', '')
+  const shortName = pkgName.replace('@ripple-next/', '')
   const pkgDir = resolve(ROOT, 'packages', shortName)
 
   if (!existsSync(pkgDir)) {

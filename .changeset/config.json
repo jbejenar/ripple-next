@@ -10,7 +10,7 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@ripple/web", "@ripple/testing"],
+  "ignore": ["@ripple-next/web", "@ripple-next/testing"],
   "privatePackages": {
     "version": false,
     "tag": false

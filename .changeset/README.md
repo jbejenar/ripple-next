@@ -1,6 +1,6 @@
 # Changesets
 
-This project uses [Changesets](https://github.com/changesets/changesets) to manage versioning and changelogs for published `@ripple/*` packages.
+This project uses [Changesets](https://github.com/changesets/changesets) to manage versioning and changelogs for published `@ripple-next/*` packages.
 
 ## For agents and developers
 
@@ -14,7 +14,7 @@ This creates a markdown file in `.changeset/` describing your change. Commit it 
 
 ## What gets versioned
 
-All `@ripple/*` packages except `@ripple/web` (private app) and `@ripple/testing` (internal).
+All `@ripple-next/*` packages except `@ripple-next/web` (private app) and `@ripple-next/testing` (internal).
 
 ## Release flow
 

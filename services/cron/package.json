@@ -1,5 +1,5 @@
 {
-  "name": "@ripple/cron",
+  "name": "@ripple-next/cron",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,10 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ripple/db": "workspace:*",
-    "@ripple/storage": "workspace:*",
-    "@ripple/events": "workspace:*",
-    "@ripple/shared": "workspace:*"
+    "@ripple-next/db": "workspace:*",
+    "@ripple-next/storage": "workspace:*",
+    "@ripple-next/events": "workspace:*",
+    "@ripple-next/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.147",

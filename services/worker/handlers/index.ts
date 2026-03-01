@@ -3,8 +3,8 @@
  * This process runs continuously and polls queues.
  */
 
-import { consumeMessages, type QueueProvider } from '@ripple/queue'
-import { sleep } from '@ripple/shared'
+import { consumeMessages, type QueueProvider } from '@ripple-next/queue'
+import { sleep } from '@ripple-next/shared'
 
 async function startWorker(): Promise<void> {
   console.log('Starting long-running worker...')
@@ -36,16 +36,16 @@ async function createProvider(): Promise<QueueProvider> {
   const env = process.env.QUEUE_PROVIDER ?? 'memory'
 
   if (env === 'sqs') {
-    const { SqsQueueProvider } = await import('@ripple/queue')
+    const { SqsQueueProvider } = await import('@ripple-next/queue')
     return new SqsQueueProvider({})
   }
 
   if (env === 'bullmq') {
-    const { BullMQQueueProvider } = await import('@ripple/queue')
+    const { BullMQQueueProvider } = await import('@ripple-next/queue')
     return new BullMQQueueProvider(process.env.REDIS_URL ?? 'redis://localhost:6379')
   }
 
-  const { MemoryQueueProvider } = await import('@ripple/queue')
+  const { MemoryQueueProvider } = await import('@ripple-next/queue')
   return new MemoryQueueProvider()
 }
 

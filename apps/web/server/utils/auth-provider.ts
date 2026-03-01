@@ -1,6 +1,6 @@
-import type { AuthProvider } from '@ripple/auth'
-import { OidcAuthProvider, MockAuthProvider } from '@ripple/auth'
-import { getDatabase, SessionRepository, UserRepository } from '@ripple/db'
+import type { AuthProvider } from '@ripple-next/auth'
+import { OidcAuthProvider, MockAuthProvider } from '@ripple-next/auth'
+import { getDatabase, SessionRepository, UserRepository } from '@ripple-next/db'
 
 let provider: AuthProvider | null = null
 

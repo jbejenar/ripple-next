@@ -1,6 +1,6 @@
 import type { H3Event } from 'h3'
-import type { Database } from '@ripple/db'
-import { getDatabase } from '@ripple/db'
+import type { Database } from '@ripple-next/db'
+import { getDatabase } from '@ripple-next/db'
 import { getSessionFromEvent } from '../utils/auth'
 
 export interface SessionUser {

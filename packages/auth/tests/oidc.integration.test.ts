@@ -5,12 +5,12 @@ import * as oauth from 'oauth4webapi'
 import { OidcAuthProvider } from '../providers/oidc'
 import type { SessionStore, UserStore } from '../providers/oidc'
 import type { Session, AuthUser } from '../types'
-import { isDockerAvailable } from '@ripple/testing/helpers/db'
+import { isDockerAvailable } from '@ripple-next/testing/helpers/db'
 import {
   setupTestKeycloak,
   simulateAuthCodeFlow,
   type TestKeycloak
-} from '@ripple/testing/helpers/keycloak'
+} from '@ripple-next/testing/helpers/keycloak'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REALM_FILE = resolve(__dirname, 'fixtures/ripple-test-realm.json')

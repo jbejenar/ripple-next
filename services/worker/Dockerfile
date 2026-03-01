@@ -10,13 +10,13 @@ COPY packages/shared/package.json packages/shared/
 COPY packages/storage/package.json packages/storage/
 COPY packages/email/package.json packages/email/
 COPY services/worker/package.json services/worker/
-RUN pnpm install --frozen-lockfile --filter @ripple/worker...
+RUN pnpm install --frozen-lockfile --filter @ripple-next/worker...
 
 FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm --filter @ripple/worker... build
+RUN pnpm --filter @ripple-next/worker... build
 
 FROM base AS runtime
 WORKDIR /app

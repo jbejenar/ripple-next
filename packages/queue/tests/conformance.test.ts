@@ -1,4 +1,4 @@
-import { queueConformance } from '@ripple/testing/conformance/queue.conformance'
+import { queueConformance } from '@ripple-next/testing/conformance/queue.conformance'
 import { MemoryQueueProvider } from '../providers/memory'
 
 queueConformance({

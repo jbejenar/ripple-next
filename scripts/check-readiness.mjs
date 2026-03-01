@@ -68,18 +68,18 @@ for (const [name, sub] of Object.entries(subsystems)) {
   // Check referenced packages exist (skip for "planned" subsystems — they don't exist yet)
   if (sub.packages?.length > 0 && sub.status !== 'planned') {
     for (const pkg of sub.packages) {
-      if (pkg === 'all @ripple/* packages') {
+      if (pkg === 'all @ripple-next/* packages') {
         // Special case for publishing subsystem
         const pkgDirs = readdirSync(join(ROOT, 'packages'))
         if (pkgDirs.length > 0) {
           ok(`packages/ directory has ${pkgDirs.length} packages`)
         } else {
-          bad(`${name}: "all @ripple/* packages" referenced but packages/ is empty`)
+          bad(`${name}: "all @ripple-next/* packages" referenced but packages/ is empty`)
         }
         continue
       }
 
-      const pkgName = pkg.replace('@ripple/', '')
+      const pkgName = pkg.replace('@ripple-next/', '')
       const pkgDir = join(ROOT, 'packages', pkgName)
       if (existsSync(pkgDir)) {
         ok(`package ${pkg} exists`)
@@ -106,9 +106,9 @@ for (const [name, sub] of Object.entries(subsystems)) {
   const indirectTestPatterns = ['conformance-suites-used-by-providers', 'self-tested']
   if (sub.status === 'implemented' && sub.packages?.length > 0 && !indirectTestPatterns.includes(sub.testCoverage)) {
     for (const pkg of sub.packages) {
-      if (pkg === 'all @ripple/* packages') continue
+      if (pkg === 'all @ripple-next/* packages') continue
 
-      const pkgName = pkg.replace('@ripple/', '')
+      const pkgName = pkg.replace('@ripple-next/', '')
       const pkgDir = join(ROOT, 'packages', pkgName)
       const testFiles = findFiles(pkgDir, /\.(test|spec)\.(ts|js)$/)
 

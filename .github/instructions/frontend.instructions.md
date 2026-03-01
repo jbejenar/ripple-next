@@ -15,5 +15,5 @@ applyTo: 'apps/web/pages/**,apps/web/components/**,apps/web/composables/**,apps/
 - All form inputs should have accessible labels and error states
 - Data fetching uses `useFetch` or `useAsyncData` with oRPC client
 - Nuxt auto-imports (do NOT add manual imports for): ref, computed, watch, onMounted, useRoute, useRouter, useFetch, useState, navigateTo, definePageMeta, defineEventHandler, getQuery, readBody, createError, setResponseStatus
-- DO manually import: @ripple/* packages, node_modules, oRPC utilities
+- DO manually import: @ripple-next/* packages, node_modules, oRPC utilities
 - Import errors? Run: `npx nuxi prepare apps/web`

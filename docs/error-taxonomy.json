@@ -204,7 +204,7 @@
       "remediation": [
         "Run: pnpm test to see failures",
         "Check test output for assertion errors",
-        "Run specific package: pnpm test --filter @ripple/<package>"
+        "Run specific package: pnpm test --filter @ripple-next/<package>"
       ],
       "automatable": false
     },
@@ -257,8 +257,8 @@
       "gate": "build",
       "remediation": [
         "Run: pnpm install --frozen-lockfile",
-        "If new dependency needed: pnpm add <package> --filter @ripple/<package>",
-        "For workspace deps: pnpm add @ripple/<dep> --filter @ripple/<package> --workspace"
+        "If new dependency needed: pnpm add <package> --filter @ripple-next/<package>",
+        "For workspace deps: pnpm add @ripple-next/<dep> --filter @ripple-next/<package> --workspace"
       ],
       "automatable": true
     },

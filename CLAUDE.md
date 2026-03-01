@@ -20,7 +20,7 @@ Do NOT add manual imports for: `ref`, `computed`, `watch`, `onMounted`, `useRout
 `useRouter`, `useFetch`, `useState`, `navigateTo`, `definePageMeta`,
 `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`.
 
-DO manually import: anything from `@ripple/*` packages, `node_modules`, oRPC utilities.
+DO manually import: anything from `@ripple-next/*` packages, `node_modules`, oRPC utilities.
 
 ## Provider Pattern
 

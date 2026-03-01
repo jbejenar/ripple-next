@@ -42,7 +42,7 @@ pnpm test:ui       # Storybook component tests
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { createMockProviders } from '@ripple/testing'
+import { createMockProviders } from '@ripple-next/testing'
 
 describe('MyFeature', () => {
   it('does the thing', () => {
@@ -55,7 +55,7 @@ describe('MyFeature', () => {
 ### Integration Tests (Real DB)
 
 ```typescript
-import { setupTestDb, teardownTestDb } from '@ripple/testing'
+import { setupTestDb, teardownTestDb } from '@ripple-next/testing'
 
 describe('UserRepository', () => {
   let db: TestDb
@@ -91,7 +91,7 @@ describe('RplButton', () => {
 Use factories from `packages/testing/factories/`:
 
 ```typescript
-import { userFactory, projectFactory } from '@ripple/testing'
+import { userFactory, projectFactory } from '@ripple-next/testing'
 
 const user = userFactory.build()
 const users = userFactory.buildList(5)
@@ -103,7 +103,7 @@ All mock providers are available from `packages/testing/mocks/providers.ts`.
 Tests use the [Provider Pattern](./provider-pattern.md) with in-memory implementations for speed.
 
 ```typescript
-import { createMockProviders } from '@ripple/testing'
+import { createMockProviders } from '@ripple-next/testing'
 
 const { queue, auth, storage, email, events, cms } = createMockProviders()
 ```
