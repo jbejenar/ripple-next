@@ -133,6 +133,8 @@
   ],
   "related": [
     "docs/downstream-adoption-guide.md",
+    "docs/consumer-app-guide.md",
+    "docs/ai-adoption-prompts.md",
     "docs/runbooks/adopt-ripple-next.json",
     "docs/adr/021-api-contract-strategy.md",
     "docs/adr/023-downstream-adoption-standards.md",

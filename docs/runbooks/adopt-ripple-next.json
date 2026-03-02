@@ -113,6 +113,8 @@
   ],
   "related": [
     "docs/downstream-adoption-guide.md",
+    "docs/consumer-app-guide.md",
+    "docs/ai-adoption-prompts.md",
     "docs/platform-capabilities.md",
     "docs/conformance-rubric.json",
     "docs/fleet-policy.json",
