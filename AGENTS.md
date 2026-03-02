@@ -167,10 +167,11 @@ When making changes, match the change type to the right validation:
 
 ## Runbooks (Machine-Readable Procedures)
 
-Structured JSON runbooks in `docs/runbooks/` codify multi-step operations.
+Structured JSON runbooks in `docs/runbooks/` codify multi-step operations
+([ADR-018](docs/adr/018-ai-first-workflow-strategy.md)).
 Use `pnpm runbook <name>` to print steps, or `pnpm runbook <name> --json`
-for machine-readable output. Agents should read the relevant runbook before
-executing a multi-step task.
+for machine-readable output. Read the relevant runbook before executing a
+multi-step task.
 
 | Runbook | When to use |
 |---------|-------------|
@@ -185,8 +186,7 @@ executing a multi-step task.
 | `migrate-legacy-api` | Migrating a legacy API into ripple-next conventions |
 | `run-conformance` | Scoring a repo against the conformance rubric |
 | `fleet-feedback-submit` | Submitting feedback to the golden-path upstream |
-| `fleet-drift-check` | Checking for drift against the golden path |
-| `fleet-sync` | Synchronising a downstream repo with golden path |
+| `fleet-sync` | Drift detection + synchronising a downstream repo with golden path |
 
 See [Platform Capabilities — Runbooks](docs/platform-capabilities.md#runbooks-machine-readable) for full details.
 

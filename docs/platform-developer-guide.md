@@ -460,8 +460,9 @@ If a port is in use, either stop the conflicting service or change the port mapp
 ## Runbooks
 
 Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
-multi-step operations. Use `pnpm runbook <name>` to print steps, or add `--json`
-for machine-readable output that AI agents can execute step-by-step.
+multi-step operations ([ADR-018](./adr/018-ai-first-workflow-strategy.md)).
+Use `pnpm runbook <name>` to print steps, or add `--json` for machine-readable
+output that AI agents can execute step-by-step.
 
 Runbooks most relevant to platform developers:
 

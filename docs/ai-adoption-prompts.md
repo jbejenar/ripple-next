@@ -4,9 +4,11 @@
 > ripple-next golden path. Copy the relevant prompt, fill in the
 > `[PLACEHOLDER]` sections, and paste it into your AI agent session.
 >
-> For the full adoption process, see the [Downstream Adoption Guide](./downstream-adoption-guide.md).
+> For the full adoption process, see the [Downstream Adoption Guide](./downstream-adoption-guide.md)
+> ([ADR-023](./adr/023-downstream-adoption-standards.md)).
 > For implementation details, see the [Consumer App Guide](./consumer-app-guide.md).
-> For machine-readable runbooks, see [`docs/runbooks/`](./runbooks/).
+> For machine-readable runbooks, see [`docs/runbooks/`](./runbooks/)
+> ([ADR-018](./adr/018-ai-first-workflow-strategy.md)).
 
 ---
 

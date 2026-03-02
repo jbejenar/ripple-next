@@ -673,7 +673,8 @@ This is the core hybrid-monorepo model from [ADR-007](./adr/007-library-vs-monor
 ## Downstream Compliance
 
 Your consumer app repo is a downstream repo. You must also follow the mandatory
-standards in the **[Downstream Adoption Guide](./downstream-adoption-guide.md)**.
+standards in the **[Downstream Adoption Guide](./downstream-adoption-guide.md)**
+([ADR-023](./adr/023-downstream-adoption-standards.md)).
 
 Every downstream repo must produce documentation in these 7 categories
 (governance is advisory — report only, does not block CI):
@@ -696,8 +697,9 @@ greenfield and legacy migration paths, provider pattern adoption, and fleet gove
 ## Runbooks
 
 Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
-multi-step operations. Use `pnpm runbook <name>` to print steps, or add `--json`
-for machine-readable output that AI agents can execute step-by-step.
+multi-step operations ([ADR-018](./adr/018-ai-first-workflow-strategy.md)).
+Use `pnpm runbook <name>` to print steps, or add `--json` for machine-readable
+output that AI agents can execute step-by-step.
 
 Runbooks most relevant to consumer app developers:
 
