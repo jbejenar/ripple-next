@@ -382,6 +382,10 @@ pnpm check:fleet-drift         # no fleet drift (if applicable)
 
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — mandatory standards and governance
 - [Consumer App Guide](./consumer-app-guide.md) — implementation details for all app types
+- [Platform Developer Guide](./platform-developer-guide.md) — contributing to ripple-next internals
+- [Architecture](./architecture.md) — system overview for architecture documentation
+- [Provider Pattern](./provider-pattern.md) — provider pattern referenced in prompts
 - [Platform Capabilities](./platform-capabilities.md) — inventory of available packages and tools
 - [Runbook: adopt-ripple-next](./runbooks/adopt-ripple-next.json) — machine-readable adoption steps
 - [Runbook: migrate-legacy-api](./runbooks/migrate-legacy-api.json) — machine-readable migration steps
+- [ADR-018](./adr/018-ai-first-workflow-strategy.md) — AI-first workflow strategy (runbooks, generators, error taxonomy)

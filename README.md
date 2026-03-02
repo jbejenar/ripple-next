@@ -1,7 +1,15 @@
 # Ripple Next
 
 AI-agent-first government digital platform built with Nuxt 3, Ripple UI, and TypeScript.
-Port of the Victorian government [Ripple design system](https://github.com/dpc-sdp/ripple) to a modern, full-stack architecture optimized for AI coding agents.
+Port of the Victorian government [Ripple design system](https://github.com/dpc-sdp/ripple)
+to a modern, full-stack architecture optimized for AI coding agents.
+
+Ripple Next is a hybrid monorepo that publishes `@ripple-next/*` packages to a private
+npm registry. Consumer teams scaffold downstream repos, install the packages they need,
+and follow the golden-path conventions for documentation, testing, and deployment.
+The platform uses the provider pattern for all infrastructure concerns, SST v3 for
+deployment, and machine-readable runbooks, error taxonomy, and code generators to
+make AI agents first-class developers.
 
 ## For AI Agents
 
@@ -24,7 +32,8 @@ pnpm verify -- --json       # all quality gates (lint, typecheck, test)
 | **Platform developer** | [Platform Developer Guide](docs/platform-developer-guide.md) — contributing to ripple-next internals |
 | **Consumer app developer** | [Consumer App Guide](docs/consumer-app-guide.md) — building apps with `@ripple-next/*` packages |
 | **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) — mandatory documentation standards and conformance |
-| **Architect / reviewer** | [Platform Capabilities](docs/platform-capabilities.md) and [Critique Evaluation](docs/critique-evaluation.md) |
+| **Architect / reviewer** | [Architecture](docs/architecture.md), [Platform Capabilities](docs/platform-capabilities.md), and [Critique Evaluation](docs/critique-evaluation.md) |
+| **Product owner / tech lead** | [Product Roadmap](docs/product-roadmap/) — priorities, status, and AI-first benefit rationale |
 | **Curious contributor** | [Contributing](#contributing) — safe zones, workflow, and expectations |
 
 ## Quick Start
@@ -107,6 +116,11 @@ graph LR
 | [API Contracts](docs/api-contracts.md)             | oRPC routers and REST endpoints                       |
 | [Deployment Guide](docs/deployment.md)             | Local dev, preview, staging, and production           |
 | [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
+| [Accessibility](docs/accessibility.md)             | WCAG 2.1 AA compliance and audit pipeline             |
+| [CI Gates](docs/ci-gates.md)                       | Gate classification — blocking vs advisory            |
+| [Performance](docs/performance.md)                 | Core Web Vitals budgets and monitoring                |
+| [Release Verification](docs/release-verification.md) | Package release verification, SBOM, checksums       |
+| [Session Observability](docs/session-observability.md) | Agent session metrics and observability            |
 | [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
 | [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
 | [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
