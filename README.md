@@ -29,10 +29,11 @@ pnpm verify -- --json       # all quality gates (lint, typecheck, test)
 | You are... | Start here |
 | --- | --- |
 | **AI agent** | [AGENTS.md](AGENTS.md) then `pnpm bootstrap` and `pnpm verify` |
-| **Platform developer** | [Platform Developer Guide](docs/platform-developer-guide.md) — contributing to ripple-next internals |
-| **Consumer app developer** | [Consumer App Guide](docs/consumer-app-guide.md) — building apps with `@ripple-next/*` packages |
-| **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) — mandatory documentation standards and conformance |
-| **Architect / reviewer** | [Architecture](docs/architecture.md), [Platform Capabilities](docs/platform-capabilities.md), and [Critique Evaluation](docs/critique-evaluation.md) |
+| **Platform developer** | [Platform Developer Guide](docs/platform-developer-guide.md), [Architecture](docs/architecture.md), [API Contracts](docs/api-contracts.md), [Testing Guide](docs/testing-guide.md), [Deployment](docs/deployment.md) |
+| **Consumer app developer** | [Consumer App Guide](docs/consumer-app-guide.md), [Downstream Adoption Guide](docs/downstream-adoption-guide.md), [AI Adoption Prompts](docs/ai-adoption-prompts.md) |
+| **Tester / QA** | [Testing Guide](docs/testing-guide.md), [CI Gates](docs/ci-gates.md), [Performance](docs/performance.md), [Session Observability](docs/session-observability.md) |
+| **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md), [Downstream Workflows](docs/downstream-workflows.md), [Platform Capabilities](docs/platform-capabilities.md) |
+| **Architect / reviewer** | [Architecture](docs/architecture.md), [Platform Capabilities](docs/platform-capabilities.md), [Critique Evaluation](docs/critique-evaluation.md), [Lambda vs ECS](docs/lambda-vs-ecs.md) |
 | **Product owner / tech lead** | [Product Roadmap](docs/product-roadmap/) — priorities, status, and AI-first benefit rationale |
 | **Curious contributor** | [Contributing](#contributing) — safe zones, workflow, and expectations |
 
@@ -55,6 +56,61 @@ pnpm db:migrate && pnpm db:seed
 # Start development server
 pnpm dev
 ```
+
+## Documentation
+
+| Document | Description |
+| --- | --- |
+| [Platform Developer Guide](docs/platform-developer-guide.md) | Platform internals — setup to deployment |
+| [Consumer App Guide](docs/consumer-app-guide.md) | Building apps with `@ripple-next/*` packages |
+| [Architecture](docs/architecture.md) | System design and stack overview |
+| [Provider Pattern](docs/provider-pattern.md) | Swappable infrastructure interfaces |
+| [Data Model](docs/data-model.md) | PostgreSQL schema and entities |
+| [API Contracts](docs/api-contracts.md) | oRPC routers and REST endpoints |
+| [Deployment](docs/deployment.md) | Local → staging → production |
+| [Testing Guide](docs/testing-guide.md) | Test pyramid, mocks, conformance |
+| [Accessibility](docs/accessibility.md) | WCAG 2.1 AA compliance |
+| [CI Gates](docs/ci-gates.md) | Blocking vs advisory gates |
+| [Performance](docs/performance.md) | Core Web Vitals budgets |
+| [Release Verification](docs/release-verification.md) | SBOM and checksums |
+| [Session Observability](docs/session-observability.md) | Agent session metrics |
+| [Lambda vs ECS](docs/lambda-vs-ecs.md) | Compute decision framework |
+| [Critique Evaluation](docs/critique-evaluation.md) | Architecture review log |
+| [Downstream Workflows](docs/downstream-workflows.md) | Reusable CI actions |
+| [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Documentation governance for downstream repos |
+| [AI Adoption Prompts](docs/ai-adoption-prompts.md) | Copy-paste prompts for AI agents |
+| [Platform Capabilities](docs/platform-capabilities.md) | Package and tool inventory |
+| [Runbooks](docs/runbooks/) | Machine-readable procedures — `pnpm runbook <name>` |
+| [Product Roadmap](docs/product-roadmap/) | Priorities, status, and archive |
+| [AGENTS.md](AGENTS.md) | Agent conventions and task routing |
+
+### Architecture Decision Records
+
+| ADR | Decision |
+| --- | --- |
+| [ADR-001](docs/adr/001-nuxt-over-next.md) | Nuxt 3 over Next.js |
+| [ADR-002](docs/adr/002-drizzle-over-prisma.md) | Drizzle ORM over Prisma |
+| [ADR-003](docs/adr/003-provider-pattern.md) | Provider pattern for infrastructure |
+| [ADR-004](docs/adr/004-sst-over-cdk.md) | SST v3 over CDK/CloudFormation |
+| [ADR-005](docs/adr/005-lambda-default-ecs-escape.md) | Lambda default, ECS escape hatch |
+| [ADR-006](docs/adr/006-no-kubernetes.md) | No Kubernetes |
+| [ADR-007](docs/adr/007-library-vs-monorepo.md) | Hybrid monorepo + published packages |
+| [ADR-008](docs/adr/008-oidc-over-lucia.md) | OIDC/OAuth over deprecated Lucia |
+| [ADR-009](docs/adr/009-cms-provider-drupal.md) | CMS provider pattern for Drupal/Tide |
+| [ADR-010](docs/adr/010-ci-observability-supply-chain.md) | CI observability + supply chain |
+| [ADR-011](docs/adr/011-cms-decoupling-pull-out-drupal.md) | CMS decoupling — pull out Drupal |
+| [ADR-012](docs/adr/012-env-schema-validation.md) | Env schema validation gate |
+| [ADR-013](docs/adr/013-flaky-test-containment.md) | Flaky test containment policy |
+| [ADR-014](docs/adr/014-preview-deploy-guardrails.md) | Preview deploy guardrails |
+| [ADR-015](docs/adr/015-localstack-assessment.md) | LocalStack — provider pattern preferred |
+| [ADR-016](docs/adr/016-roadmap-reorganisation.md) | Roadmap reorganisation — AI-first priority tiers |
+| [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
+| [ADR-018](docs/adr/018-ai-first-workflow-strategy.md) | AI-first workflow — runbooks, generators, error taxonomy |
+| [ADR-019](docs/adr/019-fleet-governance.md) | Fleet governance — drift detection + sync automation |
+| [ADR-020](docs/adr/020-context-file-minimalism.md) | Context file minimalism — evidence-based line limits |
+| [ADR-021](docs/adr/021-api-contract-strategy.md) | API contract strategy — oRPC + OpenAPI-first |
+| [ADR-022](docs/adr/022-bidirectional-fleet-communication.md) | Bidirectional fleet communication |
+| [ADR-023](docs/adr/023-downstream-adoption-standards.md) | Downstream adoption standards — documentation governance |
 
 ## Stack
 
@@ -103,61 +159,6 @@ graph LR
 | `pnpm storybook:build` | Build Storybook                |
 | `pnpm generate:scaffold <dir>` | Scaffold a downstream repo with full DX infrastructure |
 | `pnpm conform`         | Score a repo against the golden-path conformance rubric |
-
-## Documentation
-
-| Document                                           | Description                                           |
-| -------------------------------------------------- | ----------------------------------------------------- |
-| [Platform Developer Guide](docs/platform-developer-guide.md) | Platform internals — bare Mac to deployment  |
-| [Consumer App Guide](docs/consumer-app-guide.md)   | Building apps with `@ripple-next/*` packages          |
-| [Architecture](docs/architecture.md)               | System overview, stack, and high-level design         |
-| [Provider Pattern](docs/provider-pattern.md)       | Core pattern for environment-swappable infrastructure |
-| [Data Model](docs/data-model.md)                   | PostgreSQL schema and entity relationships            |
-| [API Contracts](docs/api-contracts.md)             | oRPC routers and REST endpoints                       |
-| [Deployment Guide](docs/deployment.md)             | Local dev, preview, staging, and production           |
-| [Testing Guide](docs/testing-guide.md)             | Test pyramid, examples, and mock providers            |
-| [Accessibility](docs/accessibility.md)             | WCAG 2.1 AA compliance and audit pipeline             |
-| [CI Gates](docs/ci-gates.md)                       | Gate classification — blocking vs advisory            |
-| [Performance](docs/performance.md)                 | Core Web Vitals budgets and monitoring                |
-| [Release Verification](docs/release-verification.md) | Package release verification, SBOM, checksums       |
-| [Session Observability](docs/session-observability.md) | Agent session metrics and observability            |
-| [Lambda vs ECS](docs/lambda-vs-ecs.md)             | Compute decision framework                            |
-| [Critique Evaluation](docs/critique-evaluation.md) | Architecture review decisions                         |
-| [Downstream Workflows](docs/downstream-workflows.md) | Consuming reusable CI composite actions               |
-| [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Mandatory documentation standards for downstream repos |
-| [AI Adoption Prompts](docs/ai-adoption-prompts.md) | Copy-paste prompts for AI agents (greenfield, migration, add-feature) |
-| [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
-| [Runbooks](docs/runbooks/)                         | Machine-readable JSON procedures — `pnpm runbook <name>` to execute, `--json` for agents |
-| [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
-| [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
-
-### Architecture Decision Records
-
-| ADR                                                  | Decision                             |
-| ---------------------------------------------------- | ------------------------------------ |
-| [ADR-001](docs/adr/001-nuxt-over-next.md)            | Nuxt 3 over Next.js                  |
-| [ADR-002](docs/adr/002-drizzle-over-prisma.md)       | Drizzle ORM over Prisma              |
-| [ADR-003](docs/adr/003-provider-pattern.md)          | Provider pattern for infrastructure  |
-| [ADR-004](docs/adr/004-sst-over-cdk.md)              | SST v3 over CDK/CloudFormation       |
-| [ADR-005](docs/adr/005-lambda-default-ecs-escape.md) | Lambda default, ECS escape hatch     |
-| [ADR-006](docs/adr/006-no-kubernetes.md)             | No Kubernetes                        |
-| [ADR-007](docs/adr/007-library-vs-monorepo.md)       | Hybrid monorepo + published packages |
-| [ADR-008](docs/adr/008-oidc-over-lucia.md)           | OIDC/OAuth over deprecated Lucia     |
-| [ADR-009](docs/adr/009-cms-provider-drupal.md)       | CMS provider pattern for Drupal/Tide |
-| [ADR-010](docs/adr/010-ci-observability-supply-chain.md) | CI observability + supply chain  |
-| [ADR-011](docs/adr/011-cms-decoupling-pull-out-drupal.md) | CMS decoupling — pull out Drupal |
-| [ADR-012](docs/adr/012-env-schema-validation.md)         | Env schema validation gate       |
-| [ADR-013](docs/adr/013-flaky-test-containment.md)        | Flaky test containment policy    |
-| [ADR-014](docs/adr/014-preview-deploy-guardrails.md)     | Preview deploy guardrails        |
-| [ADR-015](docs/adr/015-localstack-assessment.md)         | LocalStack — provider pattern preferred |
-| [ADR-016](docs/adr/016-roadmap-reorganisation.md)        | Roadmap reorganisation — AI-first priority tiers |
-| [ADR-017](docs/adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, selectively sync |
-| [ADR-018](docs/adr/018-ai-first-workflow-strategy.md) | AI-first workflow — runbooks, generators, error taxonomy |
-| [ADR-019](docs/adr/019-fleet-governance.md) | Fleet governance — drift detection + sync automation |
-| [ADR-020](docs/adr/020-context-file-minimalism.md) | Context file minimalism — evidence-based line limits |
-| [ADR-021](docs/adr/021-api-contract-strategy.md) | API contract strategy — oRPC + OpenAPI-first |
-| [ADR-022](docs/adr/022-bidirectional-fleet-communication.md) | Bidirectional fleet communication |
-| [ADR-023](docs/adr/023-downstream-adoption-standards.md) | Downstream adoption standards — documentation governance |
 
 ## Repository Structure
 
