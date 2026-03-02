@@ -6,8 +6,8 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 56 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 5 items active. 7 items parked.
+> 57 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 4 items active. 7 items parked.
 
 ---
 
@@ -24,7 +24,6 @@ gantt
     RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
 
     section Next (6–12 weeks)
-    RN-067 Complete upstream component port :rn067, 2026-03-24, 14d
     RN-017 Live Drupal integration         :rn017, 2026-04-07, 21d
 
     section Later (Quarter+)
@@ -70,7 +69,7 @@ per-subsystem detail.
 ## Themes
 
 1. **Ship it** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054). Stop describing; start proving.
-2. **Production credibility** — Complete component library, live CMS validation (RN-067, RN-017)
+2. **Production credibility** — Live CMS validation (RN-017); component library complete (RN-067 done)
 3. **Quality depth** — Runtime monitoring, once there's something deployed to monitor (RN-059)
 
 ---
@@ -144,41 +143,6 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 ## Next (6–12 weeks)
 
 > Complete the component library and validate the CMS integration.
-
-### RN-067: Complete Upstream Component Port — Full Ripple v2 Parity
-
-**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
-**Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) — 42/46 upstream components ported, 4 remaining
-**AI-first benefit:** Feature-complete component library means agents can build any government page pattern without custom component creation.
-**Status:** Planned
-**Dependencies:** None
-
-Port the remaining 4 upstream Ripple v2 components to reach full parity (46/46).
-These are from the lower-priority categories in ADR-017 (P5 Content, P6 Media).
-Each ported component includes Vue 3 SFC, Vue Test Utils tests, Storybook story,
-and export from `packages/ui/index.ts`. No new inventions — only components that
-exist in upstream Ripple v2.
-
-#### Definition of Done
-
-- [ ] Identify the 4 remaining upstream components (from P5/P6 categories in ADR-017)
-- [ ] Port each component following ADR-017 conventions (Composition API, `<script setup>`, `--rpl-*` tokens)
-- [ ] Vue Test Utils tests for each (props, events, accessibility, interactive state)
-- [ ] Storybook stories with autodocs and multiple variants
-- [ ] Exported from `packages/ui/index.ts` and registered in `packages/ui/nuxt.ts`
-- [ ] `readiness.json` upstream gap updated to 0
-- [ ] Coverage thresholds maintained (Tier 3: 20% lines, 10% branches)
-
-#### Verification
-
-- `readiness.json` shows `"ported": 46, "upstream": 46, "gap": 0`
-- `pnpm test -- --filter=@ripple-next/ui` passes with new component tests
-- Storybook builds without errors
-- `pnpm verify` passes
-
-**Links:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md), [RN-037](./ARCHIVE.md#rn-037-port-priority-components-from-upstream-ripple-2), `packages/ui/`
-
----
 
 ### RN-017: Live Drupal Integration Testing
 
@@ -258,7 +222,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | PolyForm Noncommercial blocks government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) (Now) |
 | No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (Now) |
 | Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
-| Docs-to-code ratio 1.82:1 | [RN-067](#rn-067-complete-upstream-component-port--full-ripple-v2-parity) adds code; no new governance items until ratio ≤ 1:1 |
+| Docs-to-code ratio | RN-067 completed — 47 components added code weight; no new governance items until ratio ≤ 1:1 |
 | No live CMS integration | [RN-017](#rn-017-live-drupal-integration-testing) (Next) — Docker Tide fixture fallback activated |
 | No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) (Later) — acceptable until production deployment exists |
 
@@ -270,7 +234,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 | Suggestion | Source | Action |
 |-----------|--------|--------|
-| Complete upstream component port to 46/46 | Critique 3/4 + tech lead review | New item [RN-067](#rn-067-complete-upstream-component-port--full-ripple-v2-parity) |
+| Complete upstream component port to 46/46 | Critique 3/4 + tech lead review | [RN-067](./ARCHIVE.md#rn-067-complete-upstream-component-port--full-ripple-v2-parity) — completed 2026-03-02 |
 | Promote RN-058 + RN-054 to Now | Critique 3/4 — production credibility is the #1 gap | Promoted from Next to Now |
 | Park RN-057 (scorecard evidence) | Critique 4 — meta-work about meta-work | Moved to Parked |
 | Park RN-060 (auto-remediation) | Critique 4 — fleet governance for fleet of zero | Moved to Parked |
@@ -281,7 +245,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 | Suggestion | Source | Rationale |
 |-----------|--------|-----------|
-| Add application feature depth item | AI agent analysis | User clarified: only port upstream Ripple components, no new inventions. RN-067 covers this. |
+| Add application feature depth item | AI agent analysis | User clarified: only port upstream Ripple components, no new inventions. RN-067 covered this (now complete). |
 | Add meta-layer reduction item | AI agent analysis | Would be meta-work about reducing meta-work. Instead, enforce as principle: no new governance items until docs-to-code ratio ≤ 1:1 |
 
 ---
@@ -332,7 +296,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-56 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-060).
+57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)

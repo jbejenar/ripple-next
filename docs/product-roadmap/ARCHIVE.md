@@ -1117,7 +1117,32 @@ gantt
     RN-025 Contract testing                :done, rn025, 2026-03-01, 1d
     RN-049 Licensing clarity (SPDX)        :done, rn049, 2026-03-01, 1d
     RN-028 Conformance CLI                 :done, rn028, 2026-03-01, 1d
+    RN-067 Complete upstream component port :done, rn067, 2026-03-02, 1d
 ```
+
+---
+
+### RN-067: Complete Upstream Component Port — Full Ripple v2 Parity
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Completed:** 2026-03-02
+**Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) — upstream Ripple v2 component parity
+**AI-first benefit:** Feature-complete component library means agents can build any government page pattern without custom component creation.
+
+Ported the remaining upstream Ripple v2 components to reach full parity (46/46).
+Components added: RplNavigation (export fix), RplProfile, RplMediaFullscreen, RplCarousel.
+Total `packages/ui/index.ts` exports: 47 (19 atoms + 18 molecules + 2 organisms + 8 content organisms).
+
+- [x] Identify remaining upstream components (from P5/P6 categories in ADR-017)
+- [x] Port each component following ADR-017 conventions (Composition API, `<script setup>`, `--rpl-*` tokens)
+- [x] Vue Test Utils tests for each (props, events, accessibility, interactive state)
+- [x] Storybook stories with autodocs and multiple variants
+- [x] Exported from `packages/ui/index.ts` and registered in `packages/ui/nuxt.ts`
+- [x] `readiness.json` upstream gap updated to 0 (ported: 46, upstream: 46, gap: 0)
+- [x] Coverage thresholds maintained (Tier 3: 20% lines, 10% branches)
+- [x] `pnpm verify` passes 10/10
+
+**Links:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md), [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2), `packages/ui/`
 
 ---
 
@@ -1170,3 +1195,4 @@ All standards achieved during the initial platform build-out (v1.0–v5.0):
 - [x] Readiness manifest maturity levels (RN-056)
 - [x] README as navigation hub with 8 audience paths (RN-062)
 - [x] Downstream adoption documentation standards — ADR-023, guides, runbooks (RN-061)
+- [x] Complete upstream component port — 46/46 Ripple v2 parity, 48 exports total (RN-067)
