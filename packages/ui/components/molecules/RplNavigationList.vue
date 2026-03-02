@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RplNavigationItem } from './RplNavigation.vue'
+import type { RplNavigationItem } from './RplNavigationTypes'
 
 defineProps<{
   items: RplNavigationItem[]

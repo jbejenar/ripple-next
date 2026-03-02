@@ -22,7 +22,7 @@ like any other dependency and upgrade on their own schedule ([ADR-007](./adr/007
 | `@ripple-next/email` | Email delivery | MemoryEmailProvider / SmtpEmailProvider / SesEmailProvider | conformance-tested |
 | `@ripple-next/events` | Domain event bus | MemoryEventBus / EventBridgeBus | conformance-tested |
 | `@ripple-next/cms` | Content management (Drupal decoupled) | MockCmsProvider / DrupalCmsProvider | conformance-tested |
-| `@ripple-next/ui` | Vue 3 component library (44 components, Ripple design system) | N/A | conformance-tested |
+| `@ripple-next/ui` | Vue 3 component library (47 components, Ripple design system) | N/A | conformance-tested |
 | `@ripple-next/validation` | Shared Zod schemas (frontend + backend) | N/A | conformance-tested |
 | `@ripple-next/shared` | Shared types and utilities | N/A | conformance-tested |
 | `@ripple-next/testing` | Test utilities, factories, mock providers, conformance suites | N/A | conformance-tested |

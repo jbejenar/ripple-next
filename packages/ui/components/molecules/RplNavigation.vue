@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import RplNavigationList from './RplNavigationList.vue'
+import type { RplNavigationItem } from './RplNavigationTypes'
 
-export interface RplNavigationItem {
-  id: string
-  label: string
-  url: string
-  children: RplNavigationItem[]
-}
+export type { RplNavigationItem }
 
 export interface RplNavigationProps {
+  /** Navigation items to display */
   items: RplNavigationItem[]
+  /** Layout direction */
   variant?: 'horizontal' | 'vertical'
+  /** Accessible label for the nav landmark */
   ariaLabel?: string
 }
 
@@ -29,6 +28,12 @@ withDefaults(defineProps<RplNavigationProps>(), {
   </nav>
 </template>
 
+<!--
+  CSS is intentionally unscoped here. RplNavigationList is a recursive internal
+  helper component rendered inside this nav; scoped styles cannot pierce child
+  component boundaries, so the list/link classes must be global to apply at
+  every level of nesting.
+-->
 <style>
 .rpl-navigation__list {
   list-style: none;

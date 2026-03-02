@@ -147,12 +147,12 @@ This check runs in CI as part of the quality composite action.
 
 ## Storybook Stories
 
-All 24 UI components have Storybook stories with `autodocs` enabled:
+All 47 exported UI components have Storybook stories with `autodocs` enabled:
 
-- **Atoms**: RplButton, RplFormInput, RplIcon, RplCheckbox, RplRadio, RplDropdown, RplDateInput, RplTextarea, RplFileUpload, RplFormAlert, RplOptionButton
-- **Molecules**: RplCard, RplHeroHeader, RplNavigation
-- **Organisms**: RplHeader, RplFooter
-- **Tide Content**: RplAccordion, RplCardCollection, RplTimeline, RplCallToAction, RplKeyDates, RplContentImage, RplEmbeddedVideo, RplContentWysiwyg
+- **Atoms (19)**: RplButton, RplFormInput, RplIcon, RplCheckbox, RplRadio, RplDropdown, RplDateInput, RplTextarea, RplFileUpload, RplFormAlert, RplOptionButton, RplBreadcrumb, RplSkipLink, RplAlert, RplCallout, RplAcknowledgement, RplBlockQuote, RplTag, RplChip
+- **Molecules (18)**: RplCard, RplHeroHeader, RplPagination, RplInPageNavigation, RplTabs, RplSearchBar, RplRelatedLinks, RplTable, RplStatisticsGrid, RplCategoryGrid, RplResultsListing, RplDetailList, RplMediaGallery, RplMediaFullscreen, RplCarousel, RplDocumentDownload, RplNavigation, RplProfile
+- **Organisms (2)**: RplHeader, RplFooter
+- **Tide Content (8)**: RplAccordion, RplCardCollection, RplTimeline, RplCallToAction, RplKeyDates, RplContentImage, RplEmbeddedVideo, RplContentWysiwyg
 
 Run Storybook locally:
 
