@@ -38,12 +38,14 @@ new downstream project from scratch.
 ### What You Must Do
 
 Follow the ripple-next golden-path adoption flow end-to-end. The authoritative
-references are:
+source is the ripple-next repository: https://github.com/jbejenar/ripple-next/
 
-- **Implementation:** `docs/consumer-app-guide.md` in the ripple-next repo
-- **Governance:** `docs/downstream-adoption-guide.md` in the ripple-next repo
-- **Machine-readable steps:** `docs/runbooks/adopt-ripple-next.json`
-- **Available packages:** `docs/platform-capabilities.md`
+Fetch and read these references before proceeding:
+
+- **Implementation:** https://github.com/jbejenar/ripple-next/blob/main/docs/consumer-app-guide.md
+- **Governance:** https://github.com/jbejenar/ripple-next/blob/main/docs/downstream-adoption-guide.md
+- **Machine-readable steps:** https://github.com/jbejenar/ripple-next/blob/main/docs/runbooks/adopt-ripple-next.json
+- **Available packages:** https://github.com/jbejenar/ripple-next/blob/main/docs/platform-capabilities.md
 
 ### Step-by-Step
 
@@ -192,12 +194,14 @@ an existing API or service into ripple-next conventions.
 ### What You Must Do
 
 Follow the ripple-next legacy migration flow end-to-end. The authoritative
-references are:
+source is the ripple-next repository: https://github.com/jbejenar/ripple-next/
 
-- **Migration procedure:** `docs/runbooks/migrate-legacy-api.json`
-- **Adoption governance:** `docs/downstream-adoption-guide.md` (Legacy Migration Path)
-- **Implementation:** `docs/consumer-app-guide.md`
-- **API conventions:** `docs/api-contracts.md` and ADR-021
+Fetch and read these references before proceeding:
+
+- **Migration procedure:** https://github.com/jbejenar/ripple-next/blob/main/docs/runbooks/migrate-legacy-api.json
+- **Adoption governance:** https://github.com/jbejenar/ripple-next/blob/main/docs/downstream-adoption-guide.md (Legacy Migration Path)
+- **Implementation:** https://github.com/jbejenar/ripple-next/blob/main/docs/consumer-app-guide.md
+- **API conventions:** https://github.com/jbejenar/ripple-next/blob/main/docs/api-contracts.md and [ADR-021](https://github.com/jbejenar/ripple-next/blob/main/docs/adr/021-api-contract-strategy.md)
 
 ### Step-by-Step
 
@@ -321,9 +325,11 @@ feature to an existing downstream repo that already follows ripple-next conventi
 
 Implement the feature following ripple-next conventions. Before starting:
 
-1. Read `docs/readiness.json` to understand current subsystem status
-2. Read `AGENTS.md` for conventions and required validation per change type
-3. Read `docs/product-roadmap/README.md` for context on priorities
+1. Read `docs/readiness.json` in your project repo to understand current subsystem status
+2. Read `AGENTS.md` in your project repo for conventions and required validation per change type
+3. Read `docs/product-roadmap/README.md` in your project repo for context on priorities
+
+For ripple-next conventions and guides, see: https://github.com/jbejenar/ripple-next/blob/main/docs/
 
 ### Implementation Rules
 
