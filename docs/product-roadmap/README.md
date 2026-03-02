@@ -6,7 +6,7 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 60 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 56 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
 > 5 items active. 7 items parked.
 
 ---
@@ -332,7 +332,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-60 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-060).
+56 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
