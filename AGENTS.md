@@ -82,29 +82,8 @@ Never access the database directly from route handlers.
 
 ## Nuxt Auto-Imports
 
-Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
-
-### Auto-imported by Nuxt core (no import statement needed):
-
-- **Vue APIs**: `ref`, `computed`, `watch`, `watchEffect`, `reactive`, `toRef`, `toRefs`, `onMounted`, `onUnmounted`, `nextTick`, `defineProps`, `defineEmits`, `withDefaults`
-- **Nuxt composables**: `useRuntimeConfig`, `useFetch`, `useAsyncData`, `useLazyFetch`, `useLazyAsyncData`, `useRoute`, `useRouter`, `useState`, `useHead`, `useSeoMeta`, `useNuxtApp`, `navigateTo`, `createError`, `definePageMeta`, `defineNuxtRouteMiddleware`
-- **Nitro server utils**: `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`
-
-### Auto-imported from project directories:
-
-- `composables/**` — all exports (e.g. `useAuth()`)
-- `stores/**` — all Pinia stores
-- `~/components/**` — all Vue components (no pathPrefix)
-
-### NOT auto-imported (you must import explicitly):
-
-- Anything from `@ripple-next/*` packages (e.g. `import { AuthProvider } from '@ripple-next/auth'`)
-- Anything from `node_modules` (e.g. `import { z } from 'zod'`)
-- Server-side oRPC utilities (e.g. `import { protectedProcedure } from '../orpc/base'`)
-
-### If you see import errors:
-
-Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
+Do NOT add manual imports for Nuxt auto-imported symbols (Vue APIs, composables, Nitro utils).
+See CLAUDE.md for the short list, or `.github/instructions/frontend.instructions.md` for full details.
 
 ## Code Conventions
 
