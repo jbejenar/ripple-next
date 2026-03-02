@@ -102,6 +102,8 @@
     "scripts/generate/scaffold/config.mjs",
     ".github/template-config.json",
     "docs/downstream-adoption-guide.md",
+    "docs/consumer-app-guide.md",
+    "docs/ai-adoption-prompts.md",
     "docs/platform-capabilities.md"
   ]
 }

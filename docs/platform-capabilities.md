@@ -194,6 +194,7 @@ Core architectural patterns that downstream repos should follow:
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — how to adopt these capabilities
 - [Downstream Workflows](./downstream-workflows.md) — CI consumption and fleet operations
 - [Architecture](./architecture.md) — ripple-next system architecture
-- [Developer Guide](./developer-guide.md) — setup, development, and deployment
+- [Platform Developer Guide](./platform-developer-guide.md) — platform setup, development, and deployment
+- [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages
 - [ADR Index](./adr/README.md) — all Architecture Decision Records (23 total)
 - [Product Roadmap](./product-roadmap/README.md) — platform roadmap and priorities

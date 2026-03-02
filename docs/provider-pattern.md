@@ -125,9 +125,12 @@ See the [Testing Guide](./testing-guide.md) for more examples of using mock prov
 
 ## Related Documentation
 
-- [Developer Guide](./developer-guide.md) — full setup and provider usage guide
+- [Platform Developer Guide](./platform-developer-guide.md) — full setup and provider usage guide
 - [Architecture](./architecture.md) — system overview
 - [Testing Guide](./testing-guide.md) — testing with mock providers
+- [Consumer App Guide](./consumer-app-guide.md) — using providers in consumer apps
+- [Downstream Adoption Guide](./downstream-adoption-guide.md) — provider pattern adoption requirements
+- [Platform Capabilities](./platform-capabilities.md) — full provider inventory
 - [ADR-003: Provider Pattern](./adr/003-provider-pattern.md) — decision rationale
 - [ADR-009: CMS Provider for Drupal](./adr/009-cms-provider-drupal.md) — CMS integration
 - [ADR-011: CMS Decoupling](./adr/011-cms-decoupling-pull-out-drupal.md) — pull-out-Drupal strategy

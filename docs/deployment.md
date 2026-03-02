@@ -232,9 +232,11 @@ Health reports conform to the `ripple-health-report/v1` schema and include:
 
 ## Related Documentation
 
-- [Developer Guide](./developer-guide.md) — full setup from bare Mac to deployment
+- [Platform Developer Guide](./platform-developer-guide.md) — full setup from bare Mac to deployment
 - [Architecture](./architecture.md) — system overview
 - [Provider Pattern](./provider-pattern.md) — local dev service swapping
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
+- [Consumer App Guide](./consumer-app-guide.md) — deployment topology for consumer repos
+- [Platform Capabilities](./platform-capabilities.md) — deployment infrastructure and CI workflows
 - [ADR-004: SST over CDK](./adr/004-sst-over-cdk.md) — infrastructure tool choice
 - [ADR-005: Lambda Default](./adr/005-lambda-default-ecs-escape.md) — compute strategy

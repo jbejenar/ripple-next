@@ -72,54 +72,6 @@ Never lower a threshold — only raise it.
 - \`@typescript-eslint/no-explicit-any\` is an **error** (use \`unknown\` + type guards)
 - Test files are exempt from no-console
 
-## Fleet Governance
-
-This project follows the ripple-next golden-path conventions and uses fleet
-governance to stay in sync. Key commands:
-
-\`\`\`bash
-# Check drift against the golden path
-node scripts/check-fleet-drift.mjs                # self-check
-node scripts/check-fleet-drift.mjs --json         # JSON output for CI
-
-# Submit feedback to the golden-path upstream
-node scripts/fleet-feedback.mjs --type=feature-request --title="Title" --description="Why" --dry-run
-node scripts/fleet-feedback.mjs --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit
-node scripts/fleet-feedback.mjs --type=bug-report --title="Title" --description="Details" --submit
-\`\`\`
-
-### Feedback Types
-
-| Type | When to Use |
-|------|-------------|
-| \`feature-request\` | Request a new golden-path capability |
-| \`bug-report\` | Report an issue with a governed surface |
-| \`policy-exception\` | Request a formal exception to a policy |
-| \`improvement-share\` | Share a local improvement upstream |
-| \`pain-point\` | Report friction with a governed surface |
-
-### Version Tracking
-
-The \`.fleet.json\` file tracks this repo's relationship to the golden path.
-AI agents should read it to understand how far behind the repo is.
-The \`lastSyncedAt\` field is updated automatically by fleet-sync.
-
-## AI-First Workflow Strategy
-
-This project treats AI agents as first-class developers. Three pillars:
-
-1. **Runbooks** — Codified procedures for common operations
-2. **Error Taxonomy** — Machine-parseable error codes with remediation paths
-3. **Code Generators** — Scaffolding commands for common patterns
-
-Available generators:
-\`\`\`bash
-pnpm generate:component <name> [--dry-run]
-pnpm generate:provider <package> <name> [--dry-run]
-pnpm generate:endpoint <router> <procedure> [--dry-run]
-pnpm generate:package <name> [--dry-run]
-\`\`\`
-
 ## Documentation Maintenance (Default Agent Directive)
 
 Every AI agent run that adds or modifies a subsystem MUST update:
@@ -214,13 +166,32 @@ config, and quality gates in sync across repos.
 quality scripts, ESLint config, security config, IaC policies, error taxonomy,
 action version pinning, AI agent instructions, fleet governance tooling.
 
-**Feedback loop:** Use \`node scripts/fleet-feedback.mjs\` to send feature
-requests, bug reports, policy exceptions, improvement shares, or pain points
-to the golden-path maintainers. See \`CLAUDE.md\` for usage examples.
+**Fleet commands:**
+\`\`\`bash
+node scripts/check-fleet-drift.mjs          # self-check
+node scripts/check-fleet-drift.mjs --json   # JSON output for CI
+node scripts/fleet-feedback.mjs --type=feature-request --title="Title" --description="Why" --dry-run
+node scripts/fleet-feedback.mjs --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit
+\`\`\`
+
+**Feedback types:** \`feature-request\`, \`bug-report\`, \`policy-exception\`,
+\`improvement-share\`, \`pain-point\`.
 
 **Automated workflows:**
 - \`.github/workflows/fleet-feedback.yml\` — manual dispatch or monthly auto-scan
 - \`.github/workflows/fleet-update.yml\` — receives update notifications from golden path
+
+### AI-First Workflow Strategy
+
+This project treats AI agents as first-class developers. Three pillars:
+
+1. **Runbooks** — Codified procedures in \`docs/runbooks/\` (\`pnpm runbook <name> --json\`)
+2. **Error Taxonomy** — Machine-parseable codes in \`docs/error-taxonomy.json\` (format: \`RPL-<CAT>-NNN\`)
+3. **Code Generators** — \`pnpm generate:component\`, \`pnpm generate:provider\`, \`pnpm generate:endpoint\`, \`pnpm generate:package\`
+
+**AI adoption prompts:** See the upstream
+[AI Adoption Prompts](https://github.com/${org}/ripple-next/blob/main/docs/ai-adoption-prompts.md)
+for ready-to-paste prompt templates (greenfield adoption, legacy migration, add feature).
 
 ### Agent Task Routing
 
@@ -272,7 +243,7 @@ ${description}. TypeScript monorepo with pnpm workspaces.
 - Check \`.fleet.json\` to see the current golden-path version
 - Run \`node scripts/check-fleet-drift.mjs\` to detect drift
 - Use \`node scripts/fleet-feedback.mjs\` to submit feedback upstream
-- See \`CLAUDE.md\` for fleet command examples
+- See \`AGENTS.md\` for fleet command examples
 `,
     targetDir,
     opts

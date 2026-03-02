@@ -18,6 +18,18 @@
 
 ---
 
+## Before You Start
+
+This guide covers **mandatory documentation and governance standards**
+for downstream repos. For implementation details (scaffolding code, folder
+layouts, code examples, quality gates, deployment), see the
+**[Consumer App Guide](./consumer-app-guide.md)**.
+
+For ready-to-paste AI agent prompts (greenfield, migration, add-feature),
+see the **[AI Adoption Prompts](./ai-adoption-prompts.md)**.
+
+---
+
 ## Quick Start
 
 ### Greenfield (New Project)
@@ -184,7 +196,7 @@ cp .env.example .env
 ### Step 3: Install Packages
 
 ```bash
-# Set up private registry (see developer-guide.md for registry setup)
+# Set up private registry (see consumer-app-guide.md for registry setup)
 pnpm add @ripple-next/validation @ripple-next/shared
 
 # Add packages based on your needs:
@@ -370,11 +382,36 @@ See [`fleet-policy.json`](./fleet-policy.json) and [Downstream Workflows](./down
 
 ---
 
+## Runbooks
+
+Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
+multi-step operations ([ADR-018](./adr/018-ai-first-workflow-strategy.md)).
+Use `pnpm runbook <name>` to print steps, or add `--json` for machine-readable
+output that AI agents can execute step-by-step.
+
+Runbooks most relevant to downstream adoption:
+
+| Runbook | When to use |
+|---------|-------------|
+| `adopt-ripple-next` | Full greenfield adoption: scaffold → configure → document → verify |
+| `migrate-legacy-api` | Legacy API migration: analyze → model → contract → implement → verify parity |
+| `scaffold-downstream` | Bootstrap a new downstream repo with golden-path files |
+| `run-conformance` | Check your repo's documentation compliance score |
+| `fleet-feedback-submit` | Submit feedback or requests to the golden-path team |
+| `fleet-sync` | Drift detection + synchronise with the golden path |
+
+See [Platform Capabilities — Runbooks](./platform-capabilities.md#runbooks-machine-readable) for the full inventory (13 runbooks).
+Downstream repos also receive additional scaffolded runbooks (`fleet-drift-check`, `fleet-feedback-submit`) via `pnpm generate:scaffold`.
+
+---
+
 ## Related Documentation
 
+- [AI Adoption Prompts](./ai-adoption-prompts.md) — copy-paste prompts for AI agents (greenfield, migration, add-feature)
 - [Platform Capabilities](./platform-capabilities.md) — what ripple-next provides
 - [Downstream Workflows](./downstream-workflows.md) — CI consumption and fleet operations
-- [Developer Guide](./developer-guide.md) — consumer app setup (frontend, backend, full-stack)
+- [Consumer App Guide](./consumer-app-guide.md) — consumer app setup (frontend, backend, full-stack)
+- [Platform Developer Guide](./platform-developer-guide.md) — contributing to ripple-next internals
 - [Architecture](./architecture.md) — ripple-next system architecture
 - [Provider Pattern](./provider-pattern.md) — core infrastructure abstraction
 - [API Contracts](./api-contracts.md) — oRPC and REST endpoints

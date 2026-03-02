@@ -133,7 +133,11 @@ Shared validation schemas are in `packages/validation/`:
 
 ## Related Documentation
 
+- [Platform Developer Guide](./platform-developer-guide.md) — full setup and quality gate reference
+- [Consumer App Guide](./consumer-app-guide.md) — API setup for consumer repos
+- [Downstream Adoption Guide](./downstream-adoption-guide.md) — API contract documentation requirements
 - [Architecture](./architecture.md) — system overview
 - [Data Model](./data-model.md) — database schema these APIs operate on
 - [Testing Guide](./testing-guide.md) — testing API endpoints
+- [Platform Capabilities](./platform-capabilities.md) — inventory of available packages and tools
 - [ADR-021](./adr/021-api-contract-strategy.md) — API contract strategy (oRPC + OpenAPI-first)

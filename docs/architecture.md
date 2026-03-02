@@ -164,7 +164,7 @@ for the full inventory of what ripple-next provides.
 
 ## Related Documentation
 
-- [Developer Guide](./developer-guide.md) — **start here** for setup and onboarding
+- [Platform Developer Guide](./platform-developer-guide.md) — **start here** for setup and onboarding
 - [Provider Pattern](./provider-pattern.md) — core architecture pattern
 - [Data Model](./data-model.md) — PostgreSQL schema
 - [API Contracts](./api-contracts.md) — oRPC routers and REST endpoints
@@ -174,6 +174,7 @@ for the full inventory of what ripple-next provides.
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
 - [ADR Index](./adr/README.md) — all Architecture Decision Records (23 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
+- [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — documentation standards for downstream repos
 - [Platform Capabilities](./platform-capabilities.md) — what ripple-next provides to consumers
 

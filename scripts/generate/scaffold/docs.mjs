@@ -65,14 +65,14 @@ export function scaffoldDocs(targetDir, config, options = {}) {
             code: 'RPL-ENV-001',
             category: 'ENV',
             message: 'Required environment variable missing',
-            severity: 'fatal',
+            severity: 'error',
             remediation: 'Copy .env.example to .env and fill in required values. Run pnpm validate:env.',
           },
           {
             code: 'RPL-BUILD-001',
             category: 'BUILD',
             message: 'TypeScript compilation failed',
-            severity: 'fatal',
+            severity: 'error',
             remediation: 'Run pnpm typecheck and fix reported type errors.',
           },
           {
@@ -589,6 +589,9 @@ See the upstream guide for:
 - Greenfield and legacy migration adoption paths
 - Provider pattern adoption
 - Conformance requirements and fleet governance
+
+For implementation details (folder layouts, code examples, deployment):
+- [Consumer App Guide](https://github.com/${org}/ripple-next/blob/main/docs/consumer-app-guide.md)
 
 Run \`pnpm conform\` to check your documentation compliance score.
 `,

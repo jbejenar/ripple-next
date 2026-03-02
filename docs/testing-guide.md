@@ -162,9 +162,11 @@ pnpm storybook   # Start Storybook dev server
 
 ## Related Documentation
 
-- [Developer Guide](./developer-guide.md) — full setup and quality gate reference
+- [Platform Developer Guide](./platform-developer-guide.md) — full setup and quality gate reference
 - [Architecture](./architecture.md) — system overview
 - [Provider Pattern](./provider-pattern.md) — how mock providers work
 - [Data Model](./data-model.md) — schema reference for integration tests
+- [Consumer App Guide](./consumer-app-guide.md) — testing setup for consumer repos
+- [Platform Capabilities](./platform-capabilities.md) — available testing packages and tools
 - [ADR-003: Provider Pattern](./adr/003-provider-pattern.md) — why memory providers
 - [ADR-013: Flaky Test Containment](./adr/013-flaky-test-containment.md) — quarantine policy

@@ -82,29 +82,8 @@ Never access the database directly from route handlers.
 
 ## Nuxt Auto-Imports
 
-Nuxt 3 auto-imports the following. Do NOT add manual imports for these:
-
-### Auto-imported by Nuxt core (no import statement needed):
-
-- **Vue APIs**: `ref`, `computed`, `watch`, `watchEffect`, `reactive`, `toRef`, `toRefs`, `onMounted`, `onUnmounted`, `nextTick`, `defineProps`, `defineEmits`, `withDefaults`
-- **Nuxt composables**: `useRuntimeConfig`, `useFetch`, `useAsyncData`, `useLazyFetch`, `useLazyAsyncData`, `useRoute`, `useRouter`, `useState`, `useHead`, `useSeoMeta`, `useNuxtApp`, `navigateTo`, `createError`, `definePageMeta`, `defineNuxtRouteMiddleware`
-- **Nitro server utils**: `defineEventHandler`, `getQuery`, `readBody`, `createError`, `setResponseStatus`
-
-### Auto-imported from project directories:
-
-- `composables/**` — all exports (e.g. `useAuth()`)
-- `stores/**` — all Pinia stores
-- `~/components/**` — all Vue components (no pathPrefix)
-
-### NOT auto-imported (you must import explicitly):
-
-- Anything from `@ripple-next/*` packages (e.g. `import { AuthProvider } from '@ripple-next/auth'`)
-- Anything from `node_modules` (e.g. `import { z } from 'zod'`)
-- Server-side oRPC utilities (e.g. `import { protectedProcedure } from '../orpc/base'`)
-
-### If you see import errors:
-
-Run `npx nuxi prepare apps/web` to regenerate the `.nuxt/` types directory.
+Do NOT add manual imports for Nuxt auto-imported symbols (Vue APIs, composables, Nitro utils).
+See CLAUDE.md for the short list, or `.github/instructions/frontend.instructions.md` for full details.
 
 ## Code Conventions
 
@@ -159,11 +138,36 @@ When making changes, match the change type to the right validation:
 | Lambda handler | Unit test with mock providers, `pnpm typecheck` |
 | Infrastructure change | `pnpm check:iac`, `npx sst deploy --stage pr-{n}`, review SST diff |
 | Package interface change | All downstream consumer tests, `pnpm typecheck` |
-| Downstream repo setup | Run `pnpm generate:scaffold`, follow `docs/downstream-adoption-guide.md`, run `pnpm conform` |
+| Downstream repo setup | Run `pnpm generate:scaffold`, follow `docs/consumer-app-guide.md` for implementation, `docs/downstream-adoption-guide.md` for standards, run `pnpm conform` |
 | Roadmap/docs change | `pnpm check:readiness`, update `readiness.json`, cross-reference ADRs |
 | New ADR | Add to `docs/adr/README.md` index, cross-reference in architecture.md |
 | Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift` |
 | Modifying CLAUDE.md or AGENTS.md | Read [ADR-020](docs/adr/020-context-file-minimalism.md). Only add hard constraints that cause CI failures if unknown. Do NOT add command catalogs, directory listings, or content from `.github/instructions/`. |
+
+## Runbooks (Machine-Readable Procedures)
+
+Structured JSON runbooks in `docs/runbooks/` codify multi-step operations
+([ADR-018](docs/adr/018-ai-first-workflow-strategy.md)).
+Use `pnpm runbook <name>` to print steps, or `pnpm runbook <name> --json`
+for machine-readable output. Read the relevant runbook before executing a
+multi-step task.
+
+| Runbook | When to use |
+|---------|-------------|
+| `deploy-to-staging` | Deploying to staging environment |
+| `rollback-production` | Rolling back a production deployment |
+| `add-api-endpoint` | Adding a new oRPC endpoint |
+| `add-new-component` | Adding a Vue component with story and tests |
+| `add-new-provider` | Adding a provider implementation |
+| `onboard-new-package` | Adding a new `@ripple-next/*` workspace package |
+| `scaffold-downstream` | Bootstrapping a new downstream repo |
+| `adopt-ripple-next` | Full downstream adoption flow (scaffold → configure → document → verify) |
+| `migrate-legacy-api` | Migrating a legacy API into ripple-next conventions |
+| `run-conformance` | Scoring a repo against the conformance rubric |
+| `fleet-feedback-submit` | Submitting feedback to the golden-path upstream |
+| `fleet-sync` | Drift detection + synchronising a downstream repo with golden path |
+
+See [Platform Capabilities — Runbooks](docs/platform-capabilities.md#runbooks-machine-readable) for full details.
 
 ## Toolchain Pinning
 
