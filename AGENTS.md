@@ -165,6 +165,31 @@ When making changes, match the change type to the right validation:
 | Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift` |
 | Modifying CLAUDE.md or AGENTS.md | Read [ADR-020](docs/adr/020-context-file-minimalism.md). Only add hard constraints that cause CI failures if unknown. Do NOT add command catalogs, directory listings, or content from `.github/instructions/`. |
 
+## Runbooks (Machine-Readable Procedures)
+
+Structured JSON runbooks in `docs/runbooks/` codify multi-step operations.
+Use `pnpm runbook <name>` to print steps, or `pnpm runbook <name> --json`
+for machine-readable output. Agents should read the relevant runbook before
+executing a multi-step task.
+
+| Runbook | When to use |
+|---------|-------------|
+| `deploy-to-staging` | Deploying to staging environment |
+| `rollback-production` | Rolling back a production deployment |
+| `add-api-endpoint` | Adding a new oRPC endpoint |
+| `add-new-component` | Adding a Vue component with story and tests |
+| `add-new-provider` | Adding a provider implementation |
+| `onboard-new-package` | Adding a new `@ripple-next/*` workspace package |
+| `scaffold-downstream` | Bootstrapping a new downstream repo |
+| `adopt-ripple-next` | Full downstream adoption flow (scaffold → configure → document → verify) |
+| `migrate-legacy-api` | Migrating a legacy API into ripple-next conventions |
+| `run-conformance` | Scoring a repo against the conformance rubric |
+| `fleet-feedback-submit` | Submitting feedback to the golden-path upstream |
+| `fleet-drift-check` | Checking for drift against the golden path |
+| `fleet-sync` | Synchronising a downstream repo with golden path |
+
+See [Platform Capabilities — Runbooks](docs/platform-capabilities.md#runbooks-machine-readable) for full details.
+
 ## Toolchain Pinning
 
 Exact runtime versions are enforced to eliminate version drift.

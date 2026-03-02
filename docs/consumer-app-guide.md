@@ -693,6 +693,26 @@ greenfield and legacy migration paths, provider pattern adoption, and fleet gove
 
 ---
 
+## Runbooks
+
+Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
+multi-step operations. Use `pnpm runbook <name>` to print steps, or add `--json`
+for machine-readable output that AI agents can execute step-by-step.
+
+Runbooks most relevant to consumer app developers:
+
+| Runbook | When to use |
+|---------|-------------|
+| `adopt-ripple-next` | Full adoption flow: scaffold → configure → document → verify |
+| `scaffold-downstream` | Bootstrap a new downstream repo with golden-path files |
+| `migrate-legacy-api` | Migrate a legacy API service into ripple-next conventions |
+| `run-conformance` | Check your repo's documentation compliance score |
+| `fleet-feedback-submit` | Submit feedback or requests to the golden-path team |
+
+See [Platform Capabilities — Runbooks](./platform-capabilities.md#runbooks-machine-readable) for the full inventory (13 runbooks).
+
+---
+
 ## Related Documentation
 
 - [Platform Developer Guide](./platform-developer-guide.md) — contributing to the ripple-next monorepo

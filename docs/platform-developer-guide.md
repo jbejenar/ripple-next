@@ -457,6 +457,28 @@ Default ports: PostgreSQL (5432), Redis (6379), MinIO (9000/9001), Mailpit (1025
 
 If a port is in use, either stop the conflicting service or change the port mapping in `docker-compose.yml`.
 
+## Runbooks
+
+Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
+multi-step operations. Use `pnpm runbook <name>` to print steps, or add `--json`
+for machine-readable output that AI agents can execute step-by-step.
+
+Runbooks most relevant to platform developers:
+
+| Runbook | When to use |
+|---------|-------------|
+| `deploy-to-staging` | Deploying to staging environment |
+| `rollback-production` | Rolling back a production deployment |
+| `add-api-endpoint` | Adding a new oRPC endpoint with contract tests |
+| `add-new-component` | Adding a Vue component with story and tests |
+| `add-new-provider` | Adding a provider implementation with conformance tests |
+| `onboard-new-package` | Adding a new `@ripple-next/*` workspace package |
+| `fleet-sync` | Synchronising a downstream repo with golden path |
+
+See [Platform Capabilities — Runbooks](./platform-capabilities.md#runbooks-machine-readable) for the full inventory (13 runbooks).
+
+---
+
 ## Related Documentation
 
 - [Architecture](./architecture.md) — system overview, stack, and design

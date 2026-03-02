@@ -382,6 +382,27 @@ See [`fleet-policy.json`](./fleet-policy.json) and [Downstream Workflows](./down
 
 ---
 
+## Runbooks
+
+Runbooks are machine-readable JSON procedures in `docs/runbooks/` that codify
+multi-step operations. Use `pnpm runbook <name>` to print steps, or add `--json`
+for machine-readable output that AI agents can execute step-by-step.
+
+Runbooks most relevant to downstream adoption:
+
+| Runbook | When to use |
+|---------|-------------|
+| `adopt-ripple-next` | Full greenfield adoption: scaffold → configure → document → verify |
+| `migrate-legacy-api` | Legacy API migration: analyze → model → contract → implement → verify parity |
+| `scaffold-downstream` | Bootstrap a new downstream repo with golden-path files |
+| `run-conformance` | Check your repo's documentation compliance score |
+| `fleet-feedback-submit` | Submit feedback or requests to the golden-path team |
+| `fleet-drift-check` | Check for drift against the golden path |
+
+See [Platform Capabilities — Runbooks](./platform-capabilities.md#runbooks-machine-readable) for the full inventory (13 runbooks).
+
+---
+
 ## Related Documentation
 
 - [AI Adoption Prompts](./ai-adoption-prompts.md) — copy-paste prompts for AI agents (greenfield, migration, add-feature)

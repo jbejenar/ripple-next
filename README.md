@@ -113,7 +113,7 @@ graph LR
 | [Downstream Adoption Guide](docs/downstream-adoption-guide.md) | Mandatory documentation standards for downstream repos |
 | [AI Adoption Prompts](docs/ai-adoption-prompts.md) | Copy-paste prompts for AI agents (greenfield, migration, add-feature) |
 | [Platform Capabilities](docs/platform-capabilities.md) | What ripple-next provides to consumers            |
-| [Runbooks](docs/runbooks/)                         | Machine-readable procedures (deploy, rollback, scaffold, adopt, migrate) |
+| [Runbooks](docs/runbooks/)                         | Machine-readable JSON procedures — `pnpm runbook <name>` to execute, `--json` for agents |
 | [Product Roadmap](docs/product-roadmap/)           | Platform roadmap, priorities, and archive             |
 | [AGENTS.md](AGENTS.md)                             | AI agent conventions and code guidelines              |
 
