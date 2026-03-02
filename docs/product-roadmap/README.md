@@ -1,6 +1,6 @@
 # Ripple Next — Product Roadmap
 
-> v7.2.0 | 2026-03-02
+> v7.3.0 | 2026-03-02
 >
 > **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
 > AI-first benefit rationale, and is organised by time horizon for execution
@@ -130,13 +130,13 @@ per-subsystem detail.
 **Status:** Done (2026-03-02)
 
 - [x] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
-- [x] "Pick Your Path" table routing 5 audiences to correct entry points
+- [x] "Pick Your Path" table routing 8 audiences to correct entry points (expanded from 5: added Tester/QA, Product owner, fleet governance links)
 - [x] Provider pattern Mermaid diagram (simplified thumbnail)
 - [x] "Contributing" section with safe zones, workflow Mermaid, and expectations
 - [x] All links verified (AGENTS.md, platform-developer-guide, consumer-app-guide, adoption guide, platform capabilities, etc.)
 
-**Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted.
-**Verified:** All 18 file links in README resolve to existing files. `docs/runbooks/` is pre-existing broken link (not introduced by this change).
+**Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted. Later enhanced: Pick Your Path expanded to 8 audiences with multi-doc links per persona, Documentation section restructured with compact descriptions and moved after Quick Start, fleet governance link added to governance row.
+**Verified:** All file links in README resolve to existing files.
 
 ---
 
@@ -172,6 +172,12 @@ Provides two adoption paths (greenfield and legacy migration) with machine-reada
 - [x] Developer Guide split into Platform Developer Guide + Consumer App Guide for audience clarity
 - [x] AI Adoption Prompts document (`docs/ai-adoption-prompts.md`) with greenfield, migration, and add-feature templates
 - [x] Readiness manifest updated for fleet-governance subsystem
+- [x] Runbook references added to all guides (platform, consumer, downstream, AGENTS.md) with ADR-018 links
+- [x] AGENTS.md trimmed per ADR-020 — Nuxt auto-imports replaced with pointer (200 → 179 lines)
+- [x] Scaffold CLAUDE.md template trimmed (115 → 62 lines) — fleet governance and AI-first sections moved to AGENTS.md template
+- [x] Scaffold error taxonomy severity fixed (`fatal` → `error`)
+- [x] README restructured: Pick Your Path expanded to 8 personas, Documentation section with compact descriptions
+- [x] Cross-reference gaps filled across 6+ docs (Related Documentation sections)
 - [ ] `pnpm verify` passes cleanly
 
 #### Verification

@@ -32,7 +32,7 @@ pnpm verify -- --json       # all quality gates (lint, typecheck, test)
 | **Platform developer** | [Platform Developer Guide](docs/platform-developer-guide.md), [Architecture](docs/architecture.md), [API Contracts](docs/api-contracts.md), [Testing Guide](docs/testing-guide.md), [Deployment](docs/deployment.md) |
 | **Consumer app developer** | [Consumer App Guide](docs/consumer-app-guide.md), [Downstream Adoption Guide](docs/downstream-adoption-guide.md), [AI Adoption Prompts](docs/ai-adoption-prompts.md) |
 | **Tester / QA** | [Testing Guide](docs/testing-guide.md), [CI Gates](docs/ci-gates.md), [Performance](docs/performance.md), [Session Observability](docs/session-observability.md) |
-| **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md), [Downstream Workflows](docs/downstream-workflows.md), [Platform Capabilities](docs/platform-capabilities.md) |
+| **Downstream team lead / governance** | [Downstream Adoption Guide](docs/downstream-adoption-guide.md), [Downstream Workflows](docs/downstream-workflows.md), [Platform Capabilities](docs/platform-capabilities.md), [Fleet Governance (ADR-019)](docs/adr/019-fleet-governance.md) |
 | **Architect / reviewer** | [Architecture](docs/architecture.md), [Platform Capabilities](docs/platform-capabilities.md), [Critique Evaluation](docs/critique-evaluation.md), [Lambda vs ECS](docs/lambda-vs-ecs.md) |
 | **Product owner / tech lead** | [Product Roadmap](docs/product-roadmap/) — priorities, status, and AI-first benefit rationale |
 | **Curious contributor** | [Contributing](#contributing) — safe zones, workflow, and expectations |
