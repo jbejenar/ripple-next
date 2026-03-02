@@ -1,14 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v7.3.0 | 2026-03-02
+> v8.0.0 | 2026-03-02
 >
-> **AI-first platform.** Every item is machine-parseable (`RN-XXX`), includes
-> AI-first benefit rationale, and is organised by time horizon for execution
-> clarity. Supersedes the tier system ([ADR-016](../adr/016-roadmap-reorganisation.md))
-> with Now/Next/Later planning.
+> **Ship it.** The roadmap is focused on production credibility: resolve licensing,
+> publish packages, deploy a downstream consumer. Meta-work is parked until the
+> platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 55 items completed (51 archived in **[ARCHIVE.md](./ARCHIVE.md)**, 4 in Done below).
-> 7 items active. 5 items parked.
+> 56 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 5 items active. 7 items parked.
 
 ---
 
@@ -20,41 +19,36 @@ gantt
     dateFormat YYYY-MM-DD
     axisFormat %b %Y
 
-    section Done (v7.2.0)
-    RN-062 README navigation hub           :done, rn062, 2026-03-02, 1d
-    RN-053 CI gate truth                   :done, rn053, 2026-03-01, 1d
-    RN-055 Node version pin parity         :done, rn055, 2026-03-01, 1d
-    RN-056 Readiness manifest honesty      :done, rn056, 2026-03-01, 1d
+    section Now (0–4 weeks)
+    RN-058 Licensing resolution ADR        :active, rn058, 2026-03-03, 7d
+    RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
 
     section Next (6–12 weeks)
-    RN-061 Downstream adoption standards   :active, rn061, 2026-03-01, 7d
-    RN-057 Scorecard evidence generation   :rn057, 2026-03-10, 7d
-    RN-058 Licensing resolution ADR        :rn058, 2026-03-10, 7d
-    RN-054 Downstream proof-of-life        :rn054, 2026-03-17, 14d
-    RN-017 Live Drupal integration         :rn017, 2026-04-01, 21d
+    RN-067 Complete upstream component port :rn067, 2026-03-24, 14d
+    RN-017 Live Drupal integration         :rn017, 2026-04-07, 21d
 
     section Later (Quarter+)
-    RN-059 Runtime monitoring ADR          :rn059, 2026-05-01, 7d
-    RN-060 Conformance auto-remediation    :rn060, 2026-05-01, 7d
+    RN-059 Runtime monitoring ADR          :rn059, 2026-06-01, 7d
 ```
 
 ## Agent-Friction Scorecard
 
-> **Status:** Interim self-assessment with known gaps flagged. Pending automated
-> evidence generation ([RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation)).
+> **Status:** Interim self-assessment (35/40). Scores will be validated by
+> RN-054 shipping evidence — a real downstream consumer exercising the platform
+> is more credible than automated self-measurement.
 
 | Dimension | Score | Notes | Known gaps |
 |-----------|-------|-------|------------|
-| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer. `.nvmrc` and `engines.node` exact match enforced by `pnpm doctor` (RN-055 done) | — |
+| Setup determinism | 5/5 | Pinned pnpm, lockfile, `.env.example` + Zod env validation, devcontainer. `.nvmrc` and `engines.node` exact match enforced by `pnpm doctor` | — |
 | One-command workflows | 5/5 | `pnpm bootstrap` — zero-to-ready, non-interactive | — |
-| Local dev parity with CI | 4/5 | Shared tooling, dockerized deps, devcontainer. CI gates classified as blocking or advisory in [`docs/ci-gates.md`](../ci-gates.md) (RN-053 done). Readiness + quarantine now blocking | 3 advisory gates remain (a11y, perf, gate summary artifact) — promote when environment-stable |
+| Local dev parity with CI | 4/5 | Shared tooling, dockerized deps, devcontainer. CI gates classified as blocking or advisory in [`docs/ci-gates.md`](../ci-gates.md) | 3 advisory gates remain (a11y, perf, gate summary artifact) |
 | Test reliability | 3/5 | Quarantine policy, unified `test:ci`, mock providers | No multi-contributor validation; no production evidence |
-| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc = engines.node = 22.22.0) + pnpm (packageManager) with doctor guards (RN-055 done) | — |
+| Dependency + toolchain pinning | 5/5 | Exact Node (.nvmrc = engines.node = 22.22.0) + pnpm (packageManager) with doctor guards | — |
 | Observability of failures | 5/5 | JUnit XML, Playwright traces, SBOM, JSON diagnostics | — |
-| Automated remediation | 3/5 | `pnpm doctor --json`, conformance CLI, error taxonomy | `conform --fix` not implemented ([RN-060](#rn-060-conformance-cli-auto-remediation-prs)); fleet sync untested |
-| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)). Downstream adoption guide and documentation standards ([RN-061](#rn-061-downstream-adoption-documentation-standards)) | — |
+| Automated remediation | 3/5 | `pnpm doctor --json`, conformance CLI, error taxonomy | `conform --fix` not implemented (parked); fleet sync untested |
+| Agent workflow integration | 5/5 | Runbooks, generators, error taxonomy ([ADR-018](../adr/018-ai-first-workflow-strategy.md)) | — |
 
-**Overall: 35/40** (interim; gaps tracked as active roadmap items)
+**Overall: 35/40** (interim; validated when [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) ships)
 
 ---
 
@@ -66,7 +60,7 @@ eliminates undifferentiated work and AI agents operate as first-class contributo
 across the fleet.
 
 **Platform status:** 16/16 subsystems with `maturity` field in
-[`readiness.json`](../readiness.json) (RN-056 done). Distribution:
+[`readiness.json`](../readiness.json). Distribution:
 2 integration-tested (auth, database), 8 conformance-tested (queue, storage,
 email, events, CMS, UI, API, testing-infra), 6 interface-defined
 (infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance).
@@ -75,152 +69,19 @@ per-subsystem detail.
 
 ## Themes
 
-1. **Honesty & trust** — ~~Fix self-assessed scores, label subsystem maturity correctly, make CI gates deterministic~~ (RN-053 done, RN-055 done, RN-056 done). Remaining: automated evidence generation (RN-057)
-2. **Production credibility** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054). Downstream documentation standards ensure agents produce conformant repos (RN-061)
-3. **Quality depth** — Live CMS validation, runtime monitoring (RN-017, RN-059)
-4. **Fleet automation** — Auto-remediation for downstream repos once fleet exists (RN-060)
+1. **Ship it** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054). Stop describing; start proving.
+2. **Production credibility** — Complete component library, live CMS validation (RN-067, RN-017)
+3. **Quality depth** — Runtime monitoring, once there's something deployed to monitor (RN-059)
 
 ---
 
-## Done (v7.2.0)
+## Now (0–4 weeks)
 
-> Honesty debt items shipped 2026-03-01. RN-062 shipped 2026-03-02. Moved to [ARCHIVE.md](./ARCHIVE.md) on next roadmap version.
-
-### RN-053: CI Gate Truth — Enforce or Explicitly Label Advisory Gates
-
-**Status:** Done (2026-03-01)
-
-- [x] Each `|| true` gate either made blocking or explicitly labeled "advisory" with workflow comment and entry in `docs/ci-gates.md`
-- [x] Scorecard "Local dev parity with CI" updated (3/5 → 4/5)
-- [x] `pnpm verify` remains the authoritative local gate (no `|| true`)
-
-**Changes:** `check:readiness` and `check:quarantine` made blocking in `reusable-quality.yml`. Gate summary, a11y audit, perf audit labeled advisory with comments. Created `docs/ci-gates.md`.
-**Verified:** `grep -rn 'continue-on-error' .github/workflows/` returns 0 results. `grep -rn '|| true' .github/workflows/` returns only deploy health checks, fleet sync, and 3 documented advisory gates. `pnpm verify` passes (10/10).
-
----
-
-### RN-055: Node Version Pin Parity
-
-**Status:** Done (2026-03-01)
-
-- [x] `engines.node` in `package.json` changed to `22.22.0` (exact, matching `.nvmrc`)
-- [x] `pnpm doctor` validates `.nvmrc` and `engines.node` show same value (new check added)
-- [x] Conformance rubric remediation text references `.nvmrc` as source of truth
-- [x] Upgrade procedure: update `.nvmrc` first, then `engines.node` follows
-
-**Verified:** `.nvmrc` (22.22.0) = `engines.node` (22.22.0) = MATCH. `pnpm doctor` passes with pin parity check.
-
----
-
-### RN-056: Readiness Manifest Honesty — Subsystem Maturity Levels
-
-**Status:** Done (2026-03-01)
-
-- [x] `maturity` field added to all 16 subsystems in `readiness.json`
-- [x] `pnpm check:readiness` validates `maturity` field exists and value is valid
-- [x] North Star section updated to reference maturity distribution
-
-**Distribution:** 2 integration-tested, 8 conformance-tested, 6 interface-defined, 0 production-proven.
-**Verified:** `pnpm check:readiness` passes (90/90 checks). `readiness.json` version bumped to 0.26.0 with `maturityLevels` legend.
-
----
-
-### RN-062: README as Navigation Hub — Audience Paths + Start Here Index
-
-**Status:** Done (2026-03-02)
-
-- [x] "For AI Agents" block with bootstrap/doctor/verify commands and error taxonomy link
-- [x] "Pick Your Path" table routing 8 audiences to correct entry points (expanded from 5: added Tester/QA, Product owner, fleet governance links)
-- [x] Provider pattern Mermaid diagram (simplified thumbnail)
-- [x] "Contributing" section with safe zones, workflow Mermaid, and expectations
-- [x] All links verified (AGENTS.md, platform-developer-guide, consumer-app-guide, adoption guide, platform capabilities, etc.)
-
-**Changes:** Added 4 new sections to README.md: "For AI Agents" quick-start block, "Pick Your Path" audience routing table, "Provider Pattern" with Mermaid diagram, and "Contributing" with safe zones, workflow Mermaid, and expectations. Subsumes RN-063 (diagrams), RN-065 (contributor magnet), RN-066 (agent start here). RN-064 rejected — files already well-formatted. Later enhanced: Pick Your Path expanded to 8 audiences with multi-doc links per persona, Documentation section restructured with compact descriptions and moved after Quick Start, fleet governance link added to governance row.
-**Verified:** All file links in README resolve to existing files.
-
----
-
-## Next (6–12 weeks)
-
-> Resolve blockers for production credibility. Dependencies from Now items understood.
-
-### RN-061: Downstream Adoption Documentation Standards
-
-**Tier:** 1 | **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** Low
-**Source:** Copilot agent failure — built standalone project, ignored all documentation and ripple-next conventions
-**AI-first benefit:** Deterministic adoption path ensures any agent can scaffold, document, and govern a downstream repo end-to-end.
-**Status:** In Progress
-**Dependencies:** None
-
-Fills the gap that caused a Copilot agent to produce zero documentation when migrating
-Mule 3 APIs. Establishes what every downstream repo must produce: product roadmap,
-architecture documentation, API contracts, ADRs, readiness manifest, README, and CLAUDE.md.
-Provides two adoption paths (greenfield and legacy migration) with machine-readable runbooks.
-
-#### Definition of Done
-
-- [x] ADR-023 documenting downstream adoption standards decision
-- [x] Platform capabilities catalog (`docs/platform-capabilities.md`)
-- [x] Downstream adoption guide (`docs/downstream-adoption-guide.md`) with 7 documentation categories
-- [x] Adoption runbook (`docs/runbooks/adopt-ripple-next.json`) — greenfield path
-- [x] Migration runbook (`docs/runbooks/migrate-legacy-api.json`) — legacy path
-- [x] Fleet policy surfaces FLEET-SURF-012 (downstream docs) and FLEET-SURF-013 (API contracts)
-- [x] Conformance rubric `downstream-docs` category (3 checks, 5 points)
-- [x] Error taxonomy ADOPT category (RPL-ADOPT-001 through RPL-ADOPT-003)
-- [x] Scaffold generator enhanced: Now/Next/Later roadmap, architecture template, API contracts template
-- [x] All existing docs updated with cross-references (architecture, developer guide, downstream workflows, AGENTS.md)
-- [x] Developer Guide split into Platform Developer Guide + Consumer App Guide for audience clarity
-- [x] AI Adoption Prompts document (`docs/ai-adoption-prompts.md`) with greenfield, migration, and add-feature templates
-- [x] Readiness manifest updated for fleet-governance subsystem
-- [x] Runbook references added to all guides (platform, consumer, downstream, AGENTS.md) with ADR-018 links
-- [x] AGENTS.md trimmed per ADR-020 — Nuxt auto-imports replaced with pointer (200 → 179 lines)
-- [x] Scaffold CLAUDE.md template trimmed (115 → 62 lines) — fleet governance and AI-first sections moved to AGENTS.md template
-- [x] Scaffold error taxonomy severity fixed (`fatal` → `error`)
-- [x] README restructured: Pick Your Path expanded to 8 personas, Documentation section with compact descriptions
-- [x] Cross-reference gaps filled across 6+ docs (Related Documentation sections)
-- [ ] `pnpm verify` passes cleanly
-
-#### Verification
-
-- `pnpm conform` includes `downstream-docs` category in scoring
-- Scaffold generates Now/Next/Later roadmap, architecture doc, and API contracts doc
-- Downstream adoption guide referenced from AGENTS.md routing table
-- Fleet policy v1.3.0 includes FLEET-SURF-012 and FLEET-SURF-013
-- Three clearly labeled guides: Platform Developer Guide, Consumer App Guide, Downstream Adoption Guide
-- AI Adoption Prompts referenced from Downstream Adoption Guide, Consumer App Guide, README, and scaffold template
-
-**Links:** [ADR-023](../adr/023-downstream-adoption-standards.md), [Adoption Guide](../downstream-adoption-guide.md), [Consumer App Guide](../consumer-app-guide.md), [AI Adoption Prompts](../ai-adoption-prompts.md), [Platform Capabilities](../platform-capabilities.md)
-
----
-
-### RN-057: Agent-Friction Scorecard — Evidence-Based Generation
-
-**Tier:** 2 | **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
-**Source:** Critique 3 — "A perfect score across all 8 dimensions is not credible self-assessment"
-**AI-first benefit:** Replaces manual self-assessment with a deterministic, reproducible measurement command.
-**Status:** Planned
-**Dependencies:** ~~RN-053~~ (done — gate classification available in `docs/ci-gates.md`)
-
-#### Definition of Done
-
-- [ ] `scripts/scorecard.mjs` evaluates all 8 dimensions against verifiable criteria
-- [ ] Output: `ripple-scorecard/v1` JSON with dimension scores, evidence links, gap descriptions
-- [ ] Static scorecard in roadmap replaced with `pnpm scorecard -- --json` reference
-- [ ] Dimensions with gaps score < 5 with remediation notes
-
-#### Verification
-
-- `pnpm scorecard -- --json` outputs valid `ripple-scorecard/v1` JSON
-- No dimension shows 5/5 without corresponding evidence artifact
-- Score matches interim manual assessment (±2 points total)
-
-**Links:** [Critique 3](../critique-evaluation.md), `scripts/conform.mjs` (pattern reference)
-
----
+> Resolve the two blockers preventing production credibility.
 
 ### RN-058: Licensing Resolution ADR — Government Procurement Compatibility
 
-**Tier:** 2 | **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** High
+**Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** High
 **Source:** Critique 3 — "Non-commercial licensing for government software is unusual and potentially incompatible with government procurement"
 **AI-first benefit:** License ambiguity blocks automated publishing gates; clear licensing enables deterministic npm publish decisions.
 **Status:** Planned
@@ -250,11 +111,11 @@ added SPDX metadata but did not resolve the underlying licensing question.
 
 ### RN-054: Downstream Proof-of-Life — First Consumer Deployment
 
-**Tier:** 2 | **Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** High
+**Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** High
 **Source:** Critique 3 — "the project is a promising skeleton with exceptional documentation — but a skeleton nonetheless"
 **AI-first benefit:** Validates that agents can scaffold, configure, test, and deploy a downstream repo end-to-end using platform tooling.
 **Status:** Planned
-**Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility), ~~RN-053~~ (done)
+**Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility)
 
 The single most important item on the roadmap. Creates one downstream repo using
 `pnpm generate:scaffold`, publishes @ripple-next/* packages, consumes them, and
@@ -280,9 +141,48 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 
 ---
 
+## Next (6–12 weeks)
+
+> Complete the component library and validate the CMS integration.
+
+### RN-067: Complete Upstream Component Port — Full Ripple v2 Parity
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md) — 42/46 upstream components ported, 4 remaining
+**AI-first benefit:** Feature-complete component library means agents can build any government page pattern without custom component creation.
+**Status:** Planned
+**Dependencies:** None
+
+Port the remaining 4 upstream Ripple v2 components to reach full parity (46/46).
+These are from the lower-priority categories in ADR-017 (P5 Content, P6 Media).
+Each ported component includes Vue 3 SFC, Vue Test Utils tests, Storybook story,
+and export from `packages/ui/index.ts`. No new inventions — only components that
+exist in upstream Ripple v2.
+
+#### Definition of Done
+
+- [ ] Identify the 4 remaining upstream components (from P5/P6 categories in ADR-017)
+- [ ] Port each component following ADR-017 conventions (Composition API, `<script setup>`, `--rpl-*` tokens)
+- [ ] Vue Test Utils tests for each (props, events, accessibility, interactive state)
+- [ ] Storybook stories with autodocs and multiple variants
+- [ ] Exported from `packages/ui/index.ts` and registered in `packages/ui/nuxt.ts`
+- [ ] `readiness.json` upstream gap updated to 0
+- [ ] Coverage thresholds maintained (Tier 3: 20% lines, 10% branches)
+
+#### Verification
+
+- `readiness.json` shows `"ported": 46, "upstream": 46, "gap": 0`
+- `pnpm test -- --filter=@ripple-next/ui` passes with new component tests
+- Storybook builds without errors
+- `pnpm verify` passes
+
+**Links:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md), [RN-037](./ARCHIVE.md#rn-037-port-priority-components-from-upstream-ripple-2), `packages/ui/`
+
+---
+
 ### RN-017: Live Drupal Integration Testing
 
-**Tier:** 2 | **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+**Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
 **Source:** CMS integration gap — continues [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
 **AI-first benefit:** Validates CMS provider against real Drupal, giving agents confidence in content-layer operations.
 **Status:** Blocked → activating Docker fallback (Q2 2026 deadline reached)
@@ -314,7 +214,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 ### RN-059: Runtime Monitoring ADR — Observability for Lambda-First Architecture
 
-**Tier:** 3 | **Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** Risks table (ongoing) — "No runtime monitoring/alerting"
 **AI-first benefit:** Structured monitoring enables agents to diagnose production issues using machine-readable telemetry.
 **Status:** Planned
@@ -337,40 +237,17 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 ---
 
-### RN-060: Conformance CLI Auto-Remediation PRs
-
-**Tier:** 3 | **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
-**Source:** Deferred follow-up from [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli)
-**AI-first benefit:** Agents auto-fix downstream conformance gaps without human scaffolding decisions.
-**Status:** Planned
-**Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (needs downstream repo to target)
-
-#### Definition of Done
-
-- [ ] `pnpm conform -- --fix --target=path` generates missing files from templates
-- [ ] `pnpm conform -- --fix --pr` creates a GitHub PR with remediation changes
-- [ ] Only scaffolds files for failed checks; does not overwrite existing
-- [ ] Dry-run mode shows what would be created
-
-#### Verification
-
-- Running against repo missing 3 conformance files creates exactly those 3 files
-- `pnpm conform -- --fix --dry-run --target=path` shows planned changes without writing
-- Post-fix conformance score improves
-
-**Links:** [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli), `scripts/conform.mjs`, `docs/conformance-rubric.json`
-
----
-
 ## Parked / Not Doing
 
-| Item | Reason | Trigger |
-|------|--------|---------|
-| Visual regression (Chromatic/Percy) | Deferred from [RN-020](./ARCHIVE.md#rn-020-storybook-stories-for-tide-components). Not justified by current UI churn. | Pull in when UI library has ≥ 3 downstream consumers |
-| Portal publication infrastructure | Deferred from [RN-025](./ARCHIVE.md#rn-025-contract-testing-across-consumers) Phase 4b. | Pull in when external integrators are onboarded |
-| SDK generation from OpenAPI spec | Deferred from [RN-025](./ARCHIVE.md#rn-025-contract-testing-across-consumers). | Pull in when consumer demand exists |
-| Testcontainers router integration tests | Deferred from [RN-046](./ARCHIVE.md#rn-046-orpc-migration--router-integration-harness-testcontainers). Contract tests sufficient. | Pull in when API complexity warrants router-level DB tests |
-| Conform as optional verify gate | Deferred from [RN-028](./ARCHIVE.md#rn-028-golden-path-conformance-cli). | Pull in when downstream repos use conform regularly |
+| Item | Reason | Unpark trigger |
+|------|--------|----------------|
+| RN-057: Scorecard evidence generation | Meta-work. Scorecard credibility comes from shipping (RN-054), not automation | After RN-054 ships and downstream consumer validates claims |
+| RN-060: Conformance auto-remediation | No downstream fleet exists to remediate | After ≥ 2 downstream repos exist |
+| Visual regression (Chromatic/Percy) | Not justified by current UI churn | UI library has ≥ 3 downstream consumers |
+| Portal publication infrastructure | No external integrators | External integrators onboarded |
+| SDK generation from OpenAPI spec | No consumer demand | Consumer demand exists |
+| Testcontainers router integration tests | Contract tests sufficient | API complexity warrants router-level DB tests |
+| Conform as optional verify gate | No downstream repos use conform | Downstream repos use conform regularly |
 
 ---
 
@@ -378,35 +255,34 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 | Risk | Mitigation |
 |------|------------|
-| RN-017 blocked on content team | Docker Tide fixture fallback activated (Q2 2026 deadline reached) |
-| PolyForm Noncommercial may conflict with government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) in Next |
-| No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) in Later |
-| No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) in Next |
-| ~~CI gates suppressed (`\|\| true`)~~ | Resolved: RN-053 done — gates classified as blocking or advisory in `docs/ci-gates.md` |
-| Agent-Friction Scorecard self-assessed | [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) in Next |
-| Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first real publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
-| AI agents ignore downstream adoption guide | CLAUDE.md routing, conformance scoring, advisory fleet surfaces ([RN-061](#rn-061-downstream-adoption-documentation-standards)) |
+| PolyForm Noncommercial blocks government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) (Now) |
+| No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (Now) |
+| Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
+| Docs-to-code ratio 1.82:1 | [RN-067](#rn-067-complete-upstream-component-port--full-ripple-v2-parity) adds code; no new governance items until ratio ≤ 1:1 |
+| No live CMS integration | [RN-017](#rn-017-live-drupal-integration-testing) (Next) — Docker Tide fixture fallback activated |
+| No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) (Later) — acceptable until production deployment exists |
 
 ---
 
-## Suggestion Triage Log (v7.2.0)
+## Suggestion Triage Log (v8.0.0)
 
 ### Adopted
 
 | Suggestion | Source | Action |
 |-----------|--------|--------|
-| Enforce perf/a11y CI pass/fail semantics | AI agent analysis | Folded into [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) (broader scope — all 5 suppressed gates) |
-| Node pin policy parity (.nvmrc vs engines) | AI agent analysis | Adopted as [RN-055](#rn-055-node-version-pin-parity) |
-| Phase RN-028 into scoring then auto-remediation | AI agent analysis | RN-028 scoring complete; auto-remediation captured as [RN-060](#rn-060-conformance-cli-auto-remediation-prs) |
-| Replace static perfect score with evidence artifact | AI agent analysis | Adopted as [RN-057](#rn-057-agent-friction-scorecard--evidence-based-generation) |
-| README as navigation hub (RN-062–066) | Tech lead review | Adopted as [RN-062](#rn-062-readme-as-navigation-hub--audience-paths--start-here-index). RN-063/065/066 folded in. RN-064 rejected (see below) |
+| Complete upstream component port to 46/46 | Critique 3/4 + tech lead review | New item [RN-067](#rn-067-complete-upstream-component-port--full-ripple-v2-parity) |
+| Promote RN-058 + RN-054 to Now | Critique 3/4 — production credibility is the #1 gap | Promoted from Next to Now |
+| Park RN-057 (scorecard evidence) | Critique 4 — meta-work about meta-work | Moved to Parked |
+| Park RN-060 (auto-remediation) | Critique 4 — fleet governance for fleet of zero | Moved to Parked |
+| Remove "Honesty & trust" theme | RN-053/055/056 completed — theme is done | Replaced with "Ship it" |
+| Remove "Fleet automation" theme | No fleet exists to automate | Removed entirely |
 
 ### Rejected
 
 | Suggestion | Source | Rationale |
 |-----------|--------|-----------|
-| Bootstrap contract truth enforcement | AI agent analysis | Bootstrap script (`pnpm install && pnpm doctor`) matches its documentation. No docs-script discrepancy found. Adding `validate:env` to bootstrap would fail on fresh clones without `.env` file. |
-| RN-064 Reformat CONTRIBUTING/AGENTS | Tech lead review | Both files already use proper headings, bullet lists, tables, and code blocks. No formatting issues found. |
+| Add application feature depth item | AI agent analysis | User clarified: only port upstream Ripple components, no new inventions. RN-067 covers this. |
+| Add meta-layer reduction item | AI agent analysis | Would be meta-work about reducing meta-work. Instead, enforce as principle: no new governance items until docs-to-code ratio ≤ 1:1 |
 
 ---
 
@@ -440,7 +316,7 @@ Checklist (if `[New Item]`):
 
 ### Open AI Suggestions
 
-_No open suggestions. All suggestions triaged in v7.0.0 (see Triage Log above)._
+_No open suggestions. All suggestions triaged in v8.0.0 (see Triage Log above)._
 
 ---
 
@@ -456,7 +332,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-55 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-061).
-51 archived in **[ARCHIVE.md](./ARCHIVE.md)**; RN-053, RN-055, RN-056, RN-062 in Done section above.
+56 items completed (RN-001 through RN-062, excluding RN-017, RN-054, RN-057–RN-060).
+All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
-Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [AI Adoption Prompts](../ai-adoption-prompts.md) | [Platform Capabilities](../platform-capabilities.md)
+Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)

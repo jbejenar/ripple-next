@@ -158,4 +158,4 @@ Add `RPL-ADOPT-*` codes for documentation governance failures (advisory, non-blo
 - [ADR-020: Context File Minimalism](./020-context-file-minimalism.md)
 - [ADR-021: API Contract Strategy](./021-api-contract-strategy.md)
 - [RN-054: Downstream Proof-of-Life](../product-roadmap/README.md#rn-054-downstream-proof-of-life--first-consumer-deployment)
-- [RN-061: Downstream Adoption Documentation Standards](../product-roadmap/README.md#rn-061-downstream-adoption-documentation-standards)
+- [RN-061: Downstream Adoption Documentation Standards](../product-roadmap/ARCHIVE.md#rn-061-downstream-adoption-documentation-standards)
