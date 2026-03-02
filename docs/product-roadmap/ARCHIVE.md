@@ -855,7 +855,7 @@ regex matches and reports advisory findings.
 
 **Evidence:** `scripts/perf-audit.mjs`, `docs/performance.md`, `.github/workflows/ci.yml`
 
-**Follow-ups:** CI gate currently advisory (`|| true`) → [RN-053](./README.md#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
+**Follow-ups:** CI gate currently advisory (`|| true`) → [RN-053](#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates) (done)
 
 ---
 

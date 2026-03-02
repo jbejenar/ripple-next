@@ -4,7 +4,7 @@
 > (produces artifacts but does not fail the pipeline). No gate may be silently
 > suppressed without classification here.
 >
-> See [RN-053](product-roadmap/README.md#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
+> See [RN-053](product-roadmap/ARCHIVE.md#rn-053-ci-gate-truth--enforce-or-explicitly-label-advisory-gates)
 > for rationale.
 
 ## Blocking Gates
