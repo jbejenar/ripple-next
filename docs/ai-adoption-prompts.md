@@ -58,7 +58,7 @@ pnpm generate:scaffold [TARGET_DIR] --name=[PROJECT_NAME] --org=[ORG] --dry-run
 pnpm generate:scaffold [TARGET_DIR] --name=[PROJECT_NAME] --org=[ORG]
 ```
 
-This creates ~35+ files: CLAUDE.md, AGENTS.md, agent profiles, CI workflows,
+This creates ~59 files: CLAUDE.md, AGENTS.md, agent profiles, CI workflows,
 quality gates, documentation templates, fleet governance config.
 
 #### Phase 2: Configure
@@ -152,7 +152,7 @@ output and fix the gaps.
 
 ### Success Criteria
 
-- [ ] Scaffold generated (~35+ files)
+- [ ] Scaffold generated (~59 files)
 - [ ] App runs locally (`pnpm dev`)
 - [ ] All tests pass (`pnpm test`)
 - [ ] All quality gates pass (`pnpm verify`)

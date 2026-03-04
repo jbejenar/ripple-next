@@ -24,10 +24,17 @@
 
 | Task | Command |
 |------|---------|
-| **Self-check for drift** | `node scripts/check-fleet-drift.mjs` |
-| **Submit feedback to upstream** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --description="..." --submit` |
-| **Preview feedback payload** | `node scripts/fleet-feedback.mjs --type=<type> --title="..." --dry-run --json` |
-| **Run fleet feedback submit runbook** | `pnpm runbook fleet-feedback-submit` |
+| **Self-check for drift** | `pnpm check:fleet-drift` |
+| **Self-check for drift (JSON)** | `pnpm check:fleet-drift -- --json` |
+| **Submit feedback to upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
+| **Preview feedback payload** | `pnpm fleet:feedback -- --type=<type> --title="..." --dry-run --json` |
+| **Share local improvement** | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit` |
+| **Pull sync from golden path** | `pnpm fleet:sync` |
+| **Quality gates + fleet drift** | `pnpm verify -- --fleet` |
+| **Run fleet drift runbook** | `pnpm runbook fleet-drift-check` |
+| **Run fleet feedback runbook** | `pnpm runbook fleet-feedback-submit` |
+
+See also: [Fleet Management Guide](./fleet-management.md) for the comprehensive reference.
 
 ### Key files in downstream repos
 
@@ -36,9 +43,15 @@
 | `.fleet.json` | Tracks golden-path version, last sync time, policy version |
 | `scripts/check-fleet-drift.mjs` | Drift detection against golden path (synced via SURF-011) |
 | `scripts/fleet-feedback.mjs` | Structured feedback submission to upstream |
+| `scripts/fleet-sync.mjs` | Pull governed surfaces from golden path |
+| `docs/fleet-management.md` | Comprehensive fleet management guide (local copy) |
+| `docs/fleet-policy.json` | Fleet governance policy (synced from upstream) |
 | `.github/workflows/fleet-feedback.yml` | Manual dispatch + monthly auto-scan for drift |
 | `.github/workflows/fleet-update.yml` | Receives update notifications from golden path |
-| `docs/runbooks/fleet-feedback-submit.json` | Step-by-step runbook for feedback submission |
+| `.github/actions/fleet-drift/action.yml` | Composite action for drift detection in CI |
+| `.github/actions/fleet-feedback/action.yml` | Composite action for feedback submission in CI |
+| `docs/runbooks/fleet-drift-check.json` | Step-by-step drift check runbook |
+| `docs/runbooks/fleet-feedback-submit.json` | Step-by-step feedback submission runbook |
 
 ---
 
@@ -499,15 +512,15 @@ pnpm generate:scaffold /path/to/downstream-repo \
   --description="My downstream project"
 ```
 
-This generates ~35 files across 6 categories:
+This generates ~59 files across 6 categories:
 
 | Category | What's Generated |
 |----------|-----------------|
-| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/` (5 agents incl. fleet-governance), `.github/instructions/`, `.github/prompts/`, Copilot instructions |
-| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, ADR index, runbook templates (deploy, fleet-feedback-submit, fleet-drift-check), product roadmap template |
-| Quality Gates | `scripts/verify.mjs`, `scripts/doctor.sh`, `scripts/check-readiness.mjs`, `scripts/validate-env.mjs` |
-| Fleet Governance | `.fleet.json`, `scripts/check-fleet-drift.mjs`, `scripts/fleet-feedback.mjs`, `.github/workflows/fleet-feedback.yml`, `.github/workflows/fleet-update.yml` |
-| CI / CD | `.github/workflows/ci.yml`, `.github/workflows/security.yml`, composite actions, PR template, CODEOWNERS |
+| AI / Agent DX | `CLAUDE.md`, `AGENTS.md`, `.github/agents/` (5 agents incl. fleet-governance), `.github/instructions/` (6 topics incl. fleet-governance), `.github/prompts/` (4 prompts incl. fleet-management), Copilot instructions |
+| Documentation | `docs/readiness.json`, `docs/error-taxonomy.json`, `docs/fleet-management.md`, `docs/fleet-policy.json`, ADR index, runbook templates (deploy, fleet-feedback-submit, fleet-drift-check), product roadmap, architecture, API contracts |
+| Quality Gates | `scripts/verify.mjs` (supports `--fleet` flag), `scripts/doctor.sh`, `scripts/check-readiness.mjs`, `scripts/check-quarantine.mjs`, `scripts/validate-env.mjs` |
+| Fleet Governance | `.fleet.json`, `scripts/check-fleet-drift.mjs`, `scripts/fleet-feedback.mjs`, `scripts/fleet-sync.mjs`, `.github/workflows/fleet-feedback.yml`, `.github/workflows/fleet-update.yml` |
+| CI / CD | `.github/workflows/ci.yml`, `.github/workflows/security.yml`, composite actions (setup, quality, test, fleet-drift, fleet-feedback), PR template, CODEOWNERS |
 | Config | `.env.example`, `.nvmrc`, `eslint.config.js`, `.changeset/config.json`, `.gitignore` |
 
 After scaffolding, use `--dry-run` to preview and `--force` to update existing files.

@@ -42,7 +42,7 @@ Optional but recommended:
 All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9** (`corepack enable pnpm`).
 
 > **Scaffold shortcut:** Run `pnpm generate:scaffold /path/to/repo --name=my-project --org=my-org`
-> to create the full DX infrastructure (~35+ files) including documentation templates,
+> to create the full DX infrastructure (~59 files) including documentation templates,
 > CI/CD, quality gates, and fleet governance. See the [Downstream Adoption Guide](./downstream-adoption-guide.md)
 > for documentation requirements (product roadmap, architecture doc, readiness manifest, CLAUDE.md).
 
