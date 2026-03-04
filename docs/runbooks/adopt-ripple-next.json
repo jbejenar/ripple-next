@@ -27,7 +27,7 @@
     {
       "order": 2,
       "command": "pnpm generate:scaffold ${TARGET_DIR} --name=${NAME} --org=${ORG}",
-      "description": "Generate all scaffold files (~35+ files across AI docs, quality gates, CI, fleet governance, documentation templates)"
+      "description": "Generate all scaffold files (~59 files across AI docs, quality gates, CI, fleet governance, documentation templates)"
     },
     {
       "order": 3,

@@ -179,7 +179,7 @@ Follow [ADR-020](./adr/020-context-file-minimalism.md): keep it minimal (~40 lin
 pnpm generate:scaffold /path/to/repo --name=my-project --org=my-org
 ```
 
-This creates ~35+ files: AI docs, quality gates, CI workflows, fleet governance,
+This creates ~59 files: AI docs, quality gates, CI workflows, fleet governance,
 documentation templates. See [Platform Capabilities](./platform-capabilities.md#code-generators).
 
 ### Step 2: Configure

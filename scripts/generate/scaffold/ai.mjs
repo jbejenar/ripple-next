@@ -8,7 +8,7 @@ import { join } from 'node:path'
 import { writeFileExternal } from '../lib.mjs'
 
 export function scaffoldAi(targetDir, config, options = {}) {
-  const { name, description } = config
+  const { name, org, description } = config
   const opts = { dryRun: options.dryRun, force: options.force }
 
   console.log('\n  AI / Agent DX')
@@ -71,6 +71,18 @@ Never lower a threshold — only raise it.
 - \`no-console\` is an **error** (use \`console.warn\`/\`console.error\` if needed)
 - \`@typescript-eslint/no-explicit-any\` is an **error** (use \`unknown\` + type guards)
 - Test files are exempt from no-console
+
+## Fleet Management
+
+This repo is governed by the ripple-next golden path. See \`docs/fleet-management.md\` for the full guide.
+
+\`\`\`bash
+pnpm check:fleet-drift          # detect drift from golden path
+pnpm check:fleet-drift -- --json # JSON output for CI/agents
+pnpm fleet:feedback -- --type=<type> --title="..." --submit  # submit feedback
+pnpm fleet:sync                  # pull sync from golden path
+pnpm verify -- --fleet           # quality gates + fleet drift
+\`\`\`
 
 ## Documentation Maintenance (Default Agent Directive)
 
@@ -314,6 +326,45 @@ ${agent.desc}
       title: 'Testing',
       content: `Use Vitest. Follow risk-tiered coverage thresholds. Use memory/mock providers for unit tests. Integration tests use real services via containers. Run pnpm test before committing.`,
     },
+    'fleet-governance': {
+      title: 'Fleet Governance',
+      content: `This repo is part of the ripple-next fleet. Fleet governance keeps CI workflows,
+toolchain versions, security config, and quality gates in sync with the golden path.
+
+## Key Commands
+
+- \\\`pnpm check:fleet-drift\\\` — detect drift from golden path
+- \\\`pnpm check:fleet-drift -- --json\\\` — JSON output for CI pipelines
+- \\\`pnpm fleet:feedback -- --type=<type> --title="..." --submit\\\` — submit feedback upstream
+- \\\`pnpm fleet:sync\\\` — pull governed surfaces from golden path
+- \\\`pnpm verify -- --fleet\\\` — run quality gates including fleet drift check
+
+## Governed Surfaces
+
+13 surfaces across 3 severity levels (security-critical, standards-required, recommended).
+Security-critical drift must be fixed within 7 days. Standards-required within 30 days.
+Advisory surfaces are report-only.
+
+## Policy Exceptions
+
+Add inline exception comments when a governed surface doesn't apply:
+\\\`// fleet-policy-exception: FLEET-SURF-007 — <justification>\\\`
+
+Exceptions expire after 90 days and must be renewed.
+
+## Feedback Types
+
+5 types: feature-request, bug-report, policy-exception, improvement-share, pain-point.
+Use improvement-share to propose local changes for fleet-wide adoption (bidirectional sync).
+
+## Key Files
+
+- \\\`.fleet.json\\\` — version tracking
+- \\\`scripts/check-fleet-drift.mjs\\\` — drift detection
+- \\\`scripts/fleet-feedback.mjs\\\` — feedback submission
+- \\\`scripts/fleet-sync.mjs\\\` — pull sync
+- \\\`docs/fleet-management.md\\\` — comprehensive guide`,
+    },
   }
 
   for (const [slug, instruction] of Object.entries(instructions)) {
@@ -375,6 +426,49 @@ Describe the bug and how to reproduce it.
 3. Verify the test passes
 4. Check for similar patterns elsewhere
 5. Run \`pnpm verify\` before committing`,
+    },
+    'fleet-management': {
+      title: 'Fleet Management',
+      content: `## Fleet Management
+
+### Context
+Manage this repo's alignment with the ripple-next golden path.
+See \`docs/fleet-management.md\` for the full guide.
+
+### Common Tasks
+
+#### Check fleet drift
+\`\`\`bash
+pnpm check:fleet-drift          # human-readable output
+pnpm check:fleet-drift -- --json # JSON for agents
+\`\`\`
+
+#### Submit feedback to golden path
+\`\`\`bash
+pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --dry-run
+pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --submit
+\`\`\`
+
+#### Share a local improvement upstream
+\`\`\`bash
+pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit
+\`\`\`
+
+#### Pull sync from golden path
+\`\`\`bash
+pnpm fleet:sync --dry-run   # preview changes
+pnpm fleet:sync              # apply
+\`\`\`
+
+#### Request a policy exception
+\`\`\`bash
+pnpm fleet:feedback -- --type=policy-exception --surface=FLEET-SURF-007 --title="No IaC" --submit
+\`\`\`
+
+### Verification
+1. Run \`pnpm check:fleet-drift\` — ensure no security-critical drift
+2. Run \`pnpm verify -- --fleet\` — all quality gates + fleet drift
+3. Review \`.fleet.json\` — verify version tracking is current`,
     },
   }
 

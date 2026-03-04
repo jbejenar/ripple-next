@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v8.0.0 | 2026-03-02
+> v9.0.0 | 2026-03-04
 >
 > **Ship it.** The roadmap is focused on production credibility: resolve licensing,
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
 > 57 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 7 items active. 7 items parked.
+> 8 items active. 7 items parked.
 
 ---
 
@@ -21,6 +21,7 @@ gantt
 
     section Now (0–4 weeks)
     RN-058 Licensing resolution ADR        :active, rn058, 2026-03-03, 7d
+    RN-071 Fleet management docs           :active, rn071, 2026-03-04, 5d
     RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
 
     section Next (6–12 weeks)
@@ -108,6 +109,45 @@ added SPDX metadata but did not resolve the underlying licensing question.
 - License compatible with identified government procurement frameworks
 
 **Links:** [Critique 3](../critique-evaluation.md), [RN-049](./ARCHIVE.md#rn-049-licensing-clarity-guardrail-spdx--dual-license-model), LICENSE
+
+---
+
+### RN-071: Fleet Management Documentation — Downstream Self-Service
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Source:** Downstream AI agent friction — agent working on ripple-next-api-address encountered missing fleet docs, no pnpm aliases, missing composite actions, missing fleet-policy.json, and verify.mjs without --fleet support.
+**AI-first benefit:** Downstream AI agents can discover and execute fleet operations from their own repo documentation without referencing upstream.
+**Status:** In Progress
+**Dependencies:** None
+
+Downstream repos scaffolded by ripple-next receive fleet scripts and workflows but
+lack comprehensive fleet management documentation within their own repo. AI agents
+and developers must refer back to upstream docs to understand fleet operations.
+This item closes the gap by scaffolding fleet management docs, pnpm aliases,
+composite actions, and instructions into every downstream repo.
+
+#### Definition of Done
+
+- [x] Upstream `docs/fleet-management.md` created — comprehensive fleet management reference
+- [x] Scaffold generates `docs/fleet-management.md` for downstream repos (localized with commands, surfaces, error codes)
+- [x] Scaffold generates `docs/fleet-policy.json` stub for drift detection
+- [x] Scaffold generates `fleet-governance.instructions.md` and `fleet-management.prompt.md`
+- [x] Scaffold generates `fleet-drift` and `fleet-feedback` composite actions
+- [x] Scaffold's CLAUDE.md template includes fleet commands section
+- [x] Scaffold's verify.mjs template supports `--fleet` flag
+- [x] Scaffold copies `fleet-sync.mjs` for downstream pull sync
+- [x] Scaffold's CODEOWNERS includes fleet governance entries
+- [x] `AGENTS.md` updated with fleet management task routing
+- [x] `docs/platform-capabilities.md` updated with downstream fleet command reference
+- [x] `pnpm verify` passes
+
+#### Verification
+
+- `pnpm generate:scaffold /tmp/test --name=test --org=test --dry-run` lists fleet management files
+- Downstream `docs/fleet-management.md` contains all fleet commands and governed surfaces
+- Downstream `pnpm check:fleet-drift` works with scaffolded fleet-policy.json
+
+**Links:** [ADR-019](../adr/019-fleet-governance.md), [ADR-022](../adr/022-bidirectional-fleet-communication.md), [Fleet Management Guide](../fleet-management.md)
 
 ---
 
