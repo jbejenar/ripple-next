@@ -111,6 +111,9 @@ pnpm dev
 | [ADR-021](docs/adr/021-api-contract-strategy.md) | API contract strategy — oRPC + OpenAPI-first |
 | [ADR-022](docs/adr/022-bidirectional-fleet-communication.md) | Bidirectional fleet communication |
 | [ADR-023](docs/adr/023-downstream-adoption-standards.md) | Downstream adoption standards — documentation governance |
+| [ADR-024](docs/adr/024-declarative-secrets-schema.md) | Declarative secrets schema — typed, validated, machine-readable |
+| [ADR-025](docs/adr/025-platform-cli-structured-output.md) | Platform CLI — unified `pnpm rip` with JSON output |
+| [ADR-026](docs/adr/026-github-oidc-zero-secrets-ci.md) | GitHub OIDC federation — zero secrets in CI/CD |
 
 ## Stack
 
@@ -125,6 +128,8 @@ pnpm dev
 | Auth     | OIDC/OAuth (oauth4webapi)     |
 | Infra    | SST v3 (Pulumi)               |
 | Compute  | Lambda + ECS Fargate          |
+| Secrets  | SSM Parameter Store + Secrets Manager (Provider pattern) |
+| CI/CD    | GitHub Actions + OIDC federation |
 | Testing  | Vitest + Playwright           |
 
 ## Provider Pattern
@@ -179,6 +184,7 @@ services/worker/     — Queue consumers
 services/websocket/  — WebSocket service
 services/cron/       — Cron jobs
 services/events/     — Event handlers
+infra/               — GitHub OIDC, IAM roles, SST components
 ```
 
 ## Contributing
