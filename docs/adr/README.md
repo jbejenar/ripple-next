@@ -31,12 +31,16 @@
 | [021](./021-api-contract-strategy.md) | API Contract Strategy — oRPC, OpenAPI-First, Public/Internal Classification | Accepted | API |
 | [022](./022-bidirectional-fleet-communication.md) | Bidirectional Fleet Communication — Feedback, Version Tracking, Notifications | Accepted | Process |
 | [023](./023-downstream-adoption-standards.md) | Downstream Adoption Standards — Documentation Governance for Fleet Consumers | Accepted | Process |
+| [024](./024-declarative-secrets-schema.md) | Declarative Secrets Schema — Typed, Validated, Machine-Readable | Proposed | Architecture |
+| [025](./025-platform-cli-structured-output.md) | Platform CLI — Unified `pnpm rip` with Structured JSON Output | Proposed | Process |
+| [026](./026-github-oidc-zero-secrets-ci.md) | GitHub OIDC Federation — Zero Secrets in CI/CD | Proposed | Infrastructure |
 
 ## Categories
 
 ### Architecture (Core Patterns)
 - **ADR-003** — Provider pattern used by all infrastructure concerns
 - **ADR-007** — Hybrid monorepo: develop together, publish independently
+- **ADR-024** — Declarative secrets schema: typed, validated, machine-readable registry
 
 ### Frontend
 - **ADR-001** — Nuxt 3 chosen over Next.js for Vue ecosystem alignment
@@ -57,6 +61,7 @@
 - **ADR-005** — Lambda as default compute; ECS Fargate as documented escape hatch
 - **ADR-006** — EKS/Kubernetes explicitly rejected
 - **ADR-015** — LocalStack optional only; provider pattern preferred for local dev
+- **ADR-026** — GitHub OIDC federation: zero long-lived credentials in CI/CD
 
 ### CI/CD & Testing
 - **ADR-010** — Structured test artifacts, SBOM, provenance, reusable actions
@@ -70,6 +75,7 @@
 ### Process
 - **ADR-016** — Roadmap reorganisation with AI-first priority tiers and suggestion governance
 - **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
+- **ADR-025** — Platform CLI with structured JSON output for agent consumption
 - **ADR-019** — Fleet governance: template drift detection, sync PRs, compliance reporting
 - **ADR-020** — Context file minimalism: trim CLAUDE.md/AGENTS.md based on empirical evidence (arXiv:2602.11988)
 - **ADR-022** — Bidirectional fleet communication: downstream feedback, version tracking, update notifications
@@ -77,7 +83,7 @@
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `023`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `026`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that

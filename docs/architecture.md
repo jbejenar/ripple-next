@@ -24,6 +24,7 @@ graph TB
         Storage[Storage Provider]
         Email[Email Provider]
         Events[Event Bus]
+        Secrets[Secrets Provider]
     end
 
     subgraph "Data Layer"
@@ -68,6 +69,7 @@ graph TB
 | CMS            | Drupal/Tide JSON:API (prod) / Mock (test) — decoupled   | [ADR-009](./adr/009-cms-provider-drupal.md), [ADR-011](./adr/011-cms-decoupling-pull-out-drupal.md) |
 | Search         | MeiliSearch (local) / CMS fallback (mock/test)           | — |
 | File Storage   | S3 (prod) / MinIO (local) / fs (test)                   | [ADR-003](./adr/003-provider-pattern.md) |
+| Secrets        | SSM + Secrets Manager (prod) / Env (local) / Memory (test) | [ADR-024](./adr/024-declarative-secrets-schema.md) |
 | Infrastructure | SST v3 (Pulumi/Terraform)                               | [ADR-004](./adr/004-sst-over-cdk.md) |
 | Compute        | Lambda (default) + ECS Fargate (long-running)           | [ADR-005](./adr/005-lambda-default-ecs-escape.md), [ADR-006](./adr/006-no-kubernetes.md) |
 | Local Dev      | Provider pattern (no LocalStack required)                | [ADR-015](./adr/015-localstack-assessment.md) |
@@ -127,8 +129,9 @@ The CI pipeline provides structured observability and supply-chain security:
 - **Env schema validation** — Zod-based validation of required/optional env vars in CI quality gate
 - **Flaky test containment** — Quarantine policy with `pnpm check:quarantine` CI gate, 14-day time box, 5% budget cap
 - **Preview deploy guardrails** — GitHub environment protection, label-gated deploys, infra change auto-deploy
+- **OIDC federation** — GitHub Actions authenticates to AWS via OIDC identity tokens. No long-lived credentials stored in GitHub. See [ADR-026](./adr/026-github-oidc-zero-secrets-ci.md)
 
-See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-env-schema-validation.md), [ADR-013](./adr/013-flaky-test-containment.md), and [ADR-014](./adr/014-preview-deploy-guardrails.md) for the rationale.
+See [ADR-010](./adr/010-ci-observability-supply-chain.md), [ADR-012](./adr/012-env-schema-validation.md), [ADR-013](./adr/013-flaky-test-containment.md), [ADR-014](./adr/014-preview-deploy-guardrails.md), and [ADR-026](./adr/026-github-oidc-zero-secrets-ci.md) for the rationale.
 
 ## AI-First Workflow Strategy
 
@@ -172,7 +175,7 @@ for the full inventory of what ripple-next provides.
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (23 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (26 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 - [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — documentation standards for downstream repos
@@ -201,3 +204,6 @@ for the full inventory of what ripple-next provides.
 | [ADR-017](./adr/017-upstream-ripple-component-strategy.md) | Upstream Ripple — port, own, sync | Frontend |
 | [ADR-018](./adr/018-ai-first-workflow-strategy.md) | AI-first workflow strategy | Process |
 | [ADR-019](./adr/019-fleet-governance.md) | Fleet governance — drift detection + sync | Process |
+| [ADR-024](./adr/024-declarative-secrets-schema.md) | Declarative secrets schema | Architecture |
+| [ADR-025](./adr/025-platform-cli-structured-output.md) | Platform CLI — structured JSON output | Process |
+| [ADR-026](./adr/026-github-oidc-zero-secrets-ci.md) | GitHub OIDC — zero secrets in CI/CD | Infrastructure |

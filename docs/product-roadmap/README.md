@@ -7,7 +7,7 @@
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
 > 57 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 4 items active. 7 items parked.
+> 7 items active. 7 items parked.
 
 ---
 
@@ -28,6 +28,9 @@ gantt
 
     section Later (Quarter+)
     RN-059 Runtime monitoring ADR          :rn059, 2026-06-01, 7d
+    RN-068 Secrets schema & provider       :rn068, 2026-06-08, 21d
+    RN-069 Platform CLI                    :rn069, after rn068, 21d
+    RN-070 OIDC infra-as-code              :rn070, 2026-06-08, 7d
 ```
 
 ## Agent-Friction Scorecard
@@ -201,6 +204,115 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 
 ---
 
+### RN-068: Declarative Secrets Schema & Provider
+
+**Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
+**Source:** Agent friction — agents cannot programmatically discover which secrets are required, which stages they apply to, or which services consume them
+**AI-first benefit:** Agents can discover all required secrets for a stage via structured output, set secrets without knowing the underlying store, and validate environments before deployment.
+**Status:** Planned
+**Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment)
+
+Secrets are currently untyped — `.env.example` is a flat list with comments.
+Agents cannot determine required vs optional, secret vs config, or which stages
+need which values. Paired credentials (OAuth client ID + secret + token URL) are
+stored as unrelated env vars with no structured representation.
+
+Introduces a typed secrets schema (`@ripple-next/config`) and provider-pattern
+secrets management (`@ripple-next/secrets`) with memory, env, AWS, and chain
+providers. Boot-time validation catches misconfiguration before traffic arrives.
+
+#### Definition of Done
+
+- [ ] `packages/config/src/secrets.schema.ts` with `defineSecrets()` helper and typed `SecretsSchema`
+- [ ] `packages/secrets/` with `SecretsProvider` interface and 4 implementations (Memory, Env, AWS, Chain)
+- [ ] Zod validation for each secret format type (`postgres-uri`, `redis-uri`, `url`, `random-bytes-32`)
+- [ ] `MemorySecretsProvider` passes conformance suite in `packages/testing/conformance/`
+- [ ] `RPL-SEC-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
+- [ ] `pnpm verify` passes all quality gates
+
+#### Verification
+
+- `pnpm test --filter @ripple-next/secrets` passes with Tier 1 coverage thresholds
+- `pnpm test --filter @ripple-next/config` passes
+- `jq '.errors[] | select(.code | startswith("RPL-SEC"))' docs/error-taxonomy.json` returns 5 entries
+
+**Links:** [ADR-024](../adr/024-declarative-secrets-schema.md), [ADR-003](../adr/003-provider-pattern.md), [ADR-012](../adr/012-env-schema-validation.md)
+
+---
+
+### RN-069: Platform CLI — Unified Agent Interface
+
+**Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
+**Source:** Agent friction — agents must call a mix of `sst`, `drizzle-kit`, `pnpm` scripts, and AWS CLI with different output formats
+**AI-first benefit:** Agents interact with one tool, one output format, one error taxonomy. Every failure includes actionable next steps as CLI commands.
+**Status:** Planned
+**Dependencies:** [RN-068](#rn-068-declarative-secrets-schema--provider)
+
+Creates `@ripple-next/cli` providing `pnpm rip` — a unified CLI that wraps all
+platform operations behind a universal `CommandResult` JSON contract. Wraps
+secrets management, environment validation, deployment, health checks, database
+operations, and dependency auditing.
+
+Does not replace existing `pnpm` scripts — advanced users can still call `sst`
+or `drizzle-kit` directly. The CLI is a dev dependency, not a runtime dependency.
+
+#### Definition of Done
+
+- [ ] `packages/cli/` with commander.js or citty
+- [ ] `rip secrets` subcommands (list, get, set, required, audit)
+- [ ] `rip env` subcommands (validate, diff)
+- [ ] `rip deploy` wrapping `sst deploy` with pre/post validation
+- [ ] `rip status` for health checks
+- [ ] `rip db` wrapping drizzle-kit with safety checks
+- [ ] Every command supports `--json` returning `CommandResult` shape
+- [ ] `RPL-CLI-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
+- [ ] `pnpm verify` passes all quality gates
+
+#### Verification
+
+- `pnpm rip --help` lists all subcommands
+- `pnpm rip secrets required --stage dev --json` returns valid `CommandResult` JSON
+- `pnpm test --filter @ripple-next/cli` passes
+
+**Links:** [ADR-025](../adr/025-platform-cli-structured-output.md), [ADR-018](../adr/018-ai-first-workflow-strategy.md)
+
+---
+
+### RN-070: GitHub OIDC Federation — Codified Infrastructure
+
+**Priority:** Low | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Source:** Infrastructure gap — OIDC federation is already used in deploy workflows but the IAM setup is not codified as infrastructure-as-code
+**AI-first benefit:** Reproducible OIDC setup for downstream fleet repos. Agents can inspect and audit the trust policy without AWS console access.
+**Status:** Planned
+**Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment)
+
+The existing `deploy-staging.yml` and `deploy-production.yml` already use OIDC
+via `aws-actions/configure-aws-credentials@v4`. This item codifies the IAM OIDC
+provider and deploy role as an SST/Pulumi component in `infra/github-oidc.ts`,
+making the setup reproducible and auditable.
+
+Also establishes the `infra/` directory convention for infrastructure components
+that are separate from the main SST app definition in `sst.config.ts`.
+
+#### Definition of Done
+
+- [ ] `infra/github-oidc.ts` with `createGitHubOIDC()` function (done — added in this PR)
+- [ ] Trust policy scoped to repo + branch + environment
+- [ ] Secrets access policy scoped to `ripple-next/*` namespace
+- [ ] `RPL-DEP-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
+- [ ] Runbook for common OIDC trust policy debugging
+- [ ] `pnpm verify` passes all quality gates
+
+#### Verification
+
+- `infra/github-oidc.ts` compiles without errors
+- Trust policy includes `StringLike` conditions for repo, branch, and environment
+- Secrets policy is scoped to `arn:aws:ssm:*:*:parameter/ripple-next/*` and `arn:aws:secretsmanager:*:*:secret:ripple-next/*`
+
+**Links:** [ADR-026](../adr/026-github-oidc-zero-secrets-ci.md), [ADR-004](../adr/004-sst-over-cdk.md), `.github/workflows/deploy-staging.yml`
+
+---
+
 ## Parked / Not Doing
 
 | Item | Reason | Unpark trigger |
@@ -225,6 +337,8 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 | Docs-to-code ratio | RN-067 completed — 47 components added code weight; no new governance items until ratio ≤ 1:1 |
 | No live CMS integration | [RN-017](#rn-017-live-drupal-integration-testing) (Next) — Docker Tide fixture fallback activated |
 | No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) (Later) — acceptable until production deployment exists |
+| Secrets untyped / no structured management | [RN-068](#rn-068-declarative-secrets-schema--provider) (Later) — `.env.example` is flat; agents cannot discover requirements programmatically |
+| OIDC IAM setup not codified as IaC | [RN-070](#rn-070-github-oidc-federation--codified-infrastructure) (Later) — OIDC works but setup is not reproducible from code |
 
 ---
 
@@ -296,7 +410,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060).
+57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060, RN-068–RN-070).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
