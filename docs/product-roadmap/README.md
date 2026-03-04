@@ -410,7 +410,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060, RN-068–RN-070).
+57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
