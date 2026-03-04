@@ -27,6 +27,7 @@ export function scaffoldScripts(targetDir, config, options = {}) {
   // ── Fleet governance scripts ────────────────────────────────────────
   copyFileFromSource('scripts/fleet-feedback.mjs', 'scripts/fleet-feedback.mjs', targetDir, opts)
   copyFileFromSource('scripts/check-fleet-drift.mjs', 'scripts/check-fleet-drift.mjs', targetDir, opts)
+  copyFileFromSource('scripts/fleet-sync.mjs', 'scripts/fleet-sync.mjs', targetDir, opts)
 
   // ── scripts/verify.mjs (templated — simplified for downstream) ────
   writeFileExternal(
@@ -41,10 +42,12 @@ export function scaffoldScripts(targetDir, config, options = {}) {
  * Usage:
  *   pnpm verify              # run all gates
  *   pnpm verify -- --json    # JSON output
+ *   pnpm verify -- --fleet   # include fleet drift gate
  */
 import { execSync } from 'node:child_process'
 
 const jsonMode = process.argv.includes('--json')
+const fleetMode = process.argv.includes('--fleet')
 const results = []
 
 const gates = [
@@ -53,6 +56,10 @@ const gates = [
   { name: 'test', command: 'pnpm test' },
   { name: 'readiness', command: 'node scripts/check-readiness.mjs' },
 ]
+
+if (fleetMode) {
+  gates.push({ name: 'fleet-drift', command: 'node scripts/check-fleet-drift.mjs' })
+}
 
 for (const gate of gates) {
   const start = Date.now()

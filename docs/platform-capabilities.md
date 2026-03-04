@@ -91,7 +91,7 @@ stay synchronised with the golden path ([ADR-019](./adr/019-fleet-governance.md)
 
 **Sync strategies:** `sync` (exact file copy), `merge` (safe text merge), `advisory` (report only).
 
-**Commands:**
+**Upstream commands (run from ripple-next):**
 
 | Task | Command |
 |------|---------|
@@ -99,9 +99,22 @@ stay synchronised with the golden path ([ADR-019](./adr/019-fleet-governance.md)
 | Check drift | `pnpm check:fleet-drift -- --target=<path>` |
 | Preview sync | `pnpm fleet:sync -- --target=<path> --dry-run` |
 | Apply sync | `pnpm fleet:sync -- --target=<path>` |
+| View compliance | `pnpm fleet:compliance -- --reports=./reports` |
+| View changelog | `pnpm fleet:changelog` |
 | Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --submit` |
 
-See [`fleet-policy.json`](./fleet-policy.json) for the full machine-readable contract and [Downstream Workflows](./downstream-workflows.md) for operational details.
+**Downstream commands (run from consumer repos after scaffolding):**
+
+| Task | Command |
+|------|---------|
+| Check drift (self) | `pnpm check:fleet-drift` |
+| Check drift (JSON) | `pnpm check:fleet-drift -- --json` |
+| Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --submit` |
+| Share improvement | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit` |
+| Pull sync | `pnpm fleet:sync` |
+| Verify + fleet | `pnpm verify -- --fleet` |
+
+See [`fleet-policy.json`](./fleet-policy.json) for the full machine-readable contract, [Fleet Management Guide](./fleet-management.md) for comprehensive reference, and [Downstream Workflows](./downstream-workflows.md) for operational details.
 
 ---
 
@@ -111,7 +124,7 @@ One-command scaffolders for agents and developers:
 
 | Generator | Command | What It Creates |
 |-----------|---------|-----------------|
-| Scaffold | `pnpm generate:scaffold <path>` | Full downstream DX (~35+ files): AI docs, quality gates, CI, fleet governance, documentation templates |
+| Scaffold | `pnpm generate:scaffold <path>` | Full downstream DX (~40+ files): AI docs, quality gates, CI, fleet governance (drift, sync, feedback, composite actions), documentation templates |
 | Component | `pnpm generate:component <Name> --tier=<tier>` | Vue 3 component + Storybook story + Vue Test Utils test |
 | Provider | `pnpm generate:provider <Name> --concern=<concern>` | Provider implementation + conformance test |
 | API Endpoint | `pnpm generate:api-endpoint <Name>` | oRPC router + procedure + contract test |
@@ -193,6 +206,7 @@ Core architectural patterns that downstream repos should follow:
 
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — how to adopt these capabilities
 - [Downstream Workflows](./downstream-workflows.md) — CI consumption and fleet operations
+- [Fleet Management Guide](./fleet-management.md) — comprehensive fleet management reference (commands, surfaces, lifecycle)
 - [Architecture](./architecture.md) — ripple-next system architecture
 - [Platform Developer Guide](./platform-developer-guide.md) — platform setup, development, and deployment
 - [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages

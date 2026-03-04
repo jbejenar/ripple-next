@@ -170,6 +170,90 @@ runs:
     opts
   )
 
+  // ── fleet-drift action ──────────────────────────────────────────────
+  writeFileExternal(
+    join(targetDir, '.github', 'actions', 'fleet-drift', 'action.yml'),
+    `name: Fleet Drift Detection
+description: Check governed surfaces for drift against golden path
+
+outputs:
+  compliance-score:
+    description: Compliance score (0-100)
+    value: \${{ steps.drift.outputs.score }}
+  has-drift:
+    description: Whether any drift was detected
+    value: \${{ steps.drift.outputs.has-drift }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run fleet drift detection
+      id: drift
+      shell: bash
+      run: |
+        if [ -f scripts/check-fleet-drift.mjs ]; then
+          node scripts/check-fleet-drift.mjs --json > fleet-drift-report.json 2>/dev/null || true
+          if [ -f fleet-drift-report.json ]; then
+            SCORE=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8'));console.log(r.complianceScore||0)")
+            DRIFTED=$(node -e "const r=JSON.parse(require('fs').readFileSync('fleet-drift-report.json','utf-8'));const d=(r.findings||[]).filter(f=>f.status==='drifted'||f.status==='missing');console.log(d.length>0?'true':'false')")
+            echo "score=\$SCORE" >> "\$GITHUB_OUTPUT"
+            echo "has-drift=\$DRIFTED" >> "\$GITHUB_OUTPUT"
+            echo "Fleet compliance score: \$SCORE%"
+          else
+            echo "score=0" >> "\$GITHUB_OUTPUT"
+            echo "has-drift=true" >> "\$GITHUB_OUTPUT"
+          fi
+        else
+          echo "Fleet drift script not found — skipping"
+          echo "score=100" >> "\$GITHUB_OUTPUT"
+          echo "has-drift=false" >> "\$GITHUB_OUTPUT"
+        fi
+`,
+    targetDir,
+    opts
+  )
+
+  // ── fleet-feedback action ─────────────────────────────────────────
+  writeFileExternal(
+    join(targetDir, '.github', 'actions', 'fleet-feedback', 'action.yml'),
+    `name: Fleet Feedback
+description: Submit structured feedback to the golden-path upstream
+
+inputs:
+  feedback-type:
+    description: 'Feedback type (feature-request, bug-report, policy-exception, improvement-share, pain-point)'
+    required: true
+  title:
+    description: 'Feedback title'
+    required: true
+  description:
+    description: 'Feedback description'
+    required: true
+  surface-id:
+    description: 'Governed surface ID (optional)'
+    required: false
+  feedback-token:
+    description: 'GitHub token with issues:write on upstream repo'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Submit feedback
+      shell: bash
+      env:
+        FLEET_FEEDBACK_TOKEN: \${{ inputs.feedback-token }}
+      run: |
+        ARGS=(--type="\${{ inputs.feedback-type }}" --title="\${{ inputs.title }}" --description="\${{ inputs.description }}" --submit)
+        if [ -n "\${{ inputs.surface-id }}" ]; then
+          ARGS+=(--surface="\${{ inputs.surface-id }}")
+        fi
+        node scripts/fleet-feedback.mjs "\$\{ARGS[@]}"
+`,
+    targetDir,
+    opts
+  )
+
   // ── .github/pull_request_template.md ──────────────────────────────
   writeFileExternal(
     join(targetDir, '.github', 'pull_request_template.md'),
@@ -206,12 +290,22 @@ runs:
 # Default owners for everything
 * @${org}/engineering
 
-# CI/CD configuration
-.github/ @${org}/platform
+# CI/CD configuration (FLEET-SURF-001, FLEET-SURF-002)
+.github/workflows/ @${org}/platform
+.github/actions/ @${org}/platform
+.github/CODEOWNERS @${org}/platform
 
-# Security-sensitive files
-.env.example @${org}/security
+# Quality gate scripts (FLEET-SURF-004)
 scripts/ @${org}/platform
+
+# Fleet governance (FLEET-SURF-011)
+.fleet.json @${org}/platform
+docs/fleet-policy.json @${org}/platform
+docs/fleet-management.md @${org}/platform
+
+# Security-sensitive files (FLEET-SURF-006, FLEET-SURF-007)
+.env.example @${org}/security
+docs/iac-policies.json @${org}/platform
 `,
     targetDir,
     opts

@@ -598,4 +598,203 @@ Run \`pnpm conform\` to check your documentation compliance score.
     targetDir,
     opts
   )
+
+  // ── docs/fleet-management.md ───────────────────────────────────────
+  writeFileExternal(
+    join(targetDir, 'docs', 'fleet-management.md'),
+    `# Fleet Management — ${name}
+
+> Local fleet management guide. Authoritative upstream reference:
+> [ripple-next Fleet Management](https://github.com/${org}/ripple-next/blob/main/docs/fleet-management.md)
+
+---
+
+## Quick Reference
+
+### Commands
+
+| Task | Command |
+|------|---------|
+| Run all quality gates | \`pnpm verify\` |
+| Run quality gates + fleet drift | \`pnpm verify -- --fleet\` |
+| Check drift against golden path | \`pnpm check:fleet-drift\` |
+| Check drift (JSON for CI/agents) | \`pnpm check:fleet-drift -- --json\` |
+| Submit feedback upstream | \`pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit\` |
+| Preview feedback (dry run) | \`pnpm fleet:feedback -- --type=<type> --title="..." --dry-run --json\` |
+| Share local improvement | \`pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit\` |
+| Request policy exception | \`pnpm fleet:feedback -- --type=policy-exception --surface=<ID> --title="..." --submit\` |
+| Pull sync from golden path | \`pnpm fleet:sync\` |
+| Pull sync (dry run) | \`pnpm fleet:sync -- --dry-run\` |
+| Run fleet drift runbook | \`pnpm runbook fleet-drift-check\` |
+| Run feedback runbook | \`pnpm runbook fleet-feedback-submit\` |
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| \`.fleet.json\` | Tracks golden-path version, last sync time, policy version |
+| \`scripts/check-fleet-drift.mjs\` | Drift detection against golden path |
+| \`scripts/fleet-feedback.mjs\` | Structured feedback submission to upstream |
+| \`scripts/fleet-sync.mjs\` | Pull governed surfaces from golden path |
+| \`.github/workflows/fleet-feedback.yml\` | Manual dispatch + monthly auto-scan for drift |
+| \`.github/workflows/fleet-update.yml\` | Receives update notifications from golden path |
+| \`docs/runbooks/fleet-drift-check.json\` | Drift check runbook |
+| \`docs/runbooks/fleet-feedback-submit.json\` | Feedback submission runbook |
+
+---
+
+## Feedback Types
+
+| Type | Use Case |
+|------|----------|
+| \`feature-request\` | Request a new golden-path capability |
+| \`bug-report\` | Report an issue with a governed surface |
+| \`policy-exception\` | Request exception to a governance policy |
+| \`improvement-share\` | Share a local improvement for fleet-wide adoption |
+| \`pain-point\` | Report friction with a governed surface |
+
+---
+
+## Governed Surfaces
+
+This repo is governed by 13 surfaces across 3 severity levels:
+
+### Security-Critical (fix within 7 days)
+
+| ID | Name | Strategy | What It Governs |
+|----|------|----------|-----------------|
+| FLEET-SURF-002 | composite-actions | sync | \`.github/actions/\` (setup, quality, test) |
+| FLEET-SURF-003 | toolchain-pinning | sync | \`.nvmrc\`, \`package.json\` engines/packageManager |
+| FLEET-SURF-006 | security-config | sync | \`security.yml\`, \`CODEOWNERS\` |
+| FLEET-SURF-007 | iac-policies | sync | \`docs/iac-policies.json\`, IaC scanner |
+
+### Standards-Required (fix within 30 days)
+
+| ID | Name | Strategy | What It Governs |
+|----|------|----------|-----------------|
+| FLEET-SURF-001 | ci-workflows | sync | CI and security workflows |
+| FLEET-SURF-004 | quality-scripts | sync | Readiness, quarantine, verify scripts |
+| FLEET-SURF-005 | eslint-config | merge | \`eslint.config.js\` |
+| FLEET-SURF-008 | error-taxonomy | sync | \`docs/error-taxonomy.json\` |
+| FLEET-SURF-011 | fleet-governance-tooling | sync | Drift detection, fleet policy |
+
+### Recommended (advisory, no SLA)
+
+| ID | Name | Strategy | What It Governs |
+|----|------|----------|-----------------|
+| FLEET-SURF-009 | action-version-pinning | advisory | No floating \`@main\` refs in workflows |
+| FLEET-SURF-010 | ai-agent-instructions | advisory | CLAUDE.md, AGENTS.md, instructions |
+| FLEET-SURF-012 | downstream-documentation | advisory | Roadmap, architecture, readiness |
+| FLEET-SURF-013 | api-contract-documentation | advisory | API contracts, OpenAPI spec |
+
+---
+
+## Policy Exceptions
+
+When a governed surface doesn't apply to this repo, add an inline exception:
+
+\`\`\`javascript
+// fleet-policy-exception: FLEET-SURF-007 — No SST IaC config; stateless API service
+\`\`\`
+
+Exception rules:
+- Must be in a file within the governed surface scope
+- Must include justification
+- Tracked in drift reports
+- Expires after 90 days
+
+Or submit a formal exception request:
+\`\`\`bash
+pnpm fleet:feedback -- --type=policy-exception --surface=FLEET-SURF-007 \\
+  --title="No IaC — stateless API" --submit
+\`\`\`
+
+---
+
+## Version Tracking
+
+\`.fleet.json\` tracks the golden-path relationship:
+
+\`\`\`json
+{
+  "schema": "ripple-fleet-version/v1",
+  "goldenPathRepo": "${org}/ripple-next",
+  "goldenPathVersion": "<commit-sha>",
+  "scaffoldedAt": "<ISO-8601>",
+  "lastSyncedAt": "<ISO-8601>",
+  "fleetPolicyVersion": "1.3.0"
+}
+\`\`\`
+
+AI agents read this to understand how far behind the golden path this repo is.
+
+---
+
+## Error Codes
+
+| Code | Meaning | Severity |
+|------|---------|----------|
+| \`RPL-FLEET-001\` | Security-critical drift detected | error |
+| \`RPL-FLEET-002\` | Standards-required drift detected | warning |
+| \`RPL-FLEET-003\` | Advisory drift detected | info |
+| \`RPL-FEEDBACK-001\` | Feedback envelope validation failed | error |
+| \`RPL-FEEDBACK-002\` | Duplicate feedback detected | warning |
+| \`RPL-FEEDBACK-003\` | Feedback submitted successfully | info |
+| \`RPL-FEEDBACK-004\` | Feedback submission failed | error |
+
+---
+
+## CI Automation
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| \`fleet-feedback.yml\` | Manual dispatch / monthly | Submit feedback or auto-scan for drift |
+| \`fleet-update.yml\` | \`repository_dispatch\` from golden path | Receive update notifications |
+
+---
+
+## Compliance Targets
+
+| Metric | Target |
+|--------|--------|
+| Minimum compliance score | 80% |
+| Security-critical drifts | 0 allowed |
+| Standards-required drifts | max 2 |
+
+---
+
+## Related Documentation
+
+- [Upstream Fleet Management](https://github.com/${org}/ripple-next/blob/main/docs/fleet-management.md) — authoritative reference
+- [Downstream Workflows](https://github.com/${org}/ripple-next/blob/main/docs/downstream-workflows.md) — CI consumption
+- [Platform Capabilities](https://github.com/${org}/ripple-next/blob/main/docs/platform-capabilities.md) — full capability inventory
+- [ADR-019](https://github.com/${org}/ripple-next/blob/main/docs/adr/019-fleet-governance.md) — fleet governance design
+- [ADR-022](https://github.com/${org}/ripple-next/blob/main/docs/adr/022-bidirectional-fleet-communication.md) — feedback system
+`,
+    targetDir,
+    opts
+  )
+
+  // ── docs/fleet-policy.json (copy from upstream) ───────────────────
+  // Downstream repos need fleet-policy.json for drift detection to work.
+  // This is governed by FLEET-SURF-011 (sync strategy).
+  writeFileExternal(
+    join(targetDir, 'docs', 'fleet-policy.json'),
+    JSON.stringify(
+      {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        title: `${name} Fleet Policy`,
+        description:
+          'Fleet governance policy synced from golden path. See ADR-019.',
+        version: '1.3.0',
+        schema: 'ripple-fleet-policy/v1',
+        note: 'This file is managed by fleet governance (FLEET-SURF-011). Do not edit manually — it will be overwritten by fleet sync.',
+        goldenPathSource: `https://github.com/${org}/ripple-next/blob/main/docs/fleet-policy.json`,
+      },
+      null,
+      2
+    ) + '\n',
+    targetDir,
+    opts
+  )
 }
