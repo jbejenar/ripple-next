@@ -114,6 +114,7 @@ pnpm dev
 | [ADR-024](docs/adr/024-declarative-secrets-schema.md) | Declarative secrets schema — typed, validated, machine-readable |
 | [ADR-025](docs/adr/025-platform-cli-structured-output.md) | Platform CLI — unified `pnpm rip` with JSON output |
 | [ADR-026](docs/adr/026-github-oidc-zero-secrets-ci.md) | GitHub OIDC federation — zero secrets in CI/CD |
+| [ADR-027](docs/adr/027-licensing-government-procurement.md) | Licensing — Apache 2.0 for government procurement |
 
 ## Stack
 
@@ -222,6 +223,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow and upstream Ripple
 
 ## License
 
-This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE).
 
-Free to use for personal, academic, research, and other noncommercial purposes. Commercial use requires a separate license — contact the maintainers for details.
+Licensed under the Apache License, Version 2.0. You may use, modify, and distribute this software in compliance with the License. See [LICENSE](LICENSE) for the full text.
