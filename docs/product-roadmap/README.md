@@ -6,8 +6,8 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 57 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 8 items active. 7 items parked.
+> 58 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 7 items active. 7 items parked.
 
 ---
 
@@ -20,7 +20,7 @@ gantt
     axisFormat %b %Y
 
     section Now (0–4 weeks)
-    RN-058 Licensing resolution ADR        :active, rn058, 2026-03-03, 7d
+    RN-058 Licensing resolution ADR        :done, rn058, 2026-03-03, 7d
     RN-071 Fleet management docs           :active, rn071, 2026-03-04, 5d
     RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
 
@@ -87,20 +87,22 @@ per-subsystem detail.
 **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** High
 **Source:** Critique 3 — "Non-commercial licensing for government software is unusual and potentially incompatible with government procurement"
 **AI-first benefit:** License ambiguity blocks automated publishing gates; clear licensing enables deterministic npm publish decisions.
-**Status:** Planned
+**Status:** Done
 **Dependencies:** None
 
 PolyForm Noncommercial 1.0.0 may conflict with government contractor usage and
 standard procurement frameworks. [RN-049](./ARCHIVE.md#rn-049-licensing-clarity-guardrail-spdx--dual-license-model)
 added SPDX metadata but did not resolve the underlying licensing question.
 
+Resolved by [ADR-027](../adr/027-licensing-government-procurement.md): relicensed to Apache 2.0.
+
 #### Definition of Done
 
-- [ ] ADR evaluating license options (PolyForm Noncommercial, Apache 2.0, MIT, dual-license, AGPL)
-- [ ] Government procurement compatibility analysis included
-- [ ] Decision documented with explicit rationale
-- [ ] All `package.json` license fields updated if license changes
-- [ ] LICENSE file updated if license changes
+- [x] ADR evaluating license options (PolyForm Noncommercial, Apache 2.0, MIT, dual-license, AGPL)
+- [x] Government procurement compatibility analysis included
+- [x] Decision documented with explicit rationale
+- [x] All `package.json` license fields updated if license changes
+- [x] LICENSE file updated if license changes
 
 #### Verification
 
@@ -371,9 +373,9 @@ that are separate from the main SST app definition in `sst.config.ts`.
 
 | Risk | Mitigation |
 |------|------------|
-| PolyForm Noncommercial blocks government procurement | [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility) (Now) |
+| ~~PolyForm Noncommercial blocks government procurement~~ | Resolved — [ADR-027](../adr/027-licensing-government-procurement.md) relicensed to Apache 2.0 |
 | No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (Now) |
-| Every package still v0.1.0 | Blocked by [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility); first publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
+| Every package still v0.1.0 | License resolved ([ADR-027](../adr/027-licensing-government-procurement.md)); first publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
 | Docs-to-code ratio | RN-067 completed — 47 components added code weight; no new governance items until ratio ≤ 1:1 |
 | No live CMS integration | [RN-017](#rn-017-live-drupal-integration-testing) (Next) — Docker Tide fixture fallback activated |
 | No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) (Later) — acceptable until production deployment exists |
@@ -450,7 +452,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-57 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057–RN-060).
+58 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057, RN-059–RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)

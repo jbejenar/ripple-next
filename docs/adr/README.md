@@ -34,6 +34,7 @@
 | [024](./024-declarative-secrets-schema.md) | Declarative Secrets Schema — Typed, Validated, Machine-Readable | Proposed | Architecture |
 | [025](./025-platform-cli-structured-output.md) | Platform CLI — Unified `pnpm rip` with Structured JSON Output | Proposed | Process |
 | [026](./026-github-oidc-zero-secrets-ci.md) | GitHub OIDC Federation — Zero Secrets in CI/CD | Proposed | Infrastructure |
+| [027](./027-licensing-government-procurement.md) | Licensing Resolution — Apache 2.0 for Government Procurement Compatibility | Accepted | Legal |
 
 ## Categories
 
@@ -72,6 +73,9 @@
 ### API
 - **ADR-021** — oRPC as canonical API boundary; OpenAPI-first contracts; public/internal classification
 
+### Legal
+- **ADR-027** — Apache 2.0 chosen over PolyForm Noncommercial for government procurement compatibility
+
 ### Process
 - **ADR-016** — Roadmap reorganisation with AI-first priority tiers and suggestion governance
 - **ADR-018** — AI-first workflow strategy: runbooks, generators, error taxonomy
@@ -83,7 +87,7 @@
 
 ## Conventions
 
-- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `026`)
+- **Numbering:** Sequential, zero-padded to 3 digits (`001`, `002`, ..., `027`)
 - **Status values:** `Proposed` → `Accepted` → `Superseded` (or `Deprecated`)
 - **File naming:** `{number}-{slug}.md` (e.g., `003-provider-pattern.md`)
 - **Immutability:** Once accepted, an ADR is never modified. Create a new ADR that
