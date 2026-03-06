@@ -1,0 +1,63 @@
+{
+  "name": "debug-oidc-trust",
+  "description": "Debug GitHub OIDC federation trust policy failures when GitHub Actions cannot assume the AWS deploy role.",
+  "preconditions": [
+    {
+      "description": "AWS CLI is installed and configured with admin access",
+      "command": "aws sts get-caller-identity --output json",
+      "expect": "exit 0"
+    },
+    {
+      "description": "GitHub Actions workflow has id-token: write permission",
+      "command": "grep -r 'id-token: write' .github/workflows/deploy-*.yml",
+      "expect": "exit 0"
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "command": "aws iam list-open-id-connect-providers --output json | grep token.actions.githubusercontent.com",
+      "description": "Verify OIDC provider exists — if no output, the GitHub OIDC provider has not been created. Run the infra/github-oidc.ts component via SST to create it."
+    },
+    {
+      "order": 2,
+      "command": "aws iam get-open-id-connect-provider --open-id-connect-provider-arn $(aws iam list-open-id-connect-providers --query 'OpenIDConnectProviderList[?contains(Arn, `token.actions.githubusercontent.com`)].Arn' --output text) --output json",
+      "description": "Inspect OIDC provider configuration — verify clientIdList includes 'sts.amazonaws.com' and thumbprintList is set."
+    },
+    {
+      "order": 3,
+      "command": "aws iam get-role --role-name GitHubDeployRole --query 'Role.AssumeRolePolicyDocument' --output json 2>/dev/null || echo 'Role not found'",
+      "description": "Check trust policy conditions — verify StringLike conditions match the repo, branch, and environment claims. The sub claim format is 'repo:OWNER/REPO:ref:refs/heads/BRANCH' or 'repo:OWNER/REPO:environment:ENV'."
+    },
+    {
+      "order": 4,
+      "command": "echo 'In a failing GitHub Actions run, add this step to inspect the OIDC token claims:' && echo '  - run: |' && echo '      TOKEN=$(curl -sS -H \"Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN\" \"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com\" | jq -r .value)' && echo '      echo \"$TOKEN\" | cut -d. -f2 | base64 -d 2>/dev/null | jq .' && echo 'Key claims to verify: sub (must match trust policy), aud (must be sts.amazonaws.com), repository, ref, environment'",
+      "description": "Validate GitHub token claims — decode the OIDC token in a workflow to verify the sub, aud, repository, ref, and environment claims match the trust policy conditions."
+    },
+    {
+      "order": 5,
+      "command": "aws iam simulate-principal-policy --policy-source-arn $(aws iam get-role --role-name GitHubDeployRole --query 'Role.Arn' --output text) --action-names s3:PutObject cloudformation:CreateStack ssm:GetParameter secretsmanager:GetSecretValue --output json",
+      "description": "Check IAM role permissions — simulate key actions the deploy role needs. Verify SST deploy permissions (CloudFormation, S3, Lambda) and secrets access (SSM, Secrets Manager)."
+    }
+  ],
+  "validation": [
+    {
+      "description": "Deploy role can be assumed from GitHub Actions",
+      "command": "Check the GitHub Actions workflow run log for 'Assuming role with OIDC' success message",
+      "expect": "No 'AccessDenied' or 'Not authorized to perform sts:AssumeRoleWithWebIdentity' errors"
+    },
+    {
+      "description": "SST deploy succeeds after trust fix",
+      "command": "Trigger a deploy workflow run and verify it completes without OIDC errors",
+      "expect": "Workflow run completes with green status"
+    }
+  ],
+  "rollback": "OIDC trust policy changes are non-destructive. If the trust policy is too broad, tighten the StringLike conditions. If too narrow, add the missing repo/branch/environment subjects.",
+  "related": [
+    "docs/adr/026-github-oidc-zero-secrets-ci.md",
+    "infra/github-oidc.ts",
+    ".github/workflows/deploy-staging.yml",
+    ".github/workflows/deploy-production.yml",
+    "docs/error-taxonomy.json"
+  ]
+}

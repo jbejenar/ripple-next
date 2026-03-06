@@ -27,7 +27,10 @@
       "@ripple-next/validation": ["./packages/validation/index.ts"],
       "@ripple-next/shared": ["./packages/shared/index.ts"],
       "@ripple-next/testing": ["./packages/testing/setup.ts"],
-      "@ripple-next/cms": ["./packages/cms/index.ts"]
+      "@ripple-next/cms": ["./packages/cms/index.ts"],
+      "@ripple-next/config": ["./packages/config/src/index.ts"],
+      "@ripple-next/secrets": ["./packages/secrets/index.ts"],
+      "@ripple-next/cli": ["./packages/cli/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "**/dist/**", "**/.output/**", "**/.nuxt/**"]

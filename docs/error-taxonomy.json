@@ -26,7 +26,7 @@
     "API": "API contract and OpenAPI specification violations (RN-051, ADR-021)",
     "AUTH": "OIDC/OAuth identity provider failures (RN-045)",
     "FEEDBACK": "Fleet feedback submission and validation failures (RN-052, ADR-022)",
-    "PERF": "Web performance budget violations — Core Web Vitals (RN-050)",
+    "PERF": "Web performance budget violations \u2014 Core Web Vitals (RN-050)",
     "CONFORM": "Golden-path conformance scoring failures (RN-028)",
     "ADOPT": "Downstream adoption and documentation governance failures (ADR-023)",
     "SEC": "Secrets management and credential validation failures (ADR-024)",
@@ -35,6 +35,508 @@
     "MONITOR": "Runtime monitoring and observability failures (ADR-028)"
   },
   "errors": [
+    {
+      "code": "RPL-A11Y-001",
+      "category": "A11Y",
+      "severity": "error",
+      "message": "Critical or serious WCAG 2.1 AA accessibility violation detected",
+      "gate": "test:a11y",
+      "remediation": [
+        "Run: pnpm test:a11y -- --json to see full violation details",
+        "Each violation includes a helpUrl with fix guidance from Deque University",
+        "Common fixes: add alt text, fix color contrast, add form labels, ensure keyboard access",
+        "See docs/accessibility.md for component checklist"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-A11Y-002",
+      "category": "A11Y",
+      "severity": "warning",
+      "message": "Moderate or minor WCAG 2.1 AA accessibility violation detected",
+      "gate": "test:a11y",
+      "remediation": [
+        "Run: pnpm test:a11y -- --json to see violation details",
+        "Moderate/minor violations are non-blocking but should be addressed",
+        "Review the helpUrl for each violation for specific remediation guidance"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ADOPT-001",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Missing downstream adoption documentation \u2014 product roadmap, architecture, or API contracts not found or empty",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm generate:scaffold to bootstrap documentation templates",
+        "See docs/downstream-adoption-guide.md for required documentation",
+        "Minimum: product roadmap with Now/Next/Later structure, architecture overview",
+        "This is advisory and does not block CI"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-ADOPT-002",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Product roadmap is placeholder or empty \u2014 no structured roadmap items found",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Replace scaffold placeholder checkboxes with structured roadmap items",
+        "Follow the Now/Next/Later timeline structure",
+        "Use a numbered prefix convention (e.g., MY-001) for items",
+        "Include: status, priority, dependencies, definition of done per item",
+        "See docs/downstream-adoption-guide.md for roadmap template"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-ADOPT-003",
+      "category": "ADOPT",
+      "severity": "warning",
+      "message": "Architecture documentation missing \u2014 no system overview, stack table, or architecture decisions documented",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Create docs/architecture.md with system overview and stack table",
+        "Document which @ripple-next/* packages are consumed and why",
+        "Document any deviations from the golden-path architecture",
+        "Add at least one ADR for the most significant architecture decision",
+        "See docs/downstream-adoption-guide.md for architecture doc template"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-API-001",
+      "category": "API",
+      "severity": "error",
+      "message": "OpenAPI spec drift detected \u2014 committed spec does not match generated output from oRPC router",
+      "gate": "check:api-contract",
+      "remediation": [
+        "Run: pnpm generate:openapi to regenerate docs/api/openapi.json",
+        "Commit the updated spec with your changes",
+        "This drift occurs when router definitions change without regenerating the spec"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-API-002",
+      "category": "API",
+      "severity": "error",
+      "message": "Breaking change detected in public API (visibility: 'public') without version bump",
+      "gate": "check:api-breaking",
+      "remediation": [
+        "Public API changes that remove or rename endpoints, parameters, or response fields are breaking",
+        "Bump the API version (/v1/ \u2192 /v2/) and add migration notes",
+        "Or mark the old endpoint as deprecated and add the new one alongside it",
+        "See ADR-021 for versioning and deprecation policy"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-API-003",
+      "category": "API",
+      "severity": "info",
+      "message": "Non-breaking API change detected \u2014 new endpoints, methods, or optional fields added",
+      "gate": "check:api-breaking",
+      "remediation": [
+        "Non-breaking changes are informational and do not block CI",
+        "Review the change report: pnpm check:api-breaking -- --json",
+        "Ensure downstream consumers are aware of new capabilities",
+        "Update API documentation if needed"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-001",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC issuer discovery failed \u2014 cannot reach .well-known/openid-configuration",
+      "gate": "test:integration",
+      "remediation": [
+        "Verify the OIDC issuer URL is correct and reachable",
+        "Check network connectivity to the identity provider",
+        "Ensure the IdP is running and the realm exists (Keycloak: /realms/<name>)",
+        "If using a custom CA, ensure it is trusted by the Node.js process"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-002",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC redirect URI mismatch \u2014 callback URL not registered with the identity provider",
+      "gate": "test:integration",
+      "remediation": [
+        "Ensure the redirect_uri in OidcConfig matches the URI registered in the IdP client settings",
+        "Keycloak: Admin Console \u2192 Clients \u2192 <client-id> \u2192 Valid Redirect URIs",
+        "The URI must match exactly including protocol, host, port, and path"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-003",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC token validation failed \u2014 clock skew, invalid signature, or expired token",
+      "gate": "test:integration",
+      "remediation": [
+        "Check system clock synchronization between app server and IdP (use NTP)",
+        "Verify the IdP's signing keys are accessible via the JWKS endpoint",
+        "Check that the ID token audience (aud) matches the configured client_id",
+        "If clock skew is persistent, configure a tolerance window"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-AUTH-004",
+      "category": "AUTH",
+      "severity": "error",
+      "message": "OIDC authorization code exchange failed \u2014 invalid code, expired code, or PKCE mismatch",
+      "gate": "test:integration",
+      "remediation": [
+        "Authorization codes are single-use \u2014 ensure the code is not being replayed",
+        "Codes expire quickly (typically 60s) \u2014 check for latency in the callback handler",
+        "PKCE mismatch: ensure the same code_verifier is used for both authorization and token exchange",
+        "Verify client_secret is correct if using confidential client authentication"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-BUILD-001",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "TypeScript compilation failed",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm typecheck to see errors",
+        "Fix compilation errors before building",
+        "Check tsconfig.json for correct configuration"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-BUILD-002",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "Missing dependency",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm install --frozen-lockfile",
+        "If new dependency needed: pnpm add <package> --filter @ripple-next/<package>",
+        "For workspace deps: pnpm add @ripple-next/<dep> --filter @ripple-next/<package> --workspace"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-BUILD-003",
+      "category": "BUILD",
+      "severity": "error",
+      "message": "Nuxt build failure",
+      "gate": "build",
+      "remediation": [
+        "Run: pnpm build to see full error",
+        "Check for import errors, missing modules, or config issues",
+        "Try: npx nuxi prepare apps/web before building"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-001",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Unknown CLI command \u2014 the command passed to pnpm rip is not recognised",
+      "gate": "cli",
+      "remediation": [
+        "Run: pnpm rip --help to see available commands",
+        "Common commands: secrets, env, deploy, status, db, deps",
+        "See ADR-025 for the full command surface"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-002",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Invalid flag combination \u2014 the flags provided to a CLI command are incompatible or malformed",
+      "gate": "cli",
+      "remediation": [
+        "Run: pnpm rip <command> --help to see valid flags",
+        "Common issue: mixing --json with interactive flags"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-003",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Stage not specified and no default set \u2014 a command that requires a deployment stage was run without --stage",
+      "gate": "cli",
+      "remediation": [
+        "Pass --stage <dev|staging|production> explicitly",
+        "Or set the STAGE environment variable: export STAGE=dev",
+        "Local dev defaults to 'dev' stage"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-004",
+      "category": "CLI",
+      "severity": "error",
+      "message": "JSON output parse error \u2014 the wrapped command produced output that could not be parsed as valid JSON",
+      "gate": "cli",
+      "remediation": [
+        "Run the underlying command directly to inspect its raw output",
+        "Ensure the wrapped command supports --json output if expected",
+        "Report this as a CLI bug if the command should produce parseable output"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-005",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Wrapped command not found \u2014 a tool required by the CLI subcommand is not installed (e.g., drizzle-kit, sst)",
+      "gate": "cli",
+      "remediation": [
+        "Run: pnpm install to ensure all workspace dependencies are available",
+        "Check that the required tool is listed in package.json devDependencies",
+        "For global tools: install via npm install -g <tool> or use npx <tool>"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-CONFORM-001",
+      "category": "CONFORM",
+      "severity": "error",
+      "message": "Conformance rubric missing or invalid \u2014 cannot load docs/conformance-rubric.json",
+      "gate": "conform",
+      "remediation": [
+        "Ensure docs/conformance-rubric.json exists and is valid JSON",
+        "Copy from the golden-path repo if missing",
+        "Run: pnpm conform -- --json for detailed diagnostics"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-CONFORM-002",
+      "category": "CONFORM",
+      "severity": "error",
+      "message": "Conformance check failed \u2014 repo does not meet golden-path standard",
+      "gate": "conform",
+      "remediation": [
+        "Run: pnpm conform to see the full conformance report",
+        "Each failed check includes specific remediation guidance",
+        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-CONFORM-003",
+      "category": "CONFORM",
+      "severity": "info",
+      "message": "Conformance score below passing threshold but no critical failures",
+      "gate": "conform",
+      "remediation": [
+        "Run: pnpm conform -- --json to see category-by-category breakdown",
+        "Focus on high-weight categories first (Setup, Quality, CI)",
+        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-001",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Pre-deploy validation failed \u2014 one or more pre-deploy checks failed (env validation, type checking, or test suite)",
+      "gate": "deploy",
+      "remediation": [
+        "Run: pnpm rip env validate --stage <stage> --json to see specific failures",
+        "Fix reported issues before retrying deploy",
+        "Common causes: missing secrets, type errors, failing tests"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-002",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Deploy failed \u2014 SST error \u2014 the underlying Pulumi/CloudFormation error is included in the data payload",
+      "gate": "deploy",
+      "remediation": [
+        "Check the error details in the data field for specific resource failures",
+        "Common causes: IAM permissions, resource limits, or state drift",
+        "Run: sst dev locally to debug infrastructure issues",
+        "See docs/deployment.md for troubleshooting guide"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-003",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Deploy failed \u2014 missing required secrets \u2014 one or more secrets required for the target stage are not set in AWS",
+      "gate": "deploy",
+      "remediation": [
+        "Run: pnpm rip secrets required --stage <stage> --json to see missing secrets",
+        "Set missing secrets: pnpm rip secrets set <KEY> <value> --stage <stage>",
+        "Deploy was aborted before reaching SST to prevent partial deployment"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-004",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Post-deploy health check failed \u2014 deployment completed but one or more services failed their health check",
+      "gate": "deploy",
+      "remediation": [
+        "Run: pnpm rip status --stage <stage> --json for detailed health check results",
+        "Check CloudWatch logs for the failing service",
+        "Common causes: missing environment variables, database connectivity, cold start timeouts",
+        "Consider rollback if health checks do not recover within 5 minutes"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-005",
+      "category": "DEP",
+      "severity": "error",
+      "message": "OIDC provider not found \u2014 the GitHub Actions OIDC identity provider does not exist in the target AWS account",
+      "gate": "deploy",
+      "remediation": [
+        "Run the infra/github-oidc.ts component via SST to create the OIDC provider",
+        "Verify: aws iam list-open-id-connect-providers | grep token.actions.githubusercontent.com",
+        "See docs/runbooks/debug-oidc-trust.json for step-by-step debugging",
+        "See ADR-026 for the OIDC federation architecture"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-006",
+      "category": "DEP",
+      "severity": "error",
+      "message": "OIDC trust policy condition mismatch \u2014 the GitHub token sub claim does not match any condition in the IAM trust policy",
+      "gate": "deploy",
+      "remediation": [
+        "Check the trust policy on the deploy role: aws iam get-role --role-name GitHubDeployRole --query Role.AssumeRolePolicyDocument",
+        "Verify the repo, branch, and environment in the StringLike conditions match the workflow context",
+        "Common cause: deploying from an unregistered branch or missing environment in the trust policy",
+        "See docs/runbooks/debug-oidc-trust.json step 3 for detailed inspection"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-007",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Deploy role assumption failed \u2014 sts:AssumeRoleWithWebIdentity returned AccessDenied",
+      "gate": "deploy",
+      "remediation": [
+        "Ensure the workflow has 'permissions: id-token: write' set",
+        "Verify the role ARN in the workflow matches the actual deploy role",
+        "Check that the OIDC provider audience includes 'sts.amazonaws.com'",
+        "See docs/runbooks/debug-oidc-trust.json for the full debugging runbook"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-008",
+      "category": "DEP",
+      "severity": "error",
+      "message": "SST deploy permission denied \u2014 the deploy role lacks required IAM permissions for infrastructure provisioning",
+      "gate": "deploy",
+      "remediation": [
+        "Check the deploy role's attached policies: aws iam list-attached-role-policies --role-name GitHubDeployRole",
+        "SST requires CloudFormation, S3, Lambda, IAM, and other service permissions",
+        "Review infra/github-oidc.ts for the expected policy attachments",
+        "Use aws iam simulate-principal-policy to test specific actions"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEP-009",
+      "category": "DEP",
+      "severity": "error",
+      "message": "Secrets access denied in deploy \u2014 the deploy role cannot read or write secrets required for deployment",
+      "gate": "deploy",
+      "remediation": [
+        "Verify the DeploySecretsPolicy is attached to the deploy role",
+        "Secrets must be scoped to arn:aws:ssm:*:*:parameter/ripple-next/* and arn:aws:secretsmanager:*:*:secret:ripple-next/*",
+        "Check: aws iam get-role-policy --role-name GitHubDeployRole --policy-name DeploySecretsPolicy",
+        "See infra/github-oidc.ts for the expected secrets policy definition"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-001",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "Health check failure after deployment",
+      "gate": "deploy",
+      "remediation": [
+        "Check /api/health endpoint for specific check failures",
+        "Verify DATABASE_URL and REDIS_URL are set in the deployed environment",
+        "Check CloudWatch logs for error details",
+        "Consider rollback: npx sst deploy --stage <previous-stage>"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-002",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "Missing AWS credentials or permissions",
+      "gate": "deploy",
+      "remediation": [
+        "Ensure AWS credentials are configured",
+        "CI uses OIDC role assumption \u2014 check the workflow's role-to-assume setting",
+        "Local: aws configure or set AWS_PROFILE"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DEPLOY-003",
+      "category": "DEPLOY",
+      "severity": "error",
+      "message": "SST deployment failure",
+      "gate": "deploy",
+      "remediation": [
+        "Check sst.config.ts for configuration errors",
+        "Review the SST deployment output for specific resource failures",
+        "Try: npx sst deploy --stage pr-<number> for isolated testing"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DOCS-001",
+      "category": "DOCS",
+      "severity": "warning",
+      "message": "Context file approaching size limit \u2014 CLAUDE.md > 60 lines or AGENTS.md > 220 lines",
+      "gate": "check:context-size",
+      "remediation": [
+        "Review ADR-020 for context file minimalism principles",
+        "Move domain-specific content to .github/instructions/ files",
+        "Only keep content that prevents CI failures if unknown",
+        "Run: pnpm check:context-size --json for detailed report"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-DOCS-002",
+      "category": "DOCS",
+      "severity": "error",
+      "message": "Context file exceeds hard size limit \u2014 CLAUDE.md > 80 lines or AGENTS.md > 280 lines",
+      "gate": "check:context-size",
+      "remediation": [
+        "Review ADR-020 for context file minimalism principles",
+        "Move domain-specific content to .github/instructions/ files",
+        "Remove command catalogs, directory listings, and CI details",
+        "Only keep content that prevents CI failures if unknown",
+        "Run: pnpm check:context-size --json for detailed report"
+      ],
+      "automatable": false
+    },
     {
       "code": "RPL-ENV-001",
       "category": "ENV",
@@ -137,241 +639,138 @@
       "automatable": false
     },
     {
-      "code": "RPL-LINT-001",
-      "category": "LINT",
+      "code": "RPL-FEEDBACK-001",
+      "category": "FEEDBACK",
       "severity": "error",
-      "message": "ESLint errors found",
-      "gate": "lint",
+      "message": "Fleet feedback envelope validation failed \u2014 payload does not conform to ripple-fleet-feedback/v1 schema",
+      "gate": "fleet:feedback",
       "remediation": [
-        "Run: pnpm lint to see errors",
-        "Auto-fix: pnpm lint:fix",
-        "Common causes: console.log (use console.warn/error), explicit any (use unknown)"
+        "Run: pnpm fleet:feedback -- --type=<type> --title=\"...\" --dry-run to preview the payload",
+        "Ensure required fields are present: feedbackType, title, description",
+        "Valid feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point",
+        "Check docs/fleet-feedback-schema.json for full schema"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-LINT-002",
-      "category": "LINT",
-      "severity": "error",
-      "message": "console.log/console.info used in production code",
-      "gate": "lint",
+      "code": "RPL-FEEDBACK-002",
+      "category": "FEEDBACK",
+      "severity": "info",
+      "message": "Duplicate fleet feedback detected \u2014 similar feedback already exists in upstream",
+      "gate": "fleet:feedback-intake",
       "remediation": [
-        "Replace console.log with console.warn or console.error",
-        "Or remove the console statement entirely",
-        "Exempt files: *.test.ts, migrate.ts, seed.ts, *.handler.ts"
+        "Check existing upstream issues for duplicates before submitting",
+        "Use --json flag to get the duplicate issue URL",
+        "Consider adding a comment to the existing issue instead of creating a new one"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FEEDBACK-003",
+      "category": "FEEDBACK",
+      "severity": "info",
+      "message": "Fleet feedback submitted successfully \u2014 upstream issue created",
+      "gate": "fleet:feedback",
+      "remediation": [
+        "No action required \u2014 feedback has been submitted",
+        "Track the upstream issue URL returned in the --json output",
+        "Upstream team will triage within the configured SLA"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FEEDBACK-004",
+      "category": "FEEDBACK",
+      "severity": "error",
+      "message": "Fleet feedback submission failed \u2014 could not create upstream issue",
+      "gate": "fleet:feedback",
+      "remediation": [
+        "Check FLEET_FEEDBACK_TOKEN is set and has issues:write scope on the upstream repo",
+        "Verify network connectivity to GitHub API",
+        "Run with --dry-run to validate payload without submitting",
+        "Retry: pnpm fleet:feedback -- --submit (exit code 2 = submission failed)"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-FLEET-001",
+      "category": "FLEET",
+      "severity": "error",
+      "message": "Security-critical fleet drift detected \u2014 governed surface has diverged from golden path",
+      "gate": "check:fleet-drift",
+      "remediation": [
+        "Run: pnpm check:fleet-drift --json to see full drift report",
+        "Security-critical surfaces: composite actions, toolchain pins, security config, IaC policies",
+        "Accept the automated sync PR or manually update the drifted files",
+        "SLA: fix within 7 days"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-LINT-003",
-      "category": "LINT",
+      "code": "RPL-FLEET-002",
+      "category": "FLEET",
       "severity": "error",
-      "message": "Explicit 'any' type used",
-      "gate": "lint",
+      "message": "Standards-required fleet drift detected \u2014 governed surface has diverged from golden path",
+      "gate": "check:fleet-drift",
       "remediation": [
-        "Replace 'any' with 'unknown' and add type guards",
-        "Or use a more specific type",
-        "Example: function parse(data: unknown): MyType { ... }"
+        "Run: pnpm check:fleet-drift --json to see full drift report",
+        "Standards surfaces: CI workflows, quality scripts, ESLint config, error taxonomy",
+        "Accept the automated sync PR or manually update the drifted files",
+        "SLA: fix within 30 days"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-TYPE-001",
-      "category": "TYPE",
-      "severity": "error",
-      "message": "TypeScript type errors found",
-      "gate": "typecheck",
+      "code": "RPL-FLEET-003",
+      "category": "FLEET",
+      "severity": "warning",
+      "message": "Recommended fleet drift detected \u2014 advisory surface has diverged from golden path",
+      "gate": "check:fleet-drift",
       "remediation": [
-        "Run: pnpm typecheck to see errors",
-        "Fix type mismatches, missing imports, or incorrect signatures",
-        "If Nuxt auto-import types are missing: npx nuxi prepare apps/web"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-TYPE-002",
-      "category": "TYPE",
-      "severity": "error",
-      "message": "Missing Nuxt auto-import types (.nuxt directory stale)",
-      "gate": "typecheck",
-      "remediation": [
-        "Run: npx nuxi prepare apps/web",
-        "This regenerates the .nuxt/ types directory",
-        "Then re-run: pnpm typecheck"
+        "Run: pnpm check:fleet-drift --json to see drift details",
+        "Recommended drifts are advisory only and do not block CI",
+        "Consider updating to stay aligned with golden path best practices"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-TEST-001",
-      "category": "TEST",
+      "code": "RPL-FLEET-004",
+      "category": "FLEET",
       "severity": "error",
-      "message": "Test suite failures",
-      "gate": "test",
+      "message": "Fleet policy manifest missing or invalid",
+      "gate": "check:fleet-drift",
       "remediation": [
-        "Run: pnpm test to see failures",
-        "Check test output for assertion errors",
-        "Run specific package: pnpm test --filter @ripple-next/<package>"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-TEST-002",
-      "category": "TEST",
-      "severity": "error",
-      "message": "Coverage threshold not met",
-      "gate": "test",
-      "remediation": [
-        "Check vitest.workspace.ts for tier-specific thresholds",
-        "Tier 1 (auth, db, queue): 60% lines/functions, 50% branches",
-        "Tier 2 (email, storage, events, cms): 40% lines/functions, 30% branches",
-        "Tier 3 (UI, services): 20% lines/functions, 10% branches",
-        "Add tests to increase coverage. Never lower thresholds."
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-TEST-003",
-      "category": "TEST",
-      "severity": "error",
-      "message": "Conformance test failures for provider implementation",
-      "gate": "test",
-      "remediation": [
-        "Run the conformance suite for your provider",
-        "Implement all interface methods from packages/<concern>/types.ts",
-        "See packages/testing/conformance/ for the test suite"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-BUILD-001",
-      "category": "BUILD",
-      "severity": "error",
-      "message": "TypeScript compilation failed",
-      "gate": "build",
-      "remediation": [
-        "Run: pnpm typecheck to see errors",
-        "Fix compilation errors before building",
-        "Check tsconfig.json for correct configuration"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-BUILD-002",
-      "category": "BUILD",
-      "severity": "error",
-      "message": "Missing dependency",
-      "gate": "build",
-      "remediation": [
-        "Run: pnpm install --frozen-lockfile",
-        "If new dependency needed: pnpm add <package> --filter @ripple-next/<package>",
-        "For workspace deps: pnpm add @ripple-next/<dep> --filter @ripple-next/<package> --workspace"
+        "Ensure docs/fleet-policy.json exists and is valid JSON",
+        "The fleet policy manifest defines governed surfaces and sync strategies",
+        "Copy from the golden-path repo if missing: docs/fleet-policy.json"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-BUILD-003",
-      "category": "BUILD",
-      "severity": "error",
-      "message": "Nuxt build failure",
-      "gate": "build",
+      "code": "RPL-FLEET-005",
+      "category": "FLEET",
+      "severity": "warning",
+      "message": "Fleet policy exception has expired",
+      "gate": "check:fleet-drift",
       "remediation": [
-        "Run: pnpm build to see full error",
-        "Check for import errors, missing modules, or config issues",
-        "Try: npx nuxi prepare apps/web before building"
+        "Fleet policy exceptions expire after 90 days",
+        "Review the exception and either renew it with updated justification or fix the drift",
+        "Exception format: // fleet-policy-exception: <SURFACE-ID> \u2014 <justification>"
       ],
       "automatable": false
     },
     {
-      "code": "RPL-DEPLOY-001",
-      "category": "DEPLOY",
-      "severity": "error",
-      "message": "Health check failure after deployment",
-      "gate": "deploy",
+      "code": "RPL-FLEET-006",
+      "category": "FLEET",
+      "severity": "info",
+      "message": "Fleet compliance score below target threshold",
+      "gate": "check:fleet-drift",
       "remediation": [
-        "Check /api/health endpoint for specific check failures",
-        "Verify DATABASE_URL and REDIS_URL are set in the deployed environment",
-        "Check CloudWatch logs for error details",
-        "Consider rollback: npx sst deploy --stage <previous-stage>"
+        "Run: pnpm fleet:compliance --json to see per-repo compliance scores",
+        "Target: minimum 80% compliance score",
+        "Address security-critical drifts first, then standards-required"
       ],
       "automatable": false
-    },
-    {
-      "code": "RPL-DEPLOY-002",
-      "category": "DEPLOY",
-      "severity": "error",
-      "message": "Missing AWS credentials or permissions",
-      "gate": "deploy",
-      "remediation": [
-        "Ensure AWS credentials are configured",
-        "CI uses OIDC role assumption — check the workflow's role-to-assume setting",
-        "Local: aws configure or set AWS_PROFILE"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DEPLOY-003",
-      "category": "DEPLOY",
-      "severity": "error",
-      "message": "SST deployment failure",
-      "gate": "deploy",
-      "remediation": [
-        "Check sst.config.ts for configuration errors",
-        "Review the SST deployment output for specific resource failures",
-        "Try: npx sst deploy --stage pr-<number> for isolated testing"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-POLICY-001",
-      "category": "POLICY",
-      "severity": "error",
-      "message": "Readiness manifest drift detected",
-      "gate": "check:readiness",
-      "remediation": [
-        "Run: pnpm check:readiness to see drift details",
-        "Update docs/readiness.json to match codebase reality",
-        "Common causes: new package not added, stale blocker, missing test files"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-POLICY-002",
-      "category": "POLICY",
-      "severity": "error",
-      "message": "Quarantine policy violation",
-      "gate": "check:quarantine",
-      "remediation": [
-        "Run: pnpm check:quarantine to see violations",
-        "Common violations: expired quarantine (>14 days), missing issue link, budget exceeded (>5%)",
-        "Fix the flaky test or extend quarantine with justification"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-POLICY-003",
-      "category": "POLICY",
-      "severity": "error",
-      "message": "Quarantined test in Tier 1 package (not allowed)",
-      "gate": "check:quarantine",
-      "remediation": [
-        "Tier 1 packages (auth, db, queue) do not allow quarantined tests",
-        "Fix the flaky test immediately or rewrite it",
-        "See ADR-013 for quarantine policy details"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-POLICY-004",
-      "category": "POLICY",
-      "severity": "error",
-      "message": "Published package API changed without changeset",
-      "gate": "changeset",
-      "remediation": [
-        "Run: pnpm changeset",
-        "Select the affected package(s) and semver bump type",
-        "Commit the generated .changeset/*.md file with your PR"
-      ],
-      "automatable": true
     },
     {
       "code": "RPL-IAC-001",
@@ -395,7 +794,7 @@
       "remediation": [
         "Replace allowOrigins: ['*'] with specific domain origins",
         "Example: allowOrigins: ['https://example.vic.gov.au']",
-        "Or add exception comment: // iac-policy-exception: IAC-002 — <justification>"
+        "Or add exception comment: // iac-policy-exception: IAC-002 \u2014 <justification>"
       ],
       "automatable": false
     },
@@ -465,150 +864,194 @@
       "automatable": false
     },
     {
-      "code": "RPL-FLEET-001",
-      "category": "FLEET",
+      "code": "RPL-LINT-001",
+      "category": "LINT",
       "severity": "error",
-      "message": "Security-critical fleet drift detected — governed surface has diverged from golden path",
-      "gate": "check:fleet-drift",
+      "message": "ESLint errors found",
+      "gate": "lint",
       "remediation": [
-        "Run: pnpm check:fleet-drift --json to see full drift report",
-        "Security-critical surfaces: composite actions, toolchain pins, security config, IaC policies",
-        "Accept the automated sync PR or manually update the drifted files",
-        "SLA: fix within 7 days"
+        "Run: pnpm lint to see errors",
+        "Auto-fix: pnpm lint:fix",
+        "Common causes: console.log (use console.warn/error), explicit any (use unknown)"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-FLEET-002",
-      "category": "FLEET",
+      "code": "RPL-LINT-002",
+      "category": "LINT",
       "severity": "error",
-      "message": "Standards-required fleet drift detected — governed surface has diverged from golden path",
-      "gate": "check:fleet-drift",
+      "message": "console.log/console.info used in production code",
+      "gate": "lint",
       "remediation": [
-        "Run: pnpm check:fleet-drift --json to see full drift report",
-        "Standards surfaces: CI workflows, quality scripts, ESLint config, error taxonomy",
-        "Accept the automated sync PR or manually update the drifted files",
-        "SLA: fix within 30 days"
+        "Replace console.log with console.warn or console.error",
+        "Or remove the console statement entirely",
+        "Exempt files: *.test.ts, migrate.ts, seed.ts, *.handler.ts"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-FLEET-003",
-      "category": "FLEET",
+      "code": "RPL-LINT-003",
+      "category": "LINT",
+      "severity": "error",
+      "message": "Explicit 'any' type used",
+      "gate": "lint",
+      "remediation": [
+        "Replace 'any' with 'unknown' and add type guards",
+        "Or use a more specific type",
+        "Example: function parse(data: unknown): MyType { ... }"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-MONITOR-001",
+      "category": "MONITOR",
+      "severity": "error",
+      "message": "Monitoring configuration missing or invalid \u2014 Powertools Logger/Metrics/Tracer not initialized",
+      "gate": "deploy",
+      "remediation": [
+        "Ensure Powertools middleware is configured in the Lambda handler",
+        "Check that the POWERTOOLS_SERVICE_NAME environment variable is set",
+        "Verify sst.config.ts links the function with the correct environment variables",
+        "See ADR-028 for monitoring implementation guide"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-002",
+      "category": "MONITOR",
+      "severity": "error",
+      "message": "Trace export failure \u2014 X-Ray daemon unreachable or OTel collector endpoint not responding",
+      "gate": "deploy",
+      "remediation": [
+        "Verify the Lambda execution role has xray:PutTraceSegments and xray:PutTelemetryRecords permissions",
+        "If using OTel escape hatch: check the OTEL_EXPORTER_OTLP_ENDPOINT environment variable",
+        "Check VPC security groups if the function runs inside a VPC",
+        "Traces will be lost but function execution is not affected"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-003",
+      "category": "MONITOR",
       "severity": "warning",
-      "message": "Recommended fleet drift detected — advisory surface has diverged from golden path",
-      "gate": "check:fleet-drift",
+      "message": "Metric emission failure \u2014 EMF payload rejected by CloudWatch or metric dimensions exceed limits",
+      "gate": "deploy",
       "remediation": [
-        "Run: pnpm check:fleet-drift --json to see drift details",
-        "Recommended drifts are advisory only and do not block CI",
-        "Consider updating to stay aligned with golden path best practices"
+        "Check CloudWatch Logs for EMF parsing errors (look for 'FAILED' in embedded metric format logs)",
+        "Ensure metric dimensions do not exceed 30 per metric (CloudWatch limit)",
+        "Verify the metric namespace is valid (no special characters)",
+        "Metrics will be lost but function execution is not affected"
       ],
-      "automatable": true
+      "automatable": false
     },
     {
-      "code": "RPL-FLEET-004",
-      "category": "FLEET",
-      "severity": "error",
-      "message": "Fleet policy manifest missing or invalid",
-      "gate": "check:fleet-drift",
-      "remediation": [
-        "Ensure docs/fleet-policy.json exists and is valid JSON",
-        "The fleet policy manifest defines governed surfaces and sync strategies",
-        "Copy from the golden-path repo if missing: docs/fleet-policy.json"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-FLEET-005",
-      "category": "FLEET",
+      "code": "RPL-MONITOR-004",
+      "category": "MONITOR",
       "severity": "warning",
-      "message": "Fleet policy exception has expired",
-      "gate": "check:fleet-drift",
+      "message": "Alert threshold exceeded \u2014 CloudWatch Alarm entered ALARM state for a monitored metric",
+      "gate": "runtime",
       "remediation": [
-        "Fleet policy exceptions expire after 90 days",
-        "Review the exception and either renew it with updated justification or fix the drift",
-        "Exception format: // fleet-policy-exception: <SURFACE-ID> — <justification>"
+        "Check the specific alarm in CloudWatch Console for the metric that triggered",
+        "Common triggers: Lambda error rate > 1%, SSR p99 > 3s, DLQ depth > 0",
+        "Review recent deployments or traffic changes that may have caused the regression",
+        "Use X-Ray traces to identify the root cause of elevated error rates or latency"
       ],
       "automatable": false
     },
     {
-      "code": "RPL-FLEET-006",
-      "category": "FLEET",
-      "severity": "info",
-      "message": "Fleet compliance score below target threshold",
-      "gate": "check:fleet-drift",
-      "remediation": [
-        "Run: pnpm fleet:compliance --json to see per-repo compliance scores",
-        "Target: minimum 80% compliance score",
-        "Address security-critical drifts first, then standards-required"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-A11Y-001",
-      "category": "A11Y",
-      "severity": "error",
-      "message": "Critical or serious WCAG 2.1 AA accessibility violation detected",
-      "gate": "test:a11y",
-      "remediation": [
-        "Run: pnpm test:a11y -- --json to see full violation details",
-        "Each violation includes a helpUrl with fix guidance from Deque University",
-        "Common fixes: add alt text, fix color contrast, add form labels, ensure keyboard access",
-        "See docs/accessibility.md for component checklist"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-A11Y-002",
-      "category": "A11Y",
+      "code": "RPL-MONITOR-005",
+      "category": "MONITOR",
       "severity": "warning",
-      "message": "Moderate or minor WCAG 2.1 AA accessibility violation detected",
-      "gate": "test:a11y",
+      "message": "Cold start duration exceeded budget (>2s) \u2014 Lambda initialization taking longer than expected",
+      "gate": "runtime",
       "remediation": [
-        "Run: pnpm test:a11y -- --json to see violation details",
-        "Moderate/minor violations are non-blocking but should be addressed",
-        "Review the helpUrl for each violation for specific remediation guidance"
+        "Review the function's initialization code for expensive operations (large imports, DB connections)",
+        "Consider using provisioned concurrency for latency-sensitive functions (e.g., Nuxt SSR)",
+        "Check the warm setting in sst.config.ts \u2014 increase if cold starts are frequent",
+        "Move heavy initialization to lazy loading patterns to reduce cold start time"
       ],
       "automatable": false
     },
     {
-      "code": "RPL-SESSION-001",
-      "category": "SESSION",
+      "code": "RPL-PERF-001",
+      "category": "PERF",
       "severity": "error",
-      "message": "Session logger initialization failed (missing .sessions directory or write permission)",
-      "gate": "session:start",
+      "message": "Critical Core Web Vitals regression \u2014 metric exceeds 'poor' threshold (LCP > 4s, CLS > 0.25, FCP > 3s, TTFB > 1.8s, TBT > 600ms)",
+      "gate": "perf-audit",
       "remediation": [
-        "Ensure .sessions/ directory exists and is writable",
-        "Run: mkdir -p .sessions",
-        "Check disk space and file permissions"
+        "Run pnpm test:perf -- --json to identify the failing metric and route",
+        "LCP: reduce render-blocking resources, optimize images, preload critical assets",
+        "CLS: set explicit dimensions on images/embeds, avoid dynamic content injection above the fold",
+        "FCP: reduce server response time, eliminate render-blocking CSS/JS",
+        "TTFB: check server performance, enable caching, reduce redirects",
+        "TBT: break up long tasks, defer non-critical JavaScript, use web workers"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-PERF-002",
+      "category": "PERF",
+      "severity": "warning",
+      "message": "Moderate Core Web Vitals regression \u2014 metric exceeds 'needs improvement' threshold (LCP > 2.5s, CLS > 0.1, FCP > 1.8s, TTFB > 800ms, TBT > 200ms)",
+      "gate": "perf-audit",
+      "remediation": [
+        "Run pnpm test:perf -- --json to identify the affected metric and route",
+        "Review recent changes for performance impact (bundle size, network requests, DOM size)",
+        "Non-blocking but should be addressed before reaching critical thresholds"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-001",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Readiness manifest drift detected",
+      "gate": "check:readiness",
+      "remediation": [
+        "Run: pnpm check:readiness to see drift details",
+        "Update docs/readiness.json to match codebase reality",
+        "Common causes: new package not added, stale blocker, missing test files"
       ],
       "automatable": true
     },
     {
-      "code": "RPL-SESSION-002",
-      "category": "SESSION",
-      "severity": "warning",
-      "message": "Session log file corrupted or unreadable",
-      "gate": "agent:metrics",
+      "code": "RPL-POLICY-002",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Quarantine policy violation",
+      "gate": "check:quarantine",
       "remediation": [
-        "Check .sessions/ for malformed JSON files",
-        "Remove corrupt files: find .sessions -name '*.json' -empty -delete",
-        "Corrupted files are skipped during aggregation — no data loss for other sessions"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-SESSION-003",
-      "category": "SESSION",
-      "severity": "info",
-      "message": "No session data available for aggregation",
-      "gate": "agent:metrics",
-      "remediation": [
-        "Start tracking sessions: pnpm session:start",
-        "End sessions to record data: pnpm session:end -- --run-gates",
-        "Session data is opt-in — no action required if observability is not needed"
+        "Run: pnpm check:quarantine to see violations",
+        "Common violations: expired quarantine (>14 days), missing issue link, budget exceeded (>5%)",
+        "Fix the flaky test or extend quarantine with justification"
       ],
       "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-003",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Quarantined test in Tier 1 package (not allowed)",
+      "gate": "check:quarantine",
+      "remediation": [
+        "Tier 1 packages (auth, db, queue) do not allow quarantined tests",
+        "Fix the flaky test immediately or rewrite it",
+        "See ADR-013 for quarantine policy details"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-POLICY-004",
+      "category": "POLICY",
+      "severity": "error",
+      "message": "Published package API changed without changeset",
+      "gate": "changeset",
+      "remediation": [
+        "Run: pnpm changeset",
+        "Select the affected package(s) and semver bump type",
+        "Commit the generated .changeset/*.md file with your PR"
+      ],
+      "automatable": true
     },
     {
       "code": "RPL-SCAFFOLD-001",
@@ -640,7 +1083,7 @@
       "code": "RPL-SCAFFOLD-003",
       "category": "SCAFFOLD",
       "severity": "error",
-      "message": "Scaffold path traversal blocked — target path outside root",
+      "message": "Scaffold path traversal blocked \u2014 target path outside root",
       "gate": "generate:scaffold",
       "remediation": [
         "Ensure the target directory path is absolute and valid",
@@ -650,301 +1093,10 @@
       "automatable": false
     },
     {
-      "code": "RPL-DOCS-001",
-      "category": "DOCS",
-      "severity": "warning",
-      "message": "Context file approaching size limit — CLAUDE.md > 60 lines or AGENTS.md > 220 lines",
-      "gate": "check:context-size",
-      "remediation": [
-        "Review ADR-020 for context file minimalism principles",
-        "Move domain-specific content to .github/instructions/ files",
-        "Only keep content that prevents CI failures if unknown",
-        "Run: pnpm check:context-size --json for detailed report"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DOCS-002",
-      "category": "DOCS",
-      "severity": "error",
-      "message": "Context file exceeds hard size limit — CLAUDE.md > 80 lines or AGENTS.md > 280 lines",
-      "gate": "check:context-size",
-      "remediation": [
-        "Review ADR-020 for context file minimalism principles",
-        "Move domain-specific content to .github/instructions/ files",
-        "Remove command catalogs, directory listings, and CI details",
-        "Only keep content that prevents CI failures if unknown",
-        "Run: pnpm check:context-size --json for detailed report"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-API-001",
-      "category": "API",
-      "severity": "error",
-      "message": "OpenAPI spec drift detected — committed spec does not match generated output from oRPC router",
-      "gate": "check:api-contract",
-      "remediation": [
-        "Run: pnpm generate:openapi to regenerate docs/api/openapi.json",
-        "Commit the updated spec with your changes",
-        "This drift occurs when router definitions change without regenerating the spec"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-API-002",
-      "category": "API",
-      "severity": "error",
-      "message": "Breaking change detected in public API (visibility: 'public') without version bump",
-      "gate": "check:api-breaking",
-      "remediation": [
-        "Public API changes that remove or rename endpoints, parameters, or response fields are breaking",
-        "Bump the API version (/v1/ → /v2/) and add migration notes",
-        "Or mark the old endpoint as deprecated and add the new one alongside it",
-        "See ADR-021 for versioning and deprecation policy"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-API-003",
-      "category": "API",
-      "severity": "info",
-      "message": "Non-breaking API change detected — new endpoints, methods, or optional fields added",
-      "gate": "check:api-breaking",
-      "remediation": [
-        "Non-breaking changes are informational and do not block CI",
-        "Review the change report: pnpm check:api-breaking -- --json",
-        "Ensure downstream consumers are aware of new capabilities",
-        "Update API documentation if needed"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-AUTH-001",
-      "category": "AUTH",
-      "severity": "error",
-      "message": "OIDC issuer discovery failed — cannot reach .well-known/openid-configuration",
-      "gate": "test:integration",
-      "remediation": [
-        "Verify the OIDC issuer URL is correct and reachable",
-        "Check network connectivity to the identity provider",
-        "Ensure the IdP is running and the realm exists (Keycloak: /realms/<name>)",
-        "If using a custom CA, ensure it is trusted by the Node.js process"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-AUTH-002",
-      "category": "AUTH",
-      "severity": "error",
-      "message": "OIDC redirect URI mismatch — callback URL not registered with the identity provider",
-      "gate": "test:integration",
-      "remediation": [
-        "Ensure the redirect_uri in OidcConfig matches the URI registered in the IdP client settings",
-        "Keycloak: Admin Console → Clients → <client-id> → Valid Redirect URIs",
-        "The URI must match exactly including protocol, host, port, and path"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-AUTH-003",
-      "category": "AUTH",
-      "severity": "error",
-      "message": "OIDC token validation failed — clock skew, invalid signature, or expired token",
-      "gate": "test:integration",
-      "remediation": [
-        "Check system clock synchronization between app server and IdP (use NTP)",
-        "Verify the IdP's signing keys are accessible via the JWKS endpoint",
-        "Check that the ID token audience (aud) matches the configured client_id",
-        "If clock skew is persistent, configure a tolerance window"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-AUTH-004",
-      "category": "AUTH",
-      "severity": "error",
-      "message": "OIDC authorization code exchange failed — invalid code, expired code, or PKCE mismatch",
-      "gate": "test:integration",
-      "remediation": [
-        "Authorization codes are single-use — ensure the code is not being replayed",
-        "Codes expire quickly (typically 60s) — check for latency in the callback handler",
-        "PKCE mismatch: ensure the same code_verifier is used for both authorization and token exchange",
-        "Verify client_secret is correct if using confidential client authentication"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-FEEDBACK-001",
-      "category": "FEEDBACK",
-      "severity": "error",
-      "message": "Fleet feedback envelope validation failed — payload does not conform to ripple-fleet-feedback/v1 schema",
-      "gate": "fleet:feedback",
-      "remediation": [
-        "Run: pnpm fleet:feedback -- --type=<type> --title=\"...\" --dry-run to preview the payload",
-        "Ensure required fields are present: feedbackType, title, description",
-        "Valid feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point",
-        "Check docs/fleet-feedback-schema.json for full schema"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-FEEDBACK-002",
-      "category": "FEEDBACK",
-      "severity": "info",
-      "message": "Duplicate fleet feedback detected — similar feedback already exists in upstream",
-      "gate": "fleet:feedback-intake",
-      "remediation": [
-        "Check existing upstream issues for duplicates before submitting",
-        "Use --json flag to get the duplicate issue URL",
-        "Consider adding a comment to the existing issue instead of creating a new one"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-FEEDBACK-003",
-      "category": "FEEDBACK",
-      "severity": "info",
-      "message": "Fleet feedback submitted successfully — upstream issue created",
-      "gate": "fleet:feedback",
-      "remediation": [
-        "No action required — feedback has been submitted",
-        "Track the upstream issue URL returned in the --json output",
-        "Upstream team will triage within the configured SLA"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-FEEDBACK-004",
-      "category": "FEEDBACK",
-      "severity": "error",
-      "message": "Fleet feedback submission failed — could not create upstream issue",
-      "gate": "fleet:feedback",
-      "remediation": [
-        "Check FLEET_FEEDBACK_TOKEN is set and has issues:write scope on the upstream repo",
-        "Verify network connectivity to GitHub API",
-        "Run with --dry-run to validate payload without submitting",
-        "Retry: pnpm fleet:feedback -- --submit (exit code 2 = submission failed)"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-PERF-001",
-      "category": "PERF",
-      "severity": "error",
-      "message": "Critical Core Web Vitals regression — metric exceeds 'poor' threshold (LCP > 4s, CLS > 0.25, FCP > 3s, TTFB > 1.8s, TBT > 600ms)",
-      "gate": "perf-audit",
-      "remediation": [
-        "Run pnpm test:perf -- --json to identify the failing metric and route",
-        "LCP: reduce render-blocking resources, optimize images, preload critical assets",
-        "CLS: set explicit dimensions on images/embeds, avoid dynamic content injection above the fold",
-        "FCP: reduce server response time, eliminate render-blocking CSS/JS",
-        "TTFB: check server performance, enable caching, reduce redirects",
-        "TBT: break up long tasks, defer non-critical JavaScript, use web workers"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-PERF-002",
-      "category": "PERF",
-      "severity": "warning",
-      "message": "Moderate Core Web Vitals regression — metric exceeds 'needs improvement' threshold (LCP > 2.5s, CLS > 0.1, FCP > 1.8s, TTFB > 800ms, TBT > 200ms)",
-      "gate": "perf-audit",
-      "remediation": [
-        "Run pnpm test:perf -- --json to identify the affected metric and route",
-        "Review recent changes for performance impact (bundle size, network requests, DOM size)",
-        "Non-blocking but should be addressed before reaching critical thresholds"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-CONFORM-001",
-      "category": "CONFORM",
-      "severity": "error",
-      "message": "Conformance rubric missing or invalid — cannot load docs/conformance-rubric.json",
-      "gate": "conform",
-      "remediation": [
-        "Ensure docs/conformance-rubric.json exists and is valid JSON",
-        "Copy from the golden-path repo if missing",
-        "Run: pnpm conform -- --json for detailed diagnostics"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-CONFORM-002",
-      "category": "CONFORM",
-      "severity": "error",
-      "message": "Conformance check failed — repo does not meet golden-path standard",
-      "gate": "conform",
-      "remediation": [
-        "Run: pnpm conform to see the full conformance report",
-        "Each failed check includes specific remediation guidance",
-        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-CONFORM-003",
-      "category": "CONFORM",
-      "severity": "info",
-      "message": "Conformance score below passing threshold but no critical failures",
-      "gate": "conform",
-      "remediation": [
-        "Run: pnpm conform -- --json to see category-by-category breakdown",
-        "Focus on high-weight categories first (Setup, Quality, CI)",
-        "Use pnpm generate:scaffold to bootstrap missing golden-path files"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-ADOPT-001",
-      "category": "ADOPT",
-      "severity": "warning",
-      "message": "Missing downstream adoption documentation — product roadmap, architecture, or API contracts not found or empty",
-      "gate": "check:fleet-drift",
-      "remediation": [
-        "Run: pnpm generate:scaffold to bootstrap documentation templates",
-        "See docs/downstream-adoption-guide.md for required documentation",
-        "Minimum: product roadmap with Now/Next/Later structure, architecture overview",
-        "This is advisory and does not block CI"
-      ],
-      "automatable": true
-    },
-    {
-      "code": "RPL-ADOPT-002",
-      "category": "ADOPT",
-      "severity": "warning",
-      "message": "Product roadmap is placeholder or empty — no structured roadmap items found",
-      "gate": "check:fleet-drift",
-      "remediation": [
-        "Replace scaffold placeholder checkboxes with structured roadmap items",
-        "Follow the Now/Next/Later timeline structure",
-        "Use a numbered prefix convention (e.g., MY-001) for items",
-        "Include: status, priority, dependencies, definition of done per item",
-        "See docs/downstream-adoption-guide.md for roadmap template"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-ADOPT-003",
-      "category": "ADOPT",
-      "severity": "warning",
-      "message": "Architecture documentation missing — no system overview, stack table, or architecture decisions documented",
-      "gate": "check:fleet-drift",
-      "remediation": [
-        "Create docs/architecture.md with system overview and stack table",
-        "Document which @ripple-next/* packages are consumed and why",
-        "Document any deviations from the golden-path architecture",
-        "Add at least one ADR for the most significant architecture decision",
-        "See docs/downstream-adoption-guide.md for architecture doc template"
-      ],
-      "automatable": true
-    },
-    {
       "code": "RPL-SEC-001",
       "category": "SEC",
       "severity": "error",
-      "message": "Missing required secret — a secret marked as required in the secrets schema was not found in any provider in the resolution chain",
+      "message": "Missing required secret \u2014 a secret marked as required in the secrets schema was not found in any provider in the resolution chain",
       "gate": "secrets:validate",
       "remediation": [
         "Run: pnpm rip secrets required --stage <stage> --json to see all missing secrets",
@@ -958,7 +1110,7 @@
       "code": "RPL-SEC-002",
       "category": "SEC",
       "severity": "error",
-      "message": "Secret value failed format validation — value does not match the expected format defined in the secrets schema",
+      "message": "Secret value failed format validation \u2014 value does not match the expected format defined in the secrets schema",
       "gate": "secrets:validate",
       "remediation": [
         "Check the value stored for this key and ensure it matches the format in packages/config/src/secrets.schema.ts",
@@ -971,11 +1123,11 @@
       "code": "RPL-SEC-003",
       "category": "SEC",
       "severity": "warning",
-      "message": "Secret exists in schema but not in store — the secrets schema declares this key but no provider has a value for it",
+      "message": "Secret exists in schema but not in store \u2014 the secrets schema declares this key but no provider has a value for it",
       "gate": "secrets:validate",
       "remediation": [
         "Run: pnpm rip secrets required --stage <stage> --json to see all missing secrets",
-        "This secret may not be required — check the 'required' field in the schema",
+        "This secret may not be required \u2014 check the 'required' field in the schema",
         "If needed, set it: pnpm rip secrets set <KEY> <value> --stage <stage>"
       ],
       "automatable": false
@@ -984,7 +1136,7 @@
       "code": "RPL-SEC-004",
       "category": "SEC",
       "severity": "error",
-      "message": "Structured secret missing required field — a structured secret (e.g. oauth-client) is missing one or more required fields",
+      "message": "Structured secret missing required field \u2014 a structured secret (e.g. oauth-client) is missing one or more required fields",
       "gate": "secrets:validate",
       "remediation": [
         "Update the secret value to include all required fields",
@@ -997,7 +1149,7 @@
       "code": "RPL-SEC-005",
       "category": "SEC",
       "severity": "warning",
-      "message": "Secret rotation overdue — a rotatable secret has not been updated within the expected rotation window",
+      "message": "Secret rotation overdue \u2014 a rotatable secret has not been updated within the expected rotation window",
       "gate": "secrets:audit",
       "remediation": [
         "Rotate the secret and update it: pnpm rip secrets set <KEY> <new-value> --stage <stage>",
@@ -1007,166 +1159,110 @@
       "automatable": false
     },
     {
-      "code": "RPL-CLI-001",
-      "category": "CLI",
+      "code": "RPL-SESSION-001",
+      "category": "SESSION",
       "severity": "error",
-      "message": "Unknown CLI command — the command passed to pnpm rip is not recognised",
-      "gate": "cli",
+      "message": "Session logger initialization failed (missing .sessions directory or write permission)",
+      "gate": "session:start",
       "remediation": [
-        "Run: pnpm rip --help to see available commands",
-        "Common commands: secrets, env, deploy, status, db, deps",
-        "See ADR-025 for the full command surface"
+        "Ensure .sessions/ directory exists and is writable",
+        "Run: mkdir -p .sessions",
+        "Check disk space and file permissions"
       ],
-      "automatable": false
+      "automatable": true
     },
     {
-      "code": "RPL-CLI-002",
-      "category": "CLI",
-      "severity": "error",
-      "message": "Invalid flag combination — the flags provided to a CLI command are incompatible or malformed",
-      "gate": "cli",
-      "remediation": [
-        "Run: pnpm rip <command> --help to see valid flags",
-        "Common issue: mixing --json with interactive flags"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-CLI-003",
-      "category": "CLI",
-      "severity": "error",
-      "message": "Stage not specified and no default set — a command that requires a deployment stage was run without --stage",
-      "gate": "cli",
-      "remediation": [
-        "Pass --stage <dev|staging|production> explicitly",
-        "Or set the STAGE environment variable: export STAGE=dev",
-        "Local dev defaults to 'dev' stage"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DEP-001",
-      "category": "DEP",
-      "severity": "error",
-      "message": "Pre-deploy validation failed — one or more pre-deploy checks failed (env validation, type checking, or test suite)",
-      "gate": "deploy",
-      "remediation": [
-        "Run: pnpm rip env validate --stage <stage> --json to see specific failures",
-        "Fix reported issues before retrying deploy",
-        "Common causes: missing secrets, type errors, failing tests"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DEP-002",
-      "category": "DEP",
-      "severity": "error",
-      "message": "Deploy failed — SST error — the underlying Pulumi/CloudFormation error is included in the data payload",
-      "gate": "deploy",
-      "remediation": [
-        "Check the error details in the data field for specific resource failures",
-        "Common causes: IAM permissions, resource limits, or state drift",
-        "Run: sst dev locally to debug infrastructure issues",
-        "See docs/deployment.md for troubleshooting guide"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DEP-003",
-      "category": "DEP",
-      "severity": "error",
-      "message": "Deploy failed — missing required secrets — one or more secrets required for the target stage are not set in AWS",
-      "gate": "deploy",
-      "remediation": [
-        "Run: pnpm rip secrets required --stage <stage> --json to see missing secrets",
-        "Set missing secrets: pnpm rip secrets set <KEY> <value> --stage <stage>",
-        "Deploy was aborted before reaching SST to prevent partial deployment"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-DEP-004",
-      "category": "DEP",
-      "severity": "error",
-      "message": "Post-deploy health check failed — deployment completed but one or more services failed their health check",
-      "gate": "deploy",
-      "remediation": [
-        "Run: pnpm rip status --stage <stage> --json for detailed health check results",
-        "Check CloudWatch logs for the failing service",
-        "Common causes: missing environment variables, database connectivity, cold start timeouts",
-        "Consider rollback if health checks do not recover within 5 minutes"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-MONITOR-001",
-      "category": "MONITOR",
-      "severity": "error",
-      "message": "Monitoring configuration missing or invalid — Powertools Logger/Metrics/Tracer not initialized",
-      "gate": "deploy",
-      "remediation": [
-        "Ensure Powertools middleware is configured in the Lambda handler",
-        "Check that the POWERTOOLS_SERVICE_NAME environment variable is set",
-        "Verify sst.config.ts links the function with the correct environment variables",
-        "See ADR-028 for monitoring implementation guide"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-MONITOR-002",
-      "category": "MONITOR",
-      "severity": "error",
-      "message": "Trace export failure — X-Ray daemon unreachable or OTel collector endpoint not responding",
-      "gate": "deploy",
-      "remediation": [
-        "Verify the Lambda execution role has xray:PutTraceSegments and xray:PutTelemetryRecords permissions",
-        "If using OTel escape hatch: check the OTEL_EXPORTER_OTLP_ENDPOINT environment variable",
-        "Check VPC security groups if the function runs inside a VPC",
-        "Traces will be lost but function execution is not affected"
-      ],
-      "automatable": false
-    },
-    {
-      "code": "RPL-MONITOR-003",
-      "category": "MONITOR",
+      "code": "RPL-SESSION-002",
+      "category": "SESSION",
       "severity": "warning",
-      "message": "Metric emission failure — EMF payload rejected by CloudWatch or metric dimensions exceed limits",
-      "gate": "deploy",
+      "message": "Session log file corrupted or unreadable",
+      "gate": "agent:metrics",
       "remediation": [
-        "Check CloudWatch Logs for EMF parsing errors (look for 'FAILED' in embedded metric format logs)",
-        "Ensure metric dimensions do not exceed 30 per metric (CloudWatch limit)",
-        "Verify the metric namespace is valid (no special characters)",
-        "Metrics will be lost but function execution is not affected"
+        "Check .sessions/ for malformed JSON files",
+        "Remove corrupt files: find .sessions -name '*.json' -empty -delete",
+        "Corrupted files are skipped during aggregation \u2014 no data loss for other sessions"
+      ],
+      "automatable": true
+    },
+    {
+      "code": "RPL-SESSION-003",
+      "category": "SESSION",
+      "severity": "info",
+      "message": "No session data available for aggregation",
+      "gate": "agent:metrics",
+      "remediation": [
+        "Start tracking sessions: pnpm session:start",
+        "End sessions to record data: pnpm session:end -- --run-gates",
+        "Session data is opt-in \u2014 no action required if observability is not needed"
       ],
       "automatable": false
     },
     {
-      "code": "RPL-MONITOR-004",
-      "category": "MONITOR",
-      "severity": "warning",
-      "message": "Alert threshold exceeded — CloudWatch Alarm entered ALARM state for a monitored metric",
-      "gate": "runtime",
+      "code": "RPL-TEST-001",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Test suite failures",
+      "gate": "test",
       "remediation": [
-        "Check the specific alarm in CloudWatch Console for the metric that triggered",
-        "Common triggers: Lambda error rate > 1%, SSR p99 > 3s, DLQ depth > 0",
-        "Review recent deployments or traffic changes that may have caused the regression",
-        "Use X-Ray traces to identify the root cause of elevated error rates or latency"
+        "Run: pnpm test to see failures",
+        "Check test output for assertion errors",
+        "Run specific package: pnpm test --filter @ripple-next/<package>"
       ],
       "automatable": false
     },
     {
-      "code": "RPL-MONITOR-005",
-      "category": "MONITOR",
-      "severity": "warning",
-      "message": "Cold start duration exceeded budget (>2s) — Lambda initialization taking longer than expected",
-      "gate": "runtime",
+      "code": "RPL-TEST-002",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Coverage threshold not met",
+      "gate": "test",
       "remediation": [
-        "Review the function's initialization code for expensive operations (large imports, DB connections)",
-        "Consider using provisioned concurrency for latency-sensitive functions (e.g., Nuxt SSR)",
-        "Check the warm setting in sst.config.ts — increase if cold starts are frequent",
-        "Move heavy initialization to lazy loading patterns to reduce cold start time"
+        "Check vitest.workspace.ts for tier-specific thresholds",
+        "Tier 1 (auth, db, queue): 60% lines/functions, 50% branches",
+        "Tier 2 (email, storage, events, cms): 40% lines/functions, 30% branches",
+        "Tier 3 (UI, services): 20% lines/functions, 10% branches",
+        "Add tests to increase coverage. Never lower thresholds."
       ],
       "automatable": false
+    },
+    {
+      "code": "RPL-TEST-003",
+      "category": "TEST",
+      "severity": "error",
+      "message": "Conformance test failures for provider implementation",
+      "gate": "test",
+      "remediation": [
+        "Run the conformance suite for your provider",
+        "Implement all interface methods from packages/<concern>/types.ts",
+        "See packages/testing/conformance/ for the test suite"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-TYPE-001",
+      "category": "TYPE",
+      "severity": "error",
+      "message": "TypeScript type errors found",
+      "gate": "typecheck",
+      "remediation": [
+        "Run: pnpm typecheck to see errors",
+        "Fix type mismatches, missing imports, or incorrect signatures",
+        "If Nuxt auto-import types are missing: npx nuxi prepare apps/web"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-TYPE-002",
+      "category": "TYPE",
+      "severity": "error",
+      "message": "Missing Nuxt auto-import types (.nuxt directory stale)",
+      "gate": "typecheck",
+      "remediation": [
+        "Run: npx nuxi prepare apps/web",
+        "This regenerates the .nuxt/ types directory",
+        "Then re-run: pnpm typecheck"
+      ],
+      "automatable": true
     }
   ]
 }
