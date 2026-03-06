@@ -27,7 +27,7 @@ defineProps<RplHeroHeaderProps>()
   background-color: var(--rpl-clr-primary, #0052c2);
   background-size: cover;
   background-position: center;
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
 }
 
 .rpl-hero-header__inner {
@@ -37,14 +37,14 @@ defineProps<RplHeroHeaderProps>()
 
 .rpl-hero-header__title {
   margin: 0 0 1rem;
-  font-size: 2.5rem;
+  font-size: var(--rpl-type-size-4xl, 2.5rem);
   font-weight: 700;
   line-height: 1.2;
 }
 
 .rpl-hero-header__description {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--rpl-type-size-xl, 1.25rem);
   line-height: 1.5;
   opacity: 0.9;
 }

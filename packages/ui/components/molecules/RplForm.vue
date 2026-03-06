@@ -183,7 +183,7 @@ function handleReset(event: Event): void {
   font: inherit;
   font-size: var(--rpl-type-size-base, 1rem);
   font-weight: var(--rpl-type-weight-bold, 700);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   background-color: var(--rpl-clr-primary, #0052c2);
   border: none;
   border-radius: var(--rpl-border-radius, 4px);

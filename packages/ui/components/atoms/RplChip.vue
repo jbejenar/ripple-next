@@ -56,11 +56,11 @@ const emit = defineEmits<{
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--rpl-clr-border, #ccc);
-  border-radius: 9999px;
+  border-radius: var(--rpl-border-radius-full, 9999px);
   font-family: var(--rpl-type-font-family, 'VIC', Arial, sans-serif);
   font-size: var(--rpl-type-size-sm, 0.875rem);
   line-height: 1;
-  background-color: #fff;
+  background-color: var(--rpl-clr-white, #ffffff);
   transition: border-color 0.2s, background-color 0.2s;
 }
 
@@ -70,7 +70,7 @@ const emit = defineEmits<{
 }
 
 .rpl-chip--active .rpl-chip__label {
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
 }
 
 .rpl-chip--disabled {
@@ -94,7 +94,7 @@ const emit = defineEmits<{
 .rpl-chip__label:focus-visible {
   outline: 2px solid var(--rpl-clr-primary, #0052c2);
   outline-offset: -2px;
-  border-radius: 9999px;
+  border-radius: var(--rpl-border-radius-full, 9999px);
 }
 
 .rpl-chip__dismiss {
@@ -127,6 +127,6 @@ const emit = defineEmits<{
 .rpl-chip__dismiss:focus-visible {
   outline: 2px solid var(--rpl-clr-primary, #0052c2);
   outline-offset: -2px;
-  border-radius: 0 9999px 9999px 0;
+  border-radius: 0 var(--rpl-border-radius-full, 9999px) var(--rpl-border-radius-full, 9999px) 0;
 }
 </style>

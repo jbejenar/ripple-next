@@ -34,7 +34,7 @@ defineProps<RplCardProps>()
   border: 1px solid var(--rpl-clr-border, #e0e0e0);
   border-radius: var(--rpl-border-radius, 4px);
   overflow: hidden;
-  background: #fff;
+  background: var(--rpl-clr-white, #ffffff);
   transition: box-shadow 0.2s;
 }
 
@@ -65,7 +65,7 @@ defineProps<RplCardProps>()
 
 .rpl-card__title {
   margin: 0 0 0.5rem;
-  font-size: 1.25rem;
+  font-size: var(--rpl-type-size-xl, 1.25rem);
   color: var(--rpl-clr-primary, #0052c2);
 }
 

@@ -54,7 +54,7 @@ withDefaults(defineProps<RplNavigationProps>(), {
   color: var(--rpl-clr-type-default, #333333);
   text-decoration: none;
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: var(--rpl-border-radius, 4px);
   transition: background-color 0.2s;
 }
 
@@ -69,7 +69,7 @@ withDefaults(defineProps<RplNavigationProps>(), {
 
 .rpl-navigation--vertical .rpl-navigation__link:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
 }
 
 .rpl-navigation__link:focus-visible {
@@ -88,8 +88,8 @@ withDefaults(defineProps<RplNavigationProps>(), {
   padding: 0.375rem 1rem;
   color: var(--rpl-clr-type-light, #666666);
   text-decoration: none;
-  font-size: 0.875rem;
-  border-radius: 4px;
+  font-size: var(--rpl-type-size-sm, 0.875rem);
+  border-radius: var(--rpl-border-radius, 4px);
   transition: background-color 0.2s;
 }
 
@@ -104,7 +104,7 @@ withDefaults(defineProps<RplNavigationProps>(), {
 
 .rpl-navigation--vertical .rpl-navigation__sublink:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
 }
 
 .rpl-navigation__sublink:focus-visible {

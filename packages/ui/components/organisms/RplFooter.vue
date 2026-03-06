@@ -26,7 +26,7 @@ withDefaults(defineProps<RplFooterProps>(), {
 <style scoped>
 .rpl-footer {
   background-color: var(--rpl-clr-footer-bg, #1a1a1a);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   padding: 2rem 1.5rem;
 }
 
@@ -39,7 +39,7 @@ withDefaults(defineProps<RplFooterProps>(), {
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 0.875rem;
+  font-size: var(--rpl-type-size-sm, 0.875rem);
   opacity: 0.8;
 }
 </style>
