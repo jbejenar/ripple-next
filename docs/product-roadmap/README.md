@@ -6,8 +6,8 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 63 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 3 items active. 7 items parked.
+> 64 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 2 items active. 7 items parked.
 
 ---
 
@@ -30,8 +30,7 @@ gantt
     RN-068 Secrets schema & provider       :done, rn068, 2026-03-06, 1d
     RN-069 Platform CLI                    :done, rn069, 2026-03-06, 1d
 
-    section In Progress
-    RN-070 OIDC infra-as-code              :active, rn070, 2026-03-06, 7d
+    RN-070 OIDC infra-as-code              :done, rn070, 2026-03-06, 1d
 ```
 
 ## Agent-Friction Scorecard
@@ -325,7 +324,7 @@ or `drizzle-kit` directly. The CLI is a dev dependency, not a runtime dependency
 **Priority:** Low | **Impact:** Medium | **Effort:** Low | **Risk:** Low
 **Source:** Infrastructure gap — OIDC federation is already used in deploy workflows but the IAM setup is not codified as infrastructure-as-code
 **AI-first benefit:** Reproducible OIDC setup for downstream fleet repos. Agents can inspect and audit the trust policy without AWS console access.
-**Status:** In Progress
+**Status:** Done
 **Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment)
 
 The existing `deploy-staging.yml` and `deploy-production.yml` already use OIDC
@@ -338,9 +337,9 @@ that are separate from the main SST app definition in `sst.config.ts`.
 
 #### Definition of Done
 
-- [ ] `infra/github-oidc.ts` with `createGitHubOIDC()` function
-- [ ] Trust policy scoped to repo + branch + environment
-- [ ] Secrets access policy scoped to `ripple-next/*` namespace
+- [x] `infra/github-oidc.ts` with `createGitHubOIDC()` function
+- [x] Trust policy scoped to repo + branch + environment
+- [x] Secrets access policy scoped to `ripple-next/*` namespace
 - [x] `RPL-DEP-*` error codes in `docs/error-taxonomy.json`
 - [x] Runbook for common OIDC trust policy debugging
 - [x] `pnpm verify` passes all quality gates
@@ -452,7 +451,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-63 items completed (RN-001 through RN-071, excluding RN-054, RN-057, RN-060, RN-070).
+64 items completed (RN-001 through RN-071, excluding RN-054, RN-057, RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
