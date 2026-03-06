@@ -13,12 +13,13 @@ jobs:
       - id: check
         env:
           AWS_ROLE: ${{ secrets.AWS_ROLE_ARN }}
+          AWS_PROD_ROLE: ${{ secrets.AWS_PROD_ROLE_ARN }}
         run: |
-          if [ -n "$AWS_ROLE" ]; then
+          if [ -n "$AWS_ROLE" ] && [ -n "$AWS_PROD_ROLE" ]; then
             echo "has-credentials=true" >> "$GITHUB_OUTPUT"
           else
             echo "has-credentials=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Deployment skipped — AWS_ROLE_ARN secret is not configured"
+            echo "::notice::Deployment skipped — AWS_ROLE_ARN and/or AWS_PROD_ROLE_ARN secret is not configured"
           fi
 
   deploy-staging:
