@@ -21,6 +21,7 @@ export { default as RplAcknowledgement } from './components/atoms/RplAcknowledge
 export { default as RplBlockQuote } from './components/atoms/RplBlockQuote.vue'
 export { default as RplTag } from './components/atoms/RplTag.vue'
 export { default as RplChip } from './components/atoms/RplChip.vue'
+export { default as RplImage } from './components/atoms/RplImage.vue'
 
 // Molecules
 export { default as RplCard } from './components/molecules/RplCard.vue'
@@ -41,6 +42,13 @@ export { default as RplCarousel } from './components/molecules/RplCarousel.vue'
 export { default as RplDocumentDownload } from './components/molecules/RplDocumentDownload.vue'
 export { default as RplNavigation } from './components/molecules/RplNavigation.vue'
 export { default as RplProfile } from './components/molecules/RplProfile.vue'
+export { default as RplCampaignBanner } from './components/molecules/RplCampaignBanner.vue'
+export { default as RplContactUs } from './components/molecules/RplContactUs.vue'
+export { default as RplPageAction } from './components/molecules/RplPageAction.vue'
+export { default as RplSocialShare } from './components/molecules/RplSocialShare.vue'
+export { default as RplVerticalNav } from './components/molecules/RplVerticalNav.vue'
+export { default as RplMediaEmbed } from './components/molecules/RplMediaEmbed.vue'
+export { default as RplForm } from './components/molecules/RplForm.vue'
 
 // Organisms
 export { default as RplHeader } from './components/organisms/RplHeader.vue'

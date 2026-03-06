@@ -1118,6 +1118,7 @@ gantt
     RN-049 Licensing clarity (SPDX)        :done, rn049, 2026-03-01, 1d
     RN-028 Conformance CLI                 :done, rn028, 2026-03-01, 1d
     RN-067 Complete upstream component port :done, rn067, 2026-03-02, 1d
+    RN-072 Component alignment audit       :done, rn072, 2026-03-06, 1d
 ```
 
 ---
@@ -1143,6 +1144,43 @@ Total `packages/ui/index.ts` exports: 47 (19 atoms + 18 molecules + 2 organisms 
 - [x] `pnpm verify` passes 10/10
 
 **Links:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md), [RN-037](#rn-037-port-priority-components-from-upstream-ripple-2), `packages/ui/`
+
+---
+
+### RN-072: Component Alignment Audit — Public Storybook Parity
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Completed:** 2026-03-06
+**Source:** User feedback — downstream developer noticed ripple-next Storybook showed different components compared to the public Ripple storybook (ripple.sdp.vic.gov.au)
+**AI-first benefit:** Complete alignment with public storybook eliminates confusion for developers comparing the two and ensures agents can build any pattern visible in the public reference.
+
+Audited all 48 components in the public Ripple storybook against ripple-next's component library.
+Identified 8 missing components and ported them all to achieve complete 1:1 parity with
+the public Ripple storybook (ripple.sdp.vic.gov.au). The existing RplEmbeddedVideo remains
+as a Tide content renderer alongside the new broader RplMediaEmbed.
+
+Components added:
+- **RplCampaignBanner** — hero-style promotional banner (primary/secondary variants)
+- **RplContactUs** — contact information card with address and link items
+- **RplPageAction** — page-level action container (print, share, back-to-top)
+- **RplSocialShare** — social media share links (Facebook, LinkedIn, X, WhatsApp, email)
+- **RplVerticalNav** — sidebar navigation with expandable/collapsible nested items
+- **RplMediaEmbed** — unified media embedding for video and images with captions, transcripts, fullscreen
+- **RplImage** — responsive image with aspect ratios, focal points, circle mode, lazy loading
+- **RplForm** — form wrapper/orchestrator with submission state management and alerts
+
+Total `packages/ui/index.ts` exports: 55 (20 atoms + 25 molecules + 2 organisms + 8 content organisms).
+
+- [x] Audit public storybook (ripple.sdp.vic.gov.au) against ripple-next components — 48 components
+- [x] Identify 8 missing components (CampaignBanner, ContactUs, PageAction, SocialShare, VerticalNav, MediaEmbed, Image, Form)
+- [x] Port each following ADR-017 conventions (Composition API, `<script setup>`, `--rpl-*` tokens)
+- [x] Vue Test Utils tests for each (105 new tests across 8 test files)
+- [x] Storybook stories with autodocs and multiple variants (8 new story files)
+- [x] All exported from `packages/ui/index.ts`
+- [x] `readiness.json` updated (ported: 48, upstream: 48, gap: 0)
+- [x] `pnpm verify` passes 10/10
+
+**Links:** [ADR-017](../adr/017-upstream-ripple-component-strategy.md), [RN-067](#rn-067-complete-upstream-component-port--full-ripple-v2-parity), `packages/ui/`
 
 ---
 
@@ -1195,4 +1233,4 @@ All standards achieved during the initial platform build-out (v1.0–v5.0):
 - [x] Readiness manifest maturity levels (RN-056)
 - [x] README as navigation hub with 8 audience paths (RN-062)
 - [x] Downstream adoption documentation standards — ADR-023, guides, runbooks (RN-061)
-- [x] Complete upstream component port — 46/46 Ripple v2 parity, 48 exports total (RN-067)
+- [x] Complete upstream component port — 48/48 public storybook parity, 55 exports total (RN-067 + RN-072)

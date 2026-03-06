@@ -6,7 +6,7 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 64 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 65 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
 > 1 item active. 7 items parked.
 
 ---
@@ -29,8 +29,8 @@ gantt
     RN-059 Runtime monitoring ADR          :done, rn059, 2026-03-06, 1d
     RN-068 Secrets schema & provider       :done, rn068, 2026-03-06, 1d
     RN-069 Platform CLI                    :done, rn069, 2026-03-06, 1d
-
     RN-070 OIDC infra-as-code              :done, rn070, 2026-03-06, 1d
+    RN-072 Component alignment audit       :done, rn072, 2026-03-06, 1d
 ```
 
 ## Agent-Friction Scorecard
@@ -72,7 +72,7 @@ per-subsystem detail.
 ## Themes
 
 1. **Ship it** — Resolve licensing, publish packages, deploy first downstream consumer (RN-058, RN-054). Stop describing; start proving.
-2. **Production credibility** — Live CMS validation (RN-017); component library complete (RN-067 done)
+2. **Production credibility** — Live CMS validation (RN-017); component library complete and aligned with public storybook (RN-067 + RN-072 done)
 3. **Quality depth** — Runtime monitoring, once there's something deployed to monitor (RN-059)
 
 ---
@@ -375,7 +375,7 @@ that are separate from the main SST app definition in `sst.config.ts`.
 | ~~PolyForm Noncommercial blocks government procurement~~ | Resolved — [ADR-027](../adr/027-licensing-government-procurement.md) relicensed to Apache 2.0 |
 | No downstream consumer exists | [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (Now) |
 | Every package still v0.1.0 | License resolved ([ADR-027](../adr/027-licensing-government-procurement.md)); first publish in [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) |
-| Docs-to-code ratio | RN-067 completed — 47 components added code weight; no new governance items until ratio ≤ 1:1 |
+| Docs-to-code ratio | RN-067 + RN-072 completed — 53 components added code weight; no new governance items until ratio ≤ 1:1 |
 | No live CMS integration | [RN-017](#rn-017-live-drupal-integration-testing) (Next) — Docker Tide fixture fallback activated |
 | No runtime monitoring/alerting | [RN-059](#rn-059-runtime-monitoring-adr--observability-for-lambda-first-architecture) (Later) — acceptable until production deployment exists |
 | Secrets untyped / no structured management | [RN-068](#rn-068-declarative-secrets-schema--provider) (Later) — `.env.example` is flat; agents cannot discover requirements programmatically |
@@ -451,7 +451,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-64 items completed (RN-001 through RN-071, excluding RN-054, RN-057, RN-060).
+65 items completed (RN-001 through RN-072, excluding RN-054, RN-057, RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
