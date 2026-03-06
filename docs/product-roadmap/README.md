@@ -1,13 +1,13 @@
 # Ripple Next — Product Roadmap
 
-> v10.0.0 | 2026-03-06
+> v10.1.0 | 2026-03-07
 >
 > **Harden and publish.** The audit revealed strong foundations but critical gaps
 > in publish-readiness, accessibility, and test coverage. Every item moves toward
 > "safe for downstream adoption" — the prerequisite for production-proven maturity.
 >
-> 73 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 8 items active. 7 items parked.
+> 79 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 2 items active. 7 items parked.
 
 ---
 
@@ -120,7 +120,7 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 **Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings DOWNSTREAM-001, 002, 003, 007, 008, 010, 012, 013, 014, 016, 019, 020
 **AI-first benefit:** Agents can consume @ripple-next/* packages with full type safety, tree-shaking, and correct dependency resolution.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 The audit found that @ripple-next/ui and @ripple-next/testing **cannot be consumed**
@@ -158,7 +158,7 @@ into a single publish-readiness sprint.
 **Priority:** High | **Impact:** High | **Effort:** Small | **Risk:** Low
 **Source:** Audit findings INFRA-001, INFRA-010, INFRA-002
 **AI-first benefit:** Agents can trust that CI pipelines are supply-chain hardened. Least-privilege IAM reduces blast radius of any CI compromise.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 All GitHub Actions are pinned to mutable tags (supply chain risk). The deploy
@@ -191,7 +191,7 @@ role uses PowerUserAccess (near-admin). S3 CORS allows all origins.
 **Priority:** High | **Impact:** Very High | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings A11Y-001 through A11Y-020 (23 findings, 2 CRITICAL, 5 HIGH)
 **AI-first benefit:** Agents building government pages can trust that all components meet WCAG 2.1 AA without manual a11y review.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 The audit found 2 CRITICAL a11y issues (missing focus traps in RplMediaEmbed and
@@ -227,7 +227,7 @@ ignoring prefers-reduced-motion. Government platform — a11y is non-negotiable.
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings TEST-001, TEST-004 through TEST-014 (7 CRITICAL, 14 HIGH)
 **AI-first benefit:** Agents can refactor provider implementations with confidence that mocked conformance tests catch regressions.
-**Status:** Not Started
+**Status:** In Progress
 **Dependencies:** None
 
 7 cloud provider implementations have zero tests (SQS, BullMQ, SES, S3, MinIO,
@@ -265,7 +265,7 @@ utilities are also untested. All are Tier 1 or Tier 2 packages.
 **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings CODE-038 through CODE-053 (54 hardcoded hex colours, ~130 px values, ~30 font sizes)
 **AI-first benefit:** Agents can theme and customise components by changing token values instead of hunting for hardcoded strings.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 54 hardcoded hex colours across 16 components, ~130 hardcoded px values, and ~30
@@ -299,7 +299,7 @@ showing the pattern exists — it just wasn't applied consistently.
 **Priority:** Low | **Impact:** Medium | **Effort:** Small | **Risk:** Low
 **Source:** Audit findings DOC-001 through DOC-023 (20 findings)
 **AI-first benefit:** Agents reading docs get accurate counts, correct commands, and current ADR statuses — reducing hallucinated assumptions.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 Stale numbers and minor inaccuracies found across docs. All factual — no
@@ -328,7 +328,7 @@ structural changes needed.
 **Priority:** Low | **Impact:** Medium | **Effort:** Small | **Risk:** Low
 **Source:** Audit findings CODE-005, CODE-009, CODE-013, CODE-025 through CODE-029
 **AI-first benefit:** Agents can trust runtime safety — no silent crashes from null dereferences or unvalidated API inputs.
-**Status:** Not Started
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 5 non-null assertions in production code risk runtime crashes. 3 API routes cast
