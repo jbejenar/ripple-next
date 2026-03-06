@@ -1184,6 +1184,170 @@ Total `packages/ui/index.ts` exports: 55 (20 atoms + 25 molecules + 2 organisms 
 
 ---
 
+### RN-058: Licensing Resolution ADR — Government Procurement Compatibility
+
+**Priority:** Critical | **Impact:** Very High | **Effort:** Medium | **Risk:** High
+**Completed:** 2026-03-04
+**Source:** Critique 3 — "Non-commercial licensing for government software is unusual and potentially incompatible with government procurement"
+
+PolyForm Noncommercial 1.0.0 conflicted with government contractor usage and
+standard procurement frameworks. Resolved by [ADR-027](../adr/027-licensing-government-procurement.md):
+relicensed to Apache 2.0. All `package.json` license fields updated.
+
+- [x] ADR evaluating license options (PolyForm Noncommercial, Apache 2.0, MIT, dual-license, AGPL)
+- [x] Government procurement compatibility analysis included
+- [x] Decision documented with explicit rationale
+- [x] All `package.json` license fields updated
+- [x] LICENSE file updated
+
+**Links:** [ADR-027](../adr/027-licensing-government-procurement.md), [RN-049](#rn-049-licensing-clarity-guardrail-spdx--dual-license-model)
+
+---
+
+### RN-071: Fleet Management Documentation — Downstream Self-Service
+
+**Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
+**Completed:** 2026-03-05
+**Source:** Downstream AI agent friction — missing fleet docs, no pnpm aliases, missing composite actions
+
+Downstream repos scaffolded by ripple-next now receive fleet management docs,
+pnpm aliases, composite actions, and instructions. AI agents can discover and
+execute fleet operations from their own repo documentation.
+
+- [x] Upstream `docs/fleet-management.md` created
+- [x] Scaffold generates downstream fleet management files
+- [x] `AGENTS.md` updated with fleet management task routing
+- [x] `pnpm verify` passes
+
+**Links:** [ADR-019](../adr/019-fleet-governance.md), [ADR-022](../adr/022-bidirectional-fleet-communication.md)
+
+---
+
+### RN-017: Live Drupal Integration Testing
+
+**Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
+**Completed:** 2026-03-06
+**Source:** CMS integration gap — continues [RN-004](#rn-004-drupaltide-cms-integration-ripplecms)
+
+Integration test with Docker-based Tide fixture (Drupal 10 + JSON:API).
+CI job runs integration tests on schedule. `readiness.json` CMS blocker removed.
+
+- [x] Docker-based Tide fixture in `docker-compose.test.yml`
+- [x] Integration test suite exercising all CMS provider methods against real Drupal
+- [x] CI job runs integration tests on schedule
+- [x] `readiness.json` CMS blocker removed
+
+**Links:** [RN-004](#rn-004-drupaltide-cms-integration-ripplecms), `packages/cms/`
+
+---
+
+### RN-059: Runtime Monitoring ADR — Observability for Lambda-First Architecture
+
+**Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Medium
+**Completed:** 2026-03-06
+**Source:** Risks table — "No runtime monitoring/alerting"
+
+ADR evaluating CloudWatch, Datadog, OpenTelemetry for Lambda + Nuxt SSR.
+Includes cost model for 3 scale tiers, structured alert schema for agent-parseable
+alerts, and error taxonomy integration plan (RPL-MONITOR-* codes).
+
+- [x] ADR evaluating monitoring options
+- [x] Cost model for each option at 3 scale tiers
+- [x] Structured alert schema for agent-parseable alerts
+- [x] Error taxonomy integration plan
+
+**Links:** [ADR in `docs/adr/`]
+
+---
+
+### RN-068: Declarative Secrets Schema & Provider
+
+**Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
+**Completed:** 2026-03-06
+**Source:** Agent friction — agents cannot programmatically discover which secrets are required
+
+Introduces typed secrets schema (`@ripple-next/config`) and provider-pattern
+secrets management (`@ripple-next/secrets`) with memory, env, AWS, and chain
+providers. Boot-time validation catches misconfiguration before traffic arrives.
+
+- [x] `packages/config/src/secrets.schema.ts` with `defineSecrets()` helper
+- [x] `packages/secrets/` with 4 implementations (Memory, Env, AWS, Chain)
+- [x] Zod validation for each secret format type
+- [x] MemorySecretsProvider passes conformance suite
+- [x] `RPL-SEC-*` error codes in error taxonomy
+- [x] `pnpm verify` passes
+
+**Links:** [ADR-024](../adr/024-declarative-secrets-schema.md), [ADR-003](../adr/003-provider-pattern.md)
+
+---
+
+### RN-069: Platform CLI — Unified Agent Interface
+
+**Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
+**Completed:** 2026-03-06
+**Source:** Agent friction — agents must call a mix of `sst`, `drizzle-kit`, `pnpm` scripts
+
+Creates `@ripple-next/cli` providing `pnpm rip` — a unified CLI wrapping all
+platform operations behind a universal `CommandResult` JSON contract.
+
+- [x] `packages/cli/` with citty
+- [x] `rip secrets`, `rip env`, `rip deploy`, `rip status`, `rip db` subcommands
+- [x] Every command supports `--json` returning `CommandResult` shape
+- [x] `RPL-CLI-*` error codes in error taxonomy
+- [x] `pnpm verify` passes
+
+**Links:** [ADR-025](../adr/025-platform-cli-structured-output.md), [ADR-018](../adr/018-ai-first-workflow-strategy.md)
+
+---
+
+### RN-070: GitHub OIDC Federation — Codified Infrastructure
+
+**Priority:** Low | **Impact:** Medium | **Effort:** Low | **Risk:** Low
+**Completed:** 2026-03-06
+**Source:** Infrastructure gap — OIDC federation not codified as infrastructure-as-code
+
+Codifies IAM OIDC provider and deploy role as SST/Pulumi component in
+`infra/github-oidc.ts`. Trust policy scoped to repo + branch + environment.
+
+- [x] `infra/github-oidc.ts` with `createGitHubOIDC()` function
+- [x] Trust policy scoped to repo + branch + environment
+- [x] Secrets access policy scoped to `ripple-next/*` namespace
+- [x] `RPL-DEP-*` error codes in error taxonomy
+- [x] `pnpm verify` passes
+
+**Links:** [ADR-026](../adr/026-github-oidc-zero-secrets-ci.md), [ADR-004](../adr/004-sst-over-cdk.md)
+
+---
+
+### RN-073: Full Codebase Audit — 6-Domain Forensic Analysis
+
+**Priority:** High | **Impact:** Very High | **Effort:** High | **Risk:** Low
+**Completed:** 2026-03-06
+**Source:** Pre-production quality gate — comprehensive audit before downstream adoption
+
+Full forensic audit using 6 specialist agents (code quality, test integrity,
+downstream compatibility, accessibility, infrastructure/security, documentation).
+166 findings across 12 CRITICAL, 39 HIGH, 55 MEDIUM, 60 LOW. Health score: B+.
+
+Deliverables:
+- `docs/audit/executive-summary.md` — leadership-ready summary
+- `docs/audit/full-audit-report.md` — all findings by domain
+- `docs/audit/remediation-backlog.md` — 86 prioritised remediation items
+- `docs/audit/downstream-risk-assessment.md` — package-by-package consumer status
+
+Key findings: @ripple-next/ui and @ripple-next/testing blocked for downstream
+adoption. 7 cloud providers completely untested. 20 components ignore
+prefers-reduced-motion. All GitHub Actions pinned to mutable tags.
+
+- [x] 6 specialist audit agents executed in parallel
+- [x] Baseline verified (typecheck, lint, tests all green)
+- [x] 4 deliverables produced in `docs/audit/`
+- [x] Findings triaged into product backlog (RN-074 through RN-080)
+
+**Links:** `docs/audit/`, [Executive Summary](../audit/executive-summary.md)
+
+---
+
 ## v1 Platform Completion Milestone
 
 All standards achieved during the initial platform build-out (v1.0–v5.0):
@@ -1234,3 +1398,11 @@ All standards achieved during the initial platform build-out (v1.0–v5.0):
 - [x] README as navigation hub with 8 audience paths (RN-062)
 - [x] Downstream adoption documentation standards — ADR-023, guides, runbooks (RN-061)
 - [x] Complete upstream component port — 48/48 public storybook parity, 55 exports total (RN-067 + RN-072)
+- [x] Licensing resolution — Apache 2.0 for government procurement (RN-058, ADR-027)
+- [x] Fleet management documentation — downstream self-service (RN-071)
+- [x] Live Drupal integration testing — Docker Tide fixture (RN-017)
+- [x] Runtime monitoring ADR — Lambda + Nuxt SSR observability (RN-059)
+- [x] Declarative secrets schema & provider — typed secrets management (RN-068, ADR-024)
+- [x] Platform CLI — unified agent interface with `pnpm rip` (RN-069, ADR-025)
+- [x] GitHub OIDC federation — codified infrastructure (RN-070, ADR-026)
+- [x] Full codebase audit — 6-domain forensic analysis, 166 findings (RN-073)
