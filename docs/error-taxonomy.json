@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Ripple Next Error Taxonomy",
-  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 80 classified error codes across 22 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, ADR-023, ADR-024, ADR-025, ADR-026, docs/accessibility.md, docs/session-observability.md, docs/performance.md, and docs/conformance-rubric.json.",
-  "version": "1.13.0",
+  "description": "Machine-parseable error taxonomy for AI agent auto-triage. Maps failure modes to categories, severities, and remediation paths. 85 classified error codes across 23 categories. See ADR-018, ADR-019, ADR-020, ADR-021, ADR-022, ADR-023, ADR-024, ADR-025, ADR-026, ADR-028, docs/accessibility.md, docs/session-observability.md, docs/performance.md, and docs/conformance-rubric.json.",
+  "version": "1.14.0",
   "codeFormat": "RPL-<CATEGORY>-<NNN>",
   "severityLevels": {
     "error": "Blocks progress. Must be fixed before proceeding.",
@@ -31,7 +31,8 @@
     "ADOPT": "Downstream adoption and documentation governance failures (ADR-023)",
     "SEC": "Secrets management and credential validation failures (ADR-024)",
     "CLI": "Platform CLI command and invocation failures (ADR-025)",
-    "DEP": "Deployment pipeline validation and execution failures (ADR-026)"
+    "DEP": "Deployment pipeline validation and execution failures (ADR-026)",
+    "MONITOR": "Runtime monitoring and observability failures (ADR-028)"
   },
   "errors": [
     {
@@ -1094,6 +1095,76 @@
         "Check CloudWatch logs for the failing service",
         "Common causes: missing environment variables, database connectivity, cold start timeouts",
         "Consider rollback if health checks do not recover within 5 minutes"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-001",
+      "category": "MONITOR",
+      "severity": "error",
+      "message": "Monitoring configuration missing or invalid — Powertools Logger/Metrics/Tracer not initialized",
+      "gate": "deploy",
+      "remediation": [
+        "Ensure Powertools middleware is configured in the Lambda handler",
+        "Check that the POWERTOOLS_SERVICE_NAME environment variable is set",
+        "Verify sst.config.ts links the function with the correct environment variables",
+        "See ADR-028 for monitoring implementation guide"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-002",
+      "category": "MONITOR",
+      "severity": "error",
+      "message": "Trace export failure — X-Ray daemon unreachable or OTel collector endpoint not responding",
+      "gate": "deploy",
+      "remediation": [
+        "Verify the Lambda execution role has xray:PutTraceSegments and xray:PutTelemetryRecords permissions",
+        "If using OTel escape hatch: check the OTEL_EXPORTER_OTLP_ENDPOINT environment variable",
+        "Check VPC security groups if the function runs inside a VPC",
+        "Traces will be lost but function execution is not affected"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-003",
+      "category": "MONITOR",
+      "severity": "warning",
+      "message": "Metric emission failure — EMF payload rejected by CloudWatch or metric dimensions exceed limits",
+      "gate": "deploy",
+      "remediation": [
+        "Check CloudWatch Logs for EMF parsing errors (look for 'FAILED' in embedded metric format logs)",
+        "Ensure metric dimensions do not exceed 30 per metric (CloudWatch limit)",
+        "Verify the metric namespace is valid (no special characters)",
+        "Metrics will be lost but function execution is not affected"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-004",
+      "category": "MONITOR",
+      "severity": "warning",
+      "message": "Alert threshold exceeded — CloudWatch Alarm entered ALARM state for a monitored metric",
+      "gate": "runtime",
+      "remediation": [
+        "Check the specific alarm in CloudWatch Console for the metric that triggered",
+        "Common triggers: Lambda error rate > 1%, SSR p99 > 3s, DLQ depth > 0",
+        "Review recent deployments or traffic changes that may have caused the regression",
+        "Use X-Ray traces to identify the root cause of elevated error rates or latency"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-MONITOR-005",
+      "category": "MONITOR",
+      "severity": "warning",
+      "message": "Cold start duration exceeded budget (>2s) — Lambda initialization taking longer than expected",
+      "gate": "runtime",
+      "remediation": [
+        "Review the function's initialization code for expensive operations (large imports, DB connections)",
+        "Consider using provisioned concurrency for latency-sensitive functions (e.g., Nuxt SSR)",
+        "Check the warm setting in sst.config.ts — increase if cold starts are frequent",
+        "Move heavy initialization to lazy loading patterns to reduce cold start time"
       ],
       "automatable": false
     }
