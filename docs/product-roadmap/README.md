@@ -245,8 +245,8 @@ utilities are also untested. All are Tier 1 or Tier 2 packages.
 - [x] `packages/db/tests/integration/session.repository.integration.test.ts`
 - [x] `packages/shared/tests/utils.test.ts` — all utility functions
 - [x] shared, config, cli, secrets added to `vitest.workspace.ts` with tier-appropriate thresholds
-- [ ] 4 service handler test files (cleanup, reports, user-created, websocket) — only email handler tested
-- [ ] 3 app composable tests (useAuth, useCms, useNavigation) + auth middleware test
+- [ ] 4 service handler test files (cleanup, reports, user-created, websocket) — only `services/worker/tests/email.handler.test.ts` exists; create matching test files for `services/cron/cleanup.handler.ts`, `services/cron/reports.handler.ts`, `services/events/user-created.handler.ts`, and `services/websocket/` (stubs have `// TODO(RN-080)` markers showing entry points)
+- [ ] 3 app composable tests (useAuth, useCms, useNavigation) + auth middleware test — create in `apps/web/tests/composables/` and `apps/web/tests/middleware/`; composables live in `apps/web/composables/`, middleware in `apps/web/middleware/`
 - [x] `pnpm verify` passes
 
 #### Verification
