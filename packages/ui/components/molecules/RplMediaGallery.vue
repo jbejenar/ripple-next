@@ -296,7 +296,7 @@ onUnmounted(() => {
   right: 0;
   background: none;
   border: none;
-  color: #fff;
+  color: var(--rpl-clr-white, #fff);
   font-size: 2rem;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
@@ -304,14 +304,14 @@ onUnmounted(() => {
 }
 
 .rpl-media-gallery__lightbox-close:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--rpl-clr-white, #fff);
   outline-offset: 2px;
 }
 
 .rpl-media-gallery__lightbox-nav {
   background: rgba(255, 255, 255, 0.2);
   border: none;
-  color: #fff;
+  color: var(--rpl-clr-white, #fff);
   font-size: 2.5rem;
   cursor: pointer;
   padding: 1rem 0.75rem;
@@ -325,7 +325,7 @@ onUnmounted(() => {
 }
 
 .rpl-media-gallery__lightbox-nav:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--rpl-clr-white, #fff);
   outline-offset: 2px;
 }
 
@@ -351,7 +351,7 @@ onUnmounted(() => {
 
 .rpl-media-gallery__lightbox-caption {
   margin-top: var(--rpl-sp-3, 0.75rem);
-  color: #fff;
+  color: var(--rpl-clr-white, #fff);
   font-size: var(--rpl-type-size-s, 0.875rem);
   line-height: 1.4;
 }

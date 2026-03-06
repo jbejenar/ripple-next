@@ -308,13 +308,13 @@ function handleTranscriptClick(): void {
   right: 0;
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--rpl-clr-white, #ffffff);
   cursor: pointer;
   font-size: 1rem;
 }
 
 .rpl-media-embed__fullscreen-close:focus-visible {
-  outline: 2px solid #ffffff;
+  outline: 2px solid var(--rpl-clr-white, #ffffff);
   outline-offset: 2px;
 }
 
