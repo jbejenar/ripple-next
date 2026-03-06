@@ -6,8 +6,8 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 58 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 7 items active. 7 items parked.
+> 59 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 6 items active. 7 items parked.
 
 ---
 
@@ -21,8 +21,8 @@ gantt
 
     section Now (0–4 weeks)
     RN-058 Licensing resolution ADR        :done, rn058, 2026-03-03, 7d
-    RN-071 Fleet management docs           :active, rn071, 2026-03-04, 5d
-    RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
+    RN-071 Fleet management docs           :done, rn071, 2026-03-04, 5d
+    RN-054 Downstream proof-of-life        :active, rn054, 2026-03-06, 14d
 
     section Next (6–12 weeks)
     RN-017 Live Drupal integration         :rn017, 2026-04-07, 21d
@@ -119,7 +119,7 @@ Resolved by [ADR-027](../adr/027-licensing-government-procurement.md): relicense
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** Downstream AI agent friction — agent working on ripple-next-api-address encountered missing fleet docs, no pnpm aliases, missing composite actions, missing fleet-policy.json, and verify.mjs without --fleet support.
 **AI-first benefit:** Downstream AI agents can discover and execute fleet operations from their own repo documentation without referencing upstream.
-**Status:** In Progress
+**Status:** Done
 **Dependencies:** None
 
 Downstream repos scaffolded by ripple-next receive fleet scripts and workflows but
@@ -158,7 +158,7 @@ composite actions, and instructions into every downstream repo.
 **Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** High
 **Source:** Critique 3 — "the project is a promising skeleton with exceptional documentation — but a skeleton nonetheless"
 **AI-first benefit:** Validates that agents can scaffold, configure, test, and deploy a downstream repo end-to-end using platform tooling.
-**Status:** Planned
+**Status:** In Progress
 **Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility)
 
 The single most important item on the roadmap. Creates one downstream repo using
@@ -167,12 +167,12 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 
 #### Definition of Done
 
-- [ ] Downstream repo created via `pnpm generate:scaffold`
-- [ ] At least 3 @ripple-next/* packages consumed from registry (auth, db, ui)
+- [x] Downstream repo created via `pnpm generate:scaffold`
+- [x] At least 3 @ripple-next/* packages consumed from registry (auth, db, ui)
 - [ ] Downstream CI passes using golden-path reusable workflows
-- [ ] Fleet drift detection runs against downstream repo
+- [x] Fleet drift detection runs against downstream repo
 - [ ] Downstream deployed to staging environment (SST)
-- [ ] `pnpm conform -- --target=../downstream-repo` scores ≥ 70
+- [x] `pnpm conform -- --target=../downstream-repo` scores ≥ 70 (scored 100/100)
 
 #### Verification
 
@@ -452,7 +452,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-58 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057, RN-059–RN-060).
+59 items completed (RN-001 through RN-071, excluding RN-017, RN-054, RN-057, RN-059–RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)

@@ -9,7 +9,7 @@
     "./nuxt": "./nuxt.ts"
   },
   "scripts": {
-    "build": "echo 'UI build handled by Nuxt'",
+    "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
@@ -24,6 +24,21 @@
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^20.0.0",
     "typescript": "^5.7.3",
+    "vite": "^6.1.0",
     "vitest": "^3.0.4"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "main": "./dist/ripple-ui.js",
+    "exports": {
+      ".": {
+        "import": "./dist/ripple-ui.js"
+      },
+      "./nuxt": {
+        "import": "./dist/nuxt.js"
+      },
+      "./style.css": "./dist/style.css"
+    }
   }
 }

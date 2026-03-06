@@ -1,0 +1,41 @@
+{
+  "name": "@ripple-next-proof-of-life/root",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "nuxi typecheck",
+    "verify": "node scripts/verify.mjs",
+    "doctor": "bash scripts/doctor.sh",
+    "bootstrap": "pnpm install && pnpm doctor && pnpm verify",
+    "validate:env": "node scripts/validate-env.mjs",
+    "check:readiness": "node scripts/check-readiness.mjs",
+    "check:quarantine": "node scripts/check-quarantine.mjs",
+    "check:fleet-drift": "node scripts/check-fleet-drift.mjs"
+  },
+  "dependencies": {
+    "@ripple-next/ui": "^0.1.0",
+    "@ripple-next/auth": "^0.1.0",
+    "@ripple-next/db": "^0.1.0",
+    "@ripple-next/validation": "^0.1.0",
+    "@ripple-next/shared": "^0.1.0",
+    "nuxt": "^3.15.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^9.0.0",
+    "happy-dom": "^20.0.0",
+    "typescript": "^5.7.0",
+    "prettier": "^3.4.0",
+    "vitest": "^3.0.0"
+  }
+}
