@@ -64,10 +64,9 @@ across the fleet.
 
 **Platform status:** 18/18 subsystems with `maturity` field in
 [`readiness.json`](../readiness.json). Distribution:
-2 integration-tested (auth, database), 8 conformance-tested (queue, storage,
-email, events, CMS, UI, API, testing-infra), 6 interface-defined
-(infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance),
-2 schema-defined (config, secrets).
+3 integration-tested (auth, database, CMS), 8 conformance-tested (queue, storage,
+email, events, UI, API, testing-infra, secrets), 7 interface-defined
+(infrastructure, CI, publishing, navigation, agent-tooling, fleet-governance, cli).
 0 production-proven. See [`readiness.json`](../readiness.json) for
 per-subsystem detail.
 

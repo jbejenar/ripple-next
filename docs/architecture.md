@@ -175,7 +175,7 @@ for the full inventory of what ripple-next provides.
 - [Testing Guide](./testing-guide.md) — test pyramid and examples
 - [Lambda vs ECS](./lambda-vs-ecs.md) — compute decision framework
 - [Critique Evaluation](./critique-evaluation.md) — architecture review decisions
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (26 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (28 total)
 - [Downstream Workflows](./downstream-workflows.md) — consuming reusable composite actions
 - [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages
 - [Downstream Adoption Guide](./downstream-adoption-guide.md) — documentation standards for downstream repos

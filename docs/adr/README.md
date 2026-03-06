@@ -31,9 +31,9 @@
 | [021](./021-api-contract-strategy.md) | API Contract Strategy — oRPC, OpenAPI-First, Public/Internal Classification | Accepted | API |
 | [022](./022-bidirectional-fleet-communication.md) | Bidirectional Fleet Communication — Feedback, Version Tracking, Notifications | Accepted | Process |
 | [023](./023-downstream-adoption-standards.md) | Downstream Adoption Standards — Documentation Governance for Fleet Consumers | Accepted | Process |
-| [024](./024-declarative-secrets-schema.md) | Declarative Secrets Schema — Typed, Validated, Machine-Readable | Proposed | Architecture |
-| [025](./025-platform-cli-structured-output.md) | Platform CLI — Unified `pnpm rip` with Structured JSON Output | Proposed | Process |
-| [026](./026-github-oidc-zero-secrets-ci.md) | GitHub OIDC Federation — Zero Secrets in CI/CD | Proposed | Infrastructure |
+| [024](./024-declarative-secrets-schema.md) | Declarative Secrets Schema — Typed, Validated, Machine-Readable | Accepted | Architecture |
+| [025](./025-platform-cli-structured-output.md) | Platform CLI — Unified `pnpm rip` with Structured JSON Output | Accepted | Process |
+| [026](./026-github-oidc-zero-secrets-ci.md) | GitHub OIDC Federation — Zero Secrets in CI/CD | Accepted | Infrastructure |
 | [027](./027-licensing-government-procurement.md) | Licensing Resolution — Apache 2.0 for Government Procurement Compatibility | Accepted | Legal |
 | [028](./028-runtime-monitoring-observability.md) | Runtime Monitoring and Observability — Powertools + CloudWatch | Accepted | Infrastructure |
 

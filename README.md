@@ -181,6 +181,9 @@ packages/events/     — Domain events
 packages/validation/ — Zod schemas
 packages/shared/     — Shared types/utils
 packages/testing/    — Test infrastructure
+packages/config/     — Declarative secrets schema, environment config
+packages/secrets/    — Secrets management (provider pattern)
+packages/cli/        — Platform CLI (pnpm rip)
 services/worker/     — Queue consumers
 services/websocket/  — WebSocket service
 services/cron/       — Cron jobs

@@ -2,7 +2,7 @@
 
 | Field        | Value                          |
 | ------------ | ------------------------------ |
-| **Status**   | Proposed                       |
+| **Status**   | Accepted                       |
 | **Date**     | 2026-03-03                     |
 | **Deciders** | Platform team                  |
 | **Relates**  | ADR-018 (AI-first workflow), ADR-024 (Secrets schema) |
