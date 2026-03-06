@@ -5,6 +5,8 @@ import { envValidateCommand } from './commands/env-validate.js'
 import { envDiffCommand } from './commands/env-diff.js'
 import { dbStatusCommand } from './commands/db-status.js'
 import { verifyCommand } from './commands/verify.js'
+import { secretsCommand } from './commands/secrets.js'
+import { deployCommand } from './commands/deploy.js'
 
 const envCommand = defineCommand({
   meta: {
@@ -38,6 +40,8 @@ const main = defineCommand({
     env: envCommand,
     db: dbCommand,
     verify: verifyCommand,
+    secrets: secretsCommand,
+    deploy: deployCommand,
   },
 })
 

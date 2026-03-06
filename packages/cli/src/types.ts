@@ -29,6 +29,8 @@ export const CLI_ERROR_CODES = {
   EXECUTION_FAILED: 'RPL-CLI-003',
   JSON_PARSE_ERROR: 'RPL-CLI-004',
   COMMAND_NOT_FOUND: 'RPL-CLI-005',
+  SECRETS_NOT_FOUND: 'RPL-CLI-006',
+  DEPLOY_FAILED: 'RPL-CLI-007',
 } as const
 
 export type CliErrorCode = (typeof CLI_ERROR_CODES)[keyof typeof CLI_ERROR_CODES]
@@ -102,4 +104,50 @@ export interface EnvValidationResult {
 export interface MigrationEntry {
   name: string
   status: 'applied' | 'pending'
+}
+
+/**
+ * Status of a single secret from the schema.
+ */
+export interface SecretStatus {
+  name: string
+  required: boolean
+  stages: string[]
+  format: string
+  group?: string
+  kind?: string
+  status: 'set' | 'missing'
+}
+
+/**
+ * Audit result for secrets across all stages.
+ */
+export interface SecretsAuditResult {
+  stages: Record<
+    string,
+    {
+      total: number
+      set: number
+      missing: number
+      secrets: SecretStatus[]
+    }
+  >
+}
+
+/**
+ * A phase within a deploy pipeline.
+ */
+export interface DeployPhase {
+  phase: string
+  status: 'pass' | 'fail' | 'skipped'
+  details?: string
+}
+
+/**
+ * Deploy command result data.
+ */
+export interface DeployResult {
+  stage: string
+  dryRun: boolean
+  phases: DeployPhase[]
 }

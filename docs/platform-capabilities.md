@@ -22,10 +22,13 @@ like any other dependency and upgrade on their own schedule ([ADR-007](./adr/007
 | `@ripple-next/email` | Email delivery | MemoryEmailProvider / SmtpEmailProvider / SesEmailProvider | conformance-tested |
 | `@ripple-next/events` | Domain event bus | MemoryEventBus / EventBridgeBus | conformance-tested |
 | `@ripple-next/cms` | Content management (Drupal decoupled) | MockCmsProvider / DrupalCmsProvider | conformance-tested |
-| `@ripple-next/ui` | Vue 3 component library (47 components, Ripple design system) | N/A | conformance-tested |
+| `@ripple-next/ui` | Vue 3 component library (55 components, Ripple design system) | N/A | conformance-tested |
 | `@ripple-next/validation` | Shared Zod schemas (frontend + backend) | N/A | conformance-tested |
 | `@ripple-next/shared` | Shared types and utilities | N/A | conformance-tested |
 | `@ripple-next/testing` | Test utilities, factories, mock providers, conformance suites | N/A | conformance-tested |
+| `@ripple-next/config` | Declarative secrets schema, environment config | N/A | conformance-tested |
+| `@ripple-next/secrets` | Secrets management | MemorySecretsProvider / EnvSecretsProvider / AwsSecretsProvider / ChainSecretsProvider | conformance-tested |
+| `@ripple-next/cli` | Platform CLI (`pnpm rip`) — status, env, db, secrets, deploy, verify | N/A | interface-defined |
 
 **Maturity levels:** `interface-defined` → `conformance-tested` → `integration-tested` → `production-proven`. See [`readiness.json`](./readiness.json) for per-subsystem detail.
 

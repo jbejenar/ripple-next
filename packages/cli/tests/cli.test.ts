@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import type { CommandResult, VerifySummary, EnvDiffEntry } from '../src/types.js'
+import type {
+  CommandResult,
+  VerifySummary,
+  EnvDiffEntry,
+  SecretStatus,
+  SecretsAuditResult,
+  DeployPhase,
+  DeployResult,
+} from '../src/types.js'
 import { CLI_ERROR_CODES } from '../src/types.js'
 import { success, failure } from '../src/utils.js'
 
@@ -63,6 +71,8 @@ describe('CLI_ERROR_CODES', () => {
     expect(CLI_ERROR_CODES.EXECUTION_FAILED).toBe('RPL-CLI-003')
     expect(CLI_ERROR_CODES.JSON_PARSE_ERROR).toBe('RPL-CLI-004')
     expect(CLI_ERROR_CODES.COMMAND_NOT_FOUND).toBe('RPL-CLI-005')
+    expect(CLI_ERROR_CODES.SECRETS_NOT_FOUND).toBe('RPL-CLI-006')
+    expect(CLI_ERROR_CODES.DEPLOY_FAILED).toBe('RPL-CLI-007')
   })
 
   it('all codes follow RPL-CLI-NNN format', () => {
@@ -279,5 +289,235 @@ describe('VerifySummary type', () => {
     const summary: VerifySummary = raw
     expect(summary.schema).toBe('ripple-gate-summary/v1')
     expect(summary.gates).toHaveLength(1)
+  })
+})
+
+describe('secrets list command output shape', () => {
+  it('produces valid CommandResult with secrets data', () => {
+    const secrets: SecretStatus[] = [
+      {
+        name: 'DATABASE_URL',
+        required: true,
+        stages: ['dev', 'staging', 'production'],
+        format: 'postgres-uri',
+        group: 'database',
+        kind: 'connection-string',
+        status: 'set',
+      },
+      {
+        name: 'REDIS_URL',
+        required: true,
+        stages: ['dev', 'staging', 'production'],
+        format: 'redis-uri',
+        group: 'cache',
+        kind: 'connection-string',
+        status: 'missing',
+      },
+    ]
+
+    const result = success(
+      'secrets list',
+      { stage: 'dev', total: 2, secrets },
+      Date.now()
+    )
+
+    expect(result.ok).toBe(true)
+    expect(result.command).toBe('secrets list')
+    expect(result.data?.secrets).toHaveLength(2)
+    expect(result.data?.total).toBe(2)
+    expect(result.data?.stage).toBe('dev')
+  })
+
+  it('secrets have correct status values', () => {
+    const secret: SecretStatus = {
+      name: 'API_KEY',
+      required: false,
+      stages: ['production'],
+      format: 'string',
+      status: 'missing',
+    }
+
+    expect(secret.status).toBe('missing')
+    expect(secret.required).toBe(false)
+  })
+})
+
+describe('secrets required command output shape', () => {
+  it('produces valid CommandResult with required secrets and counts', () => {
+    const secrets: SecretStatus[] = [
+      {
+        name: 'DATABASE_URL',
+        required: true,
+        stages: ['dev', 'staging', 'production'],
+        format: 'postgres-uri',
+        status: 'set',
+      },
+      {
+        name: 'AUTH_SECRET',
+        required: true,
+        stages: ['dev', 'staging', 'production'],
+        format: 'random-bytes-32',
+        status: 'missing',
+      },
+    ]
+
+    const result = success(
+      'secrets required',
+      { stage: 'dev', total: 2, set: 1, missing: 1, secrets },
+      Date.now()
+    )
+
+    expect(result.ok).toBe(true)
+    expect(result.command).toBe('secrets required')
+    expect(result.data?.set).toBe(1)
+    expect(result.data?.missing).toBe(1)
+    expect(result.data?.total).toBe(2)
+    expect(result.data?.secrets).toHaveLength(2)
+  })
+})
+
+describe('secrets get command output shape', () => {
+  it('produces valid CommandResult with secret metadata and masked value', () => {
+    const result = success(
+      'secrets get',
+      {
+        name: 'DATABASE_URL',
+        description: 'PostgreSQL connection string',
+        required: true,
+        stages: ['dev', 'staging', 'production'],
+        format: 'postgres-uri',
+        group: 'database',
+        kind: 'connection-string',
+        status: 'set' as const,
+        maskedValue: 'po****al',
+      },
+      Date.now()
+    )
+
+    expect(result.ok).toBe(true)
+    expect(result.command).toBe('secrets get')
+    expect(result.data?.name).toBe('DATABASE_URL')
+    expect(result.data?.maskedValue).toBe('po****al')
+    expect(result.data?.status).toBe('set')
+  })
+
+  it('produces failure for unknown secret', () => {
+    const result = failure(
+      'secrets get',
+      CLI_ERROR_CODES.SECRETS_NOT_FOUND,
+      'Secret "NONEXISTENT" not found in schema.',
+      Date.now(),
+      'Available secrets: DATABASE_URL, REDIS_URL'
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.error?.code).toBe('RPL-CLI-006')
+  })
+})
+
+describe('secrets audit command output shape', () => {
+  it('produces valid CommandResult with per-stage audit data', () => {
+    const audit: SecretsAuditResult = {
+      stages: {
+        dev: {
+          total: 3,
+          set: 2,
+          missing: 1,
+          secrets: [
+            { name: 'DATABASE_URL', required: true, stages: ['dev'], format: 'postgres-uri', status: 'set' },
+            { name: 'REDIS_URL', required: true, stages: ['dev'], format: 'redis-uri', status: 'set' },
+            { name: 'AUTH_SECRET', required: true, stages: ['dev'], format: 'random-bytes-32', status: 'missing' },
+          ],
+        },
+        staging: {
+          total: 2,
+          set: 0,
+          missing: 2,
+          secrets: [
+            { name: 'DATABASE_URL', required: true, stages: ['staging'], format: 'postgres-uri', status: 'missing' },
+            { name: 'REDIS_URL', required: true, stages: ['staging'], format: 'redis-uri', status: 'missing' },
+          ],
+        },
+      },
+    }
+
+    const result = success('secrets audit', audit, Date.now())
+
+    expect(result.ok).toBe(true)
+    expect(result.command).toBe('secrets audit')
+    expect(result.data?.stages.dev.total).toBe(3)
+    expect(result.data?.stages.dev.missing).toBe(1)
+    expect(result.data?.stages.staging.missing).toBe(2)
+  })
+})
+
+describe('deploy command output shape', () => {
+  it('produces valid CommandResult with deploy phases', () => {
+    const phases: DeployPhase[] = [
+      { phase: 'env-validate', status: 'pass', details: 'Environment variables validated' },
+      { phase: 'iac-policy-scan', status: 'skipped', details: 'IaC policy scan skipped' },
+      { phase: 'deploy', status: 'pass', details: 'SST deploy to "dev" succeeded' },
+      { phase: 'post-deploy', status: 'pass', details: 'Post-deploy health check passed' },
+    ]
+
+    const deployData: DeployResult = { stage: 'dev', dryRun: false, phases }
+    const result = success('deploy', deployData, Date.now())
+
+    expect(result.ok).toBe(true)
+    expect(result.command).toBe('deploy')
+    expect(result.data?.stage).toBe('dev')
+    expect(result.data?.dryRun).toBe(false)
+    expect(result.data?.phases).toHaveLength(4)
+    expect(result.data?.phases[0].status).toBe('pass')
+    expect(result.data?.phases[2].phase).toBe('deploy')
+  })
+
+  it('produces failure for pre-deploy check failure', () => {
+    const phases: DeployPhase[] = [
+      { phase: 'env-validate', status: 'fail', details: 'Environment validation failed' },
+    ]
+
+    const deployData: DeployResult = { stage: 'staging', dryRun: false, phases }
+    const result = failure(
+      'deploy',
+      CLI_ERROR_CODES.DEPLOY_FAILED,
+      'Pre-deploy validation failed.',
+      Date.now(),
+      'Resolve issues before deploying.'
+    )
+    result.data = deployData
+
+    expect(result.ok).toBe(false)
+    expect(result.error?.code).toBe('RPL-CLI-007')
+    expect(result.error?.message).toContain('Pre-deploy')
+  })
+
+  it('produces valid dry-run CommandResult with skipped phases', () => {
+    const phases: DeployPhase[] = [
+      { phase: 'env-validate', status: 'pass', details: 'Environment variables validated' },
+      { phase: 'iac-policy-scan', status: 'pass', details: 'IaC policy scan passed' },
+      { phase: 'deploy', status: 'skipped', details: 'Dry-run mode — deploy skipped' },
+      { phase: 'post-deploy', status: 'skipped', details: 'Dry-run mode — post-deploy skipped' },
+    ]
+
+    const deployData: DeployResult = { stage: 'production', dryRun: true, phases }
+    const result = success('deploy', deployData, Date.now())
+
+    expect(result.ok).toBe(true)
+    expect(result.data?.dryRun).toBe(true)
+    expect(result.data?.phases[2].status).toBe('skipped')
+    expect(result.data?.phases[3].status).toBe('skipped')
+  })
+
+  it('deploy failed uses RPL-CLI-007', () => {
+    const result = failure(
+      'deploy',
+      CLI_ERROR_CODES.DEPLOY_FAILED,
+      'SST deploy failed.',
+      Date.now()
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.error?.code).toBe('RPL-CLI-007')
   })
 })

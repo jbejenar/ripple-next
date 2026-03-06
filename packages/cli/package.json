@@ -31,7 +31,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "citty": "^0.1.6"
+    "citty": "^0.1.6",
+    "@ripple-next/config": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.7.3",
