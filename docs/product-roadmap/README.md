@@ -6,8 +6,8 @@
 > in publish-readiness, accessibility, and test coverage. Every item moves toward
 > "safe for downstream adoption" — the prerequisite for production-proven maturity.
 >
-> 87 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 1 item active. 0 items parked.
+> 86 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 2 items active. 0 items parked.
 
 ---
 
@@ -21,12 +21,12 @@ gantt
 
     section Now (0–4 weeks)
     RN-054 Downstream proof-of-life        :active, rn054, 2026-03-06, 14d
+    RN-077 Cloud provider test coverage     :active, rn077, 2026-03-07, 7d
 
     section Done (2026-03-07)
     RN-074 Package publish readiness        :done, rn074, 2026-03-07, 1d
     RN-075 CI/CD security hardening         :done, rn075, 2026-03-07, 1d
     RN-076 WCAG accessibility remediation   :done, rn076, 2026-03-07, 1d
-    RN-077 Cloud provider test coverage     :done, rn077, 2026-03-07, 1d
     RN-078 Design token migration           :done, rn078, 2026-03-07, 1d
     RN-079 Documentation accuracy sweep     :done, rn079, 2026-03-07, 1d
     RN-080 API & runtime hardening          :done, rn080, 2026-03-07, 1d
@@ -127,18 +127,18 @@ into a single publish-readiness sprint.
 
 #### Definition of Done
 
-- [ ] @ripple-next/ui generates .d.ts type declarations (`declaration: true` or vite-plugin-dts)
-- [ ] `publishConfig.exports` includes `types` conditions for all entry points
-- [ ] `vue` moved to `peerDependencies` in @ripple-next/ui
-- [ ] `@nuxt/kit` moved to `peerDependencies` (optional) in @ripple-next/ui
-- [ ] `"sideEffects": false` added to all 14 packages
-- [ ] `"files": ["dist", "README.md"]` added to packages missing it
-- [ ] @ripple-next/testing has build step, exports map, publishConfig
-- [ ] `secretsConformance` exported from testing/conformance/index.ts
-- [ ] `export *` replaced with explicit named exports in @ripple-next/db and @ripple-next/shared
-- [ ] Consumer guide .npmrc scope fixed (`@ripple-next:` not `@ripple:`)
-- [ ] All documented import paths in package READMEs resolve
-- [ ] `pnpm verify` passes
+- [x] @ripple-next/ui generates .d.ts type declarations (`declaration: true` or vite-plugin-dts)
+- [x] `publishConfig.exports` includes `types` conditions for all entry points
+- [x] `vue` moved to `peerDependencies` in @ripple-next/ui
+- [x] `@nuxt/kit` moved to `peerDependencies` (optional) in @ripple-next/ui
+- [x] `"sideEffects": false` added to all 14 packages
+- [x] `"files": ["dist", "README.md"]` added to packages missing it
+- [x] @ripple-next/testing has build step, exports map, publishConfig
+- [x] `secretsConformance` exported from testing/conformance/index.ts
+- [x] `export *` replaced with explicit named exports in @ripple-next/db and @ripple-next/shared
+- [x] Consumer guide .npmrc scope fixed (`@ripple-next:` not `@ripple:`)
+- [x] All documented import paths in package READMEs resolve
+- [x] `pnpm verify` passes
 
 #### Verification
 
@@ -199,17 +199,17 @@ ignoring prefers-reduced-motion. Government platform — a11y is non-negotiable.
 
 #### Definition of Done
 
-- [ ] RplMediaEmbed fullscreen uses `.showModal()` with focus trap + Escape handling
-- [ ] RplMediaGallery lightbox has focus trap matching RplMediaFullscreen pattern
-- [ ] 5 form components: `:focus { outline: none }` → `:focus-visible { ... }`
-- [ ] RplButton, RplCard, RplNavigationList have `:focus-visible` styles
-- [ ] Global or per-component `prefers-reduced-motion: reduce` suppresses animations (20 components)
-- [ ] 9 form components add `:aria-required="required"`
-- [ ] RplAccordion panel has `aria-labelledby`
-- [ ] RplForm fieldset has `<legend>`
-- [ ] RplKeyDates and RplTimeline use semantic list elements
-- [ ] RplTextarea counter has `role="status"` and `aria-live="polite"`
-- [ ] `pnpm verify` passes
+- [x] RplMediaEmbed fullscreen uses `.showModal()` with focus trap + Escape handling
+- [x] RplMediaGallery lightbox has focus trap matching RplMediaFullscreen pattern
+- [x] 5 form components: `:focus { outline: none }` → `:focus-visible { ... }`
+- [x] RplButton, RplCard, RplNavigationList have `:focus-visible` styles
+- [x] Global or per-component `prefers-reduced-motion: reduce` suppresses animations (20 components)
+- [x] 9 form components add `:aria-required="required"`
+- [x] RplAccordion panel has `aria-labelledby`
+- [x] RplForm fieldset has `<legend>`
+- [x] RplKeyDates and RplTimeline use semantic list elements
+- [x] RplTextarea counter has `role="status"` and `aria-live="polite"`
+- [x] `pnpm verify` passes
 
 #### Verification
 
@@ -226,7 +226,7 @@ ignoring prefers-reduced-motion. Government platform — a11y is non-negotiable.
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings TEST-001, TEST-004 through TEST-014 (7 CRITICAL, 14 HIGH)
 **AI-first benefit:** Agents can refactor provider implementations with confidence that mocked conformance tests catch regressions.
-**Status:** Done (2026-03-07)
+**Status:** In Progress — provider tests done, service handler + composable tests outstanding
 **Dependencies:** None
 
 7 cloud provider implementations have zero tests (SQS, BullMQ, SES, S3, MinIO,
@@ -235,19 +235,19 @@ utilities are also untested. All are Tier 1 or Tier 2 packages.
 
 #### Definition of Done
 
-- [ ] `packages/queue/tests/consumer.test.ts` — retry, DLQ, error handling
-- [ ] `packages/queue/tests/sqs.test.ts` — mocked AWS SDK
-- [ ] `packages/queue/tests/bullmq.test.ts` — mocked BullMQ
-- [ ] `packages/email/tests/ses.test.ts` — mocked AWS SDK
-- [ ] `packages/storage/tests/s3.test.ts` — mocked AWS SDK
-- [ ] `packages/storage/tests/minio.test.ts` — mocked MinIO
-- [ ] `packages/secrets/tests/aws.test.ts`, `env.test.ts`, `chain.test.ts`
-- [ ] `packages/db/tests/integration/session.repository.integration.test.ts`
-- [ ] `packages/shared/tests/utils.test.ts` — all utility functions
-- [ ] shared, config, cli, secrets added to `vitest.workspace.ts` with tier-appropriate thresholds
-- [ ] 4 service handler test files (cleanup, reports, user-created, websocket)
+- [x] `packages/queue/tests/consumer.test.ts` — retry, DLQ, error handling
+- [x] `packages/queue/tests/sqs.test.ts` — mocked AWS SDK
+- [x] `packages/queue/tests/bullmq.test.ts` — mocked BullMQ
+- [x] `packages/email/tests/ses.test.ts` — mocked AWS SDK
+- [x] `packages/storage/tests/s3.test.ts` — mocked AWS SDK
+- [x] `packages/storage/tests/minio.test.ts` — mocked MinIO
+- [x] `packages/secrets/tests/aws.test.ts`, `env.test.ts`, `chain.test.ts`
+- [x] `packages/db/tests/integration/session.repository.integration.test.ts`
+- [x] `packages/shared/tests/utils.test.ts` — all utility functions
+- [x] shared, config, cli, secrets added to `vitest.workspace.ts` with tier-appropriate thresholds
+- [ ] 4 service handler test files (cleanup, reports, user-created, websocket) — only email handler tested
 - [ ] 3 app composable tests (useAuth, useCms, useNavigation) + auth middleware test
-- [ ] `pnpm verify` passes
+- [x] `pnpm verify` passes
 
 #### Verification
 
@@ -273,12 +273,12 @@ showing the pattern exists — it just wasn't applied consistently.
 
 #### Definition of Done
 
-- [ ] All hardcoded hex colours replaced with `var(--rpl-clr-*)` CSS custom properties
-- [ ] Common px values (border-radius, max-width, breakpoints) tokenised as `var(--rpl-*)`
-- [ ] Raw font-size values replaced with `var(--rpl-type-size-*)`
-- [ ] Token definitions documented or added to tokens file
-- [ ] Zero grep hits for hardcoded hex in component `.vue` `<style>` blocks
-- [ ] `pnpm verify` passes
+- [x] All hardcoded hex colours replaced with `var(--rpl-clr-*)` CSS custom properties
+- [x] Common px values (border-radius, max-width, breakpoints) tokenised as `var(--rpl-*)`
+- [x] Raw font-size values replaced with `var(--rpl-type-size-*)`
+- [x] Token definitions documented or added to tokens file
+- [x] Zero grep hits for hardcoded hex in component `.vue` `<style>` blocks
+- [x] `pnpm verify` passes
 
 #### Verification
 
@@ -306,12 +306,12 @@ structural changes needed.
 
 #### Definition of Done
 
-- [ ] platform-capabilities.md: error count 68+ → 94, CMS maturity updated, generator command `generate:api-endpoint` → `generate:endpoint`
-- [ ] error-taxonomy.json: self-description 85 → 94 codes
-- [ ] README.md: structure section includes packages/config, secrets, cli
-- [ ] architecture.md: ADR count 26 → 28
-- [ ] ADRs 024, 025, 026 status updated from "Proposed" to "Accepted"
-- [ ] `pnpm verify` passes
+- [x] platform-capabilities.md: error count 68+ → 94, CMS maturity updated, generator command `generate:api-endpoint` → `generate:endpoint`
+- [x] error-taxonomy.json: self-description 85 → 94 codes
+- [x] README.md: structure section includes packages/config, secrets, cli
+- [x] architecture.md: ADR count 26 → 28
+- [x] ADRs 024, 025, 026 status updated from "Proposed" to "Accepted"
+- [x] `pnpm verify` passes
 
 #### Verification
 
@@ -335,12 +335,12 @@ query params without Zod validation. Console violations in non-exempt files.
 
 #### Definition of Done
 
-- [ ] 5 non-null assertions replaced with explicit null guards + error throws
-- [ ] CMS API routes validate query params with Zod before passing to providers
-- [ ] Unvalidated JSON casts in CMS/CLI replaced with schema validation
-- [ ] `console.error` in queue/consumer.ts either exempted in lint config or replaced with logger
-- [ ] Stub handlers (cleanup, reports, user-created) annotated with TODO ticket references
-- [ ] `pnpm verify` passes
+- [x] 5 non-null assertions replaced with explicit null guards + error throws
+- [x] CMS API routes validate query params with Zod before passing to providers
+- [x] Unvalidated JSON casts in CMS/CLI replaced with schema validation
+- [x] `console.error` in queue/consumer.ts replaced with `onError` callback
+- [x] Stub handlers (cleanup, reports, user-created) annotated with TODO ticket references
+- [x] `pnpm verify` passes
 
 #### Verification
 
