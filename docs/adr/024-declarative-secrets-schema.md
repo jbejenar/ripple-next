@@ -2,7 +2,7 @@
 
 | Field        | Value                          |
 | ------------ | ------------------------------ |
-| **Status**   | Proposed                       |
+| **Status**   | Accepted                       |
 | **Date**     | 2026-03-03                     |
 | **Deciders** | Platform team                  |
 | **Relates**  | ADR-003 (Provider pattern), ADR-004 (SST over CDK), ADR-012 (Env schema validation) |

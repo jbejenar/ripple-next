@@ -33,36 +33,36 @@ withDefaults(defineProps<RplFormAlertProps>(), {
 .rpl-form-alert {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: var(--rpl-sp-3, 0.75rem);
+  padding: var(--rpl-sp-4, 1rem);
   border-radius: var(--rpl-border-radius, 4px);
   border-left: 4px solid;
-  margin-bottom: 1rem;
+  margin-bottom: var(--rpl-sp-4, 1rem);
 }
 
 .rpl-form-alert--error {
   border-color: var(--rpl-clr-error, #d0021b);
-  background-color: #fef2f2;
+  background-color: var(--rpl-clr-error-bg, #fef2f2);
 }
 
 .rpl-form-alert--success {
   border-color: var(--rpl-clr-success, #027a48);
-  background-color: #f0fdf4;
+  background-color: var(--rpl-clr-success-bg, #f0fdf4);
 }
 
 .rpl-form-alert--warning {
   border-color: var(--rpl-clr-warning, #dc6803);
-  background-color: #fffbeb;
+  background-color: var(--rpl-clr-warning-bg, #fffbeb);
 }
 
 .rpl-form-alert--info {
   border-color: var(--rpl-clr-primary, #0052c2);
-  background-color: #eff6ff;
+  background-color: var(--rpl-clr-info-bg, #eff6ff);
 }
 
 .rpl-form-alert__icon {
   flex-shrink: 0;
-  font-size: 1.25rem;
+  font-size: var(--rpl-type-size-xl, 1.25rem);
   line-height: 1;
 }
 
@@ -88,13 +88,13 @@ withDefaults(defineProps<RplFormAlertProps>(), {
 
 .rpl-form-alert__title {
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 1rem;
+  margin-bottom: var(--rpl-sp-1, 0.25rem);
+  font-size: var(--rpl-type-size-base, 1rem);
   color: var(--rpl-clr-text, #333);
 }
 
 .rpl-form-alert__message {
-  font-size: 0.875rem;
+  font-size: var(--rpl-type-size-sm, 0.875rem);
   color: var(--rpl-clr-text, #333);
   margin: 0;
 }

@@ -63,22 +63,22 @@ const iconMap: Record<string, string> = {
 
 .rpl-alert--error {
   border-color: var(--rpl-clr-error, #d0021b);
-  background-color: #fef2f2;
+  background-color: var(--rpl-clr-error-bg, #fef2f2);
 }
 
 .rpl-alert--success {
   border-color: var(--rpl-clr-success, #027a48);
-  background-color: #f0fdf4;
+  background-color: var(--rpl-clr-success-bg, #f0fdf4);
 }
 
 .rpl-alert--warning {
   border-color: var(--rpl-clr-warning, #dc6803);
-  background-color: #fffbeb;
+  background-color: var(--rpl-clr-warning-bg, #fffbeb);
 }
 
 .rpl-alert--info {
   border-color: var(--rpl-clr-primary, #0052c2);
-  background-color: #eff6ff;
+  background-color: var(--rpl-clr-info-bg, #eff6ff);
 }
 
 .rpl-alert__icon {

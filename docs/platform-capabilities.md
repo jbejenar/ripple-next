@@ -130,7 +130,7 @@ One-command scaffolders for agents and developers:
 | Scaffold | `pnpm generate:scaffold <path>` | Full downstream DX (~40+ files): AI docs, quality gates, CI, fleet governance (drift, sync, feedback, composite actions), documentation templates |
 | Component | `pnpm generate:component <Name> --tier=<tier>` | Vue 3 component + Storybook story + Vue Test Utils test |
 | Provider | `pnpm generate:provider <Name> --concern=<concern>` | Provider implementation + conformance test |
-| API Endpoint | `pnpm generate:api-endpoint <Name>` | oRPC router + procedure + contract test |
+| API Endpoint | `pnpm generate:endpoint <Name>` | oRPC router + procedure + contract test |
 | Package | `pnpm generate:package <Name>` | New monorepo package with build, test, lint config |
 
 ---
@@ -180,8 +180,8 @@ Machine-parseable error codes for AI agent auto-triage across the fleet.
 | Aspect | Detail |
 |--------|--------|
 | Format | `RPL-<CATEGORY>-<NNN>` |
-| Total codes | 68+ |
-| Categories | 19 (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY, IAC, FLEET, A11Y, SESSION, SCAFFOLD, DOCS, API, AUTH, FEEDBACK, PERF, CONFORM, ADOPT) |
+| Total codes | 94 |
+| Categories | 23 (ENV, LINT, TYPE, TEST, BUILD, DEPLOY, POLICY, IAC, FLEET, A11Y, SESSION, SCAFFOLD, DOCS, API, AUTH, FEEDBACK, PERF, CONFORM, ADOPT, SEC, CLI, DEP, MONITOR) |
 | Severity levels | error (blocking), warning (non-blocking), info (informational) |
 
 Each code includes severity, category, message, remediation steps, related gate, and automatable flag.
@@ -213,5 +213,5 @@ Core architectural patterns that downstream repos should follow:
 - [Architecture](./architecture.md) — ripple-next system architecture
 - [Platform Developer Guide](./platform-developer-guide.md) — platform setup, development, and deployment
 - [Consumer App Guide](./consumer-app-guide.md) — building apps with `@ripple-next/*` packages
-- [ADR Index](./adr/README.md) — all Architecture Decision Records (23 total)
+- [ADR Index](./adr/README.md) — all Architecture Decision Records (28 total)
 - [Product Roadmap](./product-roadmap/README.md) — platform roadmap and priorities

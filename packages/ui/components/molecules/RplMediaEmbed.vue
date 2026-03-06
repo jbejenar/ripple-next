@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 
 export interface RplMediaEmbedProps {
   /** Type of media being embedded */
@@ -40,6 +40,8 @@ const emit = defineEmits<{
 }>()
 
 const isFullscreenOpen = ref(false)
+const dialogRef = ref<HTMLDialogElement | null>(null)
+const triggerRef = ref<HTMLButtonElement | null>(null)
 
 // For video: convert YouTube/Vimeo watch URLs to embed URLs
 const embedUrl = computed(() => {
@@ -56,9 +58,31 @@ const embedUrl = computed(() => {
   return url
 })
 
+async function openFullscreen(): Promise<void> {
+  isFullscreenOpen.value = true
+  emit('view-fullscreen', true)
+  await nextTick()
+  dialogRef.value?.showModal()
+}
+
+function closeFullscreen(): void {
+  dialogRef.value?.close()
+  isFullscreenOpen.value = false
+  emit('view-fullscreen', false)
+  triggerRef.value?.focus()
+}
+
 function toggleFullscreen(): void {
-  isFullscreenOpen.value = !isFullscreenOpen.value
-  emit('view-fullscreen', isFullscreenOpen.value)
+  if (isFullscreenOpen.value) {
+    closeFullscreen()
+  } else {
+    void openFullscreen()
+  }
+}
+
+function onDialogCancel(event: Event): void {
+  event.preventDefault()
+  closeFullscreen()
 }
 
 function handleTranscriptClick(): void {
@@ -127,6 +151,7 @@ function handleTranscriptClick(): void {
       </li>
       <li v-if="allowFullscreen">
         <button
+          ref="triggerRef"
           class="rpl-media-embed__action-link"
           type="button"
           @click="toggleFullscreen"
@@ -139,15 +164,17 @@ function handleTranscriptClick(): void {
     <!-- Fullscreen overlay -->
     <dialog
       v-if="allowFullscreen && type === 'image'"
-      :open="isFullscreenOpen"
+      ref="dialogRef"
       class="rpl-media-embed__fullscreen"
+      :aria-label="`${title} — fullscreen view`"
+      @cancel="onDialogCancel"
     >
       <div class="rpl-media-embed__fullscreen-inner">
         <button
           class="rpl-media-embed__fullscreen-close"
           type="button"
           aria-label="Close fullscreen"
-          @click="toggleFullscreen"
+          @click="closeFullscreen"
         >
           Close
         </button>
@@ -251,23 +278,22 @@ function handleTranscriptClick(): void {
   outline-offset: 2px;
 }
 
-/* Fullscreen overlay */
+/* Fullscreen overlay — uses .showModal() for built-in focus trap + Escape */
 .rpl-media-embed__fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+  border: none;
+  padding: 1rem;
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.9);
-  border: none;
-  padding: 1rem;
-  width: 100%;
-  height: 100%;
 }
 
-.rpl-media-embed__fullscreen:not([open]) {
-  display: none;
+.rpl-media-embed__fullscreen::backdrop {
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .rpl-media-embed__fullscreen-inner {
@@ -282,9 +308,14 @@ function handleTranscriptClick(): void {
   right: 0;
   background: none;
   border: none;
-  color: #ffffff;
+  color: var(--rpl-clr-white, #ffffff);
   cursor: pointer;
   font-size: 1rem;
+}
+
+.rpl-media-embed__fullscreen-close:focus-visible {
+  outline: 2px solid var(--rpl-clr-white, #ffffff);
+  outline-offset: 2px;
 }
 
 .rpl-media-embed__fullscreen-image {

@@ -74,6 +74,9 @@ function handleReset(event: Event): void {
       class="rpl-form__body"
       :disabled="submissionState.status === 'submitting'"
     >
+      <legend class="rpl-form__legend">
+        {{ title || 'Form fields' }}
+      </legend>
       <slot />
     </fieldset>
 
@@ -142,6 +145,18 @@ function handleReset(event: Event): void {
   margin: 0;
 }
 
+.rpl-form__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .rpl-form__body {
   border: none;
   padding: 0;
@@ -168,7 +183,7 @@ function handleReset(event: Event): void {
   font: inherit;
   font-size: var(--rpl-type-size-base, 1rem);
   font-weight: var(--rpl-type-weight-bold, 700);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   background-color: var(--rpl-clr-primary, #0052c2);
   border: none;
   border-radius: var(--rpl-border-radius, 4px);

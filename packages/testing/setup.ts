@@ -16,6 +16,7 @@ export {
   cmsConformance,
   createTestPage,
   createTestPageTwo,
-  createDraftPage
+  createDraftPage,
+  secretsConformance
 } from './conformance'
 export type { CmsConformanceOptions } from './conformance'

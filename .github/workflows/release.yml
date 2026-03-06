@@ -17,7 +17,7 @@ jobs:
     name: Version & Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: ./.github/actions/setup
         with:
           registry-url: https://registry.npmjs.org
@@ -30,7 +30,7 @@ jobs:
 
       - name: Upload API breaking-change report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: api-breaking-report
           path: api-breaking-report.json
@@ -51,7 +51,7 @@ jobs:
         run: npx --yes @cyclonedx/cyclonedx-npm --ignore-npm-errors --output-file sbom.cdx.json --output-format json
 
       - name: Upload SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: sbom-cyclonedx
           path: sbom.cdx.json
@@ -62,7 +62,7 @@ jobs:
         run: node scripts/verify-release.mjs --generate --output=release-checksums.json
 
       - name: Upload release checksums
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: release-checksums
           path: release-checksums.json
@@ -70,18 +70,18 @@ jobs:
 
       # ─── Build Provenance Attestation ─────────────────────────────
       - name: Attest SBOM provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: sbom.cdx.json
 
       - name: Attest release checksums
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: release-checksums.json
 
       - name: Create Release PR or Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
         with:
           publish: pnpm release
           version: pnpm version-packages
@@ -94,6 +94,6 @@ jobs:
       # ─── Provenance for Published Packages ────────────────────────
       - name: Attest published packages
         if: steps.changesets.outputs.published == 'true'
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: packages/*/dist/

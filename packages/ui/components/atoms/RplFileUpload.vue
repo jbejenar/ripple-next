@@ -41,6 +41,7 @@ const inputId = `rpl-file-${Math.random().toString(36).slice(2, 9)}`
         :accept="accept || undefined"
         :multiple="multiple"
         :required="required"
+        :aria-required="required"
         :disabled="disabled"
         :aria-invalid="!!error"
         :aria-describedby="error ? `${inputId}-error` : undefined"

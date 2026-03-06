@@ -5,6 +5,7 @@ import type { UserCreatedEvent } from '@ripple-next/events'
  * EventBridge handler for UserCreated events.
  * Triggered when a new user is created.
  */
+// TODO(RN-080): Implement handler — see docs/product-roadmap/README.md
 export const handler: EventBridgeHandler<'UserCreated', UserCreatedEvent['data'], void> = async (
   event
 ) => {

@@ -15,7 +15,20 @@ export const colors = {
   backgroundLight: '#f5f5f5',
   border: '#cccccc',
   borderLight: '#e0e0e0',
-  footerBg: '#1a1a1a'
+  footerBg: '#1a1a1a',
+  white: '#ffffff',
+  errorBg: '#fef2f2',
+  successBg: '#f0fdf4',
+  warningBg: '#fffbeb',
+  infoBg: '#eff6ff',
+  successLight: '#e8f5e9',
+  errorLight: '#fdecea',
+  filetypePdf: '#dc2626',
+  filetypeDoc: '#2563eb',
+  filetypeXls: '#16a34a',
+  filetypePpt: '#ea580c',
+  filetypeImg: '#7c3aed',
+  filetypeGeneric: '#6b7280'
 } as const
 
 export type RplColor = keyof typeof colors

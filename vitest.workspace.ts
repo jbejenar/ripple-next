@@ -96,5 +96,37 @@ export default defineWorkspace([
       include: ['tests/**/*.test.ts'],
       coverage: tier3Coverage
     }
+  },
+  {
+    test: {
+      name: 'secrets',
+      root: './packages/secrets',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier1Coverage
+    }
+  },
+  {
+    test: {
+      name: 'config',
+      root: './packages/config',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier2Coverage
+    }
+  },
+  {
+    test: {
+      name: 'shared',
+      root: './packages/shared',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier3Coverage
+    }
+  },
+  {
+    test: {
+      name: 'cli',
+      root: './packages/cli',
+      include: ['tests/**/*.test.ts'],
+      coverage: tier3Coverage
+    }
   }
 ])

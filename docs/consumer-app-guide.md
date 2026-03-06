@@ -55,7 +55,7 @@ All three workflows share the same prerequisites: **Node >= 22** and **pnpm >= 9
 ```ini
 # .npmrc — private registry auth for @ripple-next/* packages
 # Replace the URL and token with values from your platform team.
-@ripple:registry=https://npm.pkg.github.com
+@ripple-next:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${RIPPLE_NPM_TOKEN}
 ```
 

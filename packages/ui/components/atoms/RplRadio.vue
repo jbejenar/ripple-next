@@ -36,6 +36,7 @@ const groupId = `rpl-radio-${Math.random().toString(36).slice(2, 9)}`
 <template>
   <fieldset
     :class="['rpl-radio', { 'rpl-radio--error': error, 'rpl-radio--disabled': disabled }]"
+    :aria-required="required"
     :aria-invalid="!!error"
     :aria-describedby="error ? `${groupId}-error` : undefined"
   >

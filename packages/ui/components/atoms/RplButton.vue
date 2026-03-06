@@ -51,23 +51,23 @@ defineEmits<{
 }
 
 .rpl-button--sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  padding: var(--rpl-sp-2, 0.5rem) var(--rpl-sp-4, 1rem);
+  font-size: var(--rpl-type-size-sm, 0.875rem);
 }
 
 .rpl-button--md {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: var(--rpl-sp-3, 0.75rem) var(--rpl-sp-6, 1.5rem);
+  font-size: var(--rpl-type-size-base, 1rem);
 }
 
 .rpl-button--lg {
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
+  padding: var(--rpl-sp-4, 1rem) var(--rpl-sp-8, 2rem);
+  font-size: var(--rpl-type-size-lg, 1.125rem);
 }
 
 .rpl-button--primary {
   background-color: var(--rpl-clr-primary, #0052c2);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   border-color: var(--rpl-clr-primary, #0052c2);
 }
 
@@ -77,7 +77,7 @@ defineEmits<{
 
 .rpl-button--secondary {
   background-color: var(--rpl-clr-secondary, #333);
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   border-color: var(--rpl-clr-secondary, #333);
 }
 
@@ -91,5 +91,10 @@ defineEmits<{
   background-color: transparent;
   color: var(--rpl-clr-primary, #0052c2);
   border-color: transparent;
+}
+
+.rpl-button:focus-visible {
+  outline: 2px solid var(--rpl-clr-primary, #0052c2);
+  outline-offset: 2px;
 }
 </style>

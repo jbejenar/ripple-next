@@ -33,7 +33,7 @@ withDefaults(defineProps<RplTagProps>(), {
   font-size: var(--rpl-type-size-xs, 0.75rem);
   font-weight: 600;
   line-height: 1.5;
-  border-radius: 9999px;
+  border-radius: var(--rpl-border-radius-full, 9999px);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -53,22 +53,22 @@ a.rpl-tag:focus-visible {
 }
 
 .rpl-tag--info {
-  background-color: #eff6ff;
+  background-color: var(--rpl-clr-info-bg, #eff6ff);
   color: var(--rpl-clr-primary, #0052c2);
 }
 
 .rpl-tag--success {
-  background-color: #f0fdf4;
+  background-color: var(--rpl-clr-success-bg, #f0fdf4);
   color: var(--rpl-clr-success, #027a48);
 }
 
 .rpl-tag--warning {
-  background-color: #fffbeb;
+  background-color: var(--rpl-clr-warning-bg, #fffbeb);
   color: var(--rpl-clr-warning, #dc6803);
 }
 
 .rpl-tag--error {
-  background-color: #fef2f2;
+  background-color: var(--rpl-clr-error-bg, #fef2f2);
   color: var(--rpl-clr-error, #d0021b);
 }
 </style>

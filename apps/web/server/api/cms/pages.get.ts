@@ -1,18 +1,26 @@
+import { z } from 'zod'
 import { getCmsProvider } from '../../utils/cms-provider'
-import type { CmsListOptions } from '@ripple-next/cms'
+import { contentStatusSchema } from '@ripple-next/validation'
+
+const querySchema = z.object({
+  contentType: z.string().optional(),
+  status: contentStatusSchema.optional(),
+  page: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().max(100).optional(),
+  sort: z.enum(['created', 'updated', 'title']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional()
+})
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
+  const result = querySchema.safeParse(getQuery(event))
+  if (!result.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid query parameters',
+      data: { errors: result.error.flatten().fieldErrors }
+    })
+  }
   const cms = await getCmsProvider()
 
-  const options: CmsListOptions = {
-    contentType: query.contentType as string | undefined,
-    status: query.status as CmsListOptions['status'],
-    page: query.page ? Number(query.page) : undefined,
-    pageSize: query.pageSize ? Number(query.pageSize) : undefined,
-    sort: query.sort as CmsListOptions['sort'],
-    sortOrder: query.sortOrder as CmsListOptions['sortOrder']
-  }
-
-  return cms.listPages(options)
+  return cms.listPages(result.data)
 })

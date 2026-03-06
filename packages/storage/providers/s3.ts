@@ -47,7 +47,10 @@ export class S3StorageProvider implements StorageProvider {
 
   async download(key: string): Promise<Buffer> {
     const result = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }))
-    const bytes = await result.Body!.transformToByteArray()
+    if (!result.Body) {
+      throw new Error(`S3 object body is empty for key: ${key}`)
+    }
+    const bytes = await result.Body.transformToByteArray()
     return Buffer.from(bytes)
   }
 
@@ -68,11 +71,13 @@ export class S3StorageProvider implements StorageProvider {
     const result = await this.client.send(
       new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix })
     )
-    return (result.Contents ?? []).map((obj) => ({
-      key: obj.Key!,
-      size: obj.Size!,
-      lastModified: obj.LastModified!
-    }))
+    return (result.Contents ?? [])
+      .filter((obj) => obj.Key && obj.Size !== undefined && obj.LastModified)
+      .map((obj) => ({
+        key: obj.Key as string,
+        size: obj.Size as number,
+        lastModified: obj.LastModified as Date
+      }))
   }
 
   async getSignedUrl(key: string, expiresIn?: number): Promise<string> {

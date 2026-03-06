@@ -34,6 +34,7 @@ const inputId = `rpl-checkbox-${Math.random().toString(36).slice(2, 9)}`
         type="checkbox"
         :checked="modelValue"
         :required="required"
+        :aria-required="required"
         :disabled="disabled"
         :aria-invalid="!!error"
         :aria-describedby="error ? `${inputId}-error` : undefined"

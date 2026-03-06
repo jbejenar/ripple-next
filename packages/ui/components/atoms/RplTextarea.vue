@@ -45,13 +45,14 @@ const inputId = `rpl-textarea-${Math.random().toString(36).slice(2, 9)}`
       :rows="rows"
       :maxlength="maxlength || undefined"
       :required="required"
+      :aria-required="required"
       :disabled="disabled"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
       class="rpl-textarea__input"
       @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />
-    <div v-if="maxlength" class="rpl-textarea__counter">
+    <div v-if="maxlength" class="rpl-textarea__counter" role="status" aria-live="polite">
       {{ modelValue.length }}/{{ maxlength }}
     </div>
     <p v-if="error" :id="`${inputId}-error`" class="rpl-textarea__error" role="alert">
@@ -88,7 +89,7 @@ const inputId = `rpl-textarea-${Math.random().toString(36).slice(2, 9)}`
   transition: border-color 0.2s;
 }
 
-.rpl-textarea__input:focus {
+.rpl-textarea__input:focus-visible {
   outline: none;
   border-color: var(--rpl-clr-primary, #0052c2);
   box-shadow: 0 0 0 2px rgba(0, 82, 194, 0.2);

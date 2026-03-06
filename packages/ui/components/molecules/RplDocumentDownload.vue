@@ -139,34 +139,34 @@ function getFileTypeClass(mimeType: string): string {
   border-radius: var(--rpl-border-radius, 4px);
   font-size: var(--rpl-type-size-xs, 0.75rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   flex-shrink: 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .rpl-document-download__icon--pdf {
-  background-color: #dc2626;
+  background-color: var(--rpl-clr-filetype-pdf, #dc2626);
 }
 
 .rpl-document-download__icon--doc {
-  background-color: #2563eb;
+  background-color: var(--rpl-clr-filetype-doc, #2563eb);
 }
 
 .rpl-document-download__icon--xls {
-  background-color: #16a34a;
+  background-color: var(--rpl-clr-filetype-xls, #16a34a);
 }
 
 .rpl-document-download__icon--ppt {
-  background-color: #ea580c;
+  background-color: var(--rpl-clr-filetype-ppt, #ea580c);
 }
 
 .rpl-document-download__icon--img {
-  background-color: #7c3aed;
+  background-color: var(--rpl-clr-filetype-img, #7c3aed);
 }
 
 .rpl-document-download__icon--generic {
-  background-color: #6b7280;
+  background-color: var(--rpl-clr-filetype-generic, #6b7280);
 }
 
 .rpl-document-download__details {

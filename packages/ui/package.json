@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "type": "module",
+  "sideEffects": false,
   "main": "./index.ts",
   "exports": {
     ".": "./index.ts",
     "./nuxt": "./nuxt.ts"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
@@ -15,27 +20,41 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nuxt/kit": "^3.15.4",
     "vue": "^3.5.13"
   },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": false
+    },
+    "@nuxt/kit": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@nuxt/kit": "^3.15.4",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^20.0.0",
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
-    "vitest": "^3.0.4"
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.0.4",
+    "vue": "^3.5.13"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org",
-    "main": "./dist/ripple-ui.js",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
-        "import": "./dist/ripple-ui.js"
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
       },
       "./nuxt": {
+        "types": "./dist/nuxt.d.ts",
         "import": "./dist/nuxt.js"
       },
       "./style.css": "./dist/style.css"

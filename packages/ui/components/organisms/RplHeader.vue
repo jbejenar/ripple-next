@@ -26,7 +26,7 @@ withDefaults(defineProps<RplHeaderProps>(), {
 
 <style scoped>
 .rpl-header {
-  background-color: #fff;
+  background-color: var(--rpl-clr-white, #ffffff);
   border-bottom: 4px solid var(--rpl-clr-primary, #0052c2);
   padding: 1rem 1.5rem;
 }
@@ -40,7 +40,7 @@ withDefaults(defineProps<RplHeaderProps>(), {
 }
 
 .rpl-header__site-name {
-  font-size: 1.25rem;
+  font-size: var(--rpl-type-size-xl, 1.25rem);
   font-weight: 700;
   color: var(--rpl-clr-primary, #0052c2);
 }

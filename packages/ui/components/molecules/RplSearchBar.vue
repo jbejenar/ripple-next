@@ -88,7 +88,7 @@ function handleKeydown(event: KeyboardEvent): void {
   border: none;
   outline: none;
   color: var(--rpl-clr-text, #333);
-  background-color: #fff;
+  background-color: var(--rpl-clr-white, #ffffff);
   min-width: 0;
 }
 
@@ -102,7 +102,7 @@ function handleKeydown(event: KeyboardEvent): void {
   font: inherit;
   font-size: var(--rpl-type-size-base, 1rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--rpl-clr-white, #ffffff);
   background-color: var(--rpl-clr-primary, #0052c2);
   border: none;
   cursor: pointer;

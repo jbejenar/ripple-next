@@ -43,6 +43,7 @@ const inputId = `rpl-date-${Math.random().toString(36).slice(2, 9)}`
       :min="min || undefined"
       :max="max || undefined"
       :required="required"
+      :aria-required="required"
       :disabled="disabled"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
@@ -81,7 +82,7 @@ const inputId = `rpl-date-${Math.random().toString(36).slice(2, 9)}`
   transition: border-color 0.2s;
 }
 
-.rpl-date-input__input:focus {
+.rpl-date-input__input:focus-visible {
   outline: none;
   border-color: var(--rpl-clr-primary, #0052c2);
   box-shadow: 0 0 0 2px rgba(0, 82, 194, 0.2);

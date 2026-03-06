@@ -1,13 +1,20 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dts from 'vite-plugin-dts'
 import { resolve } from 'node:path'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    dts({
+      tsconfigPath: resolve(__dirname, 'tsconfig.json'),
+      rollupTypes: false,
+    }),
+  ],
   build: {
     lib: {
       entry: {
-        'ripple-ui': resolve(__dirname, 'index.ts'),
+        index: resolve(__dirname, 'index.ts'),
         nuxt: resolve(__dirname, 'nuxt.ts'),
       },
       formats: ['es'],

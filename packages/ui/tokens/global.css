@@ -17,6 +17,25 @@
   --rpl-clr-border: #cccccc;
   --rpl-clr-border-light: #e0e0e0;
   --rpl-clr-footer-bg: #1a1a1a;
+  --rpl-clr-white: #ffffff;
+
+  /* Variant backgrounds (light tints for alerts, callouts, tags) */
+  --rpl-clr-error-bg: #fef2f2;
+  --rpl-clr-success-bg: #f0fdf4;
+  --rpl-clr-warning-bg: #fffbeb;
+  --rpl-clr-info-bg: #eff6ff;
+
+  /* Form-specific variant backgrounds */
+  --rpl-clr-success-light: #e8f5e9;
+  --rpl-clr-error-light: #fdecea;
+
+  /* Document file-type colours */
+  --rpl-clr-filetype-pdf: #dc2626;
+  --rpl-clr-filetype-doc: #2563eb;
+  --rpl-clr-filetype-xls: #16a34a;
+  --rpl-clr-filetype-ppt: #ea580c;
+  --rpl-clr-filetype-img: #7c3aed;
+  --rpl-clr-filetype-generic: #6b7280;
 
   /* Typography */
   --rpl-type-font-family: 'VIC', Arial, 'Helvetica Neue', Helvetica, sans-serif;
@@ -39,10 +58,15 @@
   --rpl-sp-8: 2rem;
   --rpl-sp-10: 2.5rem;
   --rpl-sp-12: 3rem;
+  --rpl-sp-16: 4rem;
+  --rpl-sp-20: 5rem;
+  --rpl-sp-24: 6rem;
 
   /* Borders */
   --rpl-border-radius: 4px;
+  --rpl-border-radius-sm: 2px;
   --rpl-border-radius-lg: 8px;
+  --rpl-border-radius-full: 9999px;
 }
 
 /* Base reset */
@@ -61,4 +85,16 @@ body {
   background-color: var(--rpl-clr-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* WCAG: respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
