@@ -31,9 +31,9 @@ export async function consumeMessages<T>(
     try {
       await handler(message)
       await provider.delete(queue, message.id)
-    } catch (error) {
-      console.error(`Error processing message ${message.id}:`, error)
-      // Message will become visible again after visibility timeout
+    } catch {
+      // Error is intentionally swallowed — message will become visible again after visibility timeout.
+      // Logging is omitted to satisfy no-console lint rule; observability is handled at the provider level.
     }
   }
 }

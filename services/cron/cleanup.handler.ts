@@ -4,6 +4,7 @@ import type { ScheduledHandler } from 'aws-lambda'
  * Daily cleanup Lambda handler.
  * Triggered by EventBridge schedule: rate(1 day)
  */
+// TODO(RN-080): Implement handler — see docs/product-roadmap/README.md
 export const handler: ScheduledHandler = async () => {
   console.log('Running daily cleanup...')
 
