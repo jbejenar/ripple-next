@@ -34,7 +34,7 @@ runs:
         path: .fleet-golden-path
 
     - name: Setup Node.js
-      uses: actions/setup-node@49933ea5288caeca8642195f2b846f7c29f11741 # v4.4.0
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version-file: .fleet-golden-path/.nvmrc
 
