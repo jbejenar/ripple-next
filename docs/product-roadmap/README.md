@@ -300,9 +300,9 @@ or `drizzle-kit` directly. The CLI is a dev dependency, not a runtime dependency
 #### Definition of Done
 
 - [x] `packages/cli/` with citty
-- [ ] `rip secrets` subcommands (list, get, set, required, audit)
+- [x] `rip secrets` subcommands (list, get, set, required, audit)
 - [x] `rip env` subcommands (validate, diff)
-- [ ] `rip deploy` wrapping `sst deploy` with pre/post validation
+- [x] `rip deploy` wrapping `sst deploy` with pre/post validation
 - [x] `rip status` for health checks
 - [x] `rip db` wrapping drizzle-kit with safety checks
 - [x] Every command supports `--json` returning `CommandResult` shape

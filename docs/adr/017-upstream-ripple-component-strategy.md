@@ -36,6 +36,9 @@ or adopt a hybrid model?
 
 ### Component Gap Analysis
 
+> **Note (2026-03):** The gap analysis below reflects the state at decision time.
+> The gap has since been fully closed — see `docs/readiness.json` for current component counts.
+
 | Category | Upstream Ripple 2 | Our @ripple-next/ui | Gap |
 |----------|-------------------|----------------|-----|
 | **Atoms** (button, icon, input) | ~5 | 3 | ~2 |

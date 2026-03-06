@@ -306,6 +306,33 @@
       "automatable": true
     },
     {
+      "code": "RPL-CLI-006",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Secret not found \u2014 the requested secret name does not exist in the secrets schema",
+      "gate": "cli",
+      "remediation": [
+        "Run: pnpm rip secrets list --json to see all available secret names",
+        "Check packages/config/src/secrets.schema.ts for the full schema definition",
+        "Verify the secret name spelling and case"
+      ],
+      "automatable": false
+    },
+    {
+      "code": "RPL-CLI-007",
+      "category": "CLI",
+      "severity": "error",
+      "message": "Deployment failed \u2014 SST deploy returned a non-zero exit code or a pre-deploy validation failed",
+      "gate": "cli",
+      "remediation": [
+        "Run: pnpm rip deploy --stage <stage> --dry-run to validate pre-deploy checks",
+        "Check SST output for specific infrastructure errors",
+        "Ensure AWS credentials are configured (OIDC or env vars)",
+        "Run: pnpm rip secrets required --stage <stage> to verify all required secrets are set"
+      ],
+      "automatable": false
+    },
+    {
       "code": "RPL-CONFORM-001",
       "category": "CONFORM",
       "severity": "error",

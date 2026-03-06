@@ -190,6 +190,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@ripple-next/config':
+        specifier: workspace:*
+        version: link:../config
       citty:
         specifier: ^0.1.6
         version: 0.1.6

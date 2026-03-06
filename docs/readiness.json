@@ -245,7 +245,7 @@
     "cli": {
       "status": "implemented",
       "maturity": "interface-defined",
-      "description": "Platform CLI (@ripple-next/cli) providing unified agent interface via pnpm rip. Wraps platform operations (status, env validate, env diff, db status, verify) behind a universal CommandResult JSON contract. Uses citty for CLI framework. Error taxonomy codes RPL-CLI-001 through RPL-CLI-005. See ADR-025.",
+      "description": "Platform CLI (@ripple-next/cli) providing unified agent interface via pnpm rip. Wraps platform operations (status, env validate, env diff, db status, secrets list/get/set/required/audit, deploy with pre/post validation, verify) behind a universal CommandResult JSON contract. Uses citty for CLI framework. Error taxonomy codes RPL-CLI-001 through RPL-CLI-007. See ADR-025.",
       "packages": [
         "@ripple-next/cli"
       ],
@@ -264,7 +264,8 @@
     "syncPolicy": "Quarterly review. See CONTRIBUTING.md and ADR-017.",
     "ported": 48,
     "upstream": 48,
-    "gap": 0
+    "gap": 0,
+    "note": "48 upstream Ripple v2 components ported to parity. 55 total exports includes 7 additional components beyond upstream scope (page templates, composables, internal helpers)."
   },
   "statusLegend": {
     "implemented": "Core functionality working and tested at some level",

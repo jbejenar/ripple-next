@@ -13,6 +13,10 @@ export type {
   EnvDiffEntry,
   EnvValidationResult,
   MigrationEntry,
+  SecretStatus,
+  SecretsAuditResult,
+  DeployPhase,
+  DeployResult,
 } from './types.js'
 
 export { CLI_ERROR_CODES } from './types.js'
