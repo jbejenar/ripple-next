@@ -78,24 +78,24 @@ export const deployCommand = defineCommand({
       process.stdout.write(`  [${icon}] ${envPhase.phase}: ${envPhase.details ?? ''}\n`)
     }
 
-    // 1b. IaC policy scan (optional — skip if not available)
+    // 1b. IaC policy scan
     const iacResult = runCommand('pnpm', ['check:iac'], root, 60_000)
     const iacPhase: DeployPhase = {
       phase: 'iac-policy-scan',
-      status: iacResult.exitCode === 0 ? 'pass' : 'skipped',
+      status: iacResult.exitCode === 0 ? 'pass' : 'fail',
       details: iacResult.exitCode === 0
         ? 'IaC policy scan passed'
-        : 'IaC policy scan skipped (check:iac not available or failed)',
+        : `IaC policy scan failed: ${(iacResult.stderr || iacResult.stdout).trim()}`,
     }
     phases.push(iacPhase)
 
     if (!args.json && !dryRun) {
-      const icon = iacPhase.status === 'pass' ? 'OK' : 'SKIP'
+      const icon = iacPhase.status === 'pass' ? 'OK' : 'FAIL'
       process.stdout.write(`  [${icon}] ${iacPhase.phase}: ${iacPhase.details ?? ''}\n`)
     }
 
     // Check if pre-deploy failed
-    const preDeployFailed = envPhase.status === 'fail'
+    const preDeployFailed = envPhase.status === 'fail' || iacPhase.status === 'fail'
     if (preDeployFailed) {
       const deployData: DeployResult = { stage, dryRun, phases }
       const result = failure(
@@ -185,7 +185,7 @@ export const deployCommand = defineCommand({
 
     // ── Phase 3: Post-deploy health check ───────────────────────────
 
-    const healthResult = runCommand('pnpm', ['rip', 'status', '--json'], root, 30_000)
+    const healthResult = runCommand('pnpm', ['check:readiness'], root, 30_000)
     const postDeployPhase: DeployPhase = {
       phase: 'post-deploy',
       status: healthResult.exitCode === 0 ? 'pass' : 'fail',
