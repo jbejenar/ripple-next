@@ -46,12 +46,12 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org",
-    "main": "./dist/ripple-ui.js",
-    "types": "./dist/ripple-ui.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
-        "types": "./dist/ripple-ui.d.ts",
-        "import": "./dist/ripple-ui.js"
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
       },
       "./nuxt": {
         "types": "./dist/nuxt.d.ts",

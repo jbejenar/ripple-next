@@ -39,11 +39,16 @@ export default $config({
     })
 
     // ─── Storage ───────────────────────────────────────────
+    const corsOrigins = {
+      production: ['https://ripple-next.vic.gov.au'],
+      staging: ['https://staging.ripple-next.vic.gov.au'],
+    }[$app.stage] ?? [`https://${$app.stage}.ripple-next.vic.gov.au`, 'http://localhost:3000']
+
     const uploads = new sst.aws.Bucket('Uploads', {
       cors: {
-        allowOrigins: ['*'],
+        allowOrigins: corsOrigins,
         allowMethods: ['GET', 'PUT'],
-        allowHeaders: ['*']
+        allowHeaders: ['Content-Type']
       }
     })
 

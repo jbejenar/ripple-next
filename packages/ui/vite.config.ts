@@ -14,7 +14,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        'ripple-ui': resolve(__dirname, 'index.ts'),
+        index: resolve(__dirname, 'index.ts'),
         nuxt: resolve(__dirname, 'nuxt.ts'),
       },
       formats: ['es'],
