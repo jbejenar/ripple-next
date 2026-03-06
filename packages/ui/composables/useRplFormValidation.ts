@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { shallowRef, triggerRef, computed, type ShallowRef, type ComputedRef } from 'vue'
 
 export interface RplValidationRule {
   validate: (value: unknown) => boolean
@@ -11,11 +11,23 @@ export interface RplFieldState {
   touched: boolean
 }
 
+export interface RplFormValidation<T extends Record<string, unknown>> {
+  fields: ShallowRef<Record<keyof T, RplFieldState>>
+  isValid: ComputedRef<boolean>
+  errors: ComputedRef<Record<keyof T, string>>
+  validateField: (name: keyof T) => boolean
+  validateAll: () => boolean
+  setFieldValue: (name: keyof T, value: unknown) => void
+  resetForm: () => void
+  getFieldError: (name: keyof T) => string
+  getFieldValue: (name: keyof T) => unknown
+}
+
 export function useRplFormValidation<T extends Record<string, unknown>>(
   initialValues: T,
   rules: Partial<Record<keyof T, RplValidationRule[]>>
-) {
-  const fields = ref<Record<keyof T, RplFieldState>>(
+): RplFormValidation<T> {
+  const fields = shallowRef<Record<keyof T, RplFieldState>>(
     Object.fromEntries(
       Object.keys(initialValues).map(key => [
         key,
@@ -29,16 +41,19 @@ export function useRplFormValidation<T extends Record<string, unknown>>(
     const fieldRules = rules[name]
     if (!fieldRules) {
       field.error = ''
+      triggerRef(fields)
       return true
     }
 
     for (const rule of fieldRules) {
       if (!rule.validate(field.value)) {
         field.error = rule.message
+        triggerRef(fields)
         return false
       }
     }
     field.error = ''
+    triggerRef(fields)
     return true
   }
 
@@ -50,6 +65,7 @@ export function useRplFormValidation<T extends Record<string, unknown>>(
         valid = false
       }
     }
+    triggerRef(fields)
     return valid
   }
 
@@ -57,6 +73,7 @@ export function useRplFormValidation<T extends Record<string, unknown>>(
     fields.value[name].value = value
     fields.value[name].touched = true
     validateField(name)
+    triggerRef(fields)
   }
 
   function resetForm(): void {
@@ -65,6 +82,7 @@ export function useRplFormValidation<T extends Record<string, unknown>>(
       fields.value[key].error = ''
       fields.value[key].touched = false
     }
+    triggerRef(fields)
   }
 
   function getFieldError(name: keyof T): string {

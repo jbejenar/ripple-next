@@ -3,7 +3,45 @@
   "version": "0.1.0",
   "license": "Apache-2.0",
   "type": "module",
+  "sideEffects": false,
   "main": "./setup.ts",
+  "types": "./setup.ts",
+  "exports": {
+    ".": "./setup.ts",
+    "./conformance": "./conformance/index.ts",
+    "./helpers": "./helpers/index.ts",
+    "./factories": "./factories/index.ts",
+    "./mocks": "./mocks/providers.ts"
+  },
+  "files": ["dist"],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "main": "./dist/setup.js",
+    "types": "./dist/setup.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/setup.d.ts",
+        "import": "./dist/setup.js"
+      },
+      "./conformance": {
+        "types": "./dist/conformance/index.d.ts",
+        "import": "./dist/conformance/index.js"
+      },
+      "./helpers": {
+        "types": "./dist/helpers/index.d.ts",
+        "import": "./dist/helpers/index.js"
+      },
+      "./factories": {
+        "types": "./dist/factories/index.d.ts",
+        "import": "./dist/factories/index.js"
+      },
+      "./mocks": {
+        "types": "./dist/mocks/providers.d.ts",
+        "import": "./dist/mocks/providers.js"
+      }
+    }
+  },
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
@@ -12,10 +50,12 @@
   "dependencies": {
     "@ripple-next/auth": "workspace:*",
     "@ripple-next/cms": "workspace:*",
+    "@ripple-next/config": "workspace:*",
     "@ripple-next/db": "workspace:*",
     "@ripple-next/email": "workspace:*",
     "@ripple-next/events": "workspace:*",
     "@ripple-next/queue": "workspace:*",
+    "@ripple-next/secrets": "workspace:*",
     "@ripple-next/storage": "workspace:*",
     "fishery": "^2.2.2"
   },
