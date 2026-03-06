@@ -166,17 +166,18 @@ role uses PowerUserAccess (near-admin). S3 CORS allows all origins.
 
 #### Definition of Done
 
-- [ ] All GitHub Actions `uses:` directives pinned to full SHA hashes with tag version in comment
-- [ ] Deploy IAM role uses custom least-privilege policy (no PowerUserAccess)
-- [ ] S3 CORS `allowOrigins` restricted to actual domains
-- [ ] Hardcoded ARN patterns in `infra/github-oidc.ts` parameterised
-- [ ] `pnpm verify` passes
+- [x] All GitHub Actions `uses:` directives pinned to full SHA hashes with tag version in comment
+- [x] Deploy IAM role uses custom least-privilege policy (no PowerUserAccess)
+- [x] S3 CORS `allowOrigins` restricted to actual domains
+- [x] Hardcoded ARN patterns in `infra/github-oidc.ts` parameterised
+- [x] `pnpm verify` passes
 
 #### Verification
 
 - `grep -r '@v[0-9]' .github/workflows/` returns zero matches
-- IAM policy has no `*` actions
+- IAM policy has no `*` actions; `Resource: '*'` minimised with region-lock conditions
 - `sst.config.ts` CORS origins are explicit domains
+- `infra/github-oidc.ts` accepts `appName` and `region` as parameters (not hardcoded)
 
 **Links:** [Audit: Infrastructure & Security](../audit/full-audit-report.md#5-infrastructure--security), [RB-013, RB-014, RB-048](../audit/remediation-backlog.md)
 

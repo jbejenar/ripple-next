@@ -4,6 +4,7 @@ export interface ConsumerOptions {
   queue: string
   pollInterval?: number
   maxRetries?: number
+  onError?: (error: unknown, message: QueueMessage<unknown>) => void
 }
 
 export type MessageHandler<T> = (message: QueueMessage<T>) => Promise<void>
@@ -31,9 +32,10 @@ export async function consumeMessages<T>(
     try {
       await handler(message)
       await provider.delete(queue, message.id)
-    } catch {
-      // Error is intentionally swallowed — message will become visible again after visibility timeout.
-      // Logging is omitted to satisfy no-console lint rule; observability is handled at the provider level.
+    } catch (error: unknown) {
+      // Do not delete — message becomes visible again after visibility timeout.
+      // Notify caller via onError callback for observability (logging, metrics, alerting).
+      options.onError?.(error, message as QueueMessage<unknown>)
     }
   }
 }

@@ -25,6 +25,10 @@ import * as aws from '@pulumi/aws'
 export interface GitHubOIDCConfig {
   /** GitHub repository in 'owner/repo' format. */
   repo: string
+  /** SST app name — used to scope IAM resource ARNs. */
+  appName: string
+  /** AWS region — used to scope IAM resource ARNs. */
+  region: string
   /** Branches allowed to assume the deploy role. */
   branches?: string[]
   /** GitHub Environments allowed to assume the deploy role. */
@@ -120,8 +124,7 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
   // Least-privilege custom policy scoped to SST deploy services.
   // Replaces PowerUserAccess per ADR-026 / RN-075 (RB-014).
 
-  const appName = 'ripple-next'
-  const region = 'ap-southeast-2'
+  const { appName, region } = config
 
   new aws.iam.RolePolicy('SSTDeployPolicy', {
     role: deployRole,
@@ -264,6 +267,8 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
           Resource: `arn:aws:sqs:${region}:*:${appName}-*`,
         },
         // ── SES (email) ─────────────────────────────────────────
+        // SES identity/config-set ARNs cannot be pre-scoped by name at
+        // creation time; region-lock limits blast radius.
         {
           Sid: 'SES',
           Effect: 'Allow',
@@ -279,6 +284,11 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
             'ses:UntagResource',
           ],
           Resource: '*',
+          Condition: {
+            StringEquals: {
+              'aws:RequestedRegion': region,
+            },
+          },
         },
         // ── IAM (Lambda execution roles) ────────────────────────
         {
@@ -510,12 +520,23 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
             'ecs:UpdateService',
             'ecs:DeleteService',
             'ecs:DescribeServices',
+            'ecs:TagResource',
+            'ecs:UntagResource',
+          ],
+          Resource: [
+            `arn:aws:ecs:${region}:*:cluster/${appName}-*`,
+            `arn:aws:ecs:${region}:*:service/${appName}-*/*`,
+          ],
+        },
+        // ECS task definitions are account-scoped (no name prefix at registration)
+        {
+          Sid: 'ECSTaskDef',
+          Effect: 'Allow',
+          Action: [
             'ecs:RegisterTaskDefinition',
             'ecs:DeregisterTaskDefinition',
             'ecs:DescribeTaskDefinition',
             'ecs:ListTaskDefinitions',
-            'ecs:TagResource',
-            'ecs:UntagResource',
           ],
           Resource: '*',
           Condition: {
@@ -575,8 +596,9 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
           ],
         },
         // ── CloudFront (CDN for Nuxt) ───────────────────────────
+        // CloudFront is a global service (no region in ARN).
         {
-          Sid: 'CloudFront',
+          Sid: 'CloudFrontDistributions',
           Effect: 'Allow',
           Action: [
             'cloudfront:CreateDistribution',
@@ -584,20 +606,39 @@ export function createGitHubOIDC(config: GitHubOIDCConfig) {
             'cloudfront:DeleteDistribution',
             'cloudfront:GetDistribution',
             'cloudfront:GetDistributionConfig',
-            'cloudfront:ListDistributions',
             'cloudfront:CreateInvalidation',
             'cloudfront:TagResource',
             'cloudfront:UntagResource',
+          ],
+          Resource: 'arn:aws:cloudfront::*:distribution/*',
+        },
+        {
+          Sid: 'CloudFrontFunctions',
+          Effect: 'Allow',
+          Action: [
             'cloudfront:CreateFunction',
             'cloudfront:UpdateFunction',
             'cloudfront:DeleteFunction',
             'cloudfront:DescribeFunction',
             'cloudfront:PublishFunction',
+          ],
+          Resource: 'arn:aws:cloudfront::*:function/*',
+        },
+        {
+          Sid: 'CloudFrontOAC',
+          Effect: 'Allow',
+          Action: [
             'cloudfront:CreateOriginAccessControl',
             'cloudfront:UpdateOriginAccessControl',
             'cloudfront:DeleteOriginAccessControl',
             'cloudfront:GetOriginAccessControl',
           ],
+          Resource: 'arn:aws:cloudfront::*:origin-access-control/*',
+        },
+        {
+          Sid: 'CloudFrontList',
+          Effect: 'Allow',
+          Action: ['cloudfront:ListDistributions'],
           Resource: '*',
         },
         // ── STS (caller identity for SST) ───────────────────────

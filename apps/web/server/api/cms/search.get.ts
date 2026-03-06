@@ -9,13 +9,20 @@ const querySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const query = querySchema.parse(getQuery(event))
+  const result = querySchema.safeParse(getQuery(event))
+  if (!result.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid query parameters',
+      data: { errors: result.error.flatten().fieldErrors }
+    })
+  }
   const cms = await getCmsProvider()
 
   return cms.search({
-    query: query.q,
-    page: query.page,
-    pageSize: query.pageSize,
-    sort: query.sort
+    query: result.data.q,
+    page: result.data.page,
+    pageSize: result.data.pageSize,
+    sort: result.data.sort
   })
 })
