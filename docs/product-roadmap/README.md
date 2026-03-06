@@ -6,8 +6,8 @@
 > in publish-readiness, accessibility, and test coverage. Every item moves toward
 > "safe for downstream adoption" — the prerequisite for production-proven maturity.
 >
-> 80 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 1 item active. 7 items parked.
+> 87 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 1 item active. 0 items parked.
 
 ---
 
@@ -21,17 +21,15 @@ gantt
 
     section Now (0–4 weeks)
     RN-054 Downstream proof-of-life        :active, rn054, 2026-03-06, 14d
-    RN-074 Package publish readiness        :rn074, 2026-03-07, 7d
-    RN-075 CI/CD security hardening         :rn075, 2026-03-10, 5d
 
-    section Next (6–12 weeks)
-    RN-076 WCAG accessibility remediation   :rn076, 2026-03-21, 14d
-    RN-077 Cloud provider test coverage     :rn077, 2026-03-21, 14d
-    RN-078 Design token migration           :rn078, 2026-04-04, 10d
-
-    section Later (Quarter+)
-    RN-079 Documentation accuracy sweep     :rn079, 2026-04-14, 5d
-    RN-080 API & runtime hardening          :rn080, 2026-04-14, 7d
+    section Done (2026-03-07)
+    RN-074 Package publish readiness        :done, rn074, 2026-03-07, 1d
+    RN-075 CI/CD security hardening         :done, rn075, 2026-03-07, 1d
+    RN-076 WCAG accessibility remediation   :done, rn076, 2026-03-07, 1d
+    RN-077 Cloud provider test coverage     :done, rn077, 2026-03-07, 1d
+    RN-078 Design token migration           :done, rn078, 2026-03-07, 1d
+    RN-079 Documentation accuracy sweep     :done, rn079, 2026-03-07, 1d
+    RN-080 API & runtime hardening          :done, rn080, 2026-03-07, 1d
 ```
 
 ## Agent-Friction Scorecard
