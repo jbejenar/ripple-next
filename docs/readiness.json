@@ -149,8 +149,8 @@
     },
     "cms": {
       "status": "implemented",
-      "maturity": "conformance-tested",
-      "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide), SearchEnhancedCmsProvider (decorator for dedicated search engines). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) \u2014 removable without touching frontend, tests, or API layer. MeiliSearch integration for local dev search. See ADR-011.",
+      "maturity": "integration-tested",
+      "description": "CMS content layer with full Drupal/Tide integration and explicit decoupling architecture. Provider pattern: MockCmsProvider (test/local), DrupalCmsProvider (JSON:API client for Tide), SearchEnhancedCmsProvider (decorator for dedicated search engines). CmsProvider interface covers pages, taxonomies, menus, routes, and search. Full Tide paragraph-to-section mapping (accordion, card-collection, timeline, CTA, key-dates, embedded-video, image, wysiwyg). Provider factory with dynamic imports for tree-shakeable Drupal code. Drupal isolated to exactly 2 files (drupal.ts + tide-paragraph-mapper.ts) \u2014 removable without touching frontend, tests, or API layer. MeiliSearch integration for local dev search. Integration tests (RN-017) validate DrupalCmsProvider against containerised Drupal 10 via docker-compose.test.yml: listPages, getPage, taxonomy, menus, route resolution, and search. CI runs weekly via cms-integration.yml. See ADR-011.",
       "packages": [
         "@ripple-next/cms"
       ],
@@ -160,10 +160,8 @@
         "apps/web/composables/useNavigation.ts",
         "apps/web/pages/content/"
       ],
-      "blockers": [
-        "No integration test with live Drupal/Tide instance (awaiting URLs)"
-      ],
-      "testCoverage": "conformance-tested + unit-tested + search-tested"
+      "blockers": [],
+      "testCoverage": "conformance-tested + unit-tested + search-tested + integration-tested"
     },
     "navigation": {
       "status": "implemented",

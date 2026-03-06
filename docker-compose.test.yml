@@ -1,0 +1,44 @@
+# Integration test services — Drupal CMS
+# Usage: docker compose -f docker-compose.test.yml up -d
+# Used by: packages/cms/tests/drupal.integration.test.ts
+# CI: .github/workflows/cms-integration.yml (weekly schedule)
+services:
+  drupal-db:
+    image: mariadb:11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  drupal:
+    image: drupal:10-php8.3-apache
+    ports:
+      - '8888:80'
+    environment:
+      DRUPAL_DATABASE_HOST: drupal-db
+      DRUPAL_DATABASE_PORT: '3306'
+      DRUPAL_DATABASE_NAME: drupal
+      DRUPAL_DATABASE_USERNAME: drupal
+      DRUPAL_DATABASE_PASSWORD: drupal
+    depends_on:
+      drupal-db:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:80/jsonapi || exit 1']
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+    volumes:
+      - drupal-modules:/opt/drupal/web/modules
+      - drupal-sites:/opt/drupal/web/sites
+
+volumes:
+  drupal-modules:
+  drupal-sites:
