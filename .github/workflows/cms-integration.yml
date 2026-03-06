@@ -1,0 +1,114 @@
+name: CMS Integration Tests
+
+on:
+  schedule:
+    # Weekly: Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: cms-integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drupal-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Start Drupal test services
+        run: docker compose -f docker-compose.test.yml up -d --wait
+        timeout-minutes: 5
+
+      - name: Install Drupal via Drush
+        run: |
+          docker compose -f docker-compose.test.yml exec -T drupal bash -c '
+            # Wait for database connectivity
+            for i in $(seq 1 30); do
+              php -r "new PDO(\"mysql:host=drupal-db;dbname=drupal\", \"drupal\", \"drupal\");" 2>/dev/null && break
+              sleep 2
+            done
+
+            # Install Drupal with standard profile (includes JSON:API)
+            cd /opt/drupal && php -d memory_limit=512M vendor/bin/drush site:install standard \
+              --db-url=mysql://drupal:drupal@drupal-db:3306/drupal \
+              --site-name="Ripple Test" \
+              --account-name=admin \
+              --account-pass=admin \
+              --no-interaction -y
+
+            # Enable JSON:API (core module in Drupal 10)
+            php vendor/bin/drush en jsonapi -y
+
+            # Create test content
+            php vendor/bin/drush php:eval "
+              use Drupal\\node\\Entity\\Node;
+              use Drupal\\taxonomy\\Entity\\Vocabulary;
+              use Drupal\\taxonomy\\Entity\\Term;
+
+              // Create a vocabulary
+              if (!Vocabulary::load(\"tags\")) {
+                Vocabulary::create([\"vid\" => \"tags\", \"name\" => \"Tags\"])->save();
+              }
+
+              // Create taxonomy terms
+              \\\$term = Term::create([
+                \"vid\" => \"tags\",
+                \"name\" => \"Integration Test\",
+              ]);
+              \\\$term->save();
+
+              // Create a published page node
+              \\\$node = Node::create([
+                \"type\" => \"page\",
+                \"title\" => \"Integration Test Page\",
+                \"body\" => [[\"value\" => \"<p>This is an integration test page.</p>\", \"format\" => \"full_html\"]],
+                \"status\" => 1,
+              ]);
+              \\\$node->save();
+
+              // Create a second page
+              \\\$node2 = Node::create([
+                \"type\" => \"page\",
+                \"title\" => \"Second Test Page\",
+                \"body\" => [[\"value\" => \"<p>Another test page for listing.</p>\", \"format\" => \"full_html\"]],
+                \"status\" => 1,
+              ]);
+              \\\$node2->save();
+            "
+
+            # Grant anonymous users permission to access JSON:API
+            php vendor/bin/drush php:eval "
+              user_role_grant_permissions(\"anonymous\", [\"access content\"]);
+            "
+
+            # Clear caches
+            php vendor/bin/drush cr
+          '
+        timeout-minutes: 5
+
+      - name: Verify Drupal JSON:API is accessible
+        run: |
+          curl -sf http://localhost:8888/jsonapi/node/page | head -c 200
+          echo ""
+
+      - name: Run CMS integration tests
+        run: pnpm vitest run packages/cms/tests/drupal.integration.test.ts --reporter=verbose
+        env:
+          DRUPAL_BASE_URL: http://localhost:8888
+          CI: true
+
+      - name: Stop Drupal test services
+        if: always()
+        run: docker compose -f docker-compose.test.yml down -v

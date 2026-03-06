@@ -8,5 +8,5 @@
     "paths": {}
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.stories.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.stories.ts", "vitest.config.ts", "vite.config.ts"]
 }

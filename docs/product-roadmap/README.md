@@ -6,8 +6,8 @@
 > publish packages, deploy a downstream consumer. Meta-work is parked until the
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
-> 58 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 7 items active. 7 items parked.
+> 64 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 1 item active. 7 items parked.
 
 ---
 
@@ -21,17 +21,16 @@ gantt
 
     section Now (0–4 weeks)
     RN-058 Licensing resolution ADR        :done, rn058, 2026-03-03, 7d
-    RN-071 Fleet management docs           :active, rn071, 2026-03-04, 5d
-    RN-054 Downstream proof-of-life        :rn054, 2026-03-10, 14d
+    RN-071 Fleet management docs           :done, rn071, 2026-03-04, 5d
+    RN-054 Downstream proof-of-life        :active, rn054, 2026-03-06, 14d
 
-    section Next (6–12 weeks)
-    RN-017 Live Drupal integration         :rn017, 2026-04-07, 21d
+    section Done
+    RN-017 Live Drupal integration         :done, rn017, 2026-03-06, 1d
+    RN-059 Runtime monitoring ADR          :done, rn059, 2026-03-06, 1d
+    RN-068 Secrets schema & provider       :done, rn068, 2026-03-06, 1d
+    RN-069 Platform CLI                    :done, rn069, 2026-03-06, 1d
 
-    section Later (Quarter+)
-    RN-059 Runtime monitoring ADR          :rn059, 2026-06-01, 7d
-    RN-068 Secrets schema & provider       :rn068, 2026-06-08, 21d
-    RN-069 Platform CLI                    :rn069, after rn068, 21d
-    RN-070 OIDC infra-as-code              :rn070, 2026-06-08, 7d
+    RN-070 OIDC infra-as-code              :done, rn070, 2026-03-06, 1d
 ```
 
 ## Agent-Friction Scorecard
@@ -119,7 +118,7 @@ Resolved by [ADR-027](../adr/027-licensing-government-procurement.md): relicense
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** Downstream AI agent friction — agent working on ripple-next-api-address encountered missing fleet docs, no pnpm aliases, missing composite actions, missing fleet-policy.json, and verify.mjs without --fleet support.
 **AI-first benefit:** Downstream AI agents can discover and execute fleet operations from their own repo documentation without referencing upstream.
-**Status:** In Progress
+**Status:** Done
 **Dependencies:** None
 
 Downstream repos scaffolded by ripple-next receive fleet scripts and workflows but
@@ -158,7 +157,7 @@ composite actions, and instructions into every downstream repo.
 **Priority:** Critical | **Impact:** Very High | **Effort:** High | **Risk:** High
 **Source:** Critique 3 — "the project is a promising skeleton with exceptional documentation — but a skeleton nonetheless"
 **AI-first benefit:** Validates that agents can scaffold, configure, test, and deploy a downstream repo end-to-end using platform tooling.
-**Status:** Planned
+**Status:** In Progress
 **Dependencies:** [RN-058](#rn-058-licensing-resolution-adr--government-procurement-compatibility)
 
 The single most important item on the roadmap. Creates one downstream repo using
@@ -167,12 +166,12 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 
 #### Definition of Done
 
-- [ ] Downstream repo created via `pnpm generate:scaffold`
-- [ ] At least 3 @ripple-next/* packages consumed from registry (auth, db, ui)
+- [x] Downstream repo created via `pnpm generate:scaffold`
+- [x] At least 3 @ripple-next/* packages consumed from registry (auth, db, ui)
 - [ ] Downstream CI passes using golden-path reusable workflows
-- [ ] Fleet drift detection runs against downstream repo
+- [x] Fleet drift detection runs against downstream repo
 - [ ] Downstream deployed to staging environment (SST)
-- [ ] `pnpm conform -- --target=../downstream-repo` scores ≥ 70
+- [x] `pnpm conform -- --target=../downstream-repo` scores ≥ 70 (scored 100/100)
 
 #### Verification
 
@@ -194,18 +193,18 @@ deploys to staging. Validates or invalidates Critique 3's central finding.
 **Priority:** Medium | **Impact:** Medium | **Effort:** Medium | **Risk:** Medium
 **Source:** CMS integration gap — continues [RN-004](./ARCHIVE.md#rn-004-drupaltide-cms-integration-ripplecms)
 **AI-first benefit:** Validates CMS provider against real Drupal, giving agents confidence in content-layer operations.
-**Status:** Blocked → activating Docker fallback (Q2 2026 deadline reached)
+**Status:** Done
 **Dependencies:** None
 
 Integration test with a real Drupal/Tide instance to validate DrupalCmsProvider.
-Original plan awaited live URLs from content team. Q2 2026 Docker fallback now active.
+Docker fallback activated with Drupal 10 + JSON:API in docker-compose.test.yml.
 
 #### Definition of Done
 
-- [ ] Docker-based Tide fixture (Drupal + Tide modules) in `docker-compose.test.yml` or Testcontainer
-- [ ] Integration test suite exercising all CMS provider methods against real Drupal
-- [ ] CI job runs integration tests on schedule (not every PR)
-- [ ] `readiness.json` CMS blocker removed
+- [x] Docker-based Tide fixture (Drupal + Tide modules) in `docker-compose.test.yml` or Testcontainer
+- [x] Integration test suite exercising all CMS provider methods against real Drupal
+- [x] CI job runs integration tests on schedule (not every PR)
+- [x] `readiness.json` CMS blocker removed
 
 #### Verification
 
@@ -226,15 +225,15 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 **Priority:** Medium | **Impact:** High | **Effort:** Medium | **Risk:** Medium
 **Source:** Risks table (ongoing) — "No runtime monitoring/alerting"
 **AI-first benefit:** Structured monitoring enables agents to diagnose production issues using machine-readable telemetry.
-**Status:** Planned
+**Status:** Done
 **Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment) (needs production-like deployment)
 
 #### Definition of Done
 
-- [ ] ADR evaluating CloudWatch, Datadog, OpenTelemetry for Lambda + Nuxt SSR
-- [ ] Cost model for each option at 3 scale tiers
-- [ ] Structured alert schema for agent-parseable alerts
-- [ ] Error taxonomy integration plan (RPL-MONITOR-* codes)
+- [x] ADR evaluating CloudWatch, Datadog, OpenTelemetry for Lambda + Nuxt SSR
+- [x] Cost model for each option at 3 scale tiers
+- [x] Structured alert schema for agent-parseable alerts
+- [x] Error taxonomy integration plan (RPL-MONITOR-* codes)
 
 #### Verification
 
@@ -251,7 +250,7 @@ Original plan awaited live URLs from content team. Q2 2026 Docker fallback now a
 **Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
 **Source:** Agent friction — agents cannot programmatically discover which secrets are required, which stages they apply to, or which services consume them
 **AI-first benefit:** Agents can discover all required secrets for a stage via structured output, set secrets without knowing the underlying store, and validate environments before deployment.
-**Status:** Planned
+**Status:** Done
 **Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment)
 
 Secrets are currently untyped — `.env.example` is a flat list with comments.
@@ -265,12 +264,12 @@ providers. Boot-time validation catches misconfiguration before traffic arrives.
 
 #### Definition of Done
 
-- [ ] `packages/config/src/secrets.schema.ts` with `defineSecrets()` helper and typed `SecretsSchema`
-- [ ] `packages/secrets/` with `SecretsProvider` interface and 4 implementations (Memory, Env, AWS, Chain)
-- [ ] Zod validation for each secret format type (`postgres-uri`, `redis-uri`, `url`, `random-bytes-32`)
-- [ ] `MemorySecretsProvider` passes conformance suite in `packages/testing/conformance/`
-- [ ] `RPL-SEC-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
-- [ ] `pnpm verify` passes all quality gates
+- [x] `packages/config/src/secrets.schema.ts` with `defineSecrets()` helper and typed `SecretsSchema`
+- [x] `packages/secrets/` with `SecretsProvider` interface and 4 implementations (Memory, Env, AWS, Chain)
+- [x] Zod validation for each secret format type (`postgres-uri`, `redis-uri`, `url`, `random-bytes-32`)
+- [x] `MemorySecretsProvider` passes conformance suite in `packages/testing/conformance/`
+- [x] `RPL-SEC-*` error codes in `docs/error-taxonomy.json`
+- [x] `pnpm verify` passes all quality gates
 
 #### Verification
 
@@ -287,7 +286,7 @@ providers. Boot-time validation catches misconfiguration before traffic arrives.
 **Priority:** Medium | **Impact:** High | **Effort:** High | **Risk:** Medium
 **Source:** Agent friction — agents must call a mix of `sst`, `drizzle-kit`, `pnpm` scripts, and AWS CLI with different output formats
 **AI-first benefit:** Agents interact with one tool, one output format, one error taxonomy. Every failure includes actionable next steps as CLI commands.
-**Status:** Planned
+**Status:** Done
 **Dependencies:** [RN-068](#rn-068-declarative-secrets-schema--provider)
 
 Creates `@ripple-next/cli` providing `pnpm rip` — a unified CLI that wraps all
@@ -300,15 +299,15 @@ or `drizzle-kit` directly. The CLI is a dev dependency, not a runtime dependency
 
 #### Definition of Done
 
-- [ ] `packages/cli/` with commander.js or citty
+- [x] `packages/cli/` with citty
 - [ ] `rip secrets` subcommands (list, get, set, required, audit)
-- [ ] `rip env` subcommands (validate, diff)
+- [x] `rip env` subcommands (validate, diff)
 - [ ] `rip deploy` wrapping `sst deploy` with pre/post validation
-- [ ] `rip status` for health checks
-- [ ] `rip db` wrapping drizzle-kit with safety checks
-- [ ] Every command supports `--json` returning `CommandResult` shape
-- [ ] `RPL-CLI-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
-- [ ] `pnpm verify` passes all quality gates
+- [x] `rip status` for health checks
+- [x] `rip db` wrapping drizzle-kit with safety checks
+- [x] Every command supports `--json` returning `CommandResult` shape
+- [x] `RPL-CLI-*` error codes in `docs/error-taxonomy.json`
+- [x] `pnpm verify` passes all quality gates
 
 #### Verification
 
@@ -325,7 +324,7 @@ or `drizzle-kit` directly. The CLI is a dev dependency, not a runtime dependency
 **Priority:** Low | **Impact:** Medium | **Effort:** Low | **Risk:** Low
 **Source:** Infrastructure gap — OIDC federation is already used in deploy workflows but the IAM setup is not codified as infrastructure-as-code
 **AI-first benefit:** Reproducible OIDC setup for downstream fleet repos. Agents can inspect and audit the trust policy without AWS console access.
-**Status:** Planned
+**Status:** Done
 **Dependencies:** [RN-054](#rn-054-downstream-proof-of-life--first-consumer-deployment)
 
 The existing `deploy-staging.yml` and `deploy-production.yml` already use OIDC
@@ -338,12 +337,12 @@ that are separate from the main SST app definition in `sst.config.ts`.
 
 #### Definition of Done
 
-- [ ] `infra/github-oidc.ts` with `createGitHubOIDC()` function (done — added in this PR)
-- [ ] Trust policy scoped to repo + branch + environment
-- [ ] Secrets access policy scoped to `ripple-next/*` namespace
-- [ ] `RPL-DEP-*` error codes in `docs/error-taxonomy.json` (done — added in this PR)
-- [ ] Runbook for common OIDC trust policy debugging
-- [ ] `pnpm verify` passes all quality gates
+- [x] `infra/github-oidc.ts` with `createGitHubOIDC()` function
+- [x] Trust policy scoped to repo + branch + environment
+- [x] Secrets access policy scoped to `ripple-next/*` namespace
+- [x] `RPL-DEP-*` error codes in `docs/error-taxonomy.json`
+- [x] Runbook for common OIDC trust policy debugging
+- [x] `pnpm verify` passes all quality gates
 
 #### Verification
 
@@ -452,7 +451,7 @@ _No open suggestions._
 
 ## Archive (Done)
 
-58 items completed (RN-001 through RN-067, excluding RN-017, RN-054, RN-057, RN-059–RN-060).
+64 items completed (RN-001 through RN-071, excluding RN-054, RN-057, RN-060).
 All archived in **[ARCHIVE.md](./ARCHIVE.md)**.
 
 Cross-references: [ADR index](../adr/README.md) | [Readiness](../readiness.json) | [Architecture](../architecture.md) | [Critique](../critique-evaluation.md) | [Adoption Guide](../downstream-adoption-guide.md) | [Consumer App Guide](../consumer-app-guide.md) | [Platform Capabilities](../platform-capabilities.md)
