@@ -1,10 +1,11 @@
 {
   "name": "fleet-feedback-submit",
-  "description": "Submit fleet feedback to the golden-path upstream repository. Supports 5 feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point. See ADR-022.",
+  "description": "Submit fleet feedback to the golden-path upstream repository. Supports 5 feedback types: feature-request, bug-report, policy-exception, improvement-share, pain-point. Accepts feedback from all environments (production, staging, development, local). See ADR-022.",
   "args": {
     "type": "Feedback type (feature-request, bug-report, policy-exception, improvement-share, pain-point)",
     "title": "Short descriptive title for the feedback",
-    "description": "Detailed description of the feedback"
+    "description": "Detailed description of the feedback",
+    "environment": "Source environment (production, staging, development, local, unknown). Auto-detected from NODE_ENV if omitted."
   },
   "preconditions": [
     {
@@ -26,12 +27,12 @@
   "steps": [
     {
       "order": 1,
-      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --dry-run --json",
-      "description": "Preview the feedback payload without submitting (dry run)"
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --environment=${ENVIRONMENT:-unknown} --dry-run --json",
+      "description": "Preview the feedback payload without submitting (dry run). Environment defaults to unknown if not set."
     },
     {
       "order": 2,
-      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --submit",
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --environment=${ENVIRONMENT:-unknown} --submit",
       "description": "Submit the feedback to the upstream golden-path repository"
     },
     {
@@ -43,7 +44,7 @@
   "validation": [
     {
       "description": "Feedback payload is valid",
-      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --dry-run --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const p=JSON.parse(d);console.log(p.schema==='ripple-fleet-feedback/v1'?'valid':'invalid')})\"",
+      "command": "pnpm fleet:feedback -- --type=${TYPE} --title=\"${TITLE}\" --description=\"${DESCRIPTION}\" --environment=${ENVIRONMENT:-unknown} --dry-run --json | node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const p=JSON.parse(d);const valid=p.schema==='ripple-fleet-feedback/v1'&&p.metadata.environment;console.log(valid?'valid':'invalid')})\"",
       "expect": "valid"
     }
   ],

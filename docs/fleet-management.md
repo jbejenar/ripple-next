@@ -31,10 +31,10 @@
 | Run quality gates + fleet drift | `pnpm verify -- --fleet` |
 | Check drift against golden path | `pnpm check:fleet-drift` |
 | Check drift (JSON output) | `pnpm check:fleet-drift -- --json` |
-| Submit feedback upstream | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
-| Preview feedback (dry run) | `pnpm fleet:feedback -- --type=<type> --title="..." --dry-run --json` |
-| Share local improvement upstream | `pnpm fleet:feedback -- --type=improvement-share --surface=<SURF-ID> --file=<path> --submit` |
-| Request policy exception | `pnpm fleet:feedback -- --type=policy-exception --surface=<SURF-ID> --title="..." --submit` |
+| Submit feedback upstream | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --environment=<env> --submit` |
+| Preview feedback (dry run) | `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --dry-run --json` |
+| Share local improvement upstream | `pnpm fleet:feedback -- --type=improvement-share --surface=<SURF-ID> --file=<path> --environment=<env> --submit` |
+| Request policy exception | `pnpm fleet:feedback -- --type=policy-exception --surface=<SURF-ID> --title="..." --environment=<env> --submit` |
 | Request fleet sync from upstream | `pnpm fleet:sync` |
 | Run fleet drift check runbook | `pnpm runbook fleet-drift-check` |
 | Run fleet feedback submit runbook | `pnpm runbook fleet-feedback-submit` |
@@ -157,34 +157,43 @@ Sync respects the strategy per surface:
 
 Submit structured feedback from downstream to the golden path:
 
+All feedback commands accept `--environment=<env>` where `<env>` is one of:
+`production`, `staging`, `development`, `local`, or `unknown`. If omitted,
+the environment is auto-detected from `NODE_ENV` (defaults to `unknown`).
+Feedback from **all environments** is accepted — production feedback receives
+a +3 priority boost during intake triage.
+
 ```bash
-# Feature request
+# Feature request (production)
 pnpm fleet:feedback -- \
   --type=feature-request \
   --title="Add Vue a11y ESLint rules" \
   --description="Our team added accessibility linting rules that could benefit the fleet" \
+  --environment=production \
   --submit
 
-# Bug report
+# Bug report (staging)
 pnpm fleet:feedback -- \
   --type=bug-report \
   --title="Fleet drift false positive on SURF-005" \
   --description="ESLint merge strategy reports drift for additive rules" \
+  --environment=staging \
   --submit
 
-# Share local improvement (bidirectional sync)
+# Share local improvement (development — auto-detected from NODE_ENV)
 pnpm fleet:feedback -- \
   --type=improvement-share \
   --surface=FLEET-SURF-005 \
   --file=eslint.config.js \
   --submit
 
-# Policy exception request
+# Policy exception request (production)
 pnpm fleet:feedback -- \
   --type=policy-exception \
   --surface=FLEET-SURF-007 \
   --title="No IaC config — stateless API service" \
   --description="This service has no SST configuration; IaC policy scan is not applicable" \
+  --environment=production \
   --submit
 ```
 

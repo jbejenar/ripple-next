@@ -41,14 +41,21 @@ back to the golden-path source via GitHub Issues:
 
 - **5 feedback types:** `feature-request`, `bug-report`, `policy-exception`,
   `improvement-share`, `pain-point`
+- **Environment tagging:** Every feedback submission includes an `environment`
+  field in `metadata` (`production`, `staging`, `development`, `local`, or
+  `unknown`). Feedback is accepted from **all environments** — not restricted
+  to production. The `--environment` flag auto-detects from `NODE_ENV` when
+  not explicitly provided. Production feedback receives a +3 priority boost
+  during intake triage. Issue titles include the environment:
+  `[fleet-feedback:bug-report:production] Title (repo)`.
 - **Transport:** GitHub Issues via `gh` CLI — not `repository_dispatch`.
   Lower permission requirements: `issues: write` vs `repo` scope.
 - **Structured payload:** JSON payload in issue body between
   `<!-- fleet-feedback-begin -->` and `<!-- fleet-feedback-end -->` markers.
   Schema: `ripple-fleet-feedback/v1` (see `docs/fleet-feedback-schema.json`).
 - **Intake workflow:** GitHub Actions workflow in upstream repo auto-triages
-  incoming feedback: validate schema, apply labels, deduplicate by
-  content hash, compute priority score.
+  incoming feedback: validate schema, apply labels (including `env:<environment>`),
+  deduplicate by content hash, compute priority score.
 - **Reverse sync for `improvement-share`:** when a downstream repo submits an
   improvement with a diff, the intake workflow auto-creates a draft PR if the
   diff applies cleanly — enabling true reverse sync.

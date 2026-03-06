@@ -15,8 +15,8 @@
 | **Preview sync changes (dry run)** | `pnpm fleet:sync -- --target=/path/to/repo --dry-run` |
 | **Apply sync to downstream repo** | `pnpm fleet:sync -- --target=/path/to/repo` |
 | **View fleet compliance (multi-repo)** | `pnpm fleet:compliance -- --reports=./reports` |
-| **Submit feedback upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
-| **Share a local improvement upstream** | `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit` |
+| **Submit feedback upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --environment=<env> --submit` |
+| **Share a local improvement upstream** | `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --environment=<env> --submit` |
 | **View fleet changelog** | `pnpm fleet:changelog` |
 | **Validate changelog structure** | `pnpm fleet:changelog -- --validate` |
 
@@ -26,9 +26,9 @@
 |------|---------|
 | **Self-check for drift** | `pnpm check:fleet-drift` |
 | **Self-check for drift (JSON)** | `pnpm check:fleet-drift -- --json` |
-| **Submit feedback to upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit` |
-| **Preview feedback payload** | `pnpm fleet:feedback -- --type=<type> --title="..." --dry-run --json` |
-| **Share local improvement** | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit` |
+| **Submit feedback to upstream** | `pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --environment=<env> --submit` |
+| **Preview feedback payload** | `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --dry-run --json` |
+| **Share local improvement** | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --environment=<env> --submit` |
 | **Pull sync from golden path** | `pnpm fleet:sync` |
 | **Quality gates + fleet drift** | `pnpm verify -- --fleet` |
 | **Run fleet drift runbook** | `pnpm runbook fleet-drift-check` |
@@ -584,18 +584,28 @@ Downstream repos can **communicate back** to the golden-path source using the fl
 | `improvement-share` | Share a local improvement upstream for fleet-wide adoption | Auto-create draft PR |
 | `pain-point` | Report friction with a governed surface | Label + aggregate frequency |
 
+### Environment Tagging
+
+All feedback commands accept `--environment=<env>` where `<env>` is one of:
+`production`, `staging`, `development`, `local`, or `unknown`. If omitted,
+the environment is auto-detected from `NODE_ENV` (defaults to `unknown`).
+Feedback from **all environments** is accepted and encouraged — production
+feedback receives a +3 priority boost during intake triage.
+
 ### Submitting Feedback (CLI)
 
 ```bash
-# Preview feedback without submitting
+# Preview feedback without submitting (staging)
 pnpm fleet:feedback -- --type=feature-request --title="Add Vue a11y ESLint rules" \
-  --description="Our team added accessibility linting rules that could benefit the fleet" --dry-run
+  --description="Our team added accessibility linting rules that could benefit the fleet" \
+  --environment=staging --dry-run
 
-# Submit feedback to upstream
+# Submit feedback to upstream (production)
 pnpm fleet:feedback -- --type=feature-request --title="Add Vue a11y ESLint rules" \
-  --description="Our team added accessibility linting rules that could benefit the fleet" --submit
+  --description="Our team added accessibility linting rules that could benefit the fleet" \
+  --environment=production --submit
 
-# Share a local improvement (generates diff automatically)
+# Share a local improvement (environment auto-detected from NODE_ENV)
 pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 \
   --file=eslint.config.js --submit
 ```
@@ -612,6 +622,7 @@ steps:
       feedback-type: 'feature-request'
       title: 'Add Vue a11y ESLint rules'
       description: 'Our team added accessibility linting rules that could benefit the fleet'
+      environment: 'production'
       feedback-token: ${{ secrets.FLEET_FEEDBACK_TOKEN }}
 ```
 
@@ -627,6 +638,7 @@ jobs:
       feedback-type: 'bug-report'
       title: 'Fleet drift detection false positive on SURF-005'
       description: 'ESLint config merge strategy reports drift for additive rule additions'
+      environment: 'staging'
     secrets:
       FLEET_FEEDBACK_TOKEN: ${{ secrets.FLEET_FEEDBACK_TOKEN }}
 ```

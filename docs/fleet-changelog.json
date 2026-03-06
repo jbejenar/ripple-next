@@ -6,6 +6,33 @@
   "schema": "ripple-fleet-changelog/v1",
   "entries": [
     {
+      "version": "1.3.1",
+      "date": "2026-03-06",
+      "summary": "Environment tagging for fleet feedback — all environments can submit feedback with explicit environment identification",
+      "changes": [
+        {
+          "type": "capability-enhanced",
+          "name": "fleet-feedback-environment",
+          "description": "Fleet feedback now includes an environment field (production, staging, development, local, unknown). Feedback is accepted from all environments. --environment flag auto-detects from NODE_ENV."
+        },
+        {
+          "type": "intake-enhanced",
+          "name": "environment-labels-and-priority",
+          "description": "Intake triage applies env:<environment> labels and boosts priority by +3 for production feedback."
+        },
+        {
+          "type": "schema-updated",
+          "name": "fleet-feedback-schema",
+          "description": "ripple-fleet-feedback/v1 payloadShape.metadata now includes environment field. Issue title format updated to include environment."
+        }
+      ],
+      "upgradeActions": [
+        "Run pnpm fleet:sync to receive updated fleet-feedback.mjs with --environment support",
+        "Start passing --environment flag in feedback submissions (or rely on NODE_ENV auto-detection)",
+        "Production agents: use --environment=production for priority boost during triage"
+      ]
+    },
+    {
       "version": "1.3.0",
       "date": "2026-03-01",
       "summary": "Downstream adoption standards — documentation governance, adoption guide, migration runbook, conformance checks (ADR-023)",

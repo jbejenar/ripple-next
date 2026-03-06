@@ -64,6 +64,7 @@ jobs:
             c+='| Type | \`'+r.feedbackType+'\` |\n';
             c+='| Priority | '+r.priorityScore+'/10 |\n';
             c+='| Surface | '+(r.governedSurface||'N/A')+' |\n';
+            c+='| Environment | '+(r.environment||'unknown')+' |\n';
             c+='| Duplicate | '+(r.duplicate?'Yes (#'+r.duplicateOf+')':'No')+' |\n\n';
             if(r.feedbackType==='improvement-share'&&r.patchApplicable){
               c+='Patch applies cleanly — draft PR can be created.\n\n';

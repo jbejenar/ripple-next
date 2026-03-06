@@ -19,6 +19,11 @@ on:
         required: true
         type: string
         description: 'Feedback description'
+      environment:
+        required: false
+        type: string
+        default: 'unknown'
+        description: 'Source environment: production, staging, development, local, unknown'
       upstream-repo:
         required: false
         type: string
@@ -48,8 +53,9 @@ jobs:
           INPUT_SURFACE: ${{ inputs.surface-id }}
           INPUT_TITLE: ${{ inputs.title }}
           INPUT_DESCRIPTION: ${{ inputs.description }}
+          INPUT_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --submit)
+          ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --environment="$INPUT_ENVIRONMENT" --submit)
           if [ -n "$INPUT_SURFACE" ]; then
             ARGS+=(--surface="$INPUT_SURFACE")
           fi

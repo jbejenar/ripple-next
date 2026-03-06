@@ -234,6 +234,12 @@ function computeLabels(p) {
   // Type label
   result.push(`fleet:feedback:${p.feedbackType}`)
 
+  // Environment label
+  const env = p.metadata && p.metadata.environment
+  if (env) {
+    result.push(`env:${env}`)
+  }
+
   // Surface labels — look up matching surfaces from fleet-policy.json
   if (p.governedSurface && policy.governedSurfaces) {
     const matchedSurface = policy.governedSurfaces.find(
@@ -263,6 +269,12 @@ function computeLabels(p) {
 function computePriorityScore(p) {
   const severity = p.severity || 'medium'
   let score = SEVERITY_WEIGHTS[severity] ?? SEVERITY_WEIGHTS.medium
+
+  // Boost priority for production environment feedback
+  const env = p.metadata && p.metadata.environment
+  if (env === 'production') {
+    score += 3
+  }
 
   // Check if referenced surface is security-critical
   if (policy.governedSurfaces) {

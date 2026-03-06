@@ -10,6 +10,7 @@
  *   pnpm fleet:feedback -- --type=feature-request --title="Add X" --description="Because Y"
  *   pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js
  *   pnpm fleet:feedback -- --type=bug-report --surface=FLEET-SURF-001 --title="CI fails"
+ *   pnpm fleet:feedback -- --environment=staging --type=pain-point --title="Slow builds"
  *   pnpm fleet:feedback -- --dry-run --json             # preview payload without submitting
  *   pnpm fleet:feedback -- --submit                     # submit via gh issue create
  *
@@ -31,7 +32,7 @@
  *     "description":   "the --description value or empty",
  *     "evidence":      { driftReport, errorCodes, diff, affectedFiles },
  *     "proposedChange": null,
- *     "metadata":      { agentGenerated, agentType, goldenPathVersion, ... }
+ *     "metadata":      { agentGenerated, agentType, goldenPathVersion, environment, ... }
  *   }
  *
  * Zero external dependencies — uses only Node.js built-ins.
@@ -68,6 +69,16 @@ const description = getFlagValue('description') ?? ''
 const filePath = getFlagValue('file') ?? null
 const upstreamOverride = getFlagValue('upstream') ?? null
 const severity = getFlagValue('severity') ?? 'medium'
+
+const VALID_ENVIRONMENTS = ['production', 'staging', 'development', 'local', 'unknown']
+const environmentFlag = getFlagValue('environment')
+const environment = environmentFlag ?? (process.env.NODE_ENV === 'production' ? 'production' : process.env.NODE_ENV === 'test' ? 'development' : process.env.NODE_ENV || 'unknown')
+
+if (environmentFlag && !VALID_ENVIRONMENTS.includes(environmentFlag)) {
+  validationError(
+    `Invalid environment "${environmentFlag}". Valid environments: ${VALID_ENVIRONMENTS.join(', ')}`
+  )
+}
 
 // ── Validation ───────────────────────────────────────────────────────
 function validationError(message) {
@@ -220,6 +231,7 @@ const payload = {
     goldenPathVersion,
     complianceScore: null,
     fleetPolicyVersion,
+    environment,
   },
 }
 
@@ -238,10 +250,10 @@ if (jsonMode || dryRun) {
 }
 
 if (submitMode) {
-  const issueTitle = `[fleet-feedback:${feedbackType}] ${title} (${sourceRepo})`
+  const issueTitle = `[fleet-feedback:${feedbackType}:${environment}] ${title} (${sourceRepo})`
   const issueBody =
     `## Fleet Feedback\n\n` +
-    `**Type:** ${feedbackType} | **Surface:** ${surface ?? 'N/A'} | **Severity:** ${severity}\n` +
+    `**Type:** ${feedbackType} | **Surface:** ${surface ?? 'N/A'} | **Severity:** ${severity} | **Environment:** ${environment}\n` +
     `**Source:** ${sourceRepo} @ ${sourceRef}\n\n` +
     `### Description\n\n` +
     `${description || 'No description provided.'}\n\n` +
@@ -283,6 +295,7 @@ console.error('\u2500'.repeat(40))
 console.error('')
 console.error(`  Type:      ${feedbackType}`)
 console.error(`  Title:     ${title}`)
+console.error(`  Env:       ${environment}`)
 console.error(`  Surface:   ${surface ?? 'N/A'}`)
 console.error(`  Severity:  ${severity}`)
 console.error(`  Source:    ${sourceRepo}`)

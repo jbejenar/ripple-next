@@ -368,7 +368,7 @@ Downstream repos are monitored for compliance via fleet governance ([ADR-019](./
 - **13 governed surfaces** across 3 severity levels
 - **Drift detection:** `pnpm check:fleet-drift -- --target=/path/to/repo`
 - **Sync:** `pnpm fleet:sync -- --target=/path/to/repo`
-- **Feedback:** `pnpm fleet:feedback -- --type=<type> --title="..." --submit`
+- **Feedback:** `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --submit`
 
 Documentation surfaces (FLEET-SURF-012, FLEET-SURF-013) are **advisory** — they
 report gaps but don't block CI. This allows downstream repos to adopt incrementally.
