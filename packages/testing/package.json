@@ -9,9 +9,13 @@
   "exports": {
     ".": "./setup.ts",
     "./conformance": "./conformance/index.ts",
+    "./conformance/*": "./conformance/*.ts",
     "./helpers": "./helpers/index.ts",
+    "./helpers/*": "./helpers/*.ts",
     "./factories": "./factories/index.ts",
-    "./mocks": "./mocks/providers.ts"
+    "./factories/*": "./factories/*.ts",
+    "./mocks": "./mocks/providers.ts",
+    "./mocks/*": "./mocks/*.ts"
   },
   "files": ["dist"],
   "publishConfig": {

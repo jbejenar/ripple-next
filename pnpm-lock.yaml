@@ -406,7 +406,7 @@ importers:
         specifier: ^6.1.0
         version: 6.4.1(@types/node@25.3.1)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       vite-plugin-dts:
-        specifier: ^4.5.0
+        specifier: ^4.5.4
         version: 4.5.4(@types/node@25.3.1)(rollup@4.59.0)(typescript@5.9.3)(vite@6.4.1(@types/node@25.3.1)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
         specifier: ^3.0.4
@@ -4519,6 +4519,7 @@ packages:
   git-raw-commits@4.0.0:
     resolution: {integrity: sha512-ICsMM1Wk8xSGMowkOmPrzo2Fgmfo4bMHLNX6ytHjajRJUqvHOw/TFapQ+QG75c3X/tTDDhOSRPGC52dDbNM8FQ==}
     engines: {node: '>=16'}
+    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
     hasBin: true
 
   glob-parent@5.1.2:
