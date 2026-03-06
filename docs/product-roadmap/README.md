@@ -7,7 +7,7 @@
 > platform proves itself. Every item moves toward "production-proven" maturity.
 >
 > 64 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 2 items active. 7 items parked.
+> 1 item active. 7 items parked.
 
 ---
 
