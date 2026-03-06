@@ -6,8 +6,8 @@
 > in publish-readiness, accessibility, and test coverage. Every item moves toward
 > "safe for downstream adoption" — the prerequisite for production-proven maturity.
 >
-> 79 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
-> 2 items active. 7 items parked.
+> 80 items completed (all archived in **[ARCHIVE.md](./ARCHIVE.md)**).
+> 1 item active. 7 items parked.
 
 ---
 
@@ -227,7 +227,7 @@ ignoring prefers-reduced-motion. Government platform — a11y is non-negotiable.
 **Priority:** High | **Impact:** High | **Effort:** Medium | **Risk:** Low
 **Source:** Audit findings TEST-001, TEST-004 through TEST-014 (7 CRITICAL, 14 HIGH)
 **AI-first benefit:** Agents can refactor provider implementations with confidence that mocked conformance tests catch regressions.
-**Status:** In Progress
+**Status:** Done (2026-03-07)
 **Dependencies:** None
 
 7 cloud provider implementations have zero tests (SQS, BullMQ, SES, S3, MinIO,
