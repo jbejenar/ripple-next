@@ -35,6 +35,7 @@ function isOpen(index: number): boolean {
       :class="{ 'rpl-accordion__item--open': isOpen(index) }"
     >
       <button
+        :id="`rpl-accordion-btn-${index}`"
         class="rpl-accordion__header"
         :aria-expanded="isOpen(index)"
         :aria-controls="`rpl-accordion-panel-${index}`"
@@ -49,6 +50,7 @@ function isOpen(index: number): boolean {
         v-show="isOpen(index)"
         :id="`rpl-accordion-panel-${index}`"
         role="region"
+        :aria-labelledby="`rpl-accordion-btn-${index}`"
         class="rpl-accordion__content"
         v-html="item.body"
       />

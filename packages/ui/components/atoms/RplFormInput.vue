@@ -42,6 +42,7 @@ const inputId = `rpl-input-${Math.random().toString(36).slice(2, 9)}`
       :type="type"
       :placeholder="placeholder"
       :required="required"
+      :aria-required="required"
       :disabled="disabled"
       :aria-invalid="!!error"
       :aria-describedby="error ? `${inputId}-error` : undefined"
@@ -80,7 +81,7 @@ const inputId = `rpl-input-${Math.random().toString(36).slice(2, 9)}`
   transition: border-color 0.2s;
 }
 
-.rpl-form-input__input:focus {
+.rpl-form-input__input:focus-visible {
   outline: none;
   border-color: var(--rpl-clr-primary, #0052c2);
   box-shadow: 0 0 0 2px rgba(0, 82, 194, 0.2);

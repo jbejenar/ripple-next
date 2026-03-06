@@ -36,6 +36,7 @@ const groupId = `rpl-optbtn-${Math.random().toString(36).slice(2, 9)}`
 <template>
   <fieldset
     :class="['rpl-option-button', { 'rpl-option-button--error': error, 'rpl-option-button--disabled': disabled }]"
+    :aria-required="required"
     :aria-invalid="!!error"
     :aria-describedby="error ? `${groupId}-error` : undefined"
   >

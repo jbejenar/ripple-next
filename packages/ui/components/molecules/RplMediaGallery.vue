@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick, onUnmounted } from 'vue'
 
 export interface RplMediaGalleryItem {
   id: string
@@ -27,14 +27,18 @@ const emit = defineEmits<{
 
 const isOpen = ref(false)
 const activeIndex = ref(0)
+const lightboxRef = ref<HTMLElement | null>(null)
+const closeButtonRef = ref<HTMLElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
 
 const activeItem = computed((): RplMediaGalleryItem | undefined =>
   props.items[activeIndex.value]
 )
 
-function openLightbox(index: number): void {
+function openLightbox(index: number, event?: Event): void {
   const item = props.items[index]
   if (!item) return
+  triggerRef.value = (event?.currentTarget as HTMLElement) ?? null
   activeIndex.value = index
   isOpen.value = true
   emit('select', item, index)
@@ -42,6 +46,7 @@ function openLightbox(index: number): void {
 
 function closeLightbox(): void {
   isOpen.value = false
+  triggerRef.value?.focus()
 }
 
 function navigate(direction: 1 | -1): void {
@@ -51,12 +56,56 @@ function navigate(direction: 1 | -1): void {
   }
 }
 
+function trapFocus(event: KeyboardEvent): void {
+  const container = lightboxRef.value
+  if (!container) return
+
+  const focusableElements = Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => !el.hasAttribute('hidden'))
+
+  if (focusableElements.length === 0) return
+
+  const firstEl = focusableElements[0]
+  const lastEl = focusableElements[focusableElements.length - 1]
+  if (!firstEl || !lastEl) return
+
+  if (event.shiftKey) {
+    if (document.activeElement === firstEl) {
+      event.preventDefault()
+      lastEl.focus()
+    }
+  } else {
+    if (document.activeElement === lastEl) {
+      event.preventDefault()
+      firstEl.focus()
+    }
+  }
+}
+
 function onKeydown(event: KeyboardEvent): void {
   if (!isOpen.value) return
   if (event.key === 'Escape') closeLightbox()
   if (event.key === 'ArrowLeft') navigate(-1)
   if (event.key === 'ArrowRight') navigate(1)
+  if (event.key === 'Tab') trapFocus(event)
 }
+
+watch(isOpen, async (open) => {
+  if (open) {
+    document.body.style.overflow = 'hidden'
+    await nextTick()
+    closeButtonRef.value?.focus()
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
 </script>
 
 <template>
@@ -73,7 +122,7 @@ function onKeydown(event: KeyboardEvent): void {
         role="listitem"
         type="button"
         :aria-label="`View ${item.alt || item.title || 'image'}`"
-        @click="openLightbox(index)"
+        @click="openLightbox(index, $event)"
       >
         <img
           :src="item.thumbnail || item.src"
@@ -91,6 +140,7 @@ function onKeydown(event: KeyboardEvent): void {
     <Teleport to="body">
       <div
         v-if="isOpen"
+        ref="lightboxRef"
         class="rpl-media-gallery__lightbox"
         role="dialog"
         aria-modal="true"
@@ -100,6 +150,7 @@ function onKeydown(event: KeyboardEvent): void {
       >
         <div class="rpl-media-gallery__lightbox-content">
           <button
+            ref="closeButtonRef"
             class="rpl-media-gallery__lightbox-close"
             type="button"
             aria-label="Close lightbox"

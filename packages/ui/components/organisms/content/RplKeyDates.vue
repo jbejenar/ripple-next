@@ -14,27 +14,31 @@ const props = defineProps<{
     <h2 v-if="props.title" class="rpl-key-dates__title">
       {{ props.title }}
     </h2>
-    <div class="rpl-key-dates__list">
+    <dl class="rpl-key-dates__list">
       <div
         v-for="(item, index) in props.dates"
         :key="index"
         class="rpl-key-dates__item"
       >
-        <div class="rpl-key-dates__date">{{ item.date }}</div>
-        <div class="rpl-key-dates__content">
-          <h3 class="rpl-key-dates__item-title">{{ item.title }}</h3>
-          <p v-if="item.description" class="rpl-key-dates__description">
+        <dt class="rpl-key-dates__date">{{ item.date }}</dt>
+        <dd class="rpl-key-dates__content">
+          <span class="rpl-key-dates__item-title">{{ item.title }}</span>
+          <span v-if="item.description" class="rpl-key-dates__description">
             {{ item.description }}
-          </p>
-        </div>
+          </span>
+        </dd>
       </div>
-    </div>
+    </dl>
   </div>
 </template>
 
 <style scoped>
 .rpl-key-dates {
   margin: 1.5rem 0;
+}
+
+.rpl-key-dates__list {
+  margin: 0;
 }
 
 .rpl-key-dates__title {
@@ -61,6 +65,12 @@ const props = defineProps<{
   font-weight: 700;
   color: var(--rpl-clr-primary, #0052c2);
   font-size: 0.875rem;
+}
+
+.rpl-key-dates__content {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .rpl-key-dates__item-title {

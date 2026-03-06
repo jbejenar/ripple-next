@@ -15,8 +15,8 @@ const props = defineProps<{
     <h2 v-if="props.title" class="rpl-timeline__title">
       {{ props.title }}
     </h2>
-    <div class="rpl-timeline__list">
-      <div
+    <ol class="rpl-timeline__list">
+      <li
         v-for="(item, index) in props.items"
         :key="index"
         class="rpl-timeline__item"
@@ -28,8 +28,8 @@ const props = defineProps<{
           <p v-if="item.subtitle" class="rpl-timeline__subtitle">{{ item.subtitle }}</p>
           <div class="rpl-timeline__body" v-html="item.body" />
         </div>
-      </div>
-    </div>
+      </li>
+    </ol>
   </div>
 </template>
 
@@ -48,6 +48,8 @@ const props = defineProps<{
 .rpl-timeline__list {
   position: relative;
   padding-left: 2rem;
+  margin: 0;
+  list-style: none;
 }
 
 .rpl-timeline__list::before {

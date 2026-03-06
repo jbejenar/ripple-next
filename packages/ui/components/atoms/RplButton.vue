@@ -92,4 +92,9 @@ defineEmits<{
   color: var(--rpl-clr-primary, #0052c2);
   border-color: transparent;
 }
+
+.rpl-button:focus-visible {
+  outline: 2px solid var(--rpl-clr-primary, #0052c2);
+  outline-offset: 2px;
+}
 </style>

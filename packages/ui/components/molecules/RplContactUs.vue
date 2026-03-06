@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<RplContactUsProps>(), {
 </script>
 
 <template>
-  <div class="rpl-contact-us">
+  <section class="rpl-contact-us" :aria-label="props.title || 'Contact us'">
     <h3 v-if="props.title" class="rpl-contact-us__title">{{ props.title }}</h3>
     <div class="rpl-contact-us__body">
       <slot />
@@ -46,7 +46,7 @@ const props = withDefaults(defineProps<RplContactUsProps>(), {
         </a>
       </li>
     </ul>
-  </div>
+  </section>
 </template>
 
 <style scoped>

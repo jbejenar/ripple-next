@@ -33,7 +33,7 @@ withDefaults(defineProps<RplSkipLinkProps>(), {
   transition: top 0.2s;
 }
 
-.rpl-skip-link:focus {
+.rpl-skip-link:focus-visible {
   top: 0;
   outline: 3px solid var(--rpl-clr-primary-dark, #003e91);
   outline-offset: 2px;

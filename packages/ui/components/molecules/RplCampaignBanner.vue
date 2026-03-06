@@ -10,7 +10,7 @@ withDefaults(defineProps<RplCampaignBannerProps>(), {
 </script>
 
 <template>
-  <div :class="['rpl-campaign-banner', `rpl-campaign-banner--${type}`]">
+  <section :class="['rpl-campaign-banner', `rpl-campaign-banner--${type}`]" aria-label="Campaign banner">
     <div class="rpl-campaign-banner__inner">
       <div v-if="$slots.media" class="rpl-campaign-banner__media">
         <slot name="media" />
@@ -30,7 +30,7 @@ withDefaults(defineProps<RplCampaignBannerProps>(), {
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>

@@ -48,6 +48,11 @@ defineProps<RplCardProps>()
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.rpl-card--link:focus-visible {
+  outline: 2px solid var(--rpl-clr-primary, #0052c2);
+  outline-offset: 2px;
+}
+
 .rpl-card__image img {
   width: 100%;
   height: auto;

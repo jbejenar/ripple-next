@@ -106,4 +106,9 @@ withDefaults(defineProps<RplNavigationProps>(), {
   background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
+
+.rpl-navigation__sublink:focus-visible {
+  outline: 2px solid var(--rpl-clr-primary, #0052c2);
+  outline-offset: 2px;
+}
 </style>
