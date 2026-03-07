@@ -17,7 +17,9 @@
     "./mocks": "./mocks/providers.ts",
     "./mocks/*": "./mocks/*.ts"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org",

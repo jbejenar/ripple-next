@@ -1,0 +1,12 @@
+{
+  "schema": "ripple-api-breaking/v1",
+  "timestamp": "2026-03-07T02:04:27.539Z",
+  "status": "pass",
+  "baseRef": "main",
+  "baseline": "found",
+  "currentVersion": "1.0.0",
+  "baselineVersion": "1.0.0",
+  "breaking": 0,
+  "nonBreaking": 0,
+  "changes": []
+}

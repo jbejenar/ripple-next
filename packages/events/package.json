@@ -1,6 +1,6 @@
 {
   "name": "@ripple-next/events",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Apache-2.0",
   "type": "module",
   "sideEffects": false,
@@ -9,7 +9,10 @@
   "exports": {
     ".": "./index.ts"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org",
