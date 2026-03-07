@@ -362,6 +362,8 @@ query params without Zod validation. Console violations in non-exempt files.
 | SDK generation from OpenAPI spec | No consumer demand | Consumer demand exists |
 | Testcontainers router integration tests | Contract tests sufficient | API complexity warrants router-level DB tests |
 | Conform as optional verify gate | No downstream repos use conform | Downstream repos use conform regularly |
+| RN-081: Fleet auto-dispatch for security surfaces | No downstream fleet to dispatch to | After ≥ 2 downstream repos registered in FLEET_DOWNSTREAM_REPOS |
+| RN-082: SHA-pinned action drift detection | No downstream repos to run drift checks against | Alongside RN-081, or when drift detection runs regularly against real repos |
 
 ---
 
@@ -383,7 +385,18 @@ query params without Zod validation. Console violations in non-exempt files.
 
 ---
 
-## Suggestion Triage Log (v10.0.0)
+## Suggestion Triage Log
+
+### v10.2.0 (2026-03-07)
+
+#### Parked
+
+| Suggestion | Source | Action |
+|-----------|--------|--------|
+| RN-081: Fleet auto-dispatch for security-critical surfaces | AI agent (downstream fleet feedback) | Parked — no fleet exists; same precondition as RN-060 |
+| RN-082: Enhanced SHA-pin drift detection | AI agent (downstream fleet feedback) | Parked — no downstream repos to validate against |
+
+### v10.0.0
 
 ### Adopted
 
@@ -439,53 +452,7 @@ Checklist (if `[New Item]`):
 
 ### Open AI Suggestions
 
-#### RN-081: Fleet Auto-Dispatch for Security-Critical Surface Changes
-
-**Category:** `[New Item]`
-**Source:** Downstream fleet feedback (ripple-next-api-address, FLEET-SURF-002)
-**Date:** 2026-03-07
-**Impact:** High
-**Effort:** Medium
-**Risk:** Low
-**AI-first benefit:** AI agents managing downstream repos receive automatic PRs when security-critical surfaces change, eliminating manual detection lag.
-
-Currently `fleet-update-notify.yml` only dispatches `repository_dispatch` on releases. When security-critical governed surfaces (SURF-002 composite actions, SURF-006 security config) are updated in the golden path — e.g., SHA pinning upgrades, CodeQL version bumps — downstream repos don't automatically receive PRs. They must manually detect and sync.
-
-Implement a push-to-main trigger in `fleet-update-notify.yml` (or a new workflow) that dispatches `fleet-update-available` to registered downstream repos when files in security-critical surfaces change, so SHA pin updates propagate automatically.
-
-**Affected items:** RN-060 (parked auto-remediation — this is narrower scope: dispatch only, not full remediation)
-**Proposed action:** Add to Now or Next depending on downstream fleet size
-
-Checklist:
-- [ ] Add `push` trigger to `fleet-update-notify.yml` filtered to security-critical surface paths
-- [ ] Dispatch includes changed surface IDs in `client_payload`
-- [ ] Downstream `fleet-sync.yml` handles security-critical dispatches with higher priority
-- [ ] Test with at least one downstream repo (ripple-next-api-address)
-
----
-
-#### RN-082: Enhanced Drift Detection for SHA-Pinned Action Upgrades
-
-**Category:** `[New Item]`
-**Source:** Downstream fleet feedback (ripple-next-api-address, FLEET-SURF-009)
-**Date:** 2026-03-07
-**Impact:** Medium
-**Effort:** Low
-**Risk:** Low
-**AI-first benefit:** AI agents running drift checks get accurate results — tag-based refs (`@v4`) are flagged when upstream has moved to full SHA pinning, closing a silent security gap.
-
-SURF-009 `contentPatterns` only checks for unpinned `@main` refs. It does not flag repos still using tag-based refs (e.g., `actions/checkout@v4`) when the golden path has moved to full SHA pinning (e.g., `actions/checkout@11bd71901...#v4.2.2`). Downstream repos can silently fall behind on this security-critical practice.
-
-Add a content pattern or SHA-comparison check that detects tag-based action refs in governed workflow files when the golden path uses SHA-pinned refs.
-
-**Affected items:** FLEET-SURF-009 (action-version-pinning)
-**Proposed action:** Add to Next — low effort, improves fleet security posture
-
-Checklist:
-- [ ] Add content pattern to SURF-009 that flags `@v[0-9]` refs (without SHA) in workflow files
-- [ ] Or implement SHA-comparison for SURF-002/SURF-006 governed files
-- [ ] Update `check-fleet-drift.mjs` if new pattern logic is needed
-- [ ] Validate against ripple-next-api-address
+_No open suggestions._
 
 ---
 
