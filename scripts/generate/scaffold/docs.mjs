@@ -243,13 +243,13 @@ replacement.
           {
             order: 1,
             command:
-              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --dry-run --json',
-            description: 'Preview the feedback payload (dry run)',
+              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --environment=${ENVIRONMENT:-unknown} --dry-run --json',
+            description: 'Preview the feedback payload (dry run). Environment defaults to unknown if not set.',
           },
           {
             order: 2,
             command:
-              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --submit',
+              'pnpm fleet:feedback -- --type=${TYPE} --title="${TITLE}" --description="${DESCRIPTION}" --environment=${ENVIRONMENT:-unknown} --submit',
             description:
               'Submit feedback to the upstream golden-path repository',
           },
@@ -619,10 +619,10 @@ Run \`pnpm conform\` to check your documentation compliance score.
 | Run quality gates + fleet drift | \`pnpm verify -- --fleet\` |
 | Check drift against golden path | \`pnpm check:fleet-drift\` |
 | Check drift (JSON for CI/agents) | \`pnpm check:fleet-drift -- --json\` |
-| Submit feedback upstream | \`pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --submit\` |
-| Preview feedback (dry run) | \`pnpm fleet:feedback -- --type=<type> --title="..." --dry-run --json\` |
-| Share local improvement | \`pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit\` |
-| Request policy exception | \`pnpm fleet:feedback -- --type=policy-exception --surface=<ID> --title="..." --submit\` |
+| Submit feedback upstream | \`pnpm fleet:feedback -- --type=<type> --title="..." --description="..." --environment=<env> --submit\` |
+| Preview feedback (dry run) | \`pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --dry-run --json\` |
+| Share local improvement | \`pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --environment=<env> --submit\` |
+| Request policy exception | \`pnpm fleet:feedback -- --type=policy-exception --surface=<ID> --title="..." --environment=<env> --submit\` |
 | Pull sync from golden path | \`pnpm fleet:sync\` |
 | Pull sync (dry run) | \`pnpm fleet:sync -- --dry-run\` |
 | Run fleet drift runbook | \`pnpm runbook fleet-drift-check\` |
@@ -706,7 +706,7 @@ Exception rules:
 Or submit a formal exception request:
 \`\`\`bash
 pnpm fleet:feedback -- --type=policy-exception --surface=FLEET-SURF-007 \\
-  --title="No IaC — stateless API" --submit
+  --title="No IaC — stateless API" --environment=production --submit
 \`\`\`
 
 ---

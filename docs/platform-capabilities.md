@@ -104,7 +104,7 @@ stay synchronised with the golden path ([ADR-019](./adr/019-fleet-governance.md)
 | Apply sync | `pnpm fleet:sync -- --target=<path>` |
 | View compliance | `pnpm fleet:compliance -- --reports=./reports` |
 | View changelog | `pnpm fleet:changelog` |
-| Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --submit` |
+| Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --submit` |
 
 **Downstream commands (run from consumer repos after scaffolding):**
 
@@ -112,8 +112,8 @@ stay synchronised with the golden path ([ADR-019](./adr/019-fleet-governance.md)
 |------|---------|
 | Check drift (self) | `pnpm check:fleet-drift` |
 | Check drift (JSON) | `pnpm check:fleet-drift -- --json` |
-| Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --submit` |
-| Share improvement | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit` |
+| Submit feedback | `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --submit` |
+| Share improvement | `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --environment=<env> --submit` |
 | Pull sync | `pnpm fleet:sync` |
 | Verify + fleet | `pnpm verify -- --fleet` |
 

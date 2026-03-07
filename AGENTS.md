@@ -144,8 +144,8 @@ When making changes, match the change type to the right validation:
 | Fleet policy change | Update `docs/fleet-policy.json`, run `pnpm check:fleet-drift` |
 | Fleet drift check (downstream) | Run `pnpm check:fleet-drift -- --json`, review findings by severity, fix security-critical first |
 | Fleet sync (upstream → downstream) | Run `pnpm fleet:sync -- --target=<path> --dry-run`, review, then `pnpm fleet:sync -- --target=<path>` |
-| Fleet feedback submission | Run `pnpm fleet:feedback -- --type=<type> --title="..." --dry-run`, review, then add `--submit` |
-| Fleet improvement sharing | Run `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --submit` |
+| Fleet feedback submission | Run `pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --dry-run`, review, then add `--submit`. Environment: `production`, `staging`, `development`, `local`, or `unknown` (auto-detected from NODE_ENV if omitted) |
+| Fleet improvement sharing | Run `pnpm fleet:feedback -- --type=improvement-share --surface=<ID> --file=<path> --environment=<env> --submit` |
 | Fleet compliance audit | Run `pnpm fleet:compliance -- --reports=./reports`, review compliance scores across fleet |
 | Scaffold new downstream repo | Run `pnpm generate:scaffold <path> --name=<n> --org=<o>`, follow `docs/consumer-app-guide.md`, run `pnpm conform` |
 | Modifying CLAUDE.md or AGENTS.md | Read [ADR-020](docs/adr/020-context-file-minimalism.md). Only add hard constraints that cause CI failures if unknown. Do NOT add command catalogs, directory listings, or content from `.github/instructions/`. |

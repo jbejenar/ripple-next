@@ -15,6 +15,10 @@ inputs:
   description:
     required: true
     description: 'Feedback description'
+  environment:
+    required: false
+    description: 'Source environment: production, staging, development, local, unknown'
+    default: 'unknown'
   upstream-repo:
     required: false
     description: 'Upstream golden-path repository'
@@ -42,8 +46,9 @@ runs:
         INPUT_SURFACE: ${{ inputs.surface-id }}
         INPUT_TITLE: ${{ inputs.title }}
         INPUT_DESCRIPTION: ${{ inputs.description }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
       run: |
-        ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --json)
+        ARGS=(--type="$INPUT_TYPE" --title="$INPUT_TITLE" --description="$INPUT_DESCRIPTION" --environment="$INPUT_ENVIRONMENT" --json)
         if [ -n "$INPUT_SURFACE" ]; then
           ARGS+=(--surface="$INPUT_SURFACE")
         fi
@@ -59,14 +64,15 @@ runs:
         PAYLOAD=$(cat /tmp/fleet-feedback-payload.json)
         TITLE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).title))")
         TYPE=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).feedbackType))")
+        ENV=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).metadata?.environment||'unknown'))")
 
         BODY=$(printf '<!-- fleet-feedback-begin -->\n%s\n<!-- fleet-feedback-end -->' "$PAYLOAD")
 
         ISSUE_URL=$(gh issue create \
           --repo "$UPSTREAM_REPO" \
-          --title "[fleet-feedback:${TYPE}] ${TITLE}" \
+          --title "[fleet-feedback:${TYPE}:${ENV}] ${TITLE}" \
           --body "$BODY" \
-          --label "fleet:feedback,fleet:feedback:${TYPE}")
+          --label "fleet:feedback,fleet:feedback:${TYPE},env:${ENV}")
 
         echo "issue-url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
         FEEDBACK_ID=$(echo "$PAYLOAD" | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).metadata?.feedbackId||'unknown'))")

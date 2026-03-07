@@ -37,11 +37,12 @@
       "agentType": "claude-code | copilot | codex | human",
       "goldenPathVersion": "SHA from .fleet.json",
       "complianceScore": 85,
-      "fleetPolicyVersion": "1.2.0"
+      "fleetPolicyVersion": "1.2.0",
+      "environment": "production | staging | development | local | unknown"
     }
   },
   "issueFormat": {
-    "titleTemplate": "[fleet-feedback:{feedbackType}] {title} ({sourceRepo})",
+    "titleTemplate": "[fleet-feedback:{feedbackType}:{environment}] {title} ({sourceRepo})",
     "bodyMarkers": {
       "begin": "<!-- fleet-feedback-begin -->",
       "end": "<!-- fleet-feedback-end -->"
