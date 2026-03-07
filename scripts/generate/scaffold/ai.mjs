@@ -79,7 +79,7 @@ This repo is governed by the ripple-next golden path. See \`docs/fleet-managemen
 \`\`\`bash
 pnpm check:fleet-drift          # detect drift from golden path
 pnpm check:fleet-drift -- --json # JSON output for CI/agents
-pnpm fleet:feedback -- --type=<type> --title="..." --submit  # submit feedback
+pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --submit  # submit feedback
 pnpm fleet:sync                  # pull sync from golden path
 pnpm verify -- --fleet           # quality gates + fleet drift
 \`\`\`
@@ -335,7 +335,7 @@ toolchain versions, security config, and quality gates in sync with the golden p
 
 - \\\`pnpm check:fleet-drift\\\` — detect drift from golden path
 - \\\`pnpm check:fleet-drift -- --json\\\` — JSON output for CI pipelines
-- \\\`pnpm fleet:feedback -- --type=<type> --title="..." --submit\\\` — submit feedback upstream
+- \\\`pnpm fleet:feedback -- --type=<type> --title="..." --environment=<env> --submit\\\` — submit feedback upstream
 - \\\`pnpm fleet:sync\\\` — pull governed surfaces from golden path
 - \\\`pnpm verify -- --fleet\\\` — run quality gates including fleet drift check
 
@@ -445,13 +445,13 @@ pnpm check:fleet-drift -- --json # JSON for agents
 
 #### Submit feedback to golden path
 \`\`\`bash
-pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --dry-run
-pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --submit
+pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --environment=production --dry-run
+pnpm fleet:feedback -- --type=feature-request --title="Title" --description="Why" --environment=production --submit
 \`\`\`
 
 #### Share a local improvement upstream
 \`\`\`bash
-pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit
+pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --environment=production --submit
 \`\`\`
 
 #### Pull sync from golden path
@@ -462,7 +462,7 @@ pnpm fleet:sync              # apply
 
 #### Request a policy exception
 \`\`\`bash
-pnpm fleet:feedback -- --type=policy-exception --surface=FLEET-SURF-007 --title="No IaC" --submit
+pnpm fleet:feedback -- --type=policy-exception --surface=FLEET-SURF-007 --title="No IaC" --environment=production --submit
 \`\`\`
 
 ### Verification

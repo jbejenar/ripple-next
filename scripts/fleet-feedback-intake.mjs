@@ -135,6 +135,8 @@ const report = {
   issueNumber,
   feedbackType: payload.feedbackType,
   sourceRepo: payload.sourceRepo,
+  governedSurface: payload.governedSurface ?? null,
+  environment: (payload.metadata && payload.metadata.environment) ?? 'unknown',
   labels,
   priorityScore,
   duplicate,

@@ -656,7 +656,7 @@ Add this as a repository secret in your downstream repo.
 The `improvement-share` feedback type enables **true bidirectional sync**:
 
 1. Your AI agent improves a governed/advisory file locally (e.g., adds a11y rules to `eslint.config.js`)
-2. Run: `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --submit`
+2. Run: `pnpm fleet:feedback -- --type=improvement-share --surface=FLEET-SURF-005 --file=eslint.config.js --environment=production --submit`
 3. The script reads `.fleet.json`, generates a unified diff, and submits as a structured issue
 4. The upstream intake workflow validates the diff and auto-creates a draft PR if it applies cleanly
 5. The golden-path team reviews and merges
