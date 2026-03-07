@@ -189,12 +189,26 @@ function checkSurface(surface) {
         const content = readFileSync(fullPath, 'utf-8')
         const lines = content.split('\n')
         for (const cp of surface.contentPatterns) {
+          // Skip scope-restricted patterns that don't match this file
+          if (cp.scope && !file.endsWith(cp.scope) && !cp.scope.endsWith(file)) continue
+
           const re = new RegExp(cp.pattern)
-          for (let i = 0; i < lines.length; i++) {
-            if (re.test(lines[i])) {
+          if (cp.expect === 'present') {
+            // Pattern SHOULD be found — absence is drift
+            const found = lines.some((line) => re.test(line))
+            if (!found) {
               finding.status = 'drifted'
-              finding.details.push(`${file}:${i + 1} — ${cp.message}`)
-              finding.remediation.push(`Pin action ref in ${file}:${i + 1} to @v1 or a commit SHA`)
+              finding.details.push(`${file} — ${cp.message} (expected pattern not found)`)
+              finding.remediation.push(`Add required content to ${file}`)
+            }
+          } else {
+            // Default (expect: "absent") — pattern should NOT be found
+            for (let i = 0; i < lines.length; i++) {
+              if (re.test(lines[i])) {
+                finding.status = 'drifted'
+                finding.details.push(`${file}:${i + 1} — ${cp.message}`)
+                finding.remediation.push(`Fix flagged content in ${file}:${i + 1}`)
+              }
             }
           }
         }
