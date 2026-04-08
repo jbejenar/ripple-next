@@ -18,7 +18,7 @@
     "clean": "rimraf .output .nuxt dist"
   },
   "dependencies": {
-    "@orpc/openapi": "^1.13.5",
+    "@orpc/openapi": "^1.13.9",
     "@orpc/server": "^1.13.5",
     "@orpc/zod": "^1.13.5",
     "@pinia/nuxt": "^0.9.0",
